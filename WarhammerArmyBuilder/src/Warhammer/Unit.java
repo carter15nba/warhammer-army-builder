@@ -1,7 +1,24 @@
+/*
+ *  Copyright (C) 2011 Glenn Rune
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package Warhammer;
 
 public class Unit {
-	public static final int VALUE_NOT_SET = 0;
+	public static final int VALUE_NOT_SET = -1;
 	public static final int VALUE_NOT_FOUND = 404;
 	public static final int CHARACTHERISTIC_ATTACKS = 10;
 	public static final int CHARACTHERISTIC_BALLISTIC_SKILL = 11;
@@ -34,9 +51,30 @@ public class Unit {
 	private int charWounds = VALUE_NOT_SET;
 	private int charWeaponSkill = VALUE_NOT_SET;
 	private int unitCategory = VALUE_NOT_SET;
+
+        /**
+         * Creates a new unit object with the given unit name.
+         * @param name The unit name
+         */
 	public Unit(String name){
 		unitName = name;
 	}
+
+        /**
+         * Creates a new unit object with the given unit name,
+         * and associated charactheristics.
+         * @param name The unit name
+         * @param category An integer identifying the class of the unit. Use one of the CATEGORY_ attributes.
+         * @param movement An integer representing the movement allowance of the unit.
+         * @param weaponSkill An integer representing the weapon skill of the unit.
+         * @param ballisticSkill An integer representing the ballistics skill of the unit.
+         * @param strength An integer representing the strength of the unit.
+         * @param toughness An integer representing the toughness of the unit.
+         * @param wounds An integer representing the wounds of the unit.
+         * @param initiative An integer representing the initiative of the unit.
+         * @param attack An integer representing the attack of the unit.
+         * @param leadership An integer representing the leadership of the unit.
+         */
 	public Unit(String name, 
 			int category, 
 			int movement,
@@ -60,6 +98,11 @@ public class Unit {
 				attack, 
 				leadership);
 	}
+
+        /**
+         * Method to set the unit category.
+         * @param category Integer representing the category to be set. Use one of the CATEGORY_ attributes.
+         */
 	public void setCategory(int category){
 		switch(category){
 		case CATEGORY_CAVALRY:
@@ -100,12 +143,35 @@ public class Unit {
 			break;
 		}		
 	}
+
+        /**
+         * Method to aquire the unit category.
+         * @return -1 if no category is set, otherwise it returns an integer equal to one of the CATEGORY_ attributes.
+         */
 	public int getCategory(){
 		return unitCategory;
 	}
+
+        /**
+         * Method to aquire the unit name.
+         * @return String with the units name.
+         */
 	public String getUnitName(){
 		return unitName;
 	}
+
+        /**
+         * Method to set/update all the unit characteristics at once.
+         * @param movement Integer representing the movement allowance value.
+         * @param weaponSkill Integer representing the weapon skill value.
+         * @param ballisticSkill Integer representing the ballistic skill value.
+         * @param strength Integer representing the strength value.
+         * @param toughness Integer representing the toughness value.
+         * @param wounds Integer representing the wounds value.
+         * @param initiative Integer representing the initiative value.
+         * @param attack Integer representing the attack value.
+         * @param leadership Integer representing the leadership value.
+         */
 	public void setCharacteristics(int movement,
 			int weaponSkill,
 			int ballisticSkill,
@@ -126,6 +192,12 @@ public class Unit {
 		charLeadership = leadership;
 		
 	}
+
+        /**
+         * Method to set/update a specific unit characterisitc with the supplied value.
+         * @param characteristic Integer identifying the characteristic to set/update. Use one of the CHARACTERISTIC_ attributes.
+         * @param value Integer with the value to be assigned to the characteristic.
+         */
 	public void setCharacteristics(int characteristic, int value){
 		switch(characteristic){
 		case CHARACTHERISTIC_ATTACKS:
@@ -157,6 +229,12 @@ public class Unit {
 			break;
 		}	
 	}
+
+        /**
+         * Method to aquire the specified characteristic value.
+         * @param characteristic Integer identifying the characteristic to aquire. Use one of the CHARACTERISTIC_ attributes.
+         * @return 404 if the selected characteristic were not found, -1 if the characteristic is not set or the actual value of the characteristic.
+         */
 	public int getCharacteristic(int characteristic){
 		switch(characteristic){
 		case CHARACTHERISTIC_ATTACKS:
@@ -181,6 +259,12 @@ public class Unit {
 			return VALUE_NOT_FOUND;
 		}	
 	}
+
+
+        @Override
+        /**
+         * Method to get a textural representation of the data associated with this unit.
+         */
 	public String toString(){
 		String type;
 		switch(unitCategory){
