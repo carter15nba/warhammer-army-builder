@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) 2011 Glenn Rune
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package Warhammer;
 
 import java.util.ArrayList;
@@ -23,7 +40,11 @@ public abstract class Race {
 	public static final int RACE_WARRIORS_OF_CHAOS = 25;
 	protected ArrayList<Unit> units;
 	private String raceName;
-	
+
+        /**
+         * Constructor which create a new
+         * @param race Integer representing the race object to be created. Use one of the Race_ attributes.
+         */
 	public Race(int race){
 		units = new ArrayList<Unit>();
 		switch(race){
@@ -80,6 +101,8 @@ public abstract class Race {
 			break;
 		}
 	}
+
+        @Override
 	public String toString(){
 		String toString = raceName+"\n";
 		for(Unit unit : units){
@@ -88,10 +111,22 @@ public abstract class Race {
 		
 		return toString;
 	}
+
+        /**
+         * Method used to create the specific armies units.
+         */
 	abstract void createArmy();
+
+        /**
+         * Method to aquire the specified unit from the army.
+         * @param index Integer holding the index of the requested unit.
+         * @return A Unit object if the index exists, null otherwise.
+         */
 	abstract Unit getUnit(int index);
-	
+
+
 	public static void main(String[] args){
+           //TODO: Move main method to appropriate location.
 		Bretonnia b = new Bretonnia(Race.RACE_BRETONNIA);
 		b.createArmy();
 		System.out.println(b.toString());
