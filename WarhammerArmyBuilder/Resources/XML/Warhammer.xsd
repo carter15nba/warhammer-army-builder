@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : Warhammer.xsd
+    Created on : 11. januar 2011, 12.46
+    Author     : Glenn Rune Strandbråten
+    Description:
+        This document defines the structure of the Warhammer Race xml schema.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.w3schools.com"
+xmlns="http://www.w3schools.com"
+elementFormDefault="qualified">
+    <xsd:element name="Race">
+      <xsd:complexType mixed="true">
+          <xsd:sequence>
+              <xsd:element name="Name" type="xsd:string"/>
+              <xsd:element name="Unit" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Name" type="xsd:string"/>
+                        <xsd:element name="Movement" type="xsd:string"/>
+                        <xsd:element name="WeaponSkill" type="xsd:string"/>
+                        <xsd:element name="BallisticSkill" type="xsd:string"/>
+                        <xsd:element name="Strength" type="xsd:string"/>
+                        <xsd:element name="Toughness" type="xsd:string"/>
+                        <xsd:element name="Wounds" type="xsd:string"/>
+                        <xsd:element name="Initiative" type="xsd:string"/>
+                        <xsd:element name="Attack" type="xsd:string"/>
+                        <xsd:element name="Leadership" type="xsd:string"/>
+                        <xsd:element name="Type" type="xsd:string"/>
+                        <xsd:element name="Mount" minOccurs="0" maxOccurs="3">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="Name" type="xsd:string"/>
+                                    <xsd:element name="Movement" type="xsd:string"/>
+                                    <xsd:element name="WeaponSkill" type="xsd:string"/>
+                                    <xsd:element name="BallisticSkill" type="xsd:string"/>
+                                    <xsd:element name="Strength" type="xsd:string"/>
+                                    <xsd:element name="Toughness" type="xsd:string"/>
+                                    <xsd:element name="Wounds" type="xsd:string"/>
+                                    <xsd:element name="Initiative" type="xsd:string"/>
+                                    <xsd:element name="Attack" type="xsd:string"/>
+                                    <xsd:element name="Leadership" type="xsd:string"/>
+                                    <xsd:element name="Type" type="xsd:string"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="Crew" minOccurs="0" maxOccurs="3">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="Name" type="xsd:string"/>
+                                    <xsd:element name="Movement" type="xsd:string"/>
+                                    <xsd:element name="WeaponSkill" type="xsd:string"/>
+                                    <xsd:element name="BallisticSkill" type="xsd:string"/>
+                                    <xsd:element name="Strength" type="xsd:string"/>
+                                    <xsd:element name="Toughness" type="xsd:string"/>
+                                    <xsd:element name="Wounds" type="xsd:string"/>
+                                    <xsd:element name="Initiative" type="xsd:string"/>
+                                    <xsd:element name="Attack" type="xsd:string"/>
+                                    <xsd:element name="Leadership" type="xsd:string"/>
+                                    <xsd:element name="Type" type="xsd:string"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
