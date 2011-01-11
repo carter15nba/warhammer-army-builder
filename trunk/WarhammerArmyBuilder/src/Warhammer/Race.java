@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -127,9 +127,9 @@ public abstract class Race {
 
 	public static void main(String[] args){
            //TODO: Move main method to appropriate location.
-		Bretonnia b = new Bretonnia(Race.RACE_BRETONNIA);
-		b.createArmy();
-		System.out.println(b.toString());
+//		Bretonnia b = new Bretonnia(Race.RACE_BRETONNIA);
+//		b.createArmy();
+//		System.out.println(b.toString());
 	
 	}
 	

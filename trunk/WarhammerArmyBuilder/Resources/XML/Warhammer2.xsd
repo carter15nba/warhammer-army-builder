@@ -1,0 +1,48 @@
+    
+
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+    Document   : Warhammer.xsd
+    Created on : 11. januar 2011, 12.46
+    Author     : Glenn Rune Strandbråten
+    Description:
+
+-->
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.w3schools.com"
+xmlns="http://www.w3schools.com"
+elementFormDefault="qualified">
+    <!-- definition of simple elements -->
+    <xs:element name="Race" type="xs:string"/>
+    <xs:element name="Name" type="xs:string"/>
+    <xs:element name="Category" type="xs:string"/>
+    <xs:element name="Movement" type="xs:string"/>
+    <xs:element name="WeaponSkill" type="xs:string"/>
+    <xs:element name="BallisticSkill" type="xs:string"/>
+    <xs:element name="Strength" type="xs:string"/>
+    <xs:element name="" type="xs:string"/>
+    <xs:element name="Wounds" type="xs:string"/>
+    <xs:element name="Initiative" type="xs:string"/>
+    <xs:element name="Attack" type="xs:string"/>
+    <xs:element name="Leadership" type="xs:string"/>
+
+    <xs:element ref="Name"/>
+    <xs:element ref="Unit"/>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Category"/>
+                <xs:element ref="Movement"/>
+                <xs:element ref="WeaponSkill"/>
+                <xs:element ref="BallisticSkill"/>
+                <xs:element ref="Strength"/>
+                <xs:element ref="Toughness"/>
+                <xs:element ref="Wounds"/>
+                <xs:element ref="Initiative"/>
+                <xs:element ref="Attack"/>
+                <xs:element ref="Leadership"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xsd:schema>
