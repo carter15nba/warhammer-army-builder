@@ -20,15 +20,15 @@ package Warhammer;
 public class Unit {
 	public static final int VALUE_NOT_SET = -1;
 	public static final int VALUE_NOT_FOUND = 404;
-	public static final int CHARACTHERISTIC_ATTACKS = 10;
-	public static final int CHARACTHERISTIC_BALLISTIC_SKILL = 11;
-	public static final int CHARACTHERISTIC_INITIATIVE = 12;
-	public static final int CHARACTHERISTIC_LEADERSHIP = 13;
-	public static final int CHARACTHERISTIC_MOVEMENT_ALLOVANCE = 14;
-	public static final int CHARACTHERISTIC_STRENGTH = 15;
-	public static final int CHARACTHERISTIC_TOUGHNESS = 16;
-	public static final int CHARACTHERISTIC_WOUNDS = 17;
-	public static final int CHARACTHERISTIC_WEAPON_SKILL = 18;
+	public static final int CHARACTHERISTIC_ATTACKS = 7;
+	public static final int CHARACTHERISTIC_BALLISTIC_SKILL = 2;
+	public static final int CHARACTHERISTIC_INITIATIVE = 6;
+	public static final int CHARACTHERISTIC_LEADERSHIP = 8;
+	public static final int CHARACTHERISTIC_MOVEMENT_ALLOVANCE = 0;
+	public static final int CHARACTHERISTIC_STRENGTH = 3;
+	public static final int CHARACTHERISTIC_TOUGHNESS = 4;
+	public static final int CHARACTHERISTIC_WOUNDS = 5;
+	public static final int CHARACTHERISTIC_WEAPON_SKILL = 1;
 	public static final int CATEGORY_CAVALRY = 20;
 	public static final int CATEGORY_CHARIOT = 21;
 	public static final int CATEGORY_INFANTRY = 22;
@@ -267,45 +267,7 @@ public class Unit {
          * Method to get a textural representation of the data associated with this unit.
          */
 	public String toString(){
-		String type;
-            switch(unitCategory){
-		case CATEGORY_CAVALRY:
-			type = "Ca";
-			break;
-		case CATEGORY_CHARIOT:
-			type = "Ch";
-			break;
-		case CATEGORY_INFANTRY:
-			type = "In";
-			break;
-		case CATEGORY_MONSTER:
-			type = "Mo";
-			break;
-		case CATEGORY_MONSTROUS_BEAST:
-			type = "MB";
-			break;
-		case CATEGORY_MONSTROUS_CAVALRY:
-			type = "MC";
-			break;
-		case CATEGORY_MONSTROUS_INFANTRY:
-			type = "MI";
-			break;
-		case CATEGORY_SWARM:
-			type = "Sw";
-			break;
-		case CATEGORY_UNIQUE_UNIT:
-			type = "Un";
-			break;
-		case CATEGORY_WAR_BEAST:
-			type = "WB";
-			break;
-		case CATEGORY_WAR_MACHINE:
-			type = "WM";
-			break;
-		default:
-			type = "-";
-			break;
-            }
+            String type = getStringCategory();
             return unitName+
                 " - [M="+charMovementAllowance+
                 ", WS="+charWeaponSkill+
@@ -318,4 +280,33 @@ public class Unit {
                 ", Ld="+charLeadership+
                 ", Type="+type+"]";
 	}
+
+        public String getStringCategory(){
+            switch(unitCategory){
+		case CATEGORY_CAVALRY:
+			return "Ca";
+		case CATEGORY_CHARIOT:
+			return "Ch";
+		case CATEGORY_INFANTRY:
+			return "In";
+		case CATEGORY_MONSTER:
+			return "Mo";
+		case CATEGORY_MONSTROUS_BEAST:
+			return "MB";
+		case CATEGORY_MONSTROUS_CAVALRY:
+			return "MC";
+		case CATEGORY_MONSTROUS_INFANTRY:
+			return "MI";
+		case CATEGORY_SWARM:
+			return "Sw";
+		case CATEGORY_UNIQUE_UNIT:
+			return "Un";
+		case CATEGORY_WAR_BEAST:
+			return "WB";
+		case CATEGORY_WAR_MACHINE:
+			return "WM";
+		default:
+			return "-";
+            }
+        }
 }
