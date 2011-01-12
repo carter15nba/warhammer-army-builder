@@ -15,11 +15,11 @@ elementFormDefault="qualified">
     <xsd:element name="Race">
       <xsd:complexType mixed="true">
           <xsd:sequence>
-              <xsd:element name="Name" type="xsd:string"/>
+              <xsd:element name="RaceName" type="xsd:string"/>
               <xsd:element name="Unit" maxOccurs="unbounded">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="Name" type="xsd:string"/>
+                        <xsd:element name="UnitName" type="xsd:string"/>
                         <xsd:element name="Movement" type="xsd:string"/>
                         <xsd:element name="WeaponSkill" type="xsd:string"/>
                         <xsd:element name="BallisticSkill" type="xsd:string"/>
@@ -33,7 +33,7 @@ elementFormDefault="qualified">
                         <xsd:element name="Mount" minOccurs="0" maxOccurs="3">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element name="Name" type="xsd:string"/>
+                                    <xsd:element name="MountName" type="xsd:string"/>
                                     <xsd:element name="Movement" type="xsd:string"/>
                                     <xsd:element name="WeaponSkill" type="xsd:string"/>
                                     <xsd:element name="BallisticSkill" type="xsd:string"/>
@@ -50,7 +50,7 @@ elementFormDefault="qualified">
                         <xsd:element name="Crew" minOccurs="0" maxOccurs="3">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element name="Name" type="xsd:string"/>
+                                    <xsd:element name="CrewName" type="xsd:string"/>
                                     <xsd:element name="Movement" type="xsd:string"/>
                                     <xsd:element name="WeaponSkill" type="xsd:string"/>
                                     <xsd:element name="BallisticSkill" type="xsd:string"/>

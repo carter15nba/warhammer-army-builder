@@ -53,12 +53,13 @@ public class Unit {
 	private int unitCategory = VALUE_NOT_SET;
 
         /**
-         * Creates a new unit object with the given unit name.
-         * @param name The unit name
+         * Creates a new unit object
          */
-	public Unit(String name){
-		unitName = name;
-	}
+	public Unit(){}
+
+        public void setName(String name){
+            unitName = name;
+        }
 
         /**
          * Creates a new unit object with the given unit name,
@@ -103,7 +104,7 @@ public class Unit {
          * Method to set the unit category.
          * @param category Integer representing the category to be set. Use one of the CATEGORY_ attributes.
          */
-	public void setCategory(int category){
+	public final void setCategory(int category){
 		switch(category){
 		case CATEGORY_CAVALRY:
 			unitCategory = category;
@@ -172,7 +173,7 @@ public class Unit {
          * @param attack Integer representing the attack value.
          * @param leadership Integer representing the leadership value.
          */
-	public void setCharacteristics(int movement,
+	public final void setCharacteristics(int movement,
 			int weaponSkill,
 			int ballisticSkill,
 			int strength,
@@ -199,7 +200,7 @@ public class Unit {
          * @param value Integer with the value to be assigned to the characteristic.
          */
 	public void setCharacteristics(int characteristic, int value){
-		switch(characteristic){
+            switch(characteristic){
 		case CHARACTHERISTIC_ATTACKS:
 			charAttack = value;
 			break;
@@ -227,7 +228,7 @@ public class Unit {
 		case CHARACTHERISTIC_WOUNDS:
 			charWounds = value;
 			break;
-		}	
+            }
 	}
 
         /**
@@ -236,7 +237,7 @@ public class Unit {
          * @return 404 if the selected characteristic were not found, -1 if the characteristic is not set or the actual value of the characteristic.
          */
 	public int getCharacteristic(int characteristic){
-		switch(characteristic){
+            switch(characteristic){
 		case CHARACTHERISTIC_ATTACKS:
 			return charAttack;
 		case CHARACTHERISTIC_BALLISTIC_SKILL:
@@ -257,7 +258,7 @@ public class Unit {
 			return charWounds;
 		default:
 			return VALUE_NOT_FOUND;
-		}	
+            }
 	}
 
 
@@ -267,7 +268,7 @@ public class Unit {
          */
 	public String toString(){
 		String type;
-		switch(unitCategory){
+            switch(unitCategory){
 		case CATEGORY_CAVALRY:
 			type = "Ca";
 			break;
@@ -304,17 +305,17 @@ public class Unit {
 		default:
 			type = "-";
 			break;
-		}	
-		return unitName+
-			" - [M="+charMovementAllowance+
-			", WS="+charWeaponSkill+
-			", BS="+charBallisticSkill+
-			", S="+charStrength+
-			", T="+charToughness+
-			", W="+charWounds+
-			", I="+charInitiative+
-			", A="+charAttack+
-			", Ld="+charLeadership+
-			", Type="+type+"]";
+            }
+            return unitName+
+                " - [M="+charMovementAllowance+
+                ", WS="+charWeaponSkill+
+                ", BS="+charBallisticSkill+
+                ", S="+charStrength+
+                ", T="+charToughness+
+                ", W="+charWounds+
+                ", I="+charInitiative+
+                ", A="+charAttack+
+                ", Ld="+charLeadership+
+                ", Type="+type+"]";
 	}
 }
