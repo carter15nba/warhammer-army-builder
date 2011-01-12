@@ -14,9 +14,9 @@
 <Race xmlns="http://www.w3schools.com"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
-    <Name></Name>
+    <RaceName></RaceName>
     <Unit>
-        <Name></Name>
+        <UnitName></UnitName>
         <Movement></Movement>
         <WeaponSkill></WeaponSkill>
         <BallisticSkill></BallisticSkill>
@@ -29,7 +29,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type></Type>
     </Unit>
     <Unit>
-        <Name></Name>
+        <UnitName></UnitName>
         <Movement></Movement>
         <WeaponSkill></WeaponSkill>
         <BallisticSkill></BallisticSkill>
@@ -41,7 +41,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership></Leadership>
         <Type></Type>
         <Mount>
-            <Name></Name>
+            <MountName></MountName>
             <Movement></Movement>
             <WeaponSkill></WeaponSkill>
             <BallisticSkill></BallisticSkill>
@@ -55,7 +55,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         </Mount>
     </Unit>
     <Unit>
-        <Name></Name>
+        <UnitName></UnitName>
         <Movement></Movement>
         <WeaponSkill></WeaponSkill>
         <BallisticSkill></BallisticSkill>
@@ -67,7 +67,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership></Leadership>
         <Type></Type>
         <Crew>
-            <Name></Name>
+            <CrewName></CrewName>
             <Movement></Movement>
             <WeaponSkill></WeaponSkill>
             <BallisticSkill></BallisticSkill>
