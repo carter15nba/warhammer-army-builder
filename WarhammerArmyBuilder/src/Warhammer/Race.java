@@ -120,6 +120,10 @@ public class Race {
 		return toString;
 	}
 
+        public String getRaceName(){
+            return raceName;
+        }
+
         /**
          * Method used to create the specific armies units.
          */
@@ -146,8 +150,16 @@ public class Race {
 //		b.createArmy();
 //		System.out.println(b.toString());
                 File.XMLRaceParser t = new File.XMLRaceParser();
-                Race r = t.parseDocument(new java.io.File("Resources\\XML\\Bretonnia.xml"));
+                Race r = t.parseDocument(new java.io.File("Bretonnia.xml"));
                 System.out.println(r.toString());
+
+                File.XMLRaceWriter w = new File.XMLRaceWriter();
+                w.createDocument(r, "Glenn Rune Strandbråten");
+                System.out.println(w.now());
+//                try{
+//                    w.createDocument();
+//                }
+//                catch(Exception e){}
 	}
 	
 }
