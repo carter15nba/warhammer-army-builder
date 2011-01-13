@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,9 +26,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import Warhammer.*;
+
 /**
- *
- * @author Glenn Rune
+ * @author Glenn Rune Strandbåten
+ * @verion 0.2
  */
 public class XMLRaceParser extends DefaultHandler{
 
@@ -40,6 +41,12 @@ public class XMLRaceParser extends DefaultHandler{
     private boolean inUnit = false;
     private boolean inMount = false;
     private boolean inCrew = false;
+
+    /**
+     * Method to parse a XML file representing a Warhammer race.
+     * @param xmlFile File the XML file to be parsed.
+     * @return The Race object resulting from parsing the XML file.
+     */
     public Race parseDocument(File xmlFile) {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         try{
@@ -58,6 +65,16 @@ public class XMLRaceParser extends DefaultHandler{
         }
         return null;
     }
+
+    /**
+     * This method parses the start element tags in the XML file, and overrides
+     * the startElement method in DefaultHandler.class.
+     * @param uri
+     * @param localName
+     * @param qName The element name.
+     * @param attributes The element attribute list.
+     * @throws SAXException
+     */
     @Override
     public void startElement(String uri,
             String localName,
@@ -90,16 +107,34 @@ public class XMLRaceParser extends DefaultHandler{
             inCrew = true;
         }
     }
+
+    /**
+     * This method assignes the elements data to a string, and it overrides the
+     * characters method in DefaultHandler.class.
+     * @param ch The char[] array holding the element data.
+     * @param start int The start position to read the element data from.
+     * @param length int The stop position to stop reading the element data.
+     * @throws SAXException
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-		tempVal = new String(ch,start,length);
+        tempVal = new String(ch,start,length);
     }
+
+    /**
+     * This method reads all the child elements of the start elements found in
+     * the startElements method. It overrides the endElement method in
+     * DefaultHandler.class.
+     * @param uri
+     * @param localName
+     * @param qName String The child element name.
+     * @throws SAXException
+     */
     @Override
     public void endElement(String uri,
             String localName,
             String qName)
-            throws SAXException,
-            NullPointerException{
+            throws SAXException{
         if(qName.equalsIgnoreCase("RaceName")){
             race.assignRace(tempVal);
         }
@@ -220,6 +255,13 @@ public class XMLRaceParser extends DefaultHandler{
                 mount.setCategory(parseType(tempVal));
         }
     }
+
+    /**
+     * This method parses the Type string into the corresponding Category
+     * integer value in the Unit class.
+     * @param tempVal The string value to parse into an integer.
+     * @return int representing one of the Unit.CATEGORY_ values or Unit.VALUE_NOT_FOUND if no valid parse were found.
+     */
     private int parseType(String tempVal){
         if(tempVal.equalsIgnoreCase("Ca"))
             return Unit.CATEGORY_CAVALRY;

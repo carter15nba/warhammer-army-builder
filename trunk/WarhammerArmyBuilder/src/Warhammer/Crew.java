@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,11 +19,20 @@ package Warhammer;
 
 /**
  *
- * @author Glenn Rune
+ * @author Glenn Rune Strandbråten
+ * @version 0.1
  */
 public class Crew extends Unit{
+    /**
+     * Method to set the name of the Crew unit. This method overrides the
+     * setName method in the Unit super class.
+     * @param name String the name of the Crew unit.
+     */
     @Override
     public void setName(String name){
-        super.setName("-"+name);
+        if(name.startsWith("-"))
+            super.setName(name);
+        else
+            super.setName("-"+name);
     }
 }
