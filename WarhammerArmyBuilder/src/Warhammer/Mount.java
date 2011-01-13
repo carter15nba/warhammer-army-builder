@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,10 +20,19 @@ package Warhammer;
 /**
  *
  * @author Glenn Rune
+ * @version 0.1
  */
 public class Mount extends Unit{
+    /**
+     * Method to set the name of the Mount unit. This method overrides the
+     * setName method in the Unit super class.
+     * @param name String the name of the Mount unit.
+     */
     @Override
     public void setName(String name){
-        super.setName("-"+name);
+        if(name.startsWith("-"))
+            super.setName(name);
+        else
+            super.setName("-"+name);
     }
 }

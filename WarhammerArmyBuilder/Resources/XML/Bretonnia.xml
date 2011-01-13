@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!--
-    Document   : RaceTemplate.xml
-    Created on : 11. januar 2011, 11:42
-    Author     : Glenn Rune Strandbråten
+    Document   : Bretonnia.xml
+    Created on : 13. januar 2011, 10:06
+    Author     : Glenn Rune StrandbrÃ¥ten
     Description:
         This document contains data associated with a Warhammer Race, its units
         and the units attributes. These data are used by the
@@ -12,7 +12,7 @@
 -->
 
 <Race xmlns="http://www.w3schools.com"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
     <RaceName>Bretonnia</RaceName>
     <Unit>
@@ -67,7 +67,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>9</Leadership>
         <Type>MC</Type>
         <Mount>
-            <MountName>Silvaron</MountName>
+            <MountName>-Silvaron</MountName>
             <Movement>10</Movement>
             <WeaponSkill>5</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -93,7 +93,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>0</Leadership>
         <Type>WM</Type>
         <Crew>
-            <CrewName>Pesant Crew</CrewName>
+            <CrewName>-Pesant Crew</CrewName>
             <Movement>4</Movement>
             <WeaponSkill>2</WeaponSkill>
             <BallisticSkill>2</BallisticSkill>
@@ -119,7 +119,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>8</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Warhorse</MountName>
+            <MountName>-Warhorse</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -158,7 +158,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>9</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Shadow Steed</MountName>
+            <MountName>-Shadow Steed</MountName>
             <Movement>8</Movement>
             <WeaponSkill>4</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -197,7 +197,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>9</Leadership>
         <Type>In</Type>
         <Mount>
-            <MountName>Beaquis</MountName>
+            <MountName>-Beaquis</MountName>
             <Movement>8</Movement>
             <WeaponSkill>5</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -223,7 +223,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>7</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Warhorse</MountName>
+            <MountName>-Warhorse</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -249,7 +249,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>8</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Warhorse</MountName>
+            <MountName>-Warhorse</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -288,7 +288,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>5</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Warhorse</MountName>
+            <MountName>-Warhorse</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -340,7 +340,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>8</Leadership>
         <Type>MC</Type>
         <Mount>
-            <MountName>Pegasus</MountName>
+            <MountName>-Pegasus</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -379,7 +379,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Leadership>8</Leadership>
         <Type>Ca</Type>
         <Mount>
-            <MountName>Warhorse</MountName>
+            <MountName>-Warhorse</MountName>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,12 +20,7 @@ package File;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.*;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-import org.w3c.dom.*;
 
 import Warhammer.*;
 import java.text.SimpleDateFormat;
@@ -35,8 +30,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- *
- * @author Glenn Rune
+ * @author Glenn Rune Strandbråten
+ * @version 0.1
  */
 public class XMLRaceWriter {
     public static final String TAB = "    ";
@@ -49,13 +44,20 @@ public class XMLRaceWriter {
     "Initiative",
     "Attack",
     "Leadership"};
-    
+
+    /**
+     * This method writes a XML document representing one race and its units.
+     * The file name is determined by the name of the race to be created and
+     * any existing file will be overwritten.
+     * @param race The race object holding all the information to be written to the XML.
+     * @param author A String representation of the person creating the XML.
+     */
     public void createDocument(Race race, String author){
         try {
             XMLOutputFactory xof = XMLOutputFactory.newFactory();
             XMLStreamWriter xtw = null;
             xtw = xof.createXMLStreamWriter(
-                    new FileWriter(race.getRaceName()+".xml"));
+                    new FileWriter("Resources/XML/"+race.getRaceName()+".xml"));
             writeStartOfDocument(xtw, race, author);
             writeUnits(xtw, race);
             xtw.writeCharacters("\n");
@@ -70,14 +72,23 @@ public class XMLRaceWriter {
             Logger.getLogger(XMLRaceWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * This method setup the XML document with the correct comments,
+     * root element, namespace and reference to the validating xsd file.
+     * @param xtw The XMLStreamWriter object used to write data to the XML.
+     * @param race The race object whose data is being written to the XML.
+     * @param author A String representing the author who created the XML.
+     * @throws XMLStreamException
+     */
     private void writeStartOfDocument(XMLStreamWriter xtw,
             Race race,
             String author)
             throws XMLStreamException{
         xtw.writeStartDocument("utf-8","1.0");
         xtw.writeCharacters("\n\n");
-        xtw.writeComment("\n    Document   : "+race.getRaceName()+".xml\n"+
-                TAB+"Created on : "+now()+"\n"+TAB+"Author"+
+        xtw.writeComment("\n"+TAB+"Document   : "+race.getRaceName()+".xml\n"+
+                TAB+"Created on : "+getDateAndTime()+"\n"+TAB+"Author"+
                 TAB+" : "+author+"\n"+TAB+"Description:\n"+
                 TAB+TAB+"This document contains data associated with a " +
                 "Warhammer Race, its units\n"+TAB+TAB+"and the units "+
@@ -88,15 +99,22 @@ public class XMLRaceWriter {
         xtw.setPrefix("", "http://www.w3schools.com");
         xtw.writeStartElement("http://www.w3schools.com", "Race");
         xtw.writeAttribute("xmlns", "http://www.w3schools.com");
-        //xtw.writeCharacters("\n");
         xtw.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        //xtw.writeCharacters("\n");
         xtw.writeAttribute("\nxsi:schemaLocation", "http://www.w3schools.com Warhammer.xsd");
         xtw.writeCharacters("\n"+TAB);
         xtw.writeStartElement("RaceName");
         xtw.writeCharacters(race.getRaceName());
         xtw.writeEndElement();
     }
+
+    /**
+     * This method writes all the units associated with the race, thorugh calls
+     * to other dedicated methods is also the mount- and crew-data written for
+     * each unit.
+     * @param xtw The XMLStreanWriter object used to write data to the XML.
+     * @param race The Race whose unit data is being written to the XML.
+     * @throws XMLStreamException
+     */
     private void writeUnits(XMLStreamWriter xtw, Race race)
             throws XMLStreamException{
         ArrayList<ArmyUnit> units = race.getUnits();
@@ -124,6 +142,15 @@ public class XMLRaceWriter {
         }
 
     }
+
+    /**
+     * This method creates all the Mount sub-elements associated with the
+     * current unit. If no mounts exist the method exists.
+     * @param xtw The XMLStreamWriter object used to write data to the XML.
+     * @param unit The current unit in the Race object whose mount data is being
+     * written.
+     * @throws XMLStreamException
+     */
     private void writeMounts(XMLStreamWriter xtw, ArmyUnit unit)
             throws XMLStreamException{
         ArrayList<Mount> mounts = unit.getMount();
@@ -150,6 +177,15 @@ public class XMLRaceWriter {
             }
         }
     }
+
+    /**
+     * This method creates all the Crew sub-elements associated with the
+     * current unit. If no crews exist the method exists.
+     * @param xtw The XMLStreamWriter object used to write data to the XML.
+     * @param unit The current unit in the Race object whose crew data is being
+     * written.
+     * @throws XMLStreamException
+     */
     private void writeCrews(XMLStreamWriter xtw, ArmyUnit unit)
             throws XMLStreamException{
                 ArrayList<Crew> crews = unit.getCrew();
@@ -175,9 +211,15 @@ public class XMLRaceWriter {
                 xtw.writeEndElement();
             }
         }
-
     }
-    public static String now() {
+
+    /**
+     * This method aquires the current Date and Time from the system represented
+     * as a string. The format of the string is: dd. MMMMMMMMM yyyy, HH:mm
+     * which outputs e.g.: 13. january 2011, 09:10
+     * @return String The current date and time.
+     */
+    public static String getDateAndTime() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd. MMMMMMMMM yyyy, HH:mm");
         return sdf.format(cal.getTime());

@@ -17,6 +17,10 @@
 
 package Warhammer;
 
+/**
+ * @author Glenn Rune Strandbråten
+ * @version 0.3
+ */
 public class Unit {
 	public static final int VALUE_NOT_SET = -1;
 	public static final int VALUE_NOT_FOUND = 404;
@@ -308,5 +312,19 @@ public class Unit {
 		default:
 			return "-";
             }
+        }
+        public Object[] getTableObject(){
+            return new Object[]{unitName,
+                charMovementAllowance,
+                charWeaponSkill,
+                charBallisticSkill,
+                charStrength,
+                charToughness,
+                charWounds,
+                charInitiative,
+                charAttack,
+                charLeadership,
+                getStringCategory()
+            };
         }
 }
