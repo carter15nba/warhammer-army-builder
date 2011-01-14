@@ -17,7 +17,8 @@
 
 package UI;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import UI.Resources.WarhammerRaceTableCellRenderer;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -28,8 +29,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class CreateRaceXMLUI extends javax.swing.JFrame{
     private javax.swing.JButton addUnitButton;
     private javax.swing.JButton removeSelectedButton;
-    private javax.swing.JButton addCrewButton;
-    private javax.swing.JButton addMountButton;
+    private javax.swing.JButton addUtilityUnitButton;
     private javax.swing.JLabel raceNameLabel;
     private javax.swing.JTextField raceNameTextField;
     private javax.swing.JMenuBar menu;
@@ -40,7 +40,15 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JTable unitTable;
     private javax.swing.JScrollPane unitTableScrollPane;
-
+    private int[] attributes = new int[]{Warhammer.Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
+    Warhammer.Unit.CHARACTHERISTIC_WEAPON_SKILL,
+    Warhammer.Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
+    Warhammer.Unit.CHARACTHERISTIC_STRENGTH,
+    Warhammer.Unit.CHARACTHERISTIC_TOUGHNESS,
+    Warhammer.Unit.CHARACTHERISTIC_WOUNDS,
+    Warhammer.Unit.CHARACTHERISTIC_INITIATIVE,
+    Warhammer.Unit.CHARACTHERISTIC_ATTACKS,
+    Warhammer.Unit.CHARACTHERISTIC_LEADERSHIP};
     
     private Warhammer.Race race;
     public CreateRaceXMLUI(){
@@ -54,8 +62,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         // <editor-fold defaultstate="collapsed" desc="instantiateUIElements">
         addUnitButton = new javax.swing.JButton("Add unit");
         removeSelectedButton = new javax.swing.JButton("Remove selected unit(s)");
-        addCrewButton = new javax.swing.JButton("Add crew");
-        addMountButton = new javax.swing.JButton("Add mount");
+        addUtilityUnitButton = new javax.swing.JButton("Add utility unit");
         raceNameLabel = new javax.swing.JLabel("Race name:");
         raceNameTextField = new javax.swing.JTextField();
         menu = new javax.swing.JMenuBar();
@@ -131,17 +138,10 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             }
         });
 
-        addCrewButton.setMnemonic(java.awt.event.KeyEvent.VK_C);
-        addCrewButton.addActionListener(new java.awt.event.ActionListener() {
+        addUtilityUnitButton.setMnemonic(java.awt.event.KeyEvent.VK_C);
+        addUtilityUnitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addCrewButtonActionPerformed(evt);
-            }
-        });
-
-        addMountButton.setMnemonic(java.awt.event.KeyEvent.VK_M);
-        addMountButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addMountButtonActionPerformed(evt);
+                addUtilityUnitButtonActionPerformed(evt);
             }
         });
 
@@ -192,10 +192,8 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(addUnitButton)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(addMountButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(addCrewButton)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                                        .addComponent(addUtilityUnitButton)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
                                 .addComponent(removeSelectedButton)))
                         .addContainerGap())
                 );
@@ -208,8 +206,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
                             .addComponent(raceNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(addCrewButton)
-                            .addComponent(addMountButton)
+                            .addComponent(addUtilityUnitButton)
                             .addComponent(addUnitButton)
                             .addComponent(removeSelectedButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -221,26 +218,13 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         // </editor-fold>
     }// </editor-fold>
     private void newMenuItemActionPerformed(java.awt.event.ActionEvent evt){
-
+        race = new Warhammer.Race();
+        populateTable();
     }
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt){
-        javax.swing.JFileChooser jfc = new javax.swing.JFileChooser("Resources/XML");
-        jfc.setFileFilter(new javax.swing.filechooser.FileFilter() {
-            @Override
-            public boolean accept(java.io.File f) {
-                String name = f.getName();
-                if(f.isDirectory())
-                    return true;
-                if(name.endsWith(".xml"))
-                    return true;
-                else
-                    return false;
-            }
-            @Override
-            public String getDescription() {
-                return "Warhammer race XML files (.xml)";
-            }
-        });
+        javax.swing.JFileChooser jfc = new javax.swing.JFileChooser(
+                File.Resources.XML.DEFAULT_XML_LOCATION);
+        jfc.setFileFilter(new UI.Resources.WarhammerXMLFileFilter());
         int retVal = jfc.showOpenDialog(this);
         if(retVal==javax.swing.JFileChooser.APPROVE_OPTION){
             File.XMLRaceParser xmlRP = new File.XMLRaceParser();
@@ -250,8 +234,11 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         }
     }
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt){
-        //TODO: Implement save method
-        throw new NotImplementedException();
+        race = createRaceFromTable();
+        if(race!=null){
+            File.XMLRaceWriter xmlRaceWriter = new File.XMLRaceWriter();
+            xmlRaceWriter.createDocument(race, "");
+        }
     }
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt){
         //TODO: Save check
@@ -271,11 +258,8 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         unitTable.requestFocus();
 
     }
-    private void addCrewButtonActionPerformed(java.awt.event.ActionEvent evt){
-
-    }
-    private void addMountButtonActionPerformed(java.awt.event.ActionEvent evt){
-
+    private void addUtilityUnitButtonActionPerformed(java.awt.event.ActionEvent evt){
+        
     }
     private void removeSelectedButtonActionPerformed(java.awt.event.ActionEvent evt){
         javax.swing.table.DefaultTableModel tableModel =
@@ -283,6 +267,10 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         int[] rows = unitTable.getSelectedRows();
         for(int i = rows.length-1 ; i>-1 ; i--)
             tableModel.removeRow(rows[i]);
+    }
+    private void formWindowClosing(java.awt.event.WindowEvent evt){
+        //TODO: Save check
+        System.exit(0);
     }
     private void setupTableColumnWidth()
     {
@@ -322,28 +310,82 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             }
         });
     }
-    private void formWindowClosing(java.awt.event.WindowEvent evt){
-        //TODO: Save check
-        System.exit(0);
-    }
+
     private void populateTable(){
         if(race!=null){
+            emptyTable();
             javax.swing.table.DefaultTableModel tableModel =
                 (javax.swing.table.DefaultTableModel) unitTable.getModel();
             java.util.ArrayList<Warhammer.ArmyUnit> units = race.getUnits();
             for(Warhammer.ArmyUnit unit : units){
                 tableModel.addRow(unit.getTableObject());
-                if(unit.getCrew()!=null)
-                    for(Warhammer.Crew crew : unit.getCrew()){
+                if(unit.getUtilityUnits()!=null)
+                    for(Warhammer.UtilityUnit crew : unit.getUtilityUnits()){
                         tableModel.addRow(crew.getTableObject());
-                    }
-                if(unit.getMount()!=null)
-                    for(Warhammer.Mount mount : unit.getMount()){
-                        tableModel.addRow(mount.getTableObject());
                     }
             }
         }
     }
+    private void emptyTable(){
+        javax.swing.table.DefaultTableModel tableModel =
+                (javax.swing.table.DefaultTableModel) unitTable.getModel();
+        int rows = tableModel.getRowCount()-1;
+        for(int i = rows ; i > -1 ; i--){
+            tableModel.removeRow(i);
+        }
+    }
+
+    private Warhammer.Race createRaceFromTable(){
+        race = new Warhammer.Race();
+        String raceName = raceNameTextField.getText();
+        if(raceName.length()==0){
+            JOptionPane.showMessageDialog(this, "You must enter the name of the race in order to save the race to a file.", "Error: No supplied race name", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        javax.swing.table.DefaultTableModel tableModel =
+                (javax.swing.table.DefaultTableModel) unitTable.getModel();
+        int rows = tableModel.getRowCount();
+        Warhammer.ArmyUnit unit = null;
+        for(int i = 0 ; i < rows ; i++){
+            String unitName = (String) tableModel.getValueAt(i, 0);
+            if(unitName.startsWith("-")){
+                Warhammer.UtilityUnit utilUnit = new Warhammer.UtilityUnit();
+                utilUnit.setName(unitName);
+                createUtilityUnit(utilUnit, tableModel, i);
+                unit.addCrew(utilUnit);
+            }
+            else{
+                unit = new Warhammer.ArmyUnit();
+                createUnit(unit, tableModel, i);
+                race.addUnit(unit);
+            }
+        }
+        race.assignRace(raceName);
+        return race;
+    }
+    private void createUnit(Warhammer.ArmyUnit unit,
+            javax.swing.table.DefaultTableModel tableModel,
+            int row){
+        unit.setName((String) tableModel.getValueAt(row, 0));
+        unit.setCategory((String) tableModel.getValueAt(row, 10));
+        for(int i = 0; i < attributes.length ; i++){
+            String tableValue = String.valueOf(tableModel.getValueAt(row, i+1));
+            int value = Integer.parseInt(tableValue);
+            unit.setCharacteristics(attributes[i], value);
+        }
+    }
+    private void createUtilityUnit(Warhammer.UtilityUnit unit,
+            javax.swing.table.DefaultTableModel tableModel,
+            int row){
+        unit.setName((String) tableModel.getValueAt(row, 0));
+        unit.setCategory((String) tableModel.getValueAt(row, 10));
+        for(int i = 0; i < attributes.length ; i++){
+            String tableValue = String.valueOf(tableModel.getValueAt(row, i+1));
+            int value = Integer.parseInt(tableValue);
+            unit.setCharacteristics(attributes[i], value);
+        }
+    }
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override

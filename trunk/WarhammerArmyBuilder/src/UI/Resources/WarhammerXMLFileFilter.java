@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten
+ *  Copyright (C) 2011 Glenn Rune Strandbåten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,24 +15,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package Warhammer;
+package UI.Resources;
 
 /**
  *
- * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @author Glenn Rune Strandbåten
+ * @verion 0.1
  */
-public class Crew extends Unit{
-    /**
-     * Method to set the name of the Crew unit. This method overrides the
-     * setName method in the Unit super class.
-     * @param name String the name of the Crew unit.
-     */
+public class WarhammerXMLFileFilter extends javax.swing.filechooser.FileFilter{
     @Override
-    public void setName(String name){
-        if(name.startsWith("-"))
-            super.setName(name);
+    public boolean accept(java.io.File f) {
+        String name = f.getName();
+        if(f.isDirectory())
+            return true;
+        if(name.endsWith(".xml"))
+            return true;
         else
-            super.setName("-"+name);
+            return false;
+    }
+    @Override
+    public String getDescription() {
+        return "Warhammer race XML files (.xml)";
     }
 }

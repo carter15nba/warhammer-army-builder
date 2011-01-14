@@ -17,7 +17,9 @@
 
 package File;
 
-import java.io.*;
+import File.Resources.XML;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
@@ -33,17 +35,17 @@ import javax.xml.stream.XMLStreamWriter;
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class XMLRaceWriter {
+public class XMLRaceWriter{
     public static final String TAB = "    ";
-    private static final String[] attributes = new String[]{"Movement",
-    "WeaponSkill",
-    "BallisticSkill",
-    "Strength",
-    "Toughness",
-    "Wounds",
-    "Initiative",
-    "Attack",
-    "Leadership"};
+    private static final String[] attributes = new String[]{XML.MOVEMENT_ALLOWANCE,
+    XML.WEAPON_SKILL,
+    XML.BALLISTIC_SKILL,
+    XML.STRENGTH,
+    XML.TOUGHNESS,
+    XML.WOUNDS,
+    XML.INITIATIVE,
+    XML.ATTACK,
+    XML.LEADERSHIP};
 
     /**
      * This method writes a XML document representing one race and its units.
@@ -54,10 +56,10 @@ public class XMLRaceWriter {
      */
     public void createDocument(Race race, String author){
         try {
-            XMLOutputFactory xof = XMLOutputFactory.newFactory();
+            XMLOutputFactory xof = XMLOutputFactory.newInstance();
             XMLStreamWriter xtw = null;
             xtw = xof.createXMLStreamWriter(
-                    new FileWriter("Resources/XML/"+race.getRaceName()+".xml"));
+                    new FileWriter(XML.DEFAULT_XML_LOCATION+"/"+race.getRaceName()+".xml"));
             writeStartOfDocument(xtw, race, author);
             writeUnits(xtw, race);
             xtw.writeCharacters("\n");
@@ -97,12 +99,12 @@ public class XMLRaceWriter {
                 "aquire the\n"+TAB+TAB+"neccessary information.\n");
         xtw.writeCharacters("\n\n");
         xtw.setPrefix("", "http://www.w3schools.com");
-        xtw.writeStartElement("http://www.w3schools.com", "Race");
+        xtw.writeStartElement("http://www.w3schools.com", XML.RACE);
         xtw.writeAttribute("xmlns", "http://www.w3schools.com");
         xtw.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         xtw.writeAttribute("\nxsi:schemaLocation", "http://www.w3schools.com Warhammer.xsd");
         xtw.writeCharacters("\n"+TAB);
-        xtw.writeStartElement("RaceName");
+        xtw.writeStartElement(XML.NAME);
         xtw.writeCharacters(race.getRaceName());
         xtw.writeEndElement();
     }
@@ -120,9 +122,9 @@ public class XMLRaceWriter {
         ArrayList<ArmyUnit> units = race.getUnits();
         for(ArmyUnit unit : units){
             xtw.writeCharacters("\n"+TAB);
-            xtw.writeStartElement("Unit");
+            xtw.writeStartElement(XML.UNIT);
             xtw.writeCharacters("\n"+TAB+TAB);
-            xtw.writeStartElement("UnitName");
+            xtw.writeStartElement(XML.NAME);
             xtw.writeCharacters(unit.getUnitName());
             xtw.writeEndElement();
             for(int i = 0 ; i < attributes.length ; i++){
@@ -132,11 +134,10 @@ public class XMLRaceWriter {
                 xtw.writeEndElement();
             }
             xtw.writeCharacters("\n"+TAB+TAB);
-            xtw.writeStartElement("Type");
+            xtw.writeStartElement(XML.TYPE);
             xtw.writeCharacters(unit.getStringCategory());
             xtw.writeEndElement();
-            writeMounts(xtw,unit);
-            writeCrews(xtw, unit);
+            writeUtilityUnits(xtw, unit);
             xtw.writeCharacters("\n"+TAB);
             xtw.writeEndElement();
         }
@@ -144,68 +145,32 @@ public class XMLRaceWriter {
     }
 
     /**
-     * This method creates all the Mount sub-elements associated with the
-     * current unit. If no mounts exist the method exists.
+     * This method creates all the UtilityUnit sub-elements associated with the
+     * current unit. If no utilityUnits exist the method exists.
      * @param xtw The XMLStreamWriter object used to write data to the XML.
-     * @param unit The current unit in the Race object whose mount data is being
-     * written.
+     * @param unit The current unit in the Race object whose utilityUnit data is being written.
      * @throws XMLStreamException
      */
-    private void writeMounts(XMLStreamWriter xtw, ArmyUnit unit)
+    private void writeUtilityUnits(XMLStreamWriter xtw, ArmyUnit unit)
             throws XMLStreamException{
-        ArrayList<Mount> mounts = unit.getMount();
-        if(mounts!=null){
-            for(Mount mount : mounts){
+                ArrayList<UtilityUnit> utilityUnits = unit.getUtilityUnits();
+        if(utilityUnits!=null){
+            for(UtilityUnit utilityUnit : utilityUnits){
                 xtw.writeCharacters("\n"+TAB+TAB);
-                xtw.writeStartElement("Mount");
+                xtw.writeStartElement(XML.UTILITY_UNIT);
                 xtw.writeCharacters("\n"+TAB+TAB+TAB);
-                xtw.writeStartElement("MountName");
-                xtw.writeCharacters(mount.getUnitName());
+                xtw.writeStartElement(XML.NAME);
+                xtw.writeCharacters(utilityUnit.getUnitName());
                 xtw.writeEndElement();
                 for(int i = 0 ; i < attributes.length ; i++){
                     xtw.writeCharacters("\n"+TAB+TAB+TAB);
                     xtw.writeStartElement(attributes[i]);
-                    xtw.writeCharacters(String.valueOf(mount.getCharacteristic(i)));
+                    xtw.writeCharacters(String.valueOf(utilityUnit.getCharacteristic(i)));
                     xtw.writeEndElement();
                 }
                 xtw.writeCharacters("\n"+TAB+TAB+TAB);
-                xtw.writeStartElement("Type");
-                xtw.writeCharacters(mount.getStringCategory());
-                xtw.writeEndElement();
-                xtw.writeCharacters("\n"+TAB+TAB);
-                xtw.writeEndElement();
-            }
-        }
-    }
-
-    /**
-     * This method creates all the Crew sub-elements associated with the
-     * current unit. If no crews exist the method exists.
-     * @param xtw The XMLStreamWriter object used to write data to the XML.
-     * @param unit The current unit in the Race object whose crew data is being
-     * written.
-     * @throws XMLStreamException
-     */
-    private void writeCrews(XMLStreamWriter xtw, ArmyUnit unit)
-            throws XMLStreamException{
-                ArrayList<Crew> crews = unit.getCrew();
-        if(crews!=null){
-            for(Crew crew : crews){
-                xtw.writeCharacters("\n"+TAB+TAB);
-                xtw.writeStartElement("Crew");
-                xtw.writeCharacters("\n"+TAB+TAB+TAB);
-                xtw.writeStartElement("CrewName");
-                xtw.writeCharacters(crew.getUnitName());
-                xtw.writeEndElement();
-                for(int i = 0 ; i < attributes.length ; i++){
-                    xtw.writeCharacters("\n"+TAB+TAB+TAB);
-                    xtw.writeStartElement(attributes[i]);
-                    xtw.writeCharacters(String.valueOf(crew.getCharacteristic(i)));
-                    xtw.writeEndElement();
-                }
-                xtw.writeCharacters("\n"+TAB+TAB+TAB);
-                xtw.writeStartElement("Type");
-                xtw.writeCharacters(crew.getStringCategory());
+                xtw.writeStartElement(XML.TYPE);
+                xtw.writeCharacters(utilityUnit.getStringCategory());
                 xtw.writeEndElement();
                 xtw.writeCharacters("\n"+TAB+TAB);
                 xtw.writeEndElement();

@@ -19,7 +19,7 @@ package Warhammer;
 
 /**
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 0.3.1
  */
 public class Unit {
 	public static final int VALUE_NOT_SET = -1;
@@ -61,6 +61,10 @@ public class Unit {
          */
 	public Unit(){}
 
+        /**
+         * Method to assign a name to the unit.
+         * @param name String the name to be assigned to the unit.
+         */
         public void setName(String name){
             unitName = name;
         }
@@ -285,6 +289,41 @@ public class Unit {
                 ", Type="+type+"]";
 	}
 
+        /**
+         * Method to set the category from string
+         * @param category String the category represented as a string.
+         */
+        public void setCategory(String category){
+            if(category.equalsIgnoreCase("Ca"))
+                unitCategory = CATEGORY_CAVALRY;
+            else if(category.equalsIgnoreCase("Ch"))
+                unitCategory = CATEGORY_CHARIOT;
+            else if(category.equalsIgnoreCase("In"))
+                unitCategory = CATEGORY_INFANTRY;
+            else if(category.equalsIgnoreCase("Mo"))
+                unitCategory = CATEGORY_MONSTER;
+            else if(category.equalsIgnoreCase("MB"))
+                unitCategory = CATEGORY_MONSTROUS_BEAST;
+            else if(category.equalsIgnoreCase("MC"))
+                unitCategory = CATEGORY_MONSTROUS_CAVALRY;
+            else if(category.equalsIgnoreCase("MI"))
+                unitCategory = CATEGORY_MONSTROUS_INFANTRY;
+            else if(category.equalsIgnoreCase("Sw"))
+                unitCategory = CATEGORY_SWARM;
+            else if(category.equalsIgnoreCase("Un"))
+                unitCategory = CATEGORY_UNIQUE_UNIT;
+            else if(category.equalsIgnoreCase("WB"))
+                unitCategory = CATEGORY_WAR_BEAST;
+            else if(category.equalsIgnoreCase("WM"))
+                unitCategory = CATEGORY_WAR_MACHINE;
+            else
+                unitCategory = VALUE_NOT_FOUND;
+        }
+
+        /**
+         * Method to get the category represented as a string.
+         * @return The string representation of the category.
+         */
         public String getStringCategory(){
             switch(unitCategory){
 		case CATEGORY_CAVALRY:
@@ -313,6 +352,12 @@ public class Unit {
 			return "-";
             }
         }
+
+        /**
+         * Method to get the unit data represented as it appears in the
+         * table in the user interface.
+         * @return Object[] with the unit data.
+         */
         public Object[] getTableObject(){
             return new Object[]{unitName,
                 charMovementAllowance,
