@@ -17,7 +17,7 @@
 
 package File;
 
-import java.io.File;
+import File.Resources.XML;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -36,18 +36,16 @@ public class XMLRaceParser extends DefaultHandler{
     private Race race;
     private String tempVal;
     private ArmyUnit unit = null;
-    private Mount mount = null;
-    private Crew crew = null;
+    private UtilityUnit utilityUnit = null;
     private boolean inUnit = false;
-    private boolean inMount = false;
-    private boolean inCrew = false;
+    private boolean inUtilityUnit = false;
 
     /**
      * Method to parse a XML file representing a Warhammer race.
      * @param xmlFile File the XML file to be parsed.
      * @return The Race object resulting from parsing the XML file.
      */
-    public Race parseDocument(File xmlFile) {
+    public Race parseDocument(java.io.File xmlFile) {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         try{
             SAXParser parser = parserFactory.newSAXParser();
@@ -82,29 +80,20 @@ public class XMLRaceParser extends DefaultHandler{
             Attributes attributes)
             throws SAXException{
         tempVal = "";
-        if(qName.equalsIgnoreCase("Race")){
+        if(qName.equalsIgnoreCase(XML.RACE)){
             race = new Race();
         }
-        else if(qName.equalsIgnoreCase("Unit")){
+        else if(qName.equalsIgnoreCase(XML.UNIT)){
             unit = new ArmyUnit();
             race.addUnit(unit);
             inUnit = true;
-            inMount = false;
-            inCrew = false;
+            inUtilityUnit = false;
         }
-        else if(qName.equalsIgnoreCase("Mount")){
-            mount = new Mount();
-            unit.addMount(mount);
+        else if(qName.equalsIgnoreCase(XML.UTILITY_UNIT)){
+            utilityUnit = new UtilityUnit();
+            unit.addCrew(utilityUnit);
             inUnit = false;
-            inMount = true;
-            inCrew = false;
-        }
-        else if(qName.equalsIgnoreCase("Crew")){
-            crew = new Crew();
-            unit.addCrew(crew);
-            inUnit = false;
-            inMount = false;
-            inCrew = true;
+            inUtilityUnit = true;
         }
     }
 
@@ -135,124 +124,91 @@ public class XMLRaceParser extends DefaultHandler{
             String localName,
             String qName)
             throws SAXException{
-        if(qName.equalsIgnoreCase("RaceName")){
-            race.assignRace(tempVal);
+        if(qName.equalsIgnoreCase(XML.NAME)){
+            if(inUnit)
+                unit.setName(tempVal);
+            else if(inUtilityUnit)
+                utilityUnit.setName(tempVal);
+            else
+                race.assignRace(tempVal);
         }
-        else if(qName.equalsIgnoreCase("UnitName")){
-            unit.setName(tempVal);
-        }
-        else if(qName.equalsIgnoreCase("CrewName")){
-            crew.setName(tempVal);
-        }
-        else if(qName.equalsIgnoreCase("MountName")){
-            mount.setName(tempVal);
-        }
-        else if(qName.equalsIgnoreCase("Movement")){
+        else if(qName.equalsIgnoreCase(XML.MOVEMENT_ALLOWANCE)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("WeaponSkill")){
+        else if(qName.equalsIgnoreCase(XML.WEAPON_SKILL)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("BallisticSkill")){
+        else if(qName.equalsIgnoreCase(XML.BALLISTIC_SKILL)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Strength")){
+        else if(qName.equalsIgnoreCase(XML.STRENGTH)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Toughness")){
+        else if(qName.equalsIgnoreCase(XML.TOUGHNESS)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Wounds")){
+        else if(qName.equalsIgnoreCase(XML.WOUNDS)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Initiative")){
+        else if(qName.equalsIgnoreCase(XML.INITIATIVE)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Attack")){
+        else if(qName.equalsIgnoreCase(XML.ATTACK)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("Leadership")){
+        else if(qName.equalsIgnoreCase(XML.LEADERSHIP)){
             if(inUnit)
                 unit.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
                     Integer.parseInt(tempVal));
-            else if(inCrew)
-                crew.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
-                    Integer.parseInt(tempVal));
-            else if(inMount)
-                mount.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
+            else if(inUtilityUnit)
+                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
                     Integer.parseInt(tempVal));
         }
-        else if(qName.equalsIgnoreCase("TYPE")){
+        else if(qName.equalsIgnoreCase(XML.TYPE)){
             if(inUnit)
                 unit.setCategory(parseType(tempVal));
-            else if(inCrew)
-                crew.setCategory(parseType(tempVal));
-            else  if(inMount)
-                mount.setCategory(parseType(tempVal));
+            else if(inUtilityUnit)
+                utilityUnit.setCategory(parseType(tempVal));
         }
     }
 

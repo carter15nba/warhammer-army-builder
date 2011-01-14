@@ -14,9 +14,9 @@
 <Race xmlns="http://www.w3schools.com"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
-    <RaceName>Bretonnia</RaceName>
+    <Name>Bretonnia</Name>
     <Unit>
-        <UnitName>Battle Pilgrim</UnitName>
+        <Name>Battle Pilgrim</Name>
         <Movement>4</Movement>
         <WeaponSkill>2</WeaponSkill>
         <BallisticSkill>2</BallisticSkill>
@@ -29,7 +29,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Bretonnian Lord</UnitName>
+        <Name>Bretonnian Lord</Name>
         <Movement>4</Movement>
         <WeaponSkill>6</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -42,7 +42,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Damsel</UnitName>
+        <Name>Damsel</Name>
         <Movement>4</Movement>
         <WeaponSkill>3</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -55,7 +55,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Fay Enchantress</UnitName>
+        <Name>Fay Enchantress</Name>
         <Movement>5</Movement>
         <WeaponSkill>4</WeaponSkill>
         <BallisticSkill>4</BallisticSkill>
@@ -66,8 +66,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>9</Leadership>
         <Type>MC</Type>
-        <Mount>
-            <MountName>-Silvaron</MountName>
+        <UtilityUnit>
+            <Name>-Silvaron</Name>
             <Movement>10</Movement>
             <WeaponSkill>5</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -78,10 +78,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>2</Attack>
             <Leadership>8</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Field Trebuchet</UnitName>
+        <Name>Field Trebuchet</Name>
         <Movement>0</Movement>
         <WeaponSkill>0</WeaponSkill>
         <BallisticSkill>0</BallisticSkill>
@@ -92,8 +92,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>0</Attack>
         <Leadership>0</Leadership>
         <Type>WM</Type>
-        <Crew>
-            <CrewName>-Pesant Crew</CrewName>
+        <UtilityUnit>
+            <Name>-Pesant UtilityUnit</Name>
             <Movement>4</Movement>
             <WeaponSkill>2</WeaponSkill>
             <BallisticSkill>2</BallisticSkill>
@@ -104,10 +104,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Crew>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Grail Knight</UnitName>
+        <Name>Grail Knight</Name>
         <Movement>4</Movement>
         <WeaponSkill>5</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -118,8 +118,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>2</Attack>
         <Leadership>8</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Warhorse</MountName>
+        <UtilityUnit>
+            <Name>-Warhorse</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -130,10 +130,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Grail Relinquae</UnitName>
+        <Name>Grail Relinquae</Name>
         <Movement>4</Movement>
         <WeaponSkill>2</WeaponSkill>
         <BallisticSkill>2</BallisticSkill>
@@ -146,7 +146,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Green Knight</UnitName>
+        <Name>Green Knight</Name>
         <Movement>4</Movement>
         <WeaponSkill>7</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -157,8 +157,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>4</Attack>
         <Leadership>9</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Shadow Steed</MountName>
+        <UtilityUnit>
+            <Name>-Shadow Steed</Name>
             <Movement>8</Movement>
             <WeaponSkill>4</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -169,10 +169,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Hippogryph</UnitName>
+        <Name>Hippogryph</Name>
         <Movement>8</Movement>
         <WeaponSkill>4</WeaponSkill>
         <BallisticSkill>0</BallisticSkill>
@@ -185,7 +185,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>Mo</Type>
     </Unit>
     <Unit>
-        <UnitName>King Louen</UnitName>
+        <Name>King Louen</Name>
         <Movement>4</Movement>
         <WeaponSkill>7</WeaponSkill>
         <BallisticSkill>5</BallisticSkill>
@@ -196,8 +196,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>5</Attack>
         <Leadership>9</Leadership>
         <Type>In</Type>
-        <Mount>
-            <MountName>-Beaquis</MountName>
+        <UtilityUnit>
+            <Name>-Beaquis</Name>
             <Movement>8</Movement>
             <WeaponSkill>5</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -208,10 +208,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>4</Attack>
             <Leadership>9</Leadership>
             <Type>Mo</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Knight Errant</UnitName>
+        <Name>Knight Errant</Name>
         <Movement>4</Movement>
         <WeaponSkill>3</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -222,8 +222,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>7</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Warhorse</MountName>
+        <UtilityUnit>
+            <Name>-Warhorse</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -234,10 +234,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Knight of the Realm</UnitName>
+        <Name>Knight of the Realm</Name>
         <Movement>4</Movement>
         <WeaponSkill>4</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -248,8 +248,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>8</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Warhorse</MountName>
+        <UtilityUnit>
+            <Name>-Warhorse</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -260,10 +260,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Man-at-arms</UnitName>
+        <Name>Man-at-arms</Name>
         <Movement>4</Movement>
         <WeaponSkill>2</WeaponSkill>
         <BallisticSkill>2</BallisticSkill>
@@ -276,7 +276,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Mounted Yeoman</UnitName>
+        <Name>UtilityUnited Yeoman</Name>
         <Movement>4</Movement>
         <WeaponSkill>3</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -287,8 +287,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>5</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Warhorse</MountName>
+        <UtilityUnit>
+            <Name>-Warhorse</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -299,10 +299,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Paladin</UnitName>
+        <Name>Paladin</Name>
         <Movement>4</Movement>
         <WeaponSkill>5</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -315,7 +315,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Pesant Bowman</UnitName>
+        <Name>Pesant Bowman</Name>
         <Movement>4</Movement>
         <WeaponSkill>2</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -328,7 +328,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Pegasus Knight</UnitName>
+        <Name>Pegasus Knight</Name>
         <Movement>4</Movement>
         <WeaponSkill>4</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -339,8 +339,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>8</Leadership>
         <Type>MC</Type>
-        <Mount>
-            <MountName>-Pegasus</MountName>
+        <UtilityUnit>
+            <Name>-Pegasus</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -351,10 +351,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>2</Attack>
             <Leadership>7</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Prophetess</UnitName>
+        <Name>Prophetess</Name>
         <Movement>4</Movement>
         <WeaponSkill>3</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -367,7 +367,7 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Type>In</Type>
     </Unit>
     <Unit>
-        <UnitName>Questing Knight</UnitName>
+        <Name>Questing Knight</Name>
         <Movement>4</Movement>
         <WeaponSkill>4</WeaponSkill>
         <BallisticSkill>3</BallisticSkill>
@@ -378,8 +378,8 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
         <Attack>1</Attack>
         <Leadership>8</Leadership>
         <Type>Ca</Type>
-        <Mount>
-            <MountName>-Warhorse</MountName>
+        <UtilityUnit>
+            <Name>-Warhorse</Name>
             <Movement>8</Movement>
             <WeaponSkill>3</WeaponSkill>
             <BallisticSkill>0</BallisticSkill>
@@ -390,10 +390,10 @@ xsi:schemaLocation="http://www.w3schools.com Warhammer.xsd">
             <Attack>1</Attack>
             <Leadership>5</Leadership>
             <Type>-</Type>
-        </Mount>
+        </UtilityUnit>
     </Unit>
     <Unit>
-        <UnitName>Royal Pegasus</UnitName>
+        <Name>Royal Pegasus</Name>
         <Movement>8</Movement>
         <WeaponSkill>3</WeaponSkill>
         <BallisticSkill>0</BallisticSkill>

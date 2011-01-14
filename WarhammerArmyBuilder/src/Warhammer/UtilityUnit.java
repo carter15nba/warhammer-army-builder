@@ -19,14 +19,14 @@ package Warhammer;
 
 /**
  *
- * @author Glenn Rune
+ * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class Mount extends Unit{
+public class UtilityUnit extends Unit{
     /**
-     * Method to set the name of the Mount unit. This method overrides the
+     * Method to set the name of the Crew unit. This method overrides the
      * setName method in the Unit super class.
-     * @param name String the name of the Mount unit.
+     * @param name String the name of the Crew unit.
      */
     @Override
     public void setName(String name){
