@@ -17,7 +17,6 @@
 
 package UI;
 
-import UI.Resources.WarhammerRaceTableCellRenderer;
 import javax.swing.JOptionPane;
 
 
@@ -49,12 +48,17 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
     Warhammer.Unit.CHARACTHERISTIC_INITIATIVE,
     Warhammer.Unit.CHARACTHERISTIC_ATTACKS,
     Warhammer.Unit.CHARACTHERISTIC_LEADERSHIP};
+    private final String TITLE = "Warhammer Race XML editor";
     
     private Warhammer.Race race;
     public CreateRaceXMLUI(){
         initComponents();
         setupTableColumnWidth();
         setupTableCellRendererAndEditor();
+        java.awt.Toolkit toolkit = getToolkit();
+        java.awt.Dimension dimension = toolkit.getScreenSize();
+        setLocation((dimension.width-getWidth())/2, (dimension.height-getHeight())/2);
+        setTitle(TITLE);
         race = new Warhammer.Race();
     }
     // <editor-fold defaultstate="collapsed" desc="initComponents()">
@@ -138,7 +142,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             }
         });
 
-        addUtilityUnitButton.setMnemonic(java.awt.event.KeyEvent.VK_C);
+        addUtilityUnitButton.setMnemonic(java.awt.event.KeyEvent.VK_T);
         addUtilityUnitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addUtilityUnitButtonActionPerformed(evt);
@@ -259,7 +263,18 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
 
     }
     private void addUtilityUnitButtonActionPerformed(java.awt.event.ActionEvent evt){
-        
+        java.util.ArrayList<String> units = new java.util.ArrayList<String>();
+        units.add("-");
+        int rows = unitTable.getRowCount();
+        for (int i = 0; i < rows; i++) {
+            String value = unitTable.getValueAt(i, 0).toString();
+            if(!value.startsWith("-"))
+                units.add(value);
+        }
+
+        String[] eligibleUnits = new String[units.size()];
+        eligibleUnits = units.toArray(eligibleUnits);
+        new SelectUtilUI(eligibleUnits, this);
     }
     private void removeSelectedButtonActionPerformed(java.awt.event.ActionEvent evt){
         javax.swing.table.DefaultTableModel tableModel =
@@ -275,36 +290,36 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
     private void setupTableColumnWidth()
     {
         unitTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        unitTable.getColumnModel().getColumn(0).setPreferredWidth(240);
-        unitTable.getColumnModel().getColumn(0).setResizable(false);
+        unitTable.getColumnModel().getColumn(0).setPreferredWidth(203);
+        unitTable.getColumnModel().getColumn(0).setMinWidth(150);
         unitTable.getColumnModel().getColumn(1).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(1).setResizable(false);
+        unitTable.getColumnModel().getColumn(1).setMinWidth(35);
         unitTable.getColumnModel().getColumn(2).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(2).setResizable(false);
+        unitTable.getColumnModel().getColumn(2).setMinWidth(35);
         unitTable.getColumnModel().getColumn(3).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(3).setResizable(false);
+        unitTable.getColumnModel().getColumn(3).setMinWidth(35);
         unitTable.getColumnModel().getColumn(4).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(4).setResizable(false);
+        unitTable.getColumnModel().getColumn(4).setMinWidth(35);
         unitTable.getColumnModel().getColumn(5).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(5).setResizable(false);
+        unitTable.getColumnModel().getColumn(5).setMinWidth(35);
         unitTable.getColumnModel().getColumn(6).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(6).setResizable(false);
+        unitTable.getColumnModel().getColumn(6).setMinWidth(35);
         unitTable.getColumnModel().getColumn(7).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(7).setResizable(false);
+        unitTable.getColumnModel().getColumn(7).setMinWidth(35);
         unitTable.getColumnModel().getColumn(8).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(8).setResizable(false);
+        unitTable.getColumnModel().getColumn(8).setMinWidth(35);
         unitTable.getColumnModel().getColumn(9).setPreferredWidth(35);
-        unitTable.getColumnModel().getColumn(9).setResizable(false);
-        unitTable.getColumnModel().getColumn(10).setPreferredWidth(50);
-        unitTable.getColumnModel().getColumn(10).setResizable(false);
+        unitTable.getColumnModel().getColumn(9).setMinWidth(35);
+        unitTable.getColumnModel().getColumn(10).setPreferredWidth(55);
+        unitTable.getColumnModel().getColumn(10).setMinWidth(55);
     }
     private void setupTableCellRendererAndEditor()
     {
         javax.swing.table.TableColumn includeColumn = unitTable.getColumnModel().getColumn(10);
-        includeColumn.setCellEditor(new javax.swing.DefaultCellEditor(new javax.swing.JComboBox(UI.Resources.WarhammerRaceTableCellRenderer.types)));
+        includeColumn.setCellEditor(new javax.swing.DefaultCellEditor(new javax.swing.JComboBox(UI.Resources.WarhammerRaceTableCellRenderer.TYPES)));
         includeColumn.setCellRenderer(new javax.swing.table.TableCellRenderer(){
             public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                javax.swing.JComboBox renderedComponent = new javax.swing.JComboBox(UI.Resources.WarhammerRaceTableCellRenderer.types);
+                javax.swing.JComboBox renderedComponent = new javax.swing.JComboBox(UI.Resources.WarhammerRaceTableCellRenderer.TYPES);
                 renderedComponent.setSelectedItem(value);
                 return renderedComponent;
             }
@@ -385,8 +400,32 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             unit.setCharacteristics(attributes[i], value);
         }
     }
+    public void addUtilityUnit(String nameOfParent, String nameOfChild){
+        javax.swing.table.DefaultTableModel tableModel =
+                (javax.swing.table.DefaultTableModel) unitTable.getModel();
+        int rows = tableModel.getRowCount();
+        for (int i = 0; i < rows; i++) {
+            String value = tableModel.getValueAt(i, 0).toString();
+            if(value.equals(nameOfParent)){
+                if(i==rows-1){
+                    tableModel.addRow(new Object[]{"","","","","","","","","","","-"});
+                    unitTable.clearSelection();
+                    unitTable.editCellAt(i+1, 0);
+                }
+                else{
+                    tableModel.insertRow(i+1, new Object[]{nameOfChild,"","","","","","","","","","-"});
+                    unitTable.clearSelection();
+                    unitTable.editCellAt(i, 0);
+                }
+            }
+        }
+    }
 
     public static void main(String args[]) {
+        try {
+            javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception ex) {
+        }
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
