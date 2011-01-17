@@ -28,8 +28,7 @@ import javax.swing.JTable;
  */
 public class WarhammerRaceTableCellRenderer extends javax.swing.table.DefaultTableCellRenderer{
 
-
-    public static final String[] types = new String[]{"-","Ca","Ch","In","Mo","MB","MC","MI","Sw","Un","WB","WM"};
+    public static final String[] TYPES = new String[]{"-","Ca","Ch","In","Mo","MB","MC","MI","Sw","Un","WB","WM"};
     /**
      *
      * @param table
@@ -48,10 +47,8 @@ public class WarhammerRaceTableCellRenderer extends javax.swing.table.DefaultTab
             int row,
             int column){
         setEnabled(table == null || table.isEnabled());
-        if((row % 2) == 1)
-            setBackground(Color.LIGHT_GRAY);
-        else
-            setBackground(Color.WHITE);
+        setBackgroundColor(row);
+
         //Setup the ComboBox in the last Column
 //        javax.swing.table.TableColumn includeColumn = table.getColumnModel().getColumn(10);
 //        includeColumn.setCellEditor(new javax.swing.DefaultCellEditor(new javax.swing.JComboBox(types)));
@@ -65,5 +62,12 @@ public class WarhammerRaceTableCellRenderer extends javax.swing.table.DefaultTab
         super.getTableCellRendererComponent(table, value, selected, focused, row, column);
         return this;
     }
-
+    private void setBackgroundColor(int row){
+        if((row % 2) == 1){
+            setBackground(Color.LIGHT_GRAY);
+        }
+        else{
+            setBackground(Color.WHITE);
+        }
+    }
 }
