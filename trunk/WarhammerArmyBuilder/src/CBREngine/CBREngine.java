@@ -17,6 +17,7 @@
 
 package CBREngine;
 
+import java.sql.SQLException;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
@@ -72,9 +73,13 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws SQLException{
         Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
         dbm.connect();
+        //dbm.initDBFromScratch();
+        dbm.printDataFromDB();
+        //dbm.dropDB();
+        dbm.commitChangesToDB();
 
         dbm.disconnect();
     }
