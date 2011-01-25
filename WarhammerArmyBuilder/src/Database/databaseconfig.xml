@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : databaseconfig.xml.xml
+    Created on : 24. januar 2011, 10:49
+    Author     : Glenn Rune
+    Description:
+        Purpose of the document follows.
+-->
+
+<DataBaseConfiguration>
+	<HibernateConfigFile>Database/hibernate.cfg.xml</HibernateConfigFile>
+	<DescriptionMappingFile>Database/CaseDescription.hbm.xml</DescriptionMappingFile>
+	<DescriptionClassName>Database/CaseDescription</DescriptionClassName>
+	<SolutionMappingFile>Database/CaseSolution.hbm.xml</SolutionMappingFile>
+	<SolutionClassName>Database/CaseSolution</SolutionClassName>
+</DataBaseConfiguration>
