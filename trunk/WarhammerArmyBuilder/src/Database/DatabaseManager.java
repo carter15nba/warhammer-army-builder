@@ -76,7 +76,7 @@ public class DatabaseManager {
             props.put("password","8844Qgpty");
 
             connection = DriverManager.getConnection(
-                    protocol + dbName,
+                    protocol + dbName+";create=true",
                     props);
 
             System.out.println("Connected to database: "+dbName);
@@ -148,6 +148,7 @@ public class DatabaseManager {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, iae);
         }
     }
+
 
     /**
      * Method to create the tables in the database.

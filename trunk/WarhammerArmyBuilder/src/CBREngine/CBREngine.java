@@ -17,10 +17,16 @@
 
 package CBREngine;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
+import jcolibri.connector.DataBaseConnector;
 import jcolibri.exception.ExecutionException;
+import jcolibri.exception.InitializingException;
+import jcolibri.util.FileIO;
+import jcolibri.casebase.LinealCaseBase;
 
 /**
  *
@@ -73,14 +79,26 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args) throws SQLException{
-        Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
-        dbm.connect();
-        //dbm.initDBFromScratch();
-        dbm.printDataFromDB();
-        //dbm.dropDB();
-        dbm.commitChangesToDB();
-
-        dbm.disconnect();
+    public static void main(String[] args) throws SQLException, InitializingException, IOException, ClassNotFoundException{
+//        Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
+//        dbm.connect();
+//        //dbm.
+//        //dbm.
+//        dbm.initDBFromScratch();
+//        dbm.printDataFromDB();
+//        //dbm.dropDB();
+//        dbm.commitChangesToDB();
+//
+//        dbm.disconnect();
+        //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+        DataBaseConnector connector  = new DataBaseConnector();
+        connector.initFromXMLfile(FileIO.findFile("Database/databaseconfig.xml"));
+        CBRCaseBase cb = new LinealCaseBase();
+        cb.init(connector);
+        java.util.Collection<CBRCase> cases = cb.getCases();
+        for(CBRCase c: cases)
+            System.out.println(c);
+       // Collection<CBRCase> col = connector.retrieveAllCases();
+        //connector.
     }
 }
