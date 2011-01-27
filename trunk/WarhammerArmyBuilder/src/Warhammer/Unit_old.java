@@ -21,7 +21,7 @@ package Warhammer;
  * @author Glenn Rune Strandbråten
  * @version 0.3.1
  */
-public class Unit {
+public class Unit_old{
 	public static final int VALUE_NOT_SET = -1;
 	public static final int VALUE_NOT_FOUND = 404;
 	public static final int CHARACTHERISTIC_ATTACKS = 7;
@@ -59,7 +59,7 @@ public class Unit {
         /**
          * Creates a new unit object
          */
-	public Unit(){}
+	public Unit_old(){}
 
         /**
          * Method to assign a name to the unit.
@@ -84,7 +84,7 @@ public class Unit {
          * @param attack An integer representing the attack of the unit.
          * @param leadership An integer representing the leadership of the unit.
          */
-	public Unit(String name, 
+	public Unit_old(String name,
 			int category, 
 			int movement,
 			int weaponSkill,

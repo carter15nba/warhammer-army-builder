@@ -56,7 +56,7 @@ public class Race {
         @Override
 	public String toString(){
 		String toString = raceName+"\n";
-		for(Unit unit : units){
+		for(Unit_old unit : units){
 			toString += "\t"+unit.toString()+"\n";
 		}
 		

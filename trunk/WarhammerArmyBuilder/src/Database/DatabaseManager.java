@@ -18,17 +18,21 @@
 package Database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Collection;
+import jcolibri.cbrcore.CBRCase;
+import jcolibri.connector.DataBaseConnector;
+import jcolibri.exception.InitializingException;
+import jcolibri.util.FileIO;
+import jcolibri.cbrcore.Connector;
 
 /**
  *
@@ -37,16 +41,10 @@ import java.util.logging.Logger;
  */
 public class DatabaseManager {
 
-    private static DatabaseManager instance = null;
-    private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-    private String protocol = "jdbc:derby:";
-    private String dbName = "warhammerDB";
+    private String HIBERNATE_INIT_FILE = "Database/databaseconfig.xml";
     private Connection connection = null;
     private Statement statement = null;
-    ArrayList statements = new ArrayList();
-    PreparedStatement psInsert = null;
-    PreparedStatement psUpdate = null;
-    ResultSet rs = null;
+    private Connector casebaseConnector = null;
 
     /**
      * Singleton class with private constructor. Use
@@ -55,100 +53,49 @@ public class DatabaseManager {
     private DatabaseManager(){}
 
     /**
+     * Private innere class to hold the singleton instance.
+     */
+    private static class DatabaseManagerHolder{
+        private static final DatabaseManager INSTANCE = new DatabaseManager();
+    }
+    
+    /**
      * Method used to aquire an instance of this class. This method also creates
      * the instance if it is uninstantiated.
      * @return The DatabaseManager instanse.
      */
     public static DatabaseManager getInstance(){
-        if(instance == null)
-            instance = new DatabaseManager();
-        return instance;
+        return DatabaseManagerHolder.INSTANCE;
     }
 
     /**
-     * Method to connect to the database.
+     *
+     * @return null if
      */
-    public void connect(){
-        try{
-            loadDriver();
-            Properties props = new Properties();
-            props.put("user","gamer");
-            props.put("password","8844Qgpty");
+    public Connector connect(){
+        try {
 
-            connection = DriverManager.getConnection(
-                    protocol + dbName+";create=true",
-                    props);
-
-            System.out.println("Connected to database: "+dbName);
-
-            statement = connection.createStatement();
-            statements.add(statement);
-            connection.setAutoCommit(false);
+            casebaseConnector = new DataBaseConnector();
+            URL fileURL = FileIO.findFile(HIBERNATE_INIT_FILE);
+            casebaseConnector.initFromXMLfile(fileURL);
+            return casebaseConnector;
+        } catch (InitializingException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch(SQLException sqle){
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
-            printSQLException(sqle);
-        }
+        return null;
+    }
+
+    public Connector getConnector(){
+        return casebaseConnector;
     }
 
     /**
      * Method to shutdown the database connection and the derby engine.
      */
     public void disconnect(){
-        try{
-            DriverManager.getConnection("jdbc:derby:;shutdown=true");
-        }
-        catch(SQLException sqle){
-            if((sqle.getErrorCode() == 50000)&&
-                    ("XJ015".equals(sqle.getSQLState()))){
-                //Normal shutdown.
-            }
-            else{
-                printSQLException(sqle);
-            }
-        }
+        casebaseConnector.close();
+        casebaseConnector = null;
     }
-
-    /**
-     * Method to print the SQLExcpetion.
-     * @param e The SQLException to print.
-     */
-    public static void printSQLException(SQLException e)
-    {
-        // Unwraps the entire exception chain to unveil the real cause of the
-        // Exception.
-        while (e != null)
-        {
-            System.err.println("\n----- SQLException -----");
-            System.err.println("  SQL State:  " + e.getSQLState());
-            System.err.println("  Error Code: " + e.getErrorCode());
-            System.err.println("  Message:    " + e.getMessage());
-            // for stack traces, refer to derby.log or uncomment this:
-            //e.printStackTrace(System.err);
-            e = e.getNextException();
-        }
-    }
-
-    /**
-     * This method loads the database driver and <b>must</b> be called before
-     * any connection to the database is establised. It is called qutomatically
-     * when the connect method is executed.
-     */
-    private void loadDriver(){
-        try {
-            Class.forName(driver).newInstance();
-        }
-        catch (ClassNotFoundException cnfe) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, cnfe);
-        }
-        catch(InstantiationException ie){
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ie);
-        }
-        catch(IllegalAccessException iae){
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, iae);
-        }
-    }
-
 
     /**
      * Method to create the tables in the database.
@@ -157,54 +104,33 @@ public class DatabaseManager {
     private void createDB() throws SQLException{
         if(connection==null||statement==null)
             return;
-        String table = "create table unitCase(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY, name varchar(50) NOT NULL, UNIQUE(ID))";
+        String table;
+//        String table = "create table case(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY, "
+//                + "race varchar(50) NOT NULL, "
+//                + ""
+//                + "UNIQUE(ID))";
+//        statement.execute(table);
+        table = "create table available_units(caseID int NOT NULL, unitID int NOT NULL)";
         statement.execute(table);
-    }
-
-    /**
-     * Method to dropThe tables in this database and auto commit the changes.
-     * @throws SQLException
-     */
-    public void dropDB() throws SQLException{
-        if(connection==null||statement==null)
-            return;
-        String drop = "drop table unitCase";
-        statement.execute(drop);
-        connection.commit();
-        
-    }
-
-    /**
-     * Method to fill the database with initial data.
-     * @throws SQLException
-     */
-    private void fillDB() throws SQLException{
-        if(connection==null)
-            return;
-        psInsert = connection.prepareStatement("insert into unitCase(name) values(?)");
-        statements.add(psInsert);
-        psInsert.setString(1, "Paladin");
-        psInsert.executeUpdate();
-        psInsert.setString(1, "Berserker");
-        psInsert.executeUpdate();
-        psInsert.setString(1, "Grail Knight");
-        psInsert.executeUpdate();
-    }
-
-    /**
-     * Method to print the data from the database.
-     * @throws SQLException
-     */
-    public void printDataFromDB() throws SQLException{
-        if(connection==null||statement==null)
-            return;
-        rs = statement.executeQuery("SELECT ID, name FROM unitCase");
-        System.out.println("Fetched from database:");
-        while(rs.next()){
-            int id = rs.getInt(1);
-            String name = rs.getString(2);
-            System.out.println("   ID: "+id+", name: "+name);
-        }
+        table = "create table units(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
+                + "NAME VARCHAR(60),"
+                + "TYPE VARCHAR(2),"
+                + "MOVEMENT VARCHAR(4),"
+                + "WEAPONSKILL VARCHAR(4),"
+                + "BALLISTICSKILL VARCHAR(4),"
+                + "STRENGTH VARCHAR(4),"
+                + "TOUGHNESS VARCHAR(4),"
+                + "WOUNDS VARCHAR(4),"
+                + "INITIATIVE VARCHAR(4),"
+                + "ATTACK VARCHAR(4),"
+                + "LEADERSHIP VARCHAR(4),"
+                + "UNIQUE(ID))";
+        statement.execute(table);
+        table = "create table unit_weapons(unitID int NOT NULL, weaponID int NOT NULL)";
+        statement.execute(table);
+        table = "create table weapon(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
+                + "NAME VARCHAR(60),"
+                + "UNIQUE(ID))";
     }
 
     /**
@@ -212,16 +138,7 @@ public class DatabaseManager {
      * them with data.
      */
     public void initDBFromScratch(){
-        if(connection==null||statement==null)
-            return;
-        try{
-            createDB();
-            fillDB();
-        }
-        catch(SQLException sqle){
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
-            printSQLException(sqle);
-        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -230,41 +147,8 @@ public class DatabaseManager {
      * <b>must</b> be executed to make the changes permanent. This method
      * utilizes the commit function in the database connection object.
      */
-    public void commitChangesToDB(){
-        try {
-            if(connection==null)
-                return;
-            connection.commit();
-        }
-        catch (SQLException sqle) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
-            printSQLException(sqle);
-        }
-    }
+    public void storeCases(Collection<CBRCase> cases){
+        casebaseConnector.storeCases(cases);
 
-    /**
-     * This method executes a SQL query in the database and returns the results
-     * of the query. Queries containing <i>drop</i> & <i>create</i> keywords are
-     * not executed.
-     * @param query The String representation of the SQL query to be executed.
-     * @return null if the query is ommitted and if an exception occurs or the
-     * resulting ResultSet containing the results from the query execution.
-     *
-     */
-    public ResultSet performSQLQuery(String query){
-        if(connection==null||statement==null)
-            return null;
-        if(query.contains("drop"))
-            return null;
-        if(query.contains("create"))
-            return null;
-        try {
-            return statement.executeQuery(query);
-        }
-        catch (SQLException sqle) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
-            printSQLException(sqle);
-            return null;
-        }
     }
 }

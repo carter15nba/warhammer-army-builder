@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * @author Glenn Rune Strandbråten
  * @version 0.2
  */
-public class ArmyUnit extends Unit{
+public class ArmyUnit extends Unit_old{
     private ArrayList<UtilityUnit> utilityUnits;
 
     /**

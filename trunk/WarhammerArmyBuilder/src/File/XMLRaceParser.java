@@ -134,74 +134,74 @@ public class XMLRaceParser extends DefaultHandler{
         }
         else if(qName.equalsIgnoreCase(XML.MOVEMENT_ALLOWANCE)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.WEAPON_SKILL)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_WEAPON_SKILL,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_WEAPON_SKILL,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_WEAPON_SKILL,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.BALLISTIC_SKILL)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_BALLISTIC_SKILL,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_BALLISTIC_SKILL,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.STRENGTH)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_STRENGTH,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_STRENGTH,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_STRENGTH,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.TOUGHNESS)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_TOUGHNESS,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_TOUGHNESS,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_TOUGHNESS,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.WOUNDS)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_WOUNDS,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_WOUNDS,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_WOUNDS,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.INITIATIVE)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_INITIATIVE,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_INITIATIVE,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_INITIATIVE,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.ATTACK)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_ATTACKS,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_ATTACKS,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_ATTACKS,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.LEADERSHIP)){
             if(inUnit)
-                unit.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
+                unit.setCharacteristics(Unit_old.CHARACTHERISTIC_LEADERSHIP,
                     Integer.parseInt(tempVal));
             else if(inUtilityUnit)
-                utilityUnit.setCharacteristics(Unit.CHARACTHERISTIC_LEADERSHIP,
+                utilityUnit.setCharacteristics(Unit_old.CHARACTHERISTIC_LEADERSHIP,
                     Integer.parseInt(tempVal));
         }
         else if(qName.equalsIgnoreCase(XML.TYPE)){
@@ -220,27 +220,27 @@ public class XMLRaceParser extends DefaultHandler{
      */
     private int parseType(String tempVal){
         if(tempVal.equalsIgnoreCase("Ca"))
-            return Unit.CATEGORY_CAVALRY;
+            return Unit_old.CATEGORY_CAVALRY;
         else if(tempVal.equalsIgnoreCase("Ch"))
-            return Unit.CATEGORY_CHARIOT;
+            return Unit_old.CATEGORY_CHARIOT;
         else if(tempVal.equalsIgnoreCase("In"))
-            return Unit.CATEGORY_INFANTRY;
+            return Unit_old.CATEGORY_INFANTRY;
         else if(tempVal.equalsIgnoreCase("Mo"))
-            return Unit.CATEGORY_MONSTER;
+            return Unit_old.CATEGORY_MONSTER;
         else if(tempVal.equalsIgnoreCase("MB"))
-            return Unit.CATEGORY_MONSTROUS_BEAST;
+            return Unit_old.CATEGORY_MONSTROUS_BEAST;
         else if(tempVal.equalsIgnoreCase("MC"))
-            return Unit.CATEGORY_MONSTROUS_CAVALRY;
+            return Unit_old.CATEGORY_MONSTROUS_CAVALRY;
         else if(tempVal.equalsIgnoreCase("MI"))
-            return Unit.CATEGORY_MONSTROUS_INFANTRY;
+            return Unit_old.CATEGORY_MONSTROUS_INFANTRY;
         else if(tempVal.equalsIgnoreCase("Sw"))
-            return Unit.CATEGORY_SWARM;
+            return Unit_old.CATEGORY_SWARM;
         else if(tempVal.equalsIgnoreCase("Un"))
-            return Unit.CATEGORY_UNIQUE_UNIT;
+            return Unit_old.CATEGORY_UNIQUE_UNIT;
         else if(tempVal.equalsIgnoreCase("WB"))
-            return Unit.CATEGORY_WAR_BEAST;
+            return Unit_old.CATEGORY_WAR_BEAST;
         else if(tempVal.equalsIgnoreCase("WM"))
-            return Unit.CATEGORY_WAR_MACHINE;
-        return Unit.VALUE_NOT_FOUND;
+            return Unit_old.CATEGORY_WAR_MACHINE;
+        return Unit_old.VALUE_NOT_FOUND;
     }
 }
