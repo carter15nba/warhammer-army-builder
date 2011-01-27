@@ -17,8 +17,13 @@
 
 package CBREngine;
 
+import Warhammer.UnitCase;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import jcolibri.cbrcore.Attribute;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
@@ -27,6 +32,8 @@ import jcolibri.exception.ExecutionException;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
 import jcolibri.casebase.LinealCaseBase;
+import jcolibri.cbrcore.CaseComponent;
+import jcolibri.cbrcore.Connector;
 
 /**
  *
@@ -80,7 +87,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     }
 
     public static void main(String[] args) throws SQLException, InitializingException, IOException, ClassNotFoundException{
-//        Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
+        Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
 //        dbm.connect();
 //        //dbm.
 //        //dbm.
@@ -88,16 +95,34 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //        dbm.printDataFromDB();
 //        //dbm.dropDB();
 //        dbm.commitChangesToDB();
+          Connector con = dbm.connect();
+          CBRCase cbr = new CBRCase();
+//          Warhammer.UnitCase uc = new UnitCase();
+//          uc.setName("Bretonnian Lord");
+//          uc.setArmyType("Lord");
+//          uc.setAttack("4");
+//          uc.setBallisticSkill("3");
+//          //uc.setID(2);
+//          uc.setUnitType("In");
 //
+//          cbr.setDescription(uc);
+//          List<CBRCase> list = new ArrayList<CBRCase>();
+//
+//          list.add(cbr);
+//          Collection<CBRCase> col = list;
+//          con.storeCases(col);
+//
+          Collection<CBRCase> col = con.retrieveAllCases();
+          con.close();
 //        dbm.disconnect();
         //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        DataBaseConnector connector  = new DataBaseConnector();
-        connector.initFromXMLfile(FileIO.findFile("Database/databaseconfig.xml"));
-        CBRCaseBase cb = new LinealCaseBase();
-        cb.init(connector);
-        java.util.Collection<CBRCase> cases = cb.getCases();
-        for(CBRCase c: cases)
-            System.out.println(c);
+//        DataBaseConnector connector  = new DataBaseConnector();
+//        connector.initFromXMLfile(FileIO.findFile("Database/databaseconfig.xml"));
+//        CBRCaseBase cb = new LinealCaseBase();
+//        cb.init(connector);
+//        java.util.Collection<CBRCase> cases = cb.getCases();
+//        for(CBRCase c: cases)
+//            System.out.println(c);
        // Collection<CBRCase> col = connector.retrieveAllCases();
         //connector.
     }

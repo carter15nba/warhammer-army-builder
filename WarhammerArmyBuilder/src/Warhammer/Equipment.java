@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten
+ *  Copyright (C) 2011 Glenn Rune Strandbåten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,20 +19,26 @@ package Warhammer;
 
 /**
  *
- * @author Glenn Rune Strandbråten
+ * @author Glenn Rune Strandbåten
  * @version 0.1
  */
-public class UtilityUnit extends Unit_old{
+public class Equipment extends CoreCase{
+    
+    private String equipmentType;
+
     /**
-     * Method to set the name of the Crew unit. This method overrides the
-     * setName method in the Unit super class.
-     * @param name String the name of the Crew unit.
+     * @return the equipmentType
      */
-    @Override
-    public void setName(String name){
-        if(name.startsWith("-"))
-            super.setName(name);
-        else
-            super.setName("-"+name);
+    public String getEquipmentType() {
+        return equipmentType;
+    }
+
+    /**
+     * The type of equiment e.g.: Sword, Shield, Spear, Armour,
+     * Two-handed sword etc.
+     * @param equipmentType the equipmentType to set
+     */
+    public void setEquipmentType(String equipmentType) {
+        this.equipmentType = equipmentType;
     }
 }

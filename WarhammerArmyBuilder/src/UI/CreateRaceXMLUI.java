@@ -39,15 +39,15 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JTable unitTable;
     private javax.swing.JScrollPane unitTableScrollPane;
-    private int[] attributes = new int[]{Warhammer.Unit.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
-    Warhammer.Unit.CHARACTHERISTIC_WEAPON_SKILL,
-    Warhammer.Unit.CHARACTHERISTIC_BALLISTIC_SKILL,
-    Warhammer.Unit.CHARACTHERISTIC_STRENGTH,
-    Warhammer.Unit.CHARACTHERISTIC_TOUGHNESS,
-    Warhammer.Unit.CHARACTHERISTIC_WOUNDS,
-    Warhammer.Unit.CHARACTHERISTIC_INITIATIVE,
-    Warhammer.Unit.CHARACTHERISTIC_ATTACKS,
-    Warhammer.Unit.CHARACTHERISTIC_LEADERSHIP};
+    private int[] attributes = new int[]{Warhammer.Unit_old.CHARACTHERISTIC_MOVEMENT_ALLOVANCE,
+    Warhammer.Unit_old.CHARACTHERISTIC_WEAPON_SKILL,
+    Warhammer.Unit_old.CHARACTHERISTIC_BALLISTIC_SKILL,
+    Warhammer.Unit_old.CHARACTHERISTIC_STRENGTH,
+    Warhammer.Unit_old.CHARACTHERISTIC_TOUGHNESS,
+    Warhammer.Unit_old.CHARACTHERISTIC_WOUNDS,
+    Warhammer.Unit_old.CHARACTHERISTIC_INITIATIVE,
+    Warhammer.Unit_old.CHARACTHERISTIC_ATTACKS,
+    Warhammer.Unit_old.CHARACTHERISTIC_LEADERSHIP};
     private final String TITLE = "Warhammer Race XML editor";
 
     private Warhammer.Race race;
