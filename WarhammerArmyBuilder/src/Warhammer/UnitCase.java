@@ -260,32 +260,20 @@ public class UnitCase extends CoreCase{
         return this.equipment[index];
     }
 
-    @Override
-    public void setName(String name){
-        super.setName(name);
-    }
+    public String toString(){
+        return super.toString()+
+                "\n   M="+movement
+                + " WS="+weaponSkill
+                + " BS="+ballisticSkill
+                + " S="+strength
+                + " T="+toughness
+                + " I="+initiative
+                + " W="+wounds
+                + " A="+attack
+                + " Ld="+leadership
+                + " UnitType="+unitType
+                + " ArmyType="+armyType;
 
-    @Override
-    public String getName(){
-        return super.getName();
     }
-
-    @Override
-    public void setCost(int cost){
-        super.setCost(cost);
-
-    }
-    @Override
-    public int getCost(){
-        return super.getCost();
-    }
-    @Override
-    public int getID(){
-        return super.getID();
-    }
-    public void setID(int ID){
-        super.setID(ID);
-    }
-
 
 }

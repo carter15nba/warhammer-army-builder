@@ -76,4 +76,9 @@ public class CoreCase implements jcolibri.cbrcore.CaseComponent{
         this.cost = cost;
     }
 
+    @Override
+    public String toString(){
+        return "ID: "+ID+", name: "+name+", cost: "+cost;
+    }
+
 }

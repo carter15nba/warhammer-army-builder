@@ -88,31 +88,27 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
     public static void main(String[] args) throws SQLException, InitializingException, IOException, ClassNotFoundException{
         Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
-//        dbm.connect();
-//        //dbm.
-//        //dbm.
-//        dbm.initDBFromScratch();
-//        dbm.printDataFromDB();
-//        //dbm.dropDB();
-//        dbm.commitChangesToDB();
-          Connector con = dbm.connect();
-          CBRCase cbr = new CBRCase();
-//          Warhammer.UnitCase uc = new UnitCase();
-//          uc.setName("Bretonnian Lord");
-//          uc.setArmyType("Lord");
-//          uc.setAttack("4");
-//          uc.setBallisticSkill("3");
-//          //uc.setID(2);
-//          uc.setUnitType("In");
+        Connector con = dbm.connect();
+//        CBRCase cbr = new CBRCase();
+//        Warhammer.UnitCase uc = new UnitCase();
+//        uc.setName("Bretonnian Lord");
+//        uc.setArmyType("Lord");
+//        uc.setAttack("4");
+//        uc.setBallisticSkill("3");
+//        uc.setUnitType("In");
 //
-//          cbr.setDescription(uc);
-//          List<CBRCase> list = new ArrayList<CBRCase>();
+//        cbr.setDescription(uc);
+//        List<CBRCase> list = new ArrayList<CBRCase>();
 //
-//          list.add(cbr);
-//          Collection<CBRCase> col = list;
-//          con.storeCases(col);
+//        list.add(cbr);
+//        Collection<CBRCase> col = list;
+//        con.storeCases(col);
 //
           Collection<CBRCase> col = con.retrieveAllCases();
+          for (CBRCase cBRCase : col) {
+              System.out.println(cBRCase.toString());
+        }
+
           con.close();
 //        dbm.disconnect();
         //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
