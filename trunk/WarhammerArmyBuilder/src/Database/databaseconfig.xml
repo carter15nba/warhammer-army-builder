@@ -10,8 +10,9 @@
 
 <DataBaseConfiguration>
 	<HibernateConfigFile>Database/hibernate.cfg.xml</HibernateConfigFile>
-	<DescriptionMappingFile>Database/CaseDescription.hbm.xml</DescriptionMappingFile>
-	<DescriptionClassName>Database/CaseDescription</DescriptionClassName>
-	<SolutionMappingFile>Database/CaseSolution.hbm.xml</SolutionMappingFile>
-	<SolutionClassName>Database/CaseSolution</SolutionClassName>
+	<DescriptionMappingFile>Database/UnitCase.hbm.xml</DescriptionMappingFile>
+	<DescriptionClassName>Warhammer.UnitCase</DescriptionClassName>
+	<!--<SolutionMappingFile>Database/CoreCase.hbm.xml</SolutionMappingFile>
+	<SolutionClassName>Warhammer.UnitCase</SolutionClassName>-->
+        
 </DataBaseConfiguration>

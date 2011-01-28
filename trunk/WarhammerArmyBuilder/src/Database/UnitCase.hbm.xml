@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="Warhammer.UnitCase" table="UNITCASE">
+  <joined-subclass name="Warhammer.UnitCase" extends="Warhammer.CoreCase">
+        <key column="ID"/>
+        <property column="ARMYTYPE" name="armyType"/>
+        <property column="ATTACK" name="attack"/>
+        <property column="BALLISTICSKILL" name="ballisticSkill"/>
+        <property column="INITIATIVE" name="initiative"/>
+        <property column="LEADERSHIP" name="leadership"/>
+        <property column="MOVEMENT" name="movement"/>
+        <property column="STRENGTH" name="strength"/>
+        <property column="TOUGHNESS" name="toughness"/>
+        <property column="UNITTYPE" name="unitType"/>
+        <property column="WEAPONSKILL" name="weaponSkill"/>
+        <property column="WOUNDS" name="wounds"/>
+  </joined-subclass>
+  <!--<class name="Warhammer.UnitCase" table="UNITCASE">
       <id column="ID" name="ID">
           <generator class="identity"/>
       </id>
@@ -18,5 +32,5 @@
       <property column="UNITTYPE" name="unitType"/>
       <property column="WEAPONSKILL" name="weaponSkill"/>
       <property column="WOUNDS" name="wounds"/>
-  </class>
+  </class>-->
 </hibernate-mapping>
