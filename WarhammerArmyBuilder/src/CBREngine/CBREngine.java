@@ -19,6 +19,7 @@ package CBREngine;
 
 import Warhammer.UnitCase;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,30 +89,38 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
     public static void main(String[] args) throws SQLException, InitializingException, IOException, ClassNotFoundException{
         Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
+//        dbm.connectWithoutHibernate();
+//        ResultSet res = dbm.executeSQL("select * from unit");
+//
+//        while(res.next()){
+//            System.out.println("found: "+res.getString("NAME"));
+//        }
+//        dbm.disconnectNoHibernate();
         Connector con = dbm.connect();
-//        CBRCase cbr = new CBRCase();
-//        Warhammer.UnitCase uc = new UnitCase();
-//        uc.setName("Bretonnian Lord");
-//        uc.setArmyType("Lord");
-//        uc.setAttack("4");
-//        uc.setBallisticSkill("3");
-//        uc.setUnitType("In");
-//
-//        cbr.setDescription(uc);
-//        List<CBRCase> list = new ArrayList<CBRCase>();
-//
-//        list.add(cbr);
-//        Collection<CBRCase> col = list;
-//        con.storeCases(col);
-//
+////        CBRCase cbr = new CBRCase();
+////        Warhammer.UnitCase uc = new UnitCase();
+////        uc.setName("Bretonnian Lord");
+////        uc.setArmyType("Lord");
+////        uc.setAttack("4");
+////        uc.setBallisticSkill("3");
+////        uc.setUnitType("In");
+////
+////        cbr.setDescription(uc);
+        
+////        List<CBRCase> list = new ArrayList<CBRCase>();
+////
+////        list.add(cbr);
+////        Collection<CBRCase> col = list;
+////        con.storeCases(col);
+////
           Collection<CBRCase> col = con.retrieveAllCases();
           for (CBRCase cBRCase : col) {
               System.out.println(cBRCase.toString());
         }
-
-          con.close();
-//        dbm.disconnect();
-        //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+//
+////          con.close();
+////        dbm.disconnect();
+//        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 //        DataBaseConnector connector  = new DataBaseConnector();
 //        connector.initFromXMLfile(FileIO.findFile("Database/databaseconfig.xml"));
 //        CBRCaseBase cb = new LinealCaseBase();

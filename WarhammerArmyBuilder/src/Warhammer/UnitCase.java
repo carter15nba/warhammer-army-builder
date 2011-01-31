@@ -17,6 +17,9 @@
 
 package Warhammer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author Glenn Rune Strandbåten
@@ -34,7 +37,9 @@ public class UnitCase extends CoreCase{
     private String leadership = "";
     private String unitType = "";
     private String armyType = "";
-    private Equipment[] equipment = null;
+    private Set<Equipment> equipment = new HashSet<Equipment>();
+    //private Set<CrewMount> crewMount = new HashSet<CrewMount>();
+    
     /**
      * @return the movement
      */
@@ -241,23 +246,23 @@ public class UnitCase extends CoreCase{
     /**
      * @return the equipment
      */
-    public Equipment[] getEquipment() {
+    public Set<Equipment> getEquipment() {
         return equipment;
     }
 
     /**
      * @param equipment the equipment to set
      */
-    public void setEquipment(Equipment[] equipment) {
+    public void setEquipment(Set<Equipment> equipment) {
         this.equipment = equipment;
     }
 
-    public void setEquipment(Equipment equipment, int index){
-        this.equipment[index] = equipment;
+    public void setEquipment(Equipment equipment){
+        this.equipment.add(equipment);
     }
 
     public Equipment getEquipment(int index){
-        return this.equipment[index];
+        return (Equipment) this.equipment.toArray()[index];
     }
 
     public String toString(){

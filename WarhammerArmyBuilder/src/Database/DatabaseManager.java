@@ -17,22 +17,26 @@
 
 package Database;
 
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.net.URL;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Properties;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.connector.DataBaseConnector;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
 import jcolibri.cbrcore.Connector;
+import org.hibernate.loader.custom.CustomLoader.ScalarResultColumnProcessor;
 
 /**
  *
@@ -43,7 +47,6 @@ public class DatabaseManager {
 
     private String HIBERNATE_INIT_FILE = "Database/databaseconfig.xml";
     private Connection connection = null;
-    private Statement statement = null;
     private Connector casebaseConnector = null;
 
     /**
@@ -98,50 +101,6 @@ public class DatabaseManager {
     }
 
     /**
-     * Method to create the tables in the database.
-     * @throws SQLException
-     */
-    private void createDB() throws SQLException{
-        if(connection==null||statement==null)
-            return;
-        String table;
-//        String table = "create table case(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY, "
-//                + "race varchar(50) NOT NULL, "
-//                + ""
-//                + "UNIQUE(ID))";
-//        statement.execute(table);
-        table = "create table available_units(caseID int NOT NULL, unitID int NOT NULL)";
-        statement.execute(table);
-        table = "create table units(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
-                + "NAME VARCHAR(60),"
-                + "TYPE VARCHAR(2),"
-                + "MOVEMENT VARCHAR(4),"
-                + "WEAPONSKILL VARCHAR(4),"
-                + "BALLISTICSKILL VARCHAR(4),"
-                + "STRENGTH VARCHAR(4),"
-                + "TOUGHNESS VARCHAR(4),"
-                + "WOUNDS VARCHAR(4),"
-                + "INITIATIVE VARCHAR(4),"
-                + "ATTACK VARCHAR(4),"
-                + "LEADERSHIP VARCHAR(4),"
-                + "UNIQUE(ID))";
-        statement.execute(table);
-        table = "create table unit_weapons(unitID int NOT NULL, weaponID int NOT NULL)";
-        statement.execute(table);
-        table = "create table weapon(ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,"
-                + "NAME VARCHAR(60),"
-                + "UNIQUE(ID))";
-    }
-
-    /**
-     * Method used to intialize the database by creating its tables and filling
-     * them with data.
-     */
-    public void initDBFromScratch(){
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
      * Method to commit the changes made to the database to store those
      * changes to file. The autoCommit feature is disabled so this method
      * <b>must</b> be executed to make the changes permanent. This method
@@ -149,6 +108,56 @@ public class DatabaseManager {
      */
     public void storeCases(Collection<CBRCase> cases){
         casebaseConnector.storeCases(cases);
+    }
 
+    public void connectWithoutHibernate(){
+        try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+            Properties props = new Properties();
+            props.put("user","gamer");
+            props.put("password","8844Qgpty");
+            connection = DriverManager.getConnection(
+                    "jdbc:derby:warhammerDB;create=true",
+	 	    props);
+            connection.setAutoCommit(false);
+        }
+        catch (InstantiationException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IllegalAccessException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (ClassNotFoundException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch(SQLException sqle){
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
+        }
+    }
+    public void disconnectNoHibernate(){
+        try{
+            if(connection==null)
+                return;
+            DriverManager.getConnection("jdbc:derby:;shutdown=true");
+        }
+        catch(SQLException sqle){
+            if((sqle.getErrorCode() == 50000)&&
+                    ("XJ015".equals(sqle.getSQLState()))){
+                System.out.println("Derby shut down normally");
+            }
+            else{
+                System.err.println("Derby did not shut down normally");
+            }
+         }
+     }
+    public ResultSet executeSQL(String sql){
+        try {
+            Statement statement = connection.createStatement();
+            return statement.executeQuery(sql);
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

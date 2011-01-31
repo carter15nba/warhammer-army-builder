@@ -14,23 +14,13 @@
         <property column="UNITTYPE" name="unitType"/>
         <property column="WEAPONSKILL" name="weaponSkill"/>
         <property column="WOUNDS" name="wounds"/>
+        <set name="equipment" table="unitEquipment">
+            <key column="UNITID"/>
+            <many-to-many column="EQUIPMENTID" class="Warhammer.Equipment"/>
+        </set>
+        <!--<set name="crewMount" table="unitcrew">
+            <key column="ID"/>
+            <many-to-many column="ID" class="Warhammer.CrewMount"/>
+        </set>-->
   </joined-subclass>
-  <!--<class name="Warhammer.UnitCase" table="UNITCASE">
-      <id column="ID" name="ID">
-          <generator class="identity"/>
-      </id>
-      <property column="ARMYTYPE" name="armyType"/>
-      <property column="ATTACK" name="attack"/>
-      <property column="BALLISTICSKILL" name="ballisticSkill"/>
-      <property column="COST" name="cost"/>
-      <property column="INITIATIVE" name="initiative"/>
-      <property column="LEADERSHIP" name="leadership"/>
-      <property column="MOVEMENT" name="movement"/>
-      <property column="NAME" name="name"/>
-      <property column="STRENGTH" name="strength"/>
-      <property column="TOUGHNESS" name="toughness"/>
-      <property column="UNITTYPE" name="unitType"/>
-      <property column="WEAPONSKILL" name="weaponSkill"/>
-      <property column="WOUNDS" name="wounds"/>
-  </class>-->
 </hibernate-mapping>

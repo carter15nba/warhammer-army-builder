@@ -13,6 +13,5 @@
 	<DescriptionMappingFile>Database/UnitCase.hbm.xml</DescriptionMappingFile>
 	<DescriptionClassName>Warhammer.UnitCase</DescriptionClassName>
 	<!--<SolutionMappingFile>Database/CoreCase.hbm.xml</SolutionMappingFile>
-	<SolutionClassName>Warhammer.UnitCase</SolutionClassName>-->
-        
+	<SolutionClassName>Warhammer.UnitCase</SolutionClassName>-->       
 </DataBaseConfiguration>
