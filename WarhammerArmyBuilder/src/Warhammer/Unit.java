@@ -18,13 +18,14 @@
 package Warhammer;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
  *
  * @author Glenn Rune Strandbåten
  */
-public class UnitCase extends CoreCase{
+public class Unit extends CoreCase{
 
     private String movement = "";
     private String weaponSkill = "";
@@ -266,7 +267,8 @@ public class UnitCase extends CoreCase{
     }
 
     public String toString(){
-        return super.toString()+
+
+        String retString = super.toString()+
                 "\n   M="+movement
                 + " WS="+weaponSkill
                 + " BS="+ballisticSkill
@@ -278,6 +280,14 @@ public class UnitCase extends CoreCase{
                 + " Ld="+leadership
                 + " UnitType="+unitType
                 + " ArmyType="+armyType;
+        if(equipment.size()>0){
+            Iterator<Equipment> iterator = equipment.iterator();
+            while(iterator.hasNext()){
+                retString += "\n  *"+iterator.next().toString();
+            }
+        }
+
+        return retString;
 
     }
 

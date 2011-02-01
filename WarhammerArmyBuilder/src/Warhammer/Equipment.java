@@ -32,7 +32,6 @@ public class Equipment extends CoreCase{
     public String getEquipmentType() {
         return equipmentType;
     }
-
     /**
      * The type of equiment e.g.: Sword, Shield, Spear, Armour,
      * Two-handed sword etc.
