@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <joined-subclass name="Warhammer.Equipment" extends="Warhammer.CoreCase">
+  <joined-subclass extends="Warhammer.CoreCase" name="Warhammer.Equipment" table="EQUIPMENT">
     <key column="ID"/>
     <property column="type" name="equipmentType"/>
   </joined-subclass>

@@ -2,17 +2,16 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="Warhammer.Case" table="CASES">
-    <id name="ID" type="integer">
-        <generator class="increment"/>
+    <id name="caseID" type="integer">
+      <generator class="increment"/>
     </id>
-    <property name="armyPoints" column="ARMYPOINTS" type="integer"/>
-    <property name="opponentRace" column="OPPONENTRACE" type="string"/>
-    <property name="outcome" column="OUTCOME" type="string"/>
-    <property name="playerRace" column="PLAYERRACE" type="string"/>
-    <set name="units" table="CASEUNITS">
-        <key column=""/>
-        <many-to-many column="caseID" class="Warhammer.UnitCase"/>
-        <!-- TODO: Map caseunit.unitnumber to set map, related to the units set map -->
+    <property column="ARMYPOINTS" name="armyPoints" type="integer"/>
+    <property column="OPPONENTRACE" name="opponentRace" type="string"/>
+    <property column="OUTCOME" name="outcome" type="string"/>
+    <property column="PLAYERRACE" name="playerRace" type="string"/>
+    <set name="units" table="CASEUNITS" lazy="false" >
+        <key column="caseID"/>
+        <many-to-many column="unitID" class="Warhammer.Unit"/>
     </set>
   </class>
 </hibernate-mapping>

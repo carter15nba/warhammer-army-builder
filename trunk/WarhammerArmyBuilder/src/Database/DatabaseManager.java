@@ -19,10 +19,8 @@ package Database;
 
 import java.sql.Statement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +34,6 @@ import jcolibri.connector.DataBaseConnector;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
 import jcolibri.cbrcore.Connector;
-import org.hibernate.loader.custom.CustomLoader.ScalarResultColumnProcessor;
 
 /**
  *
@@ -77,7 +74,6 @@ public class DatabaseManager {
      */
     public Connector connect(){
         try {
-
             casebaseConnector = new DataBaseConnector();
             URL fileURL = FileIO.findFile(HIBERNATE_INIT_FILE);
             casebaseConnector.initFromXMLfile(fileURL);

@@ -27,10 +27,10 @@ import jcolibri.cbrcore.Attribute;
  */
 public class Case implements jcolibri.cbrcore.CaseComponent{
 
-    private Set<UnitCase> units;
+    private Set<Unit> units;
     private Set<Integer> count;
     private int armyPoints;
-    private int ID;
+    private int caseID;
     private String playerRace;
     private String opponentRace;
     private String outcome;
@@ -38,14 +38,14 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the units
      */
-    public Set<UnitCase> getUnits() {
+    public Set<Unit> getUnits() {
         return units;
     }
 
     /**
      * @param units the units to set
      */
-    public void setUnits(Set<UnitCase> units) {
+    public void setUnits(Set<Unit> units) {
         this.units = units;
     }
 
@@ -120,21 +120,21 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     }
 
     public Attribute getIdAttribute() {
-        return new Attribute("ID", this.getClass());
+        return new Attribute("caseID", this.getClass());
     }
 
     /**
      * @return the ID
      */
-    public int getID() {
-        return ID;
+    public int getCaseID() {
+        return caseID;
     }
 
     /**
      * @param ID the ID to set
      */
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setCaseID(int caseID) {
+        this.caseID = caseID;
     }
 
 }

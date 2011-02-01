@@ -48,7 +48,7 @@ public class RuleSet {
     public void calculateTotalCost(){
         totalCost = coreCost + specialCost + rareCost + lordCost + heroCost;
     }
-    private void calculateUnit(UnitCase uc){
+    private void calculateUnit(Unit uc){
         String armyType = uc.getArmyType();
         if(armyType.contentEquals("Lords")){
             
