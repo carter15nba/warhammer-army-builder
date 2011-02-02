@@ -9,7 +9,7 @@
     <property column="OPPONENTRACE" name="opponentRace"/>
     <property column="OUTCOME" name="outcome"/>
     <property column="PLAYERRACE" name="playerRace"/>
-    <set lazy="false" name="units" table="CASEUNITS">
+    <set lazy="false" name="units" table="CASE_UNITS">
       <key column="caseID"/>
       <many-to-many class="Warhammer.Unit" column="unitID"/>
     </set>
