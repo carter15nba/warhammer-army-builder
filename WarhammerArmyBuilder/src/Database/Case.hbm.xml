@@ -5,10 +5,10 @@
     <id name="caseID" type="integer">
       <generator class="increment"/>
     </id>
-    <property column="ARMYPOINTS" name="armyPoints" type="integer"/>
-    <property column="OPPONENTRACE" name="opponentRace" type="string"/>
-    <property column="OUTCOME" name="outcome" type="string"/>
-    <property column="PLAYERRACE" name="playerRace" type="string"/>
+    <property column="ARMYPOINTS" name="armyPoints"/>
+    <property column="OPPONENTRACE" name="opponentRace"/>
+    <property column="OUTCOME" name="outcome"/>
+    <property column="PLAYERRACE" name="playerRace"/>
     <set lazy="false" name="units" table="CASEUNITS">
       <key column="caseID"/>
       <many-to-many class="Warhammer.Unit" column="unitID"/>

@@ -3,24 +3,24 @@
 <hibernate-mapping>
   <joined-subclass extends="Warhammer.CoreCase" name="Warhammer.Unit" table="UNIT">
     <key column="ID"/>
-    <property column="ARMYTYPE" name="armyType" type="String"/>
-    <property column="ATTACK" name="attack" type="String"/>
-    <property column="BALLISTICSKILL" name="ballisticSkill" type="String"/>
-    <property column="INITIATIVE" name="initiative" type="String"/>
-    <property column="LEADERSHIP" name="leadership" type="String"/>
-    <property column="MOVEMENT" name="movement" type="String"/>
-    <property column="STRENGTH" name="strength" type="String"/>
-    <property column="TOUGHNESS" name="toughness" type="String"/>
-    <property column="UNITTYPE" name="unitType" type="String"/>
-    <property column="WEAPONSKILL" name="weaponSkill" type="String"/>
-    <property column="WOUNDS" name="wounds" type="String"/>
+    <property column="ARMYTYPE" name="armyType"/>
+    <property column="ATTACK" name="attack"/>
+    <property column="BALLISTICSKILL" name="ballisticSkill"/>
+    <property column="INITIATIVE" name="initiative"/>
+    <property column="LEADERSHIP" name="leadership"/>
+    <property column="MOVEMENT" name="movement"/>
+    <property column="STRENGTH" name="strength"/>
+    <property column="TOUGHNESS" name="toughness"/>
+    <property column="UNITTYPE" name="unitType"/>
+    <property column="WEAPONSKILL" name="weaponSkill"/>
+    <property column="WOUNDS" name="wounds"/>
     <set lazy="false" name="equipment" table="UNITEQUIPMENT">
       <key column="ID"/>
       <many-to-many class="Warhammer.Equipment" column="EQUIPMENTID"/>
     </set>
-    <set lazy="false" name="utilityUnit" table="UNITUTILITY">
+<!--    <set lazy="false" name="utilityUnit" table="UNITUTILITY">
         <key column="ID"/>
-        <many-to-many column="ID" class="Warhammer.CrewMount"/>
-    </set>
+        <one-to-many column="ID" class="Warhammer.CrewMount"/>
+    </set>-->
   </joined-subclass>
 </hibernate-mapping>
