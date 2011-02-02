@@ -242,29 +242,7 @@ public class Unit extends CoreCase{
     public void setArmyType(String armyType) {
         this.armyType = armyType;
     }
-
-    /**
-     * @return the equipment
-     */
-    public Set<Equipment> getEquipment() {
-        return equipment;
-    }
-
-    /**
-     * @param equipment the equipment to set
-     */
-    public void setEquipment(Set<Equipment> equipment) {
-        this.setEquipment(equipment);
-    }
-
-    public void setEquipment(Equipment equipment){
-        this.equipment.add(equipment);
-    }
-
-    public Equipment getEquipment(int index){
-        return (Equipment) this.equipment.toArray()[index];
-    }
-
+    
     @Override
     public String toString(){
 
@@ -280,8 +258,8 @@ public class Unit extends CoreCase{
                 + " Ld="+leadership
                 + " UnitType="+unitType
                 + " ArmyType="+armyType;
-        if(equipment.size()>0){
-            Iterator<Equipment> iterator = equipment.iterator();
+        if(getEquipment().size()>0){
+            Iterator<Equipment> iterator = getEquipment().iterator();
             while(iterator.hasNext()){
                 retString += "\n     "+iterator.next().toString();
             }
@@ -289,6 +267,20 @@ public class Unit extends CoreCase{
 
         return retString;
 
+    }
+
+    /**
+     * @return the equipment
+     */
+    public Set<Equipment> getEquipment() {
+        return equipment;
+    }
+
+    /**
+     * @param equipment the equipment to set
+     */
+    public void setEquipment(Set<Equipment> equipment) {
+        this.equipment = equipment;
     }
 
     /**
@@ -304,5 +296,4 @@ public class Unit extends CoreCase{
     public void setUtilityUnit(Set<UtilityUnit> utilityUnit) {
         this.utilityUnit = utilityUnit;
     }
-
 }
