@@ -36,7 +36,7 @@ public class XMLRaceParser extends DefaultHandler{
     private Race race;
     private String tempVal;
     private ArmyUnit unit = null;
-    private UtilityUnit utilityUnit = null;
+    private UtilityUnit_old utilityUnit = null;
     private boolean inUnit = false;
     private boolean inUtilityUnit = false;
 
@@ -90,7 +90,7 @@ public class XMLRaceParser extends DefaultHandler{
             inUtilityUnit = false;
         }
         else if(qName.equalsIgnoreCase(XML.UTILITY_UNIT)){
-            utilityUnit = new UtilityUnit();
+            utilityUnit = new UtilityUnit_old();
             unit.addCrew(utilityUnit);
             inUnit = false;
             inUtilityUnit = true;

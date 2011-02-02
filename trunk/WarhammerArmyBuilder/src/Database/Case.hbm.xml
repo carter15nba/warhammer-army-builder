@@ -9,9 +9,9 @@
     <property column="OPPONENTRACE" name="opponentRace" type="string"/>
     <property column="OUTCOME" name="outcome" type="string"/>
     <property column="PLAYERRACE" name="playerRace" type="string"/>
-    <set name="units" table="CASEUNITS" lazy="false" >
-        <key column="caseID"/>
-        <many-to-many column="unitID" class="Warhammer.Unit"/>
+    <set lazy="false" name="units" table="CASEUNITS">
+      <key column="caseID"/>
+      <many-to-many class="Warhammer.Unit" column="unitID"/>
     </set>
   </class>
 </hibernate-mapping>

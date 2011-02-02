@@ -26,7 +26,6 @@ import java.util.Set;
  * @author Glenn Rune Strandbåten
  */
 public class Unit extends CoreCase{
-
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -39,7 +38,7 @@ public class Unit extends CoreCase{
     private String unitType = "";
     private String armyType = "";
     private Set<Equipment> equipment = new HashSet<Equipment>();
-    //private Set<CrewMount> crewMount = new HashSet<CrewMount>();
+    private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     
     /**
      * @return the movement
@@ -255,7 +254,7 @@ public class Unit extends CoreCase{
      * @param equipment the equipment to set
      */
     public void setEquipment(Set<Equipment> equipment) {
-        this.equipment = equipment;
+        this.setEquipment(equipment);
     }
 
     public void setEquipment(Equipment equipment){
@@ -266,10 +265,11 @@ public class Unit extends CoreCase{
         return (Equipment) this.equipment.toArray()[index];
     }
 
+    @Override
     public String toString(){
 
         String retString = super.toString()+
-                "\n   M="+movement
+                "\n    M="+movement
                 + " WS="+weaponSkill
                 + " BS="+ballisticSkill
                 + " S="+strength
@@ -283,12 +283,26 @@ public class Unit extends CoreCase{
         if(equipment.size()>0){
             Iterator<Equipment> iterator = equipment.iterator();
             while(iterator.hasNext()){
-                retString += "\n  *"+iterator.next().toString();
+                retString += "\n     "+iterator.next().toString();
             }
         }
 
         return retString;
 
+    }
+
+    /**
+     * @return the utilityUnit
+     */
+    public Set<UtilityUnit> getUtilityUnit() {
+        return utilityUnit;
+    }
+
+    /**
+     * @param utilityUnit the utilityUnit to set
+     */
+    public void setUtilityUnit(Set<UtilityUnit> utilityUnit) {
+        this.utilityUnit = utilityUnit;
     }
 
 }
