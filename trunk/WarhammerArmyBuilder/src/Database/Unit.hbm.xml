@@ -2,6 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <joined-subclass extends="Warhammer.CoreCase" name="Warhammer.Unit" table="UNIT">
+
     <key column="ID"/>
     <property column="ARMYTYPE" name="armyType"/>
     <property column="ATTACK" name="attack"/>
@@ -14,13 +15,13 @@
     <property column="UNITTYPE" name="unitType"/>
     <property column="WEAPONSKILL" name="weaponSkill"/>
     <property column="WOUNDS" name="wounds"/>
-    <set lazy="false" name="equipment" table="UNITEQUIPMENT">
+    <set lazy="false" name="equipment" table="UNIT_EQUIPMENT">
       <key column="ID"/>
       <many-to-many class="Warhammer.Equipment" column="EQUIPMENTID"/>
     </set>
-<!--    <set lazy="false" name="utilityUnit" table="UNITUTILITY">
+    <set lazy="false" name="utilityUnit" table="UNIT_UTILITY">
         <key column="ID"/>
-        <one-to-many column="ID" class="Warhammer.CrewMount"/>
-    </set>-->
+        <many-to-many column="UTILID" class="Warhammer.UtilityUnit"/>
+    </set>
   </joined-subclass>
 </hibernate-mapping>

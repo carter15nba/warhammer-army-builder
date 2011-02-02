@@ -2,7 +2,6 @@
 insert into CASES(CASEID,ARMYPOINTS,OPPONENTRACE,OUTCOME,PLAYERRACE)
  values(1,2500,'Skaven','Defeat','The Empire');
 ---Units
-----ArchLector
 insert into UNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE)
  values(1,'Arch Lector of Sigmar',1,125,'4','4','3','4','4','3','4','2','9','In','Lord');
 insert into UNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE)
@@ -27,13 +26,18 @@ insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(6,'Item',10,'Opal Amulet');
 ---Assign equipment to Unit
-insert into UNITEQUIPMENT values(1,1);
-insert into UNITEQUIPMENT values(1,2);
-insert into UNITEQUIPMENT values(1,3);
-insert into UNITEQUIPMENT values(2,4);
-insert into UNITEQUIPMENT values(2,5);
-insert into UNITEQUIPMENT values(2,6);
+insert into UNIT_EQUIPMENT values(1,1);
+insert into UNIT_EQUIPMENT values(1,2);
+insert into UNIT_EQUIPMENT values(1,3);
+insert into UNIT_EQUIPMENT values(2,4);
+insert into UNIT_EQUIPMENT values(2,5);
+insert into UNIT_EQUIPMENT values(2,6);
+--UtilityUnits
+insert into UTILITYUNIT(ID,NAME,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE)
+ values(1,'Warhorse',1,25,'5','3','3','3','2','3','4','-');
+--Assign utilityunit to unit
+insert into UNIT_UTILITY(2,1);
 ---Assign unit to case
-insert into CASEUNITS values(1,1);
-insert into CASEUNITS values(1,2);
+insert into CASE_UNITS values(1,1);
+insert into CASE_UNITS values(1,2);
 

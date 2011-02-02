@@ -1,10 +1,11 @@
 
 
-drop table caseunits;
-drop table unitequipment;
-drop table unitcrew;
+drop table case_units;
+drop table unit_equipment;
+drop table unit_utility;
 drop table cases;
-drop table crewmount;
 drop table equipment;
+drop table utilityunit;;
 drop table unit;
+drop table corecase;
 
