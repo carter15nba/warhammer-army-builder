@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten
+ *  Copyright (C) 2011 Glenn Rune Strandbåten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,20 +19,177 @@ package Warhammer;
 
 /**
  *
- * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @author Glenn Rune Strandbåten
  */
-public class UtilityUnit extends Unit_old{
+public class UtilityUnit extends CoreCase{
+    private String movement = "";
+    private String weaponSkill = "";
+    private String ballisticSkill = "";
+    private String strength = "";
+    private String toughness = "";
+    private String wounds = "";
+    private String initiative = "";
+    private String attack = "";
+    private String leadership = "";
+    private String unitType = "";
+
+    public UtilityUnit(){
+        super();
+    }
+
     /**
-     * Method to set the name of the Crew unit. This method overrides the
-     * setName method in the Unit super class.
-     * @param name String the name of the Crew unit.
+     * @return the movement
      */
+    public String getMovement() {
+        return movement;
+    }
+
+    /**
+     * @param movement the movement to set
+     */
+    public void setMovement(String movement) {
+        this.movement = movement;
+    }
+
+    /**
+     * @return the weaponSkill
+     */
+    public String getWeaponSkill() {
+        return weaponSkill;
+    }
+
+    /**
+     * @param weaponSkill the weaponSkill to set
+     */
+    public void setWeaponSkill(String weaponSkill) {
+        this.weaponSkill = weaponSkill;
+    }
+
+    /**
+     * @return the ballisticSkill
+     */
+    public String getBallisticSkill() {
+        return ballisticSkill;
+    }
+
+    /**
+     * @param ballisticSkill the ballisticSkill to set
+     */
+    public void setBallisticSkill(String ballisticSkill) {
+        this.ballisticSkill = ballisticSkill;
+    }
+
+    /**
+     * @return the strength
+     */
+    public String getStrength() {
+        return strength;
+    }
+
+    /**
+     * @param strength the strength to set
+     */
+    public void setStrength(String strength) {
+        this.strength = strength;
+    }
+
+    /**
+     * @return the toughness
+     */
+    public String getToughness() {
+        return toughness;
+    }
+
+    /**
+     * @param toughness the toughness to set
+     */
+    public void setToughness(String toughness) {
+        this.toughness = toughness;
+    }
+
+    /**
+     * @return the wounds
+     */
+    public String getWounds() {
+        return wounds;
+    }
+
+    /**
+     * @param wounds the wounds to set
+     */
+    public void setWounds(String wounds) {
+        this.wounds = wounds;
+    }
+
+    /**
+     * @return the initiative
+     */
+    public String getInitiative() {
+        return initiative;
+    }
+
+    /**
+     * @param initiative the initiative to set
+     */
+    public void setInitiative(String initiative) {
+        this.initiative = initiative;
+    }
+
+    /**
+     * @return the attack
+     */
+    public String getAttack() {
+        return attack;
+    }
+
+    /**
+     * @param attack the attack to set
+     */
+    public void setAttack(String attack) {
+        this.attack = attack;
+    }
+
+    /**
+     * @return the leadership
+     */
+    public String getLeadership() {
+        return leadership;
+    }
+
+    /**
+     * @param leadership the leadership to set
+     */
+    public void setLeadership(String leadership) {
+        this.leadership = leadership;
+    }
+
+    /**
+     * @return the unitType
+     */
+    public String getUnitType() {
+        return unitType;
+    }
+
+    /**
+     * @param unitType the unitType to set
+     */
+    public void setUnitType(String unitType) {
+        this.unitType = unitType;
+    }
+
     @Override
-    public void setName(String name){
-        if(name.startsWith("-"))
-            super.setName(name);
-        else
-            super.setName("-"+name);
+    public String toString(){
+
+        return "    "+super.toString()+
+                "\n        M="+movement
+                + " WS="+weaponSkill
+                + " BS="+ballisticSkill
+                + " S="+strength
+                + " T="+toughness
+                + " I="+initiative
+                + " W="+wounds
+                + " A="+attack
+                + " Ld="+leadership
+                + " UnitType="+unitType;
     }
 }

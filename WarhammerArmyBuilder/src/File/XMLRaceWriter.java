@@ -153,9 +153,9 @@ public class XMLRaceWriter{
      */
     private void writeUtilityUnits(XMLStreamWriter xtw, ArmyUnit unit)
             throws XMLStreamException{
-                ArrayList<UtilityUnit> utilityUnits = unit.getUtilityUnits();
+                ArrayList<UtilityUnit_old> utilityUnits = unit.getUtilityUnits();
         if(utilityUnits!=null){
-            for(UtilityUnit utilityUnit : utilityUnits){
+            for(UtilityUnit_old utilityUnit : utilityUnits){
                 xtw.writeCharacters("\n"+TAB+TAB);
                 xtw.writeStartElement(XML.UTILITY_UNIT);
                 xtw.writeCharacters("\n"+TAB+TAB+TAB);

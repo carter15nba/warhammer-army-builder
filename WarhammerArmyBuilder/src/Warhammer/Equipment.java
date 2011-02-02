@@ -17,13 +17,20 @@
 
 package Warhammer;
 
+import javax.persistence.DiscriminatorValue;
+import jcolibri.cbrcore.Attribute;
+import org.hibernate.annotations.Entity;
+
 /**
  *
  * @author Glenn Rune Strandbåten
  * @version 0.1
  */
-public class Equipment extends CoreCase{
-    
+public class Equipment implements jcolibri.cbrcore.CaseComponent{
+
+    private int equipmentID;
+    private int cost;
+    private String name;
     private String equipmentType;
 
     /**
@@ -39,5 +46,56 @@ public class Equipment extends CoreCase{
      */
     public void setEquipmentType(String equipmentType) {
         this.equipmentType = equipmentType;
+    }
+
+    public Attribute getIdAttribute() {
+        return new Attribute("equipmentID", this.getClass());
+    }
+
+    /**
+     * @return the equpimentID
+     */
+    public int getEquipmentID() {
+        return equipmentID;
+    }
+
+    /**
+     * @param equpimentID the equpimentID to set
+     */
+    public void setEquipmentID(int equpimentID) {
+        this.equipmentID = equpimentID;
+    }
+
+    /**
+     * @return the cost
+     */
+    public int getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString(){
+        return "*Name: "+name+", type: "+equipmentType+", cost: "+cost;
     }
 }

@@ -335,7 +335,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             for(Warhammer.ArmyUnit unit : units){
                 tableModel.addRow(unit.getTableObject());
                 if(unit.getUtilityUnits()!=null)
-                    for(Warhammer.UtilityUnit crew : unit.getUtilityUnits()){
+                    for(Warhammer.UtilityUnit_old crew : unit.getUtilityUnits()){
                         tableModel.addRow(crew.getTableObject());
                     }
             }
@@ -364,7 +364,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         for(int i = 0 ; i < rows ; i++){
             String unitName = (String) tableModel.getValueAt(i, 0);
             if(unitName.startsWith("-")){
-                Warhammer.UtilityUnit utilUnit = new Warhammer.UtilityUnit();
+                Warhammer.UtilityUnit_old utilUnit = new Warhammer.UtilityUnit_old();
                 utilUnit.setName(unitName);
                 createUtilityUnit(utilUnit, tableModel, i);
                 unit.addCrew(utilUnit);
@@ -389,7 +389,7 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             unit.setCharacteristics(attributes[i], value);
         }
     }
-    private void createUtilityUnit(Warhammer.UtilityUnit unit,
+    private void createUtilityUnit(Warhammer.UtilityUnit_old unit,
             javax.swing.table.DefaultTableModel tableModel,
             int row){
         unit.setName((String) tableModel.getValueAt(row, 0));

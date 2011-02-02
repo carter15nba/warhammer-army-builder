@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * @version 0.2
  */
 public class ArmyUnit extends Unit_old{
-    private ArrayList<UtilityUnit> utilityUnits;
+    private ArrayList<UtilityUnit_old> utilityUnits;
 
     /**
      * Constructor to create a new ArmyUnit object and initialization of the
@@ -40,7 +40,7 @@ public class ArmyUnit extends Unit_old{
      * Method to aquire the utilitUnit objects associated with this unit.
      * @return null if there is no crews associated with this unit, otherwise the ArrayList<UtilityUnit> containg the associated utilityUnits.
      */
-    public ArrayList<UtilityUnit> getUtilityUnits(){
+    public ArrayList<UtilityUnit_old> getUtilityUnits(){
         return utilityUnits;
     }
 
@@ -49,9 +49,9 @@ public class ArmyUnit extends Unit_old{
      * Method that associates a new utilityUnit with this unit.
      * @param crew the UtilityUnit to associate with this unit.
      */
-    public void addCrew(UtilityUnit utilityUnit){
+    public void addCrew(UtilityUnit_old utilityUnit){
         if(utilityUnits==null)
-            utilityUnits = new ArrayList<UtilityUnit>();
+            utilityUnits = new ArrayList<UtilityUnit_old>();
         utilityUnits.add(utilityUnit);
     }
     
@@ -59,7 +59,7 @@ public class ArmyUnit extends Unit_old{
     public String toString(){
         String toString = super.toString();
         if(utilityUnits!=null)
-            for(UtilityUnit utilityUnit : utilityUnits){
+            for(UtilityUnit_old utilityUnit : utilityUnits){
                 toString += "\n\t"+utilityUnit.toString();
             }
         return toString;
