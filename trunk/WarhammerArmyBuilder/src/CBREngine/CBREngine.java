@@ -17,25 +17,12 @@
 
 package CBREngine;
 
-import Warhammer.Unit;
-import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import jcolibri.cbrcore.Attribute;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
-import jcolibri.connector.DataBaseConnector;
 import jcolibri.exception.ExecutionException;
-import jcolibri.exception.InitializingException;
-import jcolibri.util.FileIO;
-import jcolibri.casebase.LinealCaseBase;
-import jcolibri.cbrcore.CaseComponent;
 import jcolibri.cbrcore.Connector;
 
 /**
@@ -89,8 +76,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args) throws SQLException, InitializingException, IOException, ClassNotFoundException{
+    public static void main(String[] args) throws SQLException{
         Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
+//        dbm.connectWithoutHibernate();
 //        dbm.connectWithoutHibernate();
 //        ResultSet res = dbm.executeSQL("select * from unit");
 //
@@ -99,51 +87,11 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //        }
 //        dbm.disconnectNoHibernate();
         Connector con = dbm.connect();
-//        CBRCase cbr = new CBRCase();
-//        Warhammer.UnitCase uc = new UnitCase();
-//        uc.setName("Bretonnian Lord");
-//        uc.setArmyType("Lord");
-//        uc.setAttack("4");
-//        uc.setBallisticSkill("3");
-//        uc.setUnitType("In");
-//
-//        cbr.setDescription(uc);
-        
-//        List<CBRCase> list = new ArrayList<CBRCase>();
-//
-//        list.add(cbr);
-//        Collection<CBRCase> col = list;
-//        con.storeCases(col);
-
-          Collection<CBRCase> col = con.retrieveAllCases();
-          for (CBRCase cBRCase : col) {
-              Warhammer.Case c = (Warhammer.Case)cBRCase.getDescription();
-              System.out.println("-----------");
-              System.out.println("CaseID: "+c.getCaseID()+", race: "+c.getPlayerRace());
-              System.out.println("Points: "+c.getArmyPoints()+",  opponent race: "+c.getOpponentRace());
-              System.out.println("Outcome: "+c.getOutcome());
-            Set<Unit> units = c.getUnits();
-            Iterator<Unit> iterator = units.iterator();
-            while(iterator.hasNext()){
-                Warhammer.Unit u = iterator.next();
-                System.out.println("  "+u.toString());
-            }
+        Collection<CBRCase> col = con.retrieveAllCases();
+        for (CBRCase cBRCase : col) {
+          Warhammer.Case c = (Warhammer.Case)cBRCase.getDescription();
+          System.out.println(c.toString());
         }
-
-
-//
-////          con.close();
-////        dbm.disconnect();
-//        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-//        DataBaseConnector connector  = new DataBaseConnector();
-//        connector.initFromXMLfile(FileIO.findFile("Database/databaseconfig.xml"));
-//        CBRCaseBase cb = new LinealCaseBase();
-//        cb.init(connector);
-//        java.util.Collection<CBRCase> cases = cb.getCases();
-//        for(CBRCase c: cases)
-//            System.out.println(c);
-       // Collection<CBRCase> col = connector.retrieveAllCases();
-        //connector.
-          System.exit(0);
+        System.exit(0);
     }
 }

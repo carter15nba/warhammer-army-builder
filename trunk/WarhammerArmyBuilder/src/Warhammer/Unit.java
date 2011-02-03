@@ -26,6 +26,8 @@ import java.util.Set;
  * @author Glenn Rune Strandbåten
  */
 public class Unit extends CoreCase{
+    public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
+    public enum armyType {Hero, Lord, Special, Rare, Core};
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -35,8 +37,8 @@ public class Unit extends CoreCase{
     private String initiative = "";
     private String attack = "";
     private String leadership = "";
-    private String unitType = "";
-    private String armyType = "";
+    private unitType unitType;
+    private armyType armyType;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     
@@ -182,7 +184,7 @@ public class Unit extends CoreCase{
      *   <li>"WM" (War Machines)</li>
      * </ul>
      */
-    public String getUnitType() {
+    public unitType getUnitType() {
         return unitType;
     }
 
@@ -205,7 +207,7 @@ public class Unit extends CoreCase{
      * </ul>
      * @param unitType the unitType to set
      */
-    public void setUnitType(String unitType) {
+    public void setUnitType(unitType unitType) {
         this.unitType = unitType;
     }
 
@@ -222,7 +224,7 @@ public class Unit extends CoreCase{
      *   <li>Lords</li>
      * </ul>
      */
-    public String getArmyType() {
+    public armyType getArmyType() {
         return armyType;
     }
 
@@ -239,7 +241,7 @@ public class Unit extends CoreCase{
      * </ul>
      * @param armyType the armyType to set
      */
-    public void setArmyType(String armyType) {
+    public void setArmyType(armyType armyType) {
         this.armyType = armyType;
     }
     
@@ -260,6 +262,12 @@ public class Unit extends CoreCase{
                 + " ArmyType="+armyType;
         if(getEquipment().size()>0){
             Iterator<Equipment> iterator = getEquipment().iterator();
+            while(iterator.hasNext()){
+                retString += "\n     "+iterator.next().toString();
+            }
+        }
+        if(getUtilityUnit().size()>0){
+            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
             while(iterator.hasNext()){
                 retString += "\n     "+iterator.next().toString();
             }

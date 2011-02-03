@@ -17,6 +17,7 @@
 
 package Warhammer;
 
+import java.util.Iterator;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
@@ -28,7 +29,6 @@ import jcolibri.cbrcore.Attribute;
 public class Case implements jcolibri.cbrcore.CaseComponent{
 
     private Set<Unit> units;
-    private Set<Integer> count;
     private int armyPoints;
     private int caseID;
     private String playerRace;
@@ -47,20 +47,6 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
      */
     public void setUnits(Set<Unit> units) {
         this.units = units;
-    }
-
-    /**
-     * @return the count
-     */
-    public Set<Integer> getCount() {
-        return count;
-    }
-
-    /**
-     * @param count the count to set
-     */
-    public void setCount(Set<Integer> count) {
-        this.count = count;
     }
 
     /**
@@ -135,6 +121,22 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
      */
     public void setCaseID(int caseID) {
         this.caseID = caseID;
+    }
+
+    @Override
+    public String toString(){
+        String retString = "-----------\n"
+                + "CaseID: "+getCaseID()+", race: "+getPlayerRace()+"\n"
+                + "Points: "+getArmyPoints()+",  opponent race: "+getOpponentRace()+"\n"
+                + "Outcome: "+getOutcome();
+        if(units.size()>0){
+            Iterator<Unit> iterator = units.iterator();
+            while(iterator.hasNext()){
+                Warhammer.Unit u = iterator.next();
+                retString+="\n  "+u.toString();
+            }
+        }
+        return retString;
     }
 
 }
