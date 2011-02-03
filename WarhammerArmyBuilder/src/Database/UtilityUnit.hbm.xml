@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <joined-subclass extends="Warhammer.CoreCase" name="Warhammer.UtilityUnit" table="UTILITYUNIT">
-    <key column="ID"/>
+  <class name="Warhammer.UtilityUnit" table="UTILITYUNIT">
+    <id name="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <property column="NAME" name="name"/>
+    <property column="COST" name="cost"/>
+    <property column="NUMBER" name="number"/>
     <property column="ATTACK" name="attack"/>
     <property column="BALLISTICSKILL" name="ballisticSkill"/>
     <property column="INITIATIVE" name="initiative"/>
@@ -10,8 +15,12 @@
     <property column="MOVEMENT" name="movement"/>
     <property column="STRENGTH" name="strength"/>
     <property column="TOUGHNESS" name="toughness"/>
-    <property column="UNITTYPE" name="unitType"/>
+    <property column="UNITTYPE" name="unitType">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">Warhammer.UtilityUnit$unitType</param>
+      </type>
+    </property>
     <property column="WEAPONSKILL" name="weaponSkill"/>
     <property column="WOUNDS" name="wounds"/>
-  </joined-subclass>
+  </class>
 </hibernate-mapping>

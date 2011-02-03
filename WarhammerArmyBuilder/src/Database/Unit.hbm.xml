@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <joined-subclass extends="Warhammer.CoreCase" name="Warhammer.Unit" table="UNIT">
-
-    <key column="ID"/>
-    <property column="ARMYTYPE" name="armyType"/>
+  <class name="Warhammer.Unit" table="UNIT">
+    <id name="ID" type="integer">
+        <generator class="increment"/>
+    </id>
+    <property column="NAME" name="name"/>
+    <property column="COST" name="cost"/>
+    <property column="NUMBER" name="number"/>
+    <property column="ARMYTYPE" name="armyType">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">Warhammer.Unit$armyType</param>
+      </type>
+    </property>
     <property column="ATTACK" name="attack"/>
     <property column="BALLISTICSKILL" name="ballisticSkill"/>
     <property column="INITIATIVE" name="initiative"/>
@@ -12,7 +20,11 @@
     <property column="MOVEMENT" name="movement"/>
     <property column="STRENGTH" name="strength"/>
     <property column="TOUGHNESS" name="toughness"/>
-    <property column="UNITTYPE" name="unitType"/>
+    <property column="UNITTYPE" name="unitType">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+       <param name="enumClassName">Warhammer.Unit$unitType</param>
+      </type>
+    </property>
     <property column="WEAPONSKILL" name="weaponSkill"/>
     <property column="WOUNDS" name="wounds"/>
     <set lazy="false" name="equipment" table="UNIT_EQUIPMENT">
@@ -20,8 +32,8 @@
       <many-to-many class="Warhammer.Equipment" column="EQUIPMENTID"/>
     </set>
     <set lazy="false" name="utilityUnit" table="UNIT_UTILITY">
-        <key column="ID"/>
-        <many-to-many column="UTILID" class="Warhammer.UtilityUnit"/>
+      <key column="ID"/>
+      <many-to-many column="UTILID" class="Warhammer.UtilityUnit"/>
     </set>
-  </joined-subclass>
+  </class>
 </hibernate-mapping>

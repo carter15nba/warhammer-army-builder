@@ -7,5 +7,4 @@ drop table cases;
 drop table equipment;
 drop table utilityunit;;
 drop table unit;
-drop table corecase;
 

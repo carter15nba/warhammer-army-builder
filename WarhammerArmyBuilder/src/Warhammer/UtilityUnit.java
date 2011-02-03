@@ -22,6 +22,7 @@ package Warhammer;
  * @author Glenn Rune Strandbåten
  */
 public class UtilityUnit extends CoreCase{
+    public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM ,_na,};
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -31,11 +32,11 @@ public class UtilityUnit extends CoreCase{
     private String initiative = "";
     private String attack = "";
     private String leadership = "";
-    private String unitType = "";
+    private unitType unitType;
 
-    public UtilityUnit(){
-        super();
-    }
+//    public UtilityUnit(){
+//        super();
+//    }
 
     /**
      * @return the movement
@@ -166,22 +167,22 @@ public class UtilityUnit extends CoreCase{
     /**
      * @return the unitType
      */
-    public String getUnitType() {
+    public unitType getUnitType() {
         return unitType;
     }
 
     /**
      * @param unitType the unitType to set
      */
-    public void setUnitType(String unitType) {
+    public void setUnitType(unitType unitType) {
         this.unitType = unitType;
     }
 
     @Override
     public String toString(){
 
-        return "    "+super.toString()+
-                "\n        M="+movement
+        return "-Name: "+getName()+", cost: "+getCost()+
+                "\n       M="+movement
                 + " WS="+weaponSkill
                 + " BS="+ballisticSkill
                 + " S="+strength

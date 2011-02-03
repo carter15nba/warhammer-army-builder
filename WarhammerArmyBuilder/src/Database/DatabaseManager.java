@@ -69,8 +69,10 @@ public class DatabaseManager {
     }
 
     /**
-     *
-     * @return null if
+     * Method to connect to the database using the configuration settings
+     * found in the Database/databaseconfig.xml file.
+     * @return null if the connection could not be established, the
+     * jcolibri.cbrcore.connector object if connection were established.
      */
     public Connector connect(){
         try {
@@ -84,12 +86,18 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * Method to aquire the jcolibri.cbrcore.connector object.
+     * @return Return null if the connection not is established, the
+     * jcolibri.cbrcore.connector object if connection were established.
+     */
     public Connector getConnector(){
         return casebaseConnector;
     }
 
     /**
-     * Method to shutdown the database connection and the derby engine.
+     * Method to shutdown the database connector established with the xml
+     * file.
      */
     public void disconnect(){
         casebaseConnector.close();
@@ -106,6 +114,11 @@ public class DatabaseManager {
         casebaseConnector.storeCases(cases);
     }
 
+    /**
+     * This method connects to the database without using the hibernate
+     * configuration file. This allows the program to post SQL queries to
+     * the database through this connection.
+     */
     public void connectWithoutHibernate(){
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
@@ -130,6 +143,11 @@ public class DatabaseManager {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
         }
     }
+
+    /**
+     * This method disconnects the no hibernate connection establieshed with the
+     * connectNoHibernate() method.
+     */
     public void disconnectNoHibernate(){
         try{
             if(connection==null)
@@ -146,6 +164,14 @@ public class DatabaseManager {
             }
          }
      }
+
+    /**
+     * This method is used to post SQL queries to the database using the
+     * underlying no hibernate connection.
+     * @param sql The string sql statement.
+     * @return Null if a invalid sql were passed, or a ResultSet containing
+     * the results of the query.
+     */
     public ResultSet executeSQL(String sql){
         try {
             Statement statement = connection.createStatement();
