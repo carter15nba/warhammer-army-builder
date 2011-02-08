@@ -28,11 +28,13 @@ import jcolibri.cbrcore.Attribute;
  */
 public class Case implements jcolibri.cbrcore.CaseComponent{
 
+    public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
+
     private Set<Unit> units;
     private int armyPoints;
     private int caseID;
-    private String playerRace;
-    private String opponentRace;
+    private Races playerRace;
+    private Races opponentRace;
     private String outcome;
 
     /**
@@ -66,28 +68,28 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the playerRace
      */
-    public String getPlayerRace() {
+    public Races getPlayerRace() {
         return playerRace;
     }
 
     /**
      * @param playerRace the playerRace to set
      */
-    public void setPlayerRace(String playerRace) {
+    public void setPlayerRace(Races playerRace) {
         this.playerRace = playerRace;
     }
 
     /**
      * @return the opponentRace
      */
-    public String getOpponentRace() {
+    public Races getOpponentRace() {
         return opponentRace;
     }
 
     /**
      * @param opponentRace the opponentRace to set
      */
-    public void setOpponentRace(String opponentRace) {
+    public void setOpponentRace(Races opponentRace) {
         this.opponentRace = opponentRace;
     }
 
@@ -125,7 +127,7 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
 
     @Override
     public String toString(){
-        String retString = "-----------\n"
+        String retString = "\n-----------\n"
                 + "CaseID: "+getCaseID()+", race: "+getPlayerRace()+"\n"
                 + "Points: "+getArmyPoints()+",  opponent race: "+getOpponentRace()+"\n"
                 + "Outcome: "+getOutcome();
