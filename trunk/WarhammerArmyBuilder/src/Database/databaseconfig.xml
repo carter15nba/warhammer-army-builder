@@ -12,6 +12,6 @@
 	<HibernateConfigFile>Database/hibernate.cfg.xml</HibernateConfigFile>
 	<DescriptionMappingFile>Database/Case.hbm.xml</DescriptionMappingFile>
 	<DescriptionClassName>Warhammer.Case</DescriptionClassName>
-	<!--<SolutionMappingFile>Database/CoreCase.hbm.xml</SolutionMappingFile>
-	<SolutionClassName>Warhammer.UnitCase</SolutionClassName>-->       
+	<SolutionMappingFile>Database/Case.hbm.xml</SolutionMappingFile>
+	<SolutionClassName>Warhammer.Case</SolutionClassName>
 </DataBaseConfiguration>

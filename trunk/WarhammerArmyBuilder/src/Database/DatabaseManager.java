@@ -45,6 +45,9 @@ public class DatabaseManager {
     private String HIBERNATE_INIT_FILE = "Database/databaseconfig.xml";
     private Connection connection = null;
     private Connector casebaseConnector = null;
+    public static final int UPDATE_QUERY = 100;
+    public static final int SELECT_QUERY = 200;
+    public static final int TABLE_QUERY = 300;
 
     /**
      * Singleton class with private constructor. Use
@@ -121,6 +124,9 @@ public class DatabaseManager {
      */
     public void connectWithoutHibernate(){
         try {
+            if(connection!=null)
+                if(!connection.isClosed())
+                    return;
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
             Properties props = new Properties();
             props.put("user","gamer");
@@ -148,11 +154,12 @@ public class DatabaseManager {
      * This method disconnects the no hibernate connection establieshed with the
      * connectNoHibernate() method.
      */
-    public void disconnectNoHibernate(){
+    public void disconnectNoHibernate(boolean shutdownDerby){
         try{
-            if(connection==null)
-                return;
-            DriverManager.getConnection("jdbc:derby:;shutdown=true");
+            if(connection!=null)
+                connection.close();
+            if(shutdownDerby)
+                DriverManager.getConnection("jdbc:derby:;shutdown=true");
         }
         catch(SQLException sqle){
             if((sqle.getErrorCode() == 50000)&&
@@ -172,10 +179,24 @@ public class DatabaseManager {
      * @return Null if a invalid sql were passed, or a ResultSet containing
      * the results of the query.
      */
-    public ResultSet executeSQL(String sql){
+    public ResultSet executeSQL(String sql,int statementType){
         try {
             Statement statement = connection.createStatement();
-            return statement.executeQuery(sql);
+            switch(statementType){
+                case SELECT_QUERY:
+                    return statement.executeQuery(sql);
+                case TABLE_QUERY:
+                    boolean ret = statement.execute(sql);
+                    System.out.println("ret: " +ret);
+                    return null;
+                case UPDATE_QUERY:
+                    int retVal = statement.executeUpdate(sql);
+                    System.out.println("ret: " +retVal);
+                    return null;
+                default:
+                    return null;
+            }
+            
         }
         catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);

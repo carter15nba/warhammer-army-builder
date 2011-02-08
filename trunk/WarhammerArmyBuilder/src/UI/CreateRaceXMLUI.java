@@ -245,7 +245,6 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
         }
     }
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt){
-        //TODO: Save check
         System.exit(0);
     }
     private void addUnitButtonActionPerformed(java.awt.event.ActionEvent evt){
@@ -284,7 +283,6 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             tableModel.removeRow(rows[i]);
     }
     private void formWindowClosing(java.awt.event.WindowEvent evt){
-        //TODO: Save check
         System.exit(0);
     }
     private void setupTableColumnWidth()
@@ -434,21 +432,4 @@ public class CreateRaceXMLUI extends javax.swing.JFrame{
             }
         });
     }
-
-//	public static void main(String[] args){
-//           //TODO: Move main method to appropriate location.
-////		Bretonnia b = new Bretonnia(Race.RACE_BRETONNIA);
-////		b.createArmy();
-////		System.out.println(b.toString());
-//                File.XMLRaceParser t = new File.XMLRaceParser();
-//                Race r = t.parseDocument(new java.io.File("Resources/XML/Bretonnia.xml"));
-//                System.out.println(r.toString());
-//
-////                File.XMLRaceWriter w = new File.XMLRaceWriter();
-////                w.createDocument(r, "Glenn Rune Strandbråten");
-////                try{
-////                    w.createDocument();
-////                }
-////                catch(Exception e){}
-//	}
 }
