@@ -47,8 +47,8 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
         double v1 = i1.doubleValue();
         double v2 = i2.doubleValue();
 
-        if(v1==-1.0)
-            return 0.75;
+        if(v1==-1)
+            return 1 - ((double) Math.abs(v2) / interval);
 
         return 1 - ((double) Math.abs(v1 - v2) / interval);
     }

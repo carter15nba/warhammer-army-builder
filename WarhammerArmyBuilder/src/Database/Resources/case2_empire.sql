@@ -21,11 +21,11 @@ insert into UNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGT
 
 ---Equipment
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
- values(21,'One unit upgrade',25,'Battle standard bearer');
+ values(22,'One unit upgrade',25,'Battle standard bearer');
  
 
 ---Assign equipment to Unit
-insert into UNIT_EQUIPMENT values(19,21);
+insert into UNIT_EQUIPMENT values(19,22);
 
 --UtilityUnits
 insert into UTILITYUNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE)

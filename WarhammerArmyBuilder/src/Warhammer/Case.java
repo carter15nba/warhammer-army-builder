@@ -131,14 +131,22 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
                 + "CaseID: "+getCaseID()+", race: "+getPlayerRace()+"\n"
                 + "Points: "+getArmyPoints()+",  opponent race: "+getOpponentRace()+"\n"
                 + "Outcome: "+getOutcome();
-        if(units.size()>0){
-            Iterator<Unit> iterator = units.iterator();
-            while(iterator.hasNext()){
-                Warhammer.Unit u = iterator.next();
-                retString+="\n  "+u.toString();
-            }
+        if(units!=null)
+            if(units.size()>0){
+                Iterator<Unit> iterator = units.iterator();
+                while(iterator.hasNext()){
+                    Warhammer.Unit u = iterator.next();
+                    retString+="\n  "+u.toString();
+                }
         }
         return retString;
+    }
+    public int calculateCaseCost(){
+        int totalCost=0;
+        for (Unit unit : units) {
+            totalCost+=unit.calculateTotalUnitCost();
+        }
+        return totalCost;
     }
 
 }

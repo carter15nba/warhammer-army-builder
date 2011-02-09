@@ -36,7 +36,7 @@ insert into UNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGT
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(1,'Mace',60, 'The Mace Of Helsturm');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
- values(2,'Armour',20,'Armour of Fortune');
+ values(2,'Armour',25,'Armour of Fortune');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(3,'Potion',15,'Potion of Speed');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
@@ -58,9 +58,9 @@ insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(12,'Ranged weapon',10,'Repeater Pistol');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
- values(13,'One unit upgrade',10,'Sergeant');
+ values(13,'One unit upgrade',8,'Sergeant');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
- values(14,'One unit upgrade',10,'Battle standard bearer');
+ values(14,'One unit upgrade',8,'Battle standard bearer');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(15,'One unit upgrade',4,'Musician');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
@@ -73,6 +73,14 @@ insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(19,'One unit upgrade',12,'Battle standard bearer');
 insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
  values(20,'One unit upgrade',6,'Musician');
+insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
+ values(21,'Armour',20,'Shields');
+insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
+ values(23,'One unit upgrade',10,'Counts champion');
+insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
+ values(24,'One unit upgrade',10,'Battle standard bearer');
+insert into EQUIPMENT(EQUIPMENTID,TYPE,COST,NAME)
+ values(25,'One unit upgrade',5,'Musician');
 ---Assign equipment to Unit
 insert into UNIT_EQUIPMENT values(1,1);
 insert into UNIT_EQUIPMENT values(1,2);
@@ -92,14 +100,15 @@ insert into UNIT_EQUIPMENT values(6,15);
 insert into UNIT_EQUIPMENT values(7,13);
 insert into UNIT_EQUIPMENT values(7,14);
 insert into UNIT_EQUIPMENT values(7,15);
-insert into UNIT_EQUIPMENT values(8,13);
-insert into UNIT_EQUIPMENT values(8,14);
-insert into UNIT_EQUIPMENT values(8,15);
+insert into UNIT_EQUIPMENT values(8,23);
+insert into UNIT_EQUIPMENT values(8,24);
+insert into UNIT_EQUIPMENT values(8,25);
 insert into UNIT_EQUIPMENT values(10,16);
 insert into UNIT_EQUIPMENT values(10,17);
 insert into UNIT_EQUIPMENT values(11,18);
 insert into UNIT_EQUIPMENT values(11,19);
 insert into UNIT_EQUIPMENT values(11,20);
+insert into UNIT_EQUIPMENT values(7,21);
 --UtilityUnits
 insert into UTILITYUNIT(ID,NAME,NUMBER,COST,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE)
  values(1,'Barded steed',1,21,'5','3','3','3','2','3','4','4','3','_na');
