@@ -18,7 +18,6 @@
 package CBREngine;
 
 import Database.DatabaseManager;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
@@ -29,12 +28,9 @@ import jcolibri.exception.ExecutionException;
 import jcolibri.cbrcore.Connector;
 import CBREngine.Resources.*;
 import Warhammer.Case;
-import Warhammer.CoreCase;
-import Warhammer.Race;
 import Warhammer.Unit;
-import java.util.AbstractSet;
 import java.util.Collection;
-import java.util.Set;
+import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
@@ -77,20 +73,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         return caseBase;
     }
 
-    public void cycle(CBRQuery cbrq) throws ExecutionException {
-
-        NNConfig conf = simSim.getSimilarityConfig();
-        conf.setDescriptionSimFunction(new Average());
-        Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
-        for (RetrievalResult retrievalResult : eval) {
-            System.out.println(retrievalResult.getEval());
-        }
-        Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
-        for (CBRCase cBRCase : selectedcases) {
-            System.out.println(cBRCase.toString());
-
-        }
-//        retrieve();
+    public void cycle(CBRQuery cbrq) throws ExecutionException {        
+        retrieve(cbrq);
 //        reuse();
 //        revise();
 //        retain();
@@ -100,8 +84,23 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void retrieve(){
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void retrieve(CBRQuery cbrq){
+        NNConfig conf = simSim.getSimilarityConfig();
+        conf.setDescriptionSimFunction(new Average());
+        Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
+        System.out.println("Case similarity:");
+        for (RetrievalResult retrievalResult : eval) {
+            Case c = (Case) retrievalResult.get_case().getDescription();
+            System.out.println("Case: "+c.getCaseID()+", "+c.getPlayerRace()+"::"+retrievalResult.getEval());
+        }
+        Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
+        for (CBRCase cBRCase : selectedcases) {
+//            System.out.println(cBRCase.toString());
+            Case ca = (Case) cBRCase.getDescription();
+            System.out.println(ca.toString());
+            System.out.println("\nTOTAL COST: "+ca.calculateCaseCost());
+
+        }
     }
 
     private void reuse(){
@@ -116,7 +115,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoApplicableSimilarityFunctionException {
         try {
             CBREngine cbrEngine = CBREngine.getInstance();
             cbrEngine.configure();
@@ -124,13 +123,46 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
             CBRQuery q = new CBRQuery();
             Case comp = new Case();
-            comp.setArmyPoints(2000);
+            comp.setArmyPoints(1400);
             comp.setPlayerRace(Case.Races.Empire);
-            comp.setOpponentRace(Case.Races.Dark_Elves);
-   
+            comp.setOpponentRace(Case.Races.Wood_Elves);
             q.setDescription(comp);
-
+            System.out.println("***************\n  QUERY: "+comp.toString()+"\n***************");
             cbrEngine.cycle(q);
+
+            System.out.println("\n\n\n***************\n  PREPARING TEST UNIT SIMILARITY...\n***************");
+            Unit u1 = new Unit();
+            u1.setName("Trojan horse");
+            u1.setCost(120);
+            u1.setNumber(2);
+            u1.setArmyType(Unit.armyType.Rare);
+            u1.setUnitType(Unit.unitType.Un);
+
+            Unit u2 = new Unit();
+            u2.setName("Trojan horse");
+            u2.setCost(120);
+            u2.setNumber(1);
+            u2.setArmyType(Unit.armyType.Rare);
+            u2.setUnitType(Unit.unitType.Un);
+
+            Unit u3 = new Unit();
+            u3.setName("Swordsman");
+            u3.setCost(120);
+            u3.setNumber(10);
+            u3.setArmyType(Unit.armyType.Core);
+            u3.setUnitType(Unit.unitType.In);
+
+            UnitSimilarity us = new UnitSimilarity();
+            double c1 = us.compute(u1, u2);
+            double c2 = us.compute(u1, u3);
+            double c3 = us.compute(u2, u3);
+            System.out.println("sim  c1 (2xTrojan horse with 1xTrojan horse): "+c1);
+            System.out.println("sim  c2 (2xTrojan horse with 10xSwordsmen)  : "+c2);
+            System.out.println("sim  c3 (1xTrojan horse with 10xSwordsmen)  : "+c3);
+
+            double d = us.simUnitType(Unit.unitType.In, Unit.unitType.MI);
+            System.out.println(d);
+
 
 
 

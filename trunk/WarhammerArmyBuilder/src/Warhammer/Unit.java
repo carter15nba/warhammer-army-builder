@@ -304,4 +304,16 @@ public class Unit extends CoreCase{
     public void setUtilityUnit(Set<UtilityUnit> utilityUnit) {
         this.utilityUnit = utilityUnit;
     }
+
+    public int calculateTotalUnitCost(){
+        int totalCost = getCost()*getNumber();
+        for (Equipment eq : equipment) {
+            totalCost+=eq.getCost();
+        }
+        for (UtilityUnit uu : utilityUnit) {
+            totalCost+=uu.getCost()*uu.getNumber();
+        }
+        System.out.println("Unit: "+getName()+", cost: "+totalCost);
+        return totalCost;
+    }
 }

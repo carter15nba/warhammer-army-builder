@@ -51,12 +51,12 @@ public class SimpleSimilarityMeasure {
         attr = new Attribute("opponentRace",Warhammer.Case.class);
         func = localSimilarityFactory("Equal", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.25);
+        nnConfig.setWeight(attr, 0.80);
         //Points
         attr = new Attribute("armyPoints",Warhammer.Case.class);
         func = localSimilarityFactory("Interval", 500);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.65);
+        nnConfig.setWeight(attr, 0.75);
         //Units
         attr = new Attribute("units",Warhammer.Case.class);
         func = localSimilarityFactory("Unit", 0);
