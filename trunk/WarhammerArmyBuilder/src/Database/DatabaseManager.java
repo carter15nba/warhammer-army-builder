@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import java.net.URL;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Properties;
@@ -48,6 +49,8 @@ public class DatabaseManager {
     public static final int UPDATE_QUERY = 100;
     public static final int SELECT_QUERY = 200;
     public static final int TABLE_QUERY = 300;
+
+    private PreparedStatement insertUnit;
 
     /**
      * Singleton class with private constructor. Use
@@ -202,5 +205,15 @@ public class DatabaseManager {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    public PreparedStatement prepareStatement(String sql) throws SQLException, NullPointerException{
+        if(connection==null)
+            throw new NullPointerException();
+        return connection.prepareStatement(sql);
+    }
+    public void commit() throws SQLException, NullPointerException{
+        if(connection==null)
+            throw new NullPointerException();
+        connection.commit();
     }
 }

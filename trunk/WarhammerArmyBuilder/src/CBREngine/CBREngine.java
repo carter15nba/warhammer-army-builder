@@ -18,6 +18,7 @@
 package CBREngine;
 
 import Database.DatabaseManager;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
@@ -28,7 +29,9 @@ import jcolibri.exception.ExecutionException;
 import jcolibri.cbrcore.Connector;
 import CBREngine.Resources.*;
 import Warhammer.Case;
+import Warhammer.RuleSet;
 import Warhammer.Unit;
+import java.sql.ResultSet;
 import java.util.Collection;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
@@ -94,12 +97,23 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
             System.out.println("Case: "+c.getCaseID()+", "+c.getPlayerRace()+"::"+retrievalResult.getEval());
         }
         Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
+
+        Warhammer.RuleSet set = new RuleSet();
+        RuleSet.messages l = RuleSet.messages.FAIL;
         for (CBRCase cBRCase : selectedcases) {
 //            System.out.println(cBRCase.toString());
             Case ca = (Case) cBRCase.getDescription();
             System.out.println(ca.toString());
             System.out.println("\nTOTAL COST: "+ca.calculateCaseCost());
+            l = set.isFollowingArmyDispositionRules(ca, 2500);
 
+        }
+        if(l == RuleSet.messages.FAIL){
+            RuleSet.messages[] r = set.getErrorCauses();
+            for (RuleSet.messages object : r) {
+                System.out.println(object);
+            }
+            
         }
     }
 
@@ -115,7 +129,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args) throws NoApplicableSimilarityFunctionException {
+    public static void main(String[] args) throws NoApplicableSimilarityFunctionException, SQLException {
         try {
             CBREngine cbrEngine = CBREngine.getInstance();
             cbrEngine.configure();
@@ -123,45 +137,53 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
             CBRQuery q = new CBRQuery();
             Case comp = new Case();
-            comp.setArmyPoints(1400);
+            comp.setArmyPoints(2500);
             comp.setPlayerRace(Case.Races.Empire);
-            comp.setOpponentRace(Case.Races.Wood_Elves);
+//            comp.setOpponentRace(Case.Races.Wood_Elves);
             q.setDescription(comp);
             System.out.println("***************\n  QUERY: "+comp.toString()+"\n***************");
             cbrEngine.cycle(q);
+//                DatabaseManager dbm = DatabaseManager.getInstance();
+//                dbm.connectWithoutHibernate();
+//                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT", DatabaseManager.SELECT_QUERY);
+//                while(res.next()){
+//                    System.out.println(res.getString("name"));
+//                }
 
-            System.out.println("\n\n\n***************\n  PREPARING TEST UNIT SIMILARITY...\n***************");
-            Unit u1 = new Unit();
-            u1.setName("Trojan horse");
-            u1.setCost(120);
-            u1.setNumber(2);
-            u1.setArmyType(Unit.armyType.Rare);
-            u1.setUnitType(Unit.unitType.Un);
 
-            Unit u2 = new Unit();
-            u2.setName("Trojan horse");
-            u2.setCost(120);
-            u2.setNumber(1);
-            u2.setArmyType(Unit.armyType.Rare);
-            u2.setUnitType(Unit.unitType.Un);
 
-            Unit u3 = new Unit();
-            u3.setName("Swordsman");
-            u3.setCost(120);
-            u3.setNumber(10);
-            u3.setArmyType(Unit.armyType.Core);
-            u3.setUnitType(Unit.unitType.In);
-
-            UnitSimilarity us = new UnitSimilarity();
-            double c1 = us.compute(u1, u2);
-            double c2 = us.compute(u1, u3);
-            double c3 = us.compute(u2, u3);
-            System.out.println("sim  c1 (2xTrojan horse with 1xTrojan horse): "+c1);
-            System.out.println("sim  c2 (2xTrojan horse with 10xSwordsmen)  : "+c2);
-            System.out.println("sim  c3 (1xTrojan horse with 10xSwordsmen)  : "+c3);
-
-            double d = us.simUnitType(Unit.unitType.In, Unit.unitType.MI);
-            System.out.println(d);
+//            System.out.println("\n\n\n***************\n  PREPARING TEST UNIT SIMILARITY...\n***************");
+//            Unit u1 = new Unit();
+//            u1.setName("Trojan horse");
+//            u1.setCost(120);
+//            u1.setNumber(2);
+//            u1.setArmyType(Unit.armyType.Rare);
+//            u1.setUnitType(Unit.unitType.Un);
+//
+//            Unit u2 = new Unit();
+//            u2.setName("Trojan horse");
+//            u2.setCost(120);
+//            u2.setNumber(1);
+//            u2.setArmyType(Unit.armyType.Rare);
+//            u2.setUnitType(Unit.unitType.Un);
+//
+//            Unit u3 = new Unit();
+//            u3.setName("Swordsman");
+//            u3.setCost(120);
+//            u3.setNumber(10);
+//            u3.setArmyType(Unit.armyType.Core);
+//            u3.setUnitType(Unit.unitType.In);
+//
+//            UnitSimilarity us = new UnitSimilarity();
+//            double c1 = us.compute(u1, u2);
+//            double c2 = us.compute(u1, u3);
+//            double c3 = us.compute(u2, u3);
+//            System.out.println("sim  c1 (2xTrojan horse with 1xTrojan horse): "+c1);
+//            System.out.println("sim  c2 (2xTrojan horse with 10xSwordsmen)  : "+c2);
+//            System.out.println("sim  c3 (1xTrojan horse with 10xSwordsmen)  : "+c3);
+//
+//            double d = us.simUnitType(Unit.unitType.In, Unit.unitType.MI);
+//            System.out.println(d);
 
 
 

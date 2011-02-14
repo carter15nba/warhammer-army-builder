@@ -17,6 +17,7 @@
 
 package Warhammer;
 
+import Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,6 +27,21 @@ import java.util.Set;
  * @author Glenn Rune Strandbåten
  */
 public class Unit extends CoreCase{
+
+    /**
+     * @return the race
+     */
+    public Races getRace() {
+        return race;
+    }
+
+    /**
+     * @param race the race to set
+     */
+    public void setRace(Races race) {
+        this.race = race;
+    }
+
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
     public enum armyType {Hero, Lord, Special, Rare, Core};
     private String movement = "";
@@ -41,6 +57,7 @@ public class Unit extends CoreCase{
     private armyType armyType;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
+    private Races race;
     
     /**
      * @return the movement
@@ -313,7 +330,6 @@ public class Unit extends CoreCase{
         for (UtilityUnit uu : utilityUnit) {
             totalCost+=uu.getCost()*uu.getNumber();
         }
-        System.out.println("Unit: "+getName()+", cost: "+totalCost);
         return totalCost;
     }
 }

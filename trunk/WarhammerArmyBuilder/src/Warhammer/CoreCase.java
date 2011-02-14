@@ -30,6 +30,7 @@ public class CoreCase implements jcolibri.cbrcore.CaseComponent{
     private String name;
     private int cost;
     private int number;
+    private int minNumber;
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
@@ -94,6 +95,20 @@ public class CoreCase implements jcolibri.cbrcore.CaseComponent{
      */
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    /**
+     * @return the minNumber
+     */
+    public int getMinNumber() {
+        return minNumber;
+    }
+
+    /**
+     * @param minNumber the minNumber to set
+     */
+    public void setMinNumber(int minNumber) {
+        this.minNumber = minNumber;
     }
 
 }
