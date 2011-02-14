@@ -25,7 +25,10 @@ package UI;
 
 import Warhammer.Unit.armyType;
 import Warhammer.Unit.unitType;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
@@ -37,7 +40,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class createUnitSQLUI extends javax.swing.JFrame {
 
-    private static final String insertUnit = "INSERT INTO UNIT(NAME,COST,MINUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
+    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
     private ArrayList<String> sql;
     /** Creates new form createUnitSQLUI */
     public createUnitSQLUI() {
@@ -138,6 +141,11 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
         jButton3.setText("Execute sql");
         jButton3.setEnabled(false);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Load");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -151,11 +159,9 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 659, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addGap(30, 30, 30)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
@@ -164,8 +170,11 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,8 +187,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                     .addComponent(jButton4)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -237,6 +246,25 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             jButton3.setEnabled(true);
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        try {
+            if (sql.isEmpty()) {
+                parseSQLSFromTable();
+            }
+            Database.DatabaseManager dbm = Database.DatabaseManager.getInstance();
+            for (String string : sql) {
+                dbm.executeSQL(string, Database.DatabaseManager.UPDATE_QUERY);
+            }
+            dbm.commit();
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(createUnitSQLUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (NullPointerException ex) {
+            Logger.getLogger(createUnitSQLUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
     * @param args the command line arguments
@@ -318,7 +346,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         for (String string : result) {
             String[] s = parseQuery(string);
             race = s[1];
-            tm.addRow(new Object[]{s[0],s[2],s[3],s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
+            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
         }
         for (int i = 0; i < jComboBox1.getItemCount() ; i++) {
             Object object = jComboBox1.getItemAt(i);

@@ -7,7 +7,7 @@
     </id>
     <property column="NAME" name="name"/>
     <property column="COST" name="cost"/>
-    <property column="MINUNITS" name="minNUMBER"/>
+    <property column="MINUNITS" name="minNumber"/>
     <property column="ATTACK" name="attack"/>
     <property column="BALLISTICSKILL" name="ballisticSkill"/>
     <property column="INITIATIVE" name="initiative"/>

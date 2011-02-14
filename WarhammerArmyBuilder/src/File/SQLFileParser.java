@@ -83,26 +83,19 @@ public class SQLFileParser {
             int i=0;
             ArrayList<String> statements = new ArrayList<String>();
             String sql="";
-            boolean comment = false;
             while((i=reader.read())!=-1){
-                if(i=='-'){
-                    comment=true;
-                }
                 if((i=='\n')||(i=='\r')){
-                    comment=false;
                     continue;
                 }
-                if(!comment){
-                    if(';'==i){
-                        sql+=" ";
-                        statements.add(sql);
-                        sql="";
-                    }
-                    else{
-                        sql+=(char)i;
-                    }
-                }
+                sql+=(char)i;
             }
+            String[] s = sql.split(";");
+             for (String string : s) {
+                 if(!string.contentEquals("\n")){
+                    statements.add(string);
+                    System.out.println(string);
+                 }
+             }
             return statements;
         }
         catch (IOException ex) {
