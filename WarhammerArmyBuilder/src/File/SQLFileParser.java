@@ -15,9 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package Database;
+package File;
 
+import Database.DatabaseManager;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -75,5 +77,37 @@ public class SQLFileParser {
             dbm.executeSQL(sql,DatabaseManager.UPDATE_QUERY);
         }
     }
-
+    public static ArrayList<String> parseRaceUnitsSQL(java.io.File file){
+         try {
+            FileInputStream reader = new FileInputStream(file);
+            int i=0;
+            ArrayList<String> statements = new ArrayList<String>();
+            String sql="";
+            boolean comment = false;
+            while((i=reader.read())!=-1){
+                if(i=='-'){
+                    comment=true;
+                }
+                if((i=='\n')||(i=='\r')){
+                    comment=false;
+                    continue;
+                }
+                if(!comment){
+                    if(';'==i){
+                        sql+=" ";
+                        statements.add(sql);
+                        sql="";
+                    }
+                    else{
+                        sql+=(char)i;
+                    }
+                }
+            }
+            return statements;
+        }
+        catch (IOException ex) {
+            Logger.getLogger(SQLFileParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 }

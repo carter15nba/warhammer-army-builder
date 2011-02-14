@@ -2,12 +2,17 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="Warhammer.Unit" table="UNIT">
-    <id name="ID" type="integer">
-        <generator class="increment"/>
+    <id name="name" type="string">
+      <!--      <generator class=""/>-->
     </id>
-    <property column="NAME" name="name"/>
+    <!--    <property column="NAME" name="name"/>-->
+    <property column="RACE" name="race">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">Warhammer.Case$Races</param>
+      </type>
+    </property>
     <property column="COST" name="cost"/>
-    <property column="NUMBER" name="number"/>
+    <property column="MINUNITS" name="minNumber"/>
     <property column="ARMYTYPE" name="armyType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">Warhammer.Unit$armyType</param>
@@ -22,7 +27,7 @@
     <property column="TOUGHNESS" name="toughness"/>
     <property column="UNITTYPE" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-       <param name="enumClassName">Warhammer.Unit$unitType</param>
+        <param name="enumClassName">Warhammer.Unit$unitType</param>
       </type>
     </property>
     <property column="WEAPONSKILL" name="weaponSkill"/>
@@ -33,7 +38,7 @@
     </set>
     <set lazy="false" name="utilityUnit" table="UNIT_UTILITY">
       <key column="ID"/>
-      <many-to-many column="UTILID" class="Warhammer.UtilityUnit"/>
+      <many-to-many class="Warhammer.UtilityUnit" column="UTILID"/>
     </set>
   </class>
 </hibernate-mapping>
