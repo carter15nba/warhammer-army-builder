@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.Warhammer.Warhammer.Case" table="CASES">
+    <id name="caseID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <property column="ARMYPOINTS" name="armyPoints"/>
+    <property column="OPPONENTRACE" name="opponentRace">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">Warhammer.Case$Races</param>
+      </type>
+    </property>
+    <property column="OUTCOME" name="outcome"/>
+    <property column="PLAYERRACE" name="playerRace">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">org.Warhammer.Warhammer.Case$Races</param>
+      </type>
+    </property>
+    <set lazy="false" name="units" table="CASE_UNITS">
+      <key column="caseID"/>
+      <many-to-many class="org.Warhammer.Warhammer.Unit" column="unitID"/>
+    </set>
+  </class>
+</hibernate-mapping>
