@@ -71,7 +71,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 pos++;
             }
             table.getColumnModel().getColumn(13).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 13));
-            org.Warhammer.Database.DatabaseManager dbm = org.Warhammer.Database.DatabaseManager.getInstance();
+            org.Warhammer.Database.DatabaseManager dbm =
+                    org.Warhammer.Database.DatabaseManager.getInstance();
             dbm.connectWithoutHibernate();
             addUnit.doClick();
             addUnit.setMnemonic('a');
@@ -214,7 +215,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     }//GEN-LAST:event_generateSQLActionPerformed
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-    JFileChooser jfc = new JFileChooser(new java.io.File("src/Database/Resources/"));
+    JFileChooser jfc = new JFileChooser(new java.io.File("src/org/Warhammer/Database/Resources/"));
     jfc.setFileFilter(new FileFilter() {
 
             @Override
