@@ -194,12 +194,10 @@ public class DatabaseManager {
                 case SELECT_QUERY:
                     return statement.executeQuery(sql);
                 case TABLE_QUERY:
-                    boolean ret = statement.execute(sql);
-                    System.out.println("ret: " +ret);
+                    statement.execute(sql);
                     return null;
                 case UPDATE_QUERY:
-                    int retVal = statement.executeUpdate(sql);
-                    System.out.println("ret: " +retVal);
+                    statement.executeUpdate(sql);
                     return null;
                 default:
                     return null;

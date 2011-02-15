@@ -38,9 +38,7 @@ public class SQLFileParser {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                 getClass().getResourceAsStream(sqlPath)));
-            System.out.println("reading:");
             int i=0;
-            System.out.println("sqlFile: "+sqlPath);
             ArrayList<String> statements = new ArrayList<String>();
             String sql="";
             boolean comment = false;
@@ -56,7 +54,6 @@ public class SQLFileParser {
                     if(';'==i){
                         sql+=" ";
                         statements.add(sql);
-                        System.out.println("Found: "+sql);
                         sql="";
                     }
                     else{
@@ -93,7 +90,6 @@ public class SQLFileParser {
              for (String string : s) {
                  if(!string.contentEquals("\n")){
                     statements.add(string);
-                    System.out.println(string);
                  }
              }
             return statements;

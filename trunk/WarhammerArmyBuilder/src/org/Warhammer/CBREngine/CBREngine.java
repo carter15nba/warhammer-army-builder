@@ -181,7 +181,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
             else if(args[0].contentEquals("sqlPrint")){
                 DatabaseManager dbm = DatabaseManager.getInstance();
                 dbm.connectWithoutHibernate();
-                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT", DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT order by NAME ASC", DatabaseManager.SELECT_QUERY);
                 
                 while(res.next()){
                     System.out.println(res.getString("name"));
