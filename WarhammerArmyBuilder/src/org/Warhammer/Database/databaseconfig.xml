@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : databaseconfig.xml.xml
+    Created on : 24. januar 2011, 10:49
+    Author     : Glenn Rune
+    Description:
+        Purpose of the document follows.
+-->
+
+<DataBaseConfiguration>
+	<HibernateConfigFile>org/Warhammer/Database/hibernate.cfg.xml</HibernateConfigFile>
+	<DescriptionMappingFile>org/Warhammer/Database/Unit.hbm.xml</DescriptionMappingFile>
+	<DescriptionClassName>org.Warhammer.Warhammer.Unit</DescriptionClassName>
+<!--	<SolutionMappingFile>org/Warhammer/Database/Case.hbm.xml</SolutionMappingFile>
+	<SolutionClassName>org.Warhammer.Warhammer.Case</SolutionClassName>-->
+</DataBaseConfiguration>
