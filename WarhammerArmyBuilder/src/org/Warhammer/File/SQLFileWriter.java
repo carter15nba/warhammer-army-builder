@@ -36,7 +36,7 @@ public class SQLFileWriter {
     public static void writeRaceUnitSQLFile(String race, ArrayList<String> sql){
         PrintStream ps = null;
         try {
-            java.io.File file = new java.io.File("src/Database/Resources/race_units_" + race + ".sql");
+            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/race_units_" + race + ".sql");
             OutputStream os = new FileOutputStream(file);
             ps = new PrintStream(os, true, "UTF-8");
             for (String string : sql) {

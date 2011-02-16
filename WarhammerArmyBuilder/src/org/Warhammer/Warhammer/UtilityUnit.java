@@ -34,9 +34,6 @@ public class UtilityUnit extends CoreCase{
     private String leadership = "";
     private unitType unitType;
 
-//    public UtilityUnit(){
-//        super();
-//    }
 
     /**
      * @return the movement

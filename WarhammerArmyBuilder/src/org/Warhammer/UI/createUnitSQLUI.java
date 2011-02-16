@@ -192,8 +192,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                     .addComponent(executeSQL)
                     .addComponent(loadButton)
                     .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                .addGap(19, 19, 19)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -229,7 +229,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "SQL file";
+                return "units in race SQL file";
             }
         });
         int ret = jfc.showOpenDialog(this);
@@ -256,9 +256,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
     private void executeSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeSQLActionPerformed
         try {
-            if (sql.isEmpty()) {
-                parseSQLSFromTable();
-            }
+            parseSQLSFromTable();
             org.Warhammer.Database.DatabaseManager dbm = org.Warhammer.Database.DatabaseManager.getInstance();
             for (String string : sql) {
                 dbm.executeSQL(string, org.Warhammer.Database.DatabaseManager.UPDATE_QUERY);

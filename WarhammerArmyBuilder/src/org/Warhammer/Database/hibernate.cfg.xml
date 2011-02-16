@@ -19,5 +19,6 @@
     <mapping resource="Database/Case.hbm.xml"/>
 -->
     <mapping resource="org/Warhammer/Database/UtilityUnit.hbm.xml"/>
+    <mapping resource="org/Warhammer/Database/SpecialRules.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>
