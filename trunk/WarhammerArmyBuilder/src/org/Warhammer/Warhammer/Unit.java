@@ -20,6 +20,7 @@ package org.Warhammer.Warhammer;
 import org.Warhammer.Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,23 +28,8 @@ import java.util.Set;
  * @author Glenn Rune Strandbåten
  */
 public class Unit extends CoreCase{
-
-    /**
-     * @return the race
-     */
-    public Races getRace() {
-        return race;
-    }
-
-    /**
-     * @param race the race to set
-     */
-    public void setRace(Races race) {
-        this.race = race;
-    }
-
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
-    public enum armyType {Hero, Lord, Special, Rare, Core};
+    public enum armyType {Hero, Lord, Special, Rare, Core, _na};
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -58,6 +44,7 @@ public class Unit extends CoreCase{
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
+    private List<SpecialRules> specialRules;
     
     /**
      * @return the movement
@@ -277,16 +264,26 @@ public class Unit extends CoreCase{
                 + " Ld="+leadership
                 + " UnitType="+unitType
                 + " ArmyType="+armyType;
-        if(getEquipment().size()>0){
-            Iterator<Equipment> iterator = getEquipment().iterator();
-            while(iterator.hasNext()){
-                retString += "\n     "+iterator.next().toString();
-            }
-        }
-        if(getUtilityUnit().size()>0){
-            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
-            while(iterator.hasNext()){
-                retString += "\n     "+iterator.next().toString();
+//        if(getEquipment().size()>0){
+//            Iterator<Equipment> iterator = getEquipment().iterator();
+//            while(iterator.hasNext()){
+//                retString += "\n     "+iterator.next().toString();
+//            }
+//        }
+//        if(getUtilityUnit().size()>0){
+//            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
+//            while(iterator.hasNext()){
+//                retString += "\n     "+iterator.next().toString();
+//            }
+//        }
+        if(getSpecialRules().size()>0){
+            retString += "\nSpecialRules:";
+            System.out.println(specialRules.size());
+            for (int i = 0; i<specialRules.size(); i++) {
+//                try{
+                    retString += " "+specialRules.get(i).getRule();
+//                }
+//                catch(NullPointerException npe){}
             }
         }
 
@@ -331,5 +328,32 @@ public class Unit extends CoreCase{
             totalCost+=uu.getCost()*uu.getNumber();
         }
         return totalCost;
+    }
+        /**
+     * @return the race
+     */
+    public Races getRace() {
+        return race;
+    }
+
+    /**
+     * @param race the race to set
+     */
+    public void setRace(Races race) {
+        this.race = race;
+    }
+
+    /**
+     * @return the specialRules
+     */
+    public List<SpecialRules> getSpecialRules() {
+        return specialRules;
+    }
+
+    /**
+     * @param specialRules the specialRules to set
+     */
+    public void setSpecialRules(List<SpecialRules> specialRules) {
+        this.specialRules = specialRules;
     }
 }
