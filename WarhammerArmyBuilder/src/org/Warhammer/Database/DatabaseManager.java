@@ -85,9 +85,11 @@ public class DatabaseManager {
             casebaseConnector = new DataBaseConnector();
             URL fileURL = FileIO.findFile(HIBERNATE_CONFIG_FILE);
             casebaseConnector.initFromXMLfile(fileURL);
+
             return casebaseConnector;
         } catch (InitializingException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+
         }
         return null;
     }

@@ -5,22 +5,23 @@
     <id name="ID" type="integer">
       <generator class="increment"/>
     </id>
-    <property column="NAME" name="name"/>
+    <property column="NAME" name="name" length="30"/>
     <property column="COST" name="cost"/>
     <property column="MINUNITS" name="minNumber"/>
-    <property column="ATTACK" name="attack"/>
-    <property column="BALLISTICSKILL" name="ballisticSkill"/>
-    <property column="INITIATIVE" name="initiative"/>
-    <property column="LEADERSHIP" name="leadership"/>
-    <property column="MOVEMENT" name="movement"/>
-    <property column="STRENGTH" name="strength"/>
-    <property column="TOUGHNESS" name="toughness"/>
-    <property column="UNITTYPE" name="unitType">
+    <property column="ATTACK" name="attack" length="7"/>
+    <property column="BALLISTICSKILL" name="ballisticSkill" length="7"/>
+    <property column="INITIATIVE" name="initiative" length="7"/>
+    <property column="LEADERSHIP" name="leadership" length="7"/>
+    <property column="MOVEMENT" name="movement" length="7"/>
+    <property column="STRENGTH" name="strength" length="7"/>
+    <property column="TOUGHNESS" name="toughness" length="7"/>
+    <property column="UNITTYPE" name="unitType" length="3">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.UtilityUnit$unitType</param>
       </type>
     </property>
-    <property column="WEAPONSKILL" name="weaponSkill"/>
-    <property column="WOUNDS" name="wounds"/>
+    <property column="WEAPONSKILL" name="weaponSkill" length="7"/>
+    <property column="WOUNDS" name="wounds" length="7"/>
+    <property column="REQUIRED" name="required" type="boolean"/>
   </class>
 </hibernate-mapping>

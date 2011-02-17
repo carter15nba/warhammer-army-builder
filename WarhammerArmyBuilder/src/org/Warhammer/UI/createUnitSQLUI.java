@@ -23,6 +23,7 @@
 
 package org.Warhammer.UI;
 
+import java.sql.ResultSet;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.Unit.unitType;
 import java.sql.SQLException;
@@ -33,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
+import org.Warhammer.Database.DatabaseManager;
 
 /**
  *
@@ -40,8 +42,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class createUnitSQLUI extends javax.swing.JFrame {
 
-    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
+    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
+    private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE) VALUES(";
+    private static final String insertUnit_Util = "INSERT INTO UNIT_UTILITY(NAME,UTILID)VALUES(";
+    private int pane;
+    private int id=0;
     private ArrayList<String> sql;
+    private DatabaseManager dbm = DatabaseManager.getInstance();
     /** Creates new form createUnitSQLUI */
     public createUnitSQLUI() {
             initComponents();
@@ -51,6 +58,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 raceBox.addItem(race);
             }
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            utilTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             String[] model = new String[12];
             model[0] = "N/A";
             int pos = 1;
@@ -62,17 +70,16 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 pos++;
             }
 
-            table.getColumnModel().getColumn(12).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 12));
-            model = new String[6];
+            table.getColumnModel().getColumn(13).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 13));
+            utilTable.getColumnModel().getColumn(14).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 14));
+            model = new String[7];
             model[0] = "N/A";
             pos = 1;
             for (org.Warhammer.Warhammer.Unit.armyType ut : armyType.values()) {
                 model[pos] = ut.toString();
                 pos++;
             }
-            table.getColumnModel().getColumn(13).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 13));
-            org.Warhammer.Database.DatabaseManager dbm =
-                    org.Warhammer.Database.DatabaseManager.getInstance();
+            table.getColumnModel().getColumn(14).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 14));
             dbm.connectWithoutHibernate();
             addUnit.doClick();
             addUnit.setMnemonic('a');
@@ -90,12 +97,17 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     private void initComponents() {
 
         raceBox = new javax.swing.JComboBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
         addUnit = new javax.swing.JButton();
         generateSQL = new javax.swing.JButton();
         executeSQL = new javax.swing.JButton();
         loadButton = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        utilTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tableAssocUnit_Util = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -109,25 +121,6 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 raceBoxActionPerformed(evt);
             }
         });
-
-        table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Name", "Cost", "Min number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        table.setRowHeight(20);
-        jScrollPane1.setViewportView(table);
 
         addUnit.setText("Add unit");
         addUnit.setEnabled(false);
@@ -160,6 +153,74 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
         });
 
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
+
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Cost", "Min number of units", "Max number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        table.setRowHeight(20);
+        jScrollPane1.setViewportView(table);
+
+        jTabbedPane1.addTab("Create unit", jScrollPane1);
+
+        utilTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Cost", "Number of Units", "Required", "M", "WS", "BS", "S", "T", "W", "I", "A", "LD", "Unit type"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, true, true, true, true, true, true, true, true, true, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        utilTable.setRowHeight(20);
+        jScrollPane2.setViewportView(utilTable);
+
+        jTabbedPane1.addTab("Create util unit", jScrollPane2);
+
+        tableAssocUnit_Util.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Unit", "Utility"
+            }
+        ));
+        tableAssocUnit_Util.setRowHeight(20);
+        jScrollPane3.setViewportView(tableAssocUnit_Util);
+
+        jTabbedPane1.addTab("Associate unit and utility", jScrollPane3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -169,7 +230,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(26, 26, 26)
                         .addComponent(addUnit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(generateSQL)
@@ -177,9 +238,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                         .addComponent(executeSQL)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -187,13 +246,13 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addUnit)
                     .addComponent(generateSQL)
                     .addComponent(executeSQL)
                     .addComponent(loadButton)
-                    .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                    .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addUnit))
+                .addGap(18, 18, 18)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -201,17 +260,46 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addUnitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUnitActionPerformed
-        DefaultTableModel tm = (DefaultTableModel) table.getModel();
-        tm.addRow(new Object[]{null,null,null,null,null,null,null,null,null,null,null,null,"N/A","N/A"});
-        table.setCellSelectionEnabled(true);
-        table.getSelectionModel().setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
-        table.getColumnModel().getSelectionModel().setSelectionInterval(0, 0);
-        table.requestFocus();
+        DefaultTableModel tm = null;
+        JTable tab = null;
+        Object[] row = null;
+        if(pane==0){
+            tab = table;
+            row = new Object[]{null,null,null,null,null,null,null,null,null,null,null,null,null,"N/A","N/A"};
+        }
+        else if(pane==1){
+            tab = utilTable;
+            id++;
+            row = new Object[]{id,null,null,null,false,null,null,null,null,null,null,null,null,null,"N/A"};
+        }
+        else if(pane==2){
+            tab = tableAssocUnit_Util;
+            row = new Object[]{"N/A","N/A"};
+        }
+        if(tab!=null){
+            tm = (DefaultTableModel) tab.getModel();
+            tm.addRow(row);
+            tab.setCellSelectionEnabled(true);
+            tab.getSelectionModel().setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+            tab.getColumnModel().getSelectionModel().setSelectionInterval(0, 0);
+            tab.requestFocus();
+        }
     }//GEN-LAST:event_addUnitActionPerformed
 
     private void generateSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSQLActionPerformed
-        parseSQLSFromTable();
-        org.Warhammer.File.SQLFileWriter.writeRaceUnitSQLFile(raceBox.getSelectedItem().toString(), sql);
+        if(pane==0){
+            parseSQLSFromUnitTable();
+            org.Warhammer.File.SQLFileWriter.writeRaceUnitSQLFile(raceBox.getSelectedItem().toString(), sql);
+        }
+        else if(pane==1){
+            parseSQLFromUtilityTable();
+            org.Warhammer.File.SQLFileWriter.writeUtilityUnitSQLFile(raceBox.getSelectedItem().toString(),sql);
+        }
+        else if(pane==2){
+            parseSQLFromUnit_UtilityTable();
+            org.Warhammer.File.SQLFileWriter.write_Unit_UtilitySQLFile(raceBox.getSelectedItem().toString(), sql);
+        }
+        
     }//GEN-LAST:event_generateSQLActionPerformed
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
@@ -221,7 +309,11 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             @Override
             public boolean accept(java.io.File f) {
                 String name = f.getName();
-                if(name.startsWith("race_units"))
+                String filter="";
+                if(pane==0){filter = "race_units";}
+                if(pane==1){filter = "utilityunits";}
+                if(pane==2){filter = "unit_utility";}
+                if(name.startsWith(filter))
                     return true;
                 else
                     return false;
@@ -229,14 +321,19 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "units in race SQL file";
+                return "Eligible .sql files";
             }
         });
         int ret = jfc.showOpenDialog(this);
         if(ret==JFileChooser.APPROVE_OPTION){
             emptyTable();
             ArrayList<String> result = org.Warhammer.File.SQLFileParser.parseRaceUnitsSQL(jfc.getSelectedFile());
-            populteTable(result);
+            if(pane==0)
+                populteUnitTable(result);
+            else if(pane == 1)
+                populateUtilityTable(result);
+            else if(pane==2)
+                populateUnit_UtilityTable(result);
         }
 
     }//GEN-LAST:event_loadButtonActionPerformed
@@ -256,8 +353,12 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
     private void executeSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeSQLActionPerformed
         try {
-            parseSQLSFromTable();
-            org.Warhammer.Database.DatabaseManager dbm = org.Warhammer.Database.DatabaseManager.getInstance();
+            if(pane==0)
+                parseSQLSFromUnitTable();
+            else if(pane==1)
+                parseSQLFromUtilityTable();
+            else if(pane==2)
+                parseSQLFromUnit_UtilityTable();
             for (String string : sql) {
                 dbm.executeSQL(string, org.Warhammer.Database.DatabaseManager.UPDATE_QUERY);
             }
@@ -275,6 +376,39 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         org.Warhammer.Database.DatabaseManager.getInstance().disconnectNoHibernate(false);
     }//GEN-LAST:event_formWindowClosing
 
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        pane = jTabbedPane1.getSelectedIndex();
+        try{
+            if(pane==1){
+                ResultSet res = dbm.executeSQL("Select * from UTILITYUNIT", DatabaseManager.SELECT_QUERY);
+                while (res.next()) {
+                    id = res.getInt("ID");
+                }
+            }
+            else if(pane==2){
+                ResultSet res = dbm.executeSQL("Select name from UTILITYUNIT where name like '"+raceBox.getSelectedItem().toString()+"%'", DatabaseManager.SELECT_QUERY);
+                ArrayList<String> util = new ArrayList<String>();
+                util.add("N/A");
+                while(res.next()){
+                    util.add(res.getString("name"));
+                }
+                String[] comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocUnit_Util.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 1));
+                res = dbm.executeSQL("Select name from UNIT where race ='"+raceBox.getSelectedItem().toString()+"'", DatabaseManager.SELECT_QUERY);
+                util.clear();
+                util.add("N/A");
+                while(res.next()){
+                    util.add(res.getString("name"));
+                }
+                comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocUnit_Util.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
+            }
+        }
+        catch(SQLException ex){}
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
     /**
     * @param args the command line arguments
     */
@@ -285,7 +419,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
         });
     }
-    private void parseSQLSFromTable(){
+    private void parseSQLSFromUnitTable(){
         int rows = table.getRowCount();
         sql.clear();
         for(int i = 0 ; i < rows ; i++){
@@ -315,28 +449,27 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 continue;
             if(table.getValueAt(i, 12)==null)
                 continue;
-            if(table.getValueAt(i, 13)==null)
-                continue;
             String name = table.getValueAt(i, 0).toString();
             int cost = (Integer)table.getValueAt(i, 1);
-            int num = (Integer) table.getValueAt(i,2);
-            String m = table.getValueAt(i,3).toString();
-            String ws = table.getValueAt(i,4).toString();
-            String bs = table.getValueAt(i,5).toString();
-            String s =  table.getValueAt(i,6).toString();
-            String t = table.getValueAt(i,7).toString();
-            String w = table.getValueAt(i,8).toString();
-            String in = table.getValueAt(i,9).toString();
-            String a = table.getValueAt(i,10).toString();
-            String ld = table.getValueAt(i,11).toString();
-            String ut = table.getValueAt(i,12).toString();
+            int min = (Integer) table.getValueAt(i,2);
+            int max = (Integer) table.getValueAt(i, 3);
+            String m = table.getValueAt(i,4).toString();
+            String ws = table.getValueAt(i,5).toString();
+            String bs = table.getValueAt(i,6).toString();
+            String s =  table.getValueAt(i,7).toString();
+            String t = table.getValueAt(i,8).toString();
+            String w = table.getValueAt(i,9).toString();
+            String in = table.getValueAt(i,10).toString();
+            String a = table.getValueAt(i,11).toString();
+            String ld = table.getValueAt(i,12).toString();
+            String ut = table.getValueAt(i,13).toString();
             if(ut.contentEquals("N/A"))
                 ut="_na";
-            String at = table.getValueAt(i,13).toString();
+            String at = table.getValueAt(i,14).toString();
             if(at.contentEquals("N/A"))
                 at="_na";
             String race = raceBox.getSelectedItem().toString();
-            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+num+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"')";
+            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+min+","+max+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"')";
             sql.add(stat);
         }
     }
@@ -346,12 +479,17 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     private javax.swing.JButton executeSQL;
     private javax.swing.JButton generateSQL;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton loadButton;
     private javax.swing.JComboBox raceBox;
     private javax.swing.JTable table;
+    private javax.swing.JTable tableAssocUnit_Util;
+    private javax.swing.JTable utilTable;
     // End of variables declaration//GEN-END:variables
 
-    private void populteTable(ArrayList<String> result) {
+    private void populteUnitTable(ArrayList<String> result) {
         DefaultTableModel tm = (DefaultTableModel) table.getModel();
         String race="";
         for (String string : result) {
@@ -361,7 +499,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 s[13] = "N/A";
             if(s[14].contentEquals("_na"))
                 s[14] = "N/A";
-            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
+            //tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),null,s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
+            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15]});
         }
         for (int i = 0; i < raceBox.getItemCount() ; i++) {
             Object object = raceBox.getItemAt(i);
@@ -372,13 +511,68 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
         }
     }
+    private void populateUtilityTable(ArrayList<String> result){
+        DefaultTableModel tm = (DefaultTableModel) utilTable.getModel();
+        String name[]= null;
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            name = s[1].split(":");
+            if(s[14].contentEquals("_na"))
+                s[14] = "N/A";
+            boolean req;
+            if(Integer.parseInt(s[4])==0)
+                req=false;
+            else
+                req=true;
+            tm.addRow(new Object[]{Integer.parseInt(s[0]),name[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),req,s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
+        }
+
+        for (int i = 0; i < raceBox.getItemCount() ; i++) {
+            Object object = raceBox.getItemAt(i);
+            String s = object.toString();
+            if(s.equalsIgnoreCase(name[0])){
+                raceBox.setSelectedItem(object);
+                break;
+            }
+        }
+    }
+    private void populateUnit_UtilityTable(ArrayList<String> result) {
+        DefaultTableModel tm = (DefaultTableModel) tableAssocUnit_Util.getModel();
+        String[] entry = parseQuery(result.get(0));
+        String[] race = entry[0].split(":");
+        for (int i = 0; i < raceBox.getItemCount() ; i++) {
+            Object object = raceBox.getItemAt(i);
+            String s = object.toString();
+            System.out.println(race[0]);
+            if(s.equalsIgnoreCase(race[0])){
+                raceBox.setSelectedItem(object);
+                break;
+            }
+        }
+        jTabbedPane1StateChanged(null);
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            ResultSet res = dbm.executeSQL("SELECT NAME FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
+            try {
+                while(res.next())
+                    tm.addRow(new Object[]{s[0], res.getString("name")});
+            }
+            catch (SQLException ex) {}
+        }
+
+    }
     private String[] parseQuery(String q){
+        System.out.println("Query: "+q);
         int idx = q.indexOf("VALUES");
-        String insert = q.substring(idx+7,q.length()-2);
+        String insert = q.substring(idx+7,q.length()-1);
+        System.out.println("Insert:"+insert);
         String clean = insert.replaceAll("'", "");
+        System.out.println("Clean:"+clean);
         idx = clean.indexOf(":");
-        String ret = clean.substring(idx+1);
-        return ret.split(",");
+        if(pane==0)
+            return clean.substring(idx+1).split(",");
+
+        return clean.split(",");
     }
 
     private void emptyTable() {
@@ -388,4 +582,85 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
         }
     }
+
+    private void parseSQLFromUtilityTable() {
+        int rows = utilTable.getRowCount();
+        sql.clear();
+        for(int i = 0 ; i < rows ; i++){
+            if(utilTable.getValueAt(i, 1)==null)
+                continue;
+            if(utilTable.getValueAt(i, 2)==null)
+                continue;
+            if(utilTable.getValueAt(i, 3)==null)
+                continue;
+            if(utilTable.getValueAt(i, 5)==null)
+                continue;
+            if(utilTable.getValueAt(i,6)==null)
+                continue;
+            if(utilTable.getValueAt(i, 7)==null)
+                continue;
+            if(utilTable.getValueAt(i, 8)==null)
+                continue;
+            if(utilTable.getValueAt(i, 9)==null)
+                continue;
+            if(utilTable.getValueAt(i, 10)==null)
+                continue;
+            if(utilTable.getValueAt(i, 11)==null)
+                continue;
+            if(utilTable.getValueAt(i, 12)==null)
+                continue;
+            int idx = (Integer)utilTable.getValueAt(i, 0);
+            String name = utilTable.getValueAt(i, 1).toString();
+            int cost = (Integer)utilTable.getValueAt(i,2);
+            int min = (Integer) utilTable.getValueAt(i,3);
+            boolean req = (Boolean) utilTable.getValueAt(i, 4);
+            int iReq;
+            if(req)
+                iReq = 1;
+            else
+                iReq = 0;
+            String m = utilTable.getValueAt(i,5).toString();
+            String ws = utilTable.getValueAt(i,6).toString();
+            String bs = utilTable.getValueAt(i,7).toString();
+            String s =  utilTable.getValueAt(i,8).toString();
+            String t = utilTable.getValueAt(i,9).toString();
+            String w = utilTable.getValueAt(i,10).toString();
+            String in = utilTable.getValueAt(i,11).toString();
+            String a = utilTable.getValueAt(i,12).toString();
+            String ld = utilTable.getValueAt(i,13).toString();
+            String ut = utilTable.getValueAt(i,14).toString();
+            String race = raceBox.getSelectedItem().toString();
+            if(ut.contentEquals("N/A"))
+                ut="_na";
+            String stat = insertUtility+idx+",'"+race+":"+name+"',"+cost+","+min+","+iReq+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"')";
+            System.out.println(stat);
+            sql.add(stat);
+    }}
+
+    private void parseSQLFromUnit_UtilityTable() {
+        int rows = tableAssocUnit_Util.getRowCount();
+        sql.clear();
+        for (int i = 0; i < rows; i++) {
+            String unit = tableAssocUnit_Util.getValueAt(i, 0).toString();
+            String util = tableAssocUnit_Util.getValueAt(i, 1).toString();
+            if(unit.contentEquals("N/A")||util.contentEquals("N/A"))
+                    continue;
+            ResultSet res = dbm.executeSQL("Select ID FROM UTILITYUNIT WHERE NAME='"+util+"'", DatabaseManager.SELECT_QUERY);
+            int tID=-1;
+            try {
+                while (res.next()) {
+                   tID = res.getInt("ID");
+                }
+            }
+            catch (SQLException ex) {}
+            if(tID!=-1){
+                String stat = insertUnit_Util+"'"+unit+"',"+tID+")";
+                System.out.println(stat);
+                sql.add(stat);
+            }
+
+        }
+    }
+
+
 }

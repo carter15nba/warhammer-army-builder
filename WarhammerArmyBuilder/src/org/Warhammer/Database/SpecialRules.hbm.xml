@@ -9,6 +9,6 @@
     <id name="idx" type="integer" unsaved-value="0">
       <!--      <generator class=""/>-->
     </id>
-    <property name="rule" column="specialRule" />
+    <property name="rule" column="specialRule" length="30"/>
     </class>
 </hibernate-mapping>

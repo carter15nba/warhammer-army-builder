@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.ArrayList;
 import org.Warhammer.Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -264,26 +265,23 @@ public class Unit extends CoreCase{
                 + " Ld="+leadership
                 + " UnitType="+unitType
                 + " ArmyType="+armyType;
-//        if(getEquipment().size()>0){
-//            Iterator<Equipment> iterator = getEquipment().iterator();
-//            while(iterator.hasNext()){
-//                retString += "\n     "+iterator.next().toString();
-//            }
-//        }
-//        if(getUtilityUnit().size()>0){
-//            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
-//            while(iterator.hasNext()){
-//                retString += "\n     "+iterator.next().toString();
-//            }
-//        }
+        if(getEquipment().size()>0){
+            Iterator<Equipment> iterator = getEquipment().iterator();
+            while(iterator.hasNext()){
+                retString += "\n     "+iterator.next().toString();
+            }
+        }
+        if(getUtilityUnit().size()>0){
+            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
+            while(iterator.hasNext()){
+                retString += "\n     "+iterator.next().toString();
+            }
+        }
         if(getSpecialRules().size()>0){
-            retString += "\nSpecialRules:";
-            System.out.println(specialRules.size());
-            for (int i = 0; i<specialRules.size(); i++) {
-//                try{
-                    retString += " "+specialRules.get(i).getRule();
-//                }
-//                catch(NullPointerException npe){}
+            retString += "\n     SpecialRules:";
+            for (SpecialRules sr : specialRules) {
+                if(sr!=null)
+                    retString += " "+sr.getRule();
             }
         }
 
@@ -320,14 +318,16 @@ public class Unit extends CoreCase{
     }
 
     public int calculateTotalUnitCost(){
-        int totalCost = getCost()*getNumber();
-        for (Equipment eq : equipment) {
-            totalCost+=eq.getCost();
-        }
-        for (UtilityUnit uu : utilityUnit) {
-            totalCost+=uu.getCost()*uu.getNumber();
-        }
-        return totalCost;
+//        int totalCost = getCost()*getNumber();
+//        for (Equipment eq : equipment) {
+//            totalCost+=eq.getCost();
+//        }
+//        for (UtilityUnit uu : utilityUnit) {
+//            totalCost+=uu.getCost()*uu.getNumber();
+//        }
+//        return totalCost;
+        //TODO: FIX COST CALCULATION
+        return 0;
     }
         /**
      * @return the race

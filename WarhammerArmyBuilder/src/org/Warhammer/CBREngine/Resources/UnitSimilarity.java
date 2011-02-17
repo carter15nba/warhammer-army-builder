@@ -40,7 +40,8 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         org.Warhammer.Warhammer.Unit cU = (org.Warhammer.Warhammer.Unit) caseObject;
         org.Warhammer.Warhammer.Unit qU = (org.Warhammer.Warhammer.Unit) queryObject;
         sim += simText(cU.getName(), qU.getName());
-        sim += simNumber(cU.getNumber(), qU.getNumber(), 5);
+//        sim += simNumber(cU.getNumber(), qU.getNumber(), 5);
+        //TODO FIX uncomment.
         sim += simArmyType(cU.getArmyType(), qU.getArmyType());
         sim += simUnitType(cU.getUnitType(), qU.getUnitType());
 

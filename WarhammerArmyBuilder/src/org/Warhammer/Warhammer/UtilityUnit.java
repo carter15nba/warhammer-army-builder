@@ -22,6 +22,20 @@ package org.Warhammer.Warhammer;
  * @author Glenn Rune Strandbåten
  */
 public class UtilityUnit extends CoreCase{
+
+    /**
+     * @return the required
+     */
+    public boolean isRequired() {
+        return required;
+    }
+
+    /**
+     * @param required the required to set
+     */
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM ,_na,};
     private String movement = "";
     private String weaponSkill = "";
@@ -33,6 +47,7 @@ public class UtilityUnit extends CoreCase{
     private String attack = "";
     private String leadership = "";
     private unitType unitType;
+    private boolean required;
 
 
     /**

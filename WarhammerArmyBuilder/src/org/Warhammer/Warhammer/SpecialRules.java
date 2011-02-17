@@ -37,15 +37,13 @@ public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
         this.rule = rule;
     }
 
-
-
     /**
      * @return the idx
      */
     public int getIdx() {
         return idx;
     }
-
+                                                                                                                    
     /**
      * @param idx the idx to set
      */
