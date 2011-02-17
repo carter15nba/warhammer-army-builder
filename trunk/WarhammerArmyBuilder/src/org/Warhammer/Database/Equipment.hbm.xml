@@ -5,8 +5,8 @@
     <id name="equipmentID" type="integer">
       <generator class="increment"/>
     </id>
-    <property column="TYPE" name="equipmentType"/>
+    <property column="TYPE" name="equipmentType" length="20"/>
     <property column="COST" name="cost"/>
-    <property column="NAME" name="name"/>
+    <property column="NAME" name="name" length="30"/>
   </class>
 </hibernate-mapping>

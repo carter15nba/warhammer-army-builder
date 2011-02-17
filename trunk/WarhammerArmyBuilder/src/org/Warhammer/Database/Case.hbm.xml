@@ -6,13 +6,13 @@
       <generator class="increment"/>
     </id>
     <property column="ARMYPOINTS" name="armyPoints"/>
-    <property column="OPPONENTRACE" name="opponentRace">
+    <property column="OPPONENTRACE" name="opponentRace" length="20">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">Warhammer.Case$Races</param>
       </type>
     </property>
-    <property column="OUTCOME" name="outcome"/>
-    <property column="PLAYERRACE" name="playerRace">
+    <property column="OUTCOME" name="outcome" length="20"/>
+    <property column="PLAYERRACE" name="playerRace" length="20">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Case$Races</param>
       </type>

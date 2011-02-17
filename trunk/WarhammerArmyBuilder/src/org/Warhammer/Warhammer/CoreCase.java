@@ -29,8 +29,8 @@ public class CoreCase implements jcolibri.cbrcore.CaseComponent{
     private int ID;
     private String name;
     private int cost;
-    private int number;
     private int minNumber;
+    private int maxNumber;
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
@@ -80,21 +80,21 @@ public class CoreCase implements jcolibri.cbrcore.CaseComponent{
 
     @Override
     public String toString(){
-        return "ID: "+ID+", name: "+name+", number of units: "+number+", cost: "+cost;
+        return "ID: "+ID+", name: "+name+"," + "cost: "+cost;
     }
 
     /**
      * @return the number
      */
-    public int getNumber() {
-        return number;
+    public int getMaxNumber() {
+        return maxNumber;
     }
 
     /**
      * @param number the number to set
      */
-    public void setNumber(int number) {
-        this.number = number;
+    public void setMaxNumber(int maxNumber) {
+        this.maxNumber = maxNumber;
     }
 
     /**

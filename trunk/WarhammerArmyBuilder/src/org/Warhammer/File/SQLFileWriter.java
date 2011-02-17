@@ -54,4 +54,46 @@ public class SQLFileWriter {
             ps.close();
         }
     }
+    public static void writeUtilityUnitSQLFile(String race,ArrayList<String> sql){
+        PrintStream ps = null;
+        try {
+            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/utilityunits_"+race+".sql");
+            OutputStream os = new FileOutputStream(file);
+            ps = new PrintStream(os, true, "UTF-8");
+            for (String string : sql) {
+                String print = string+";";
+                ps.println(print);
+            }
+        }
+        catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            ps.close();
+        }
+    }
+    public static void write_Unit_UtilitySQLFile(String race,ArrayList<String> sql){
+        PrintStream ps = null;
+        try {
+            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_utility_"+race+".sql");
+            OutputStream os = new FileOutputStream(file);
+            ps = new PrintStream(os, true, "UTF-8");
+            for (String string : sql) {
+                String print = string+";";
+                ps.println(print);
+            }
+        }
+        catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            ps.close();
+        }
+    }
 }

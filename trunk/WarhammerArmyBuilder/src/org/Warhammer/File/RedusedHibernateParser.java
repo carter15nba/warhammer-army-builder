@@ -47,7 +47,6 @@ public class RedusedHibernateParser extends DefaultHandler{
     }
     public Properties parseHibernate(String path){
         try {
-
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             SAXParser parser = parserFactory.newSAXParser();
             URL file = jcolibri.util.FileIO.findFile(path);
