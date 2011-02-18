@@ -40,7 +40,7 @@ import org.Warhammer.Database.DatabaseManager;
  *
  * @author Glenn Rune Strandbråten
  */
-public class createUnitSQLUI extends javax.swing.JFrame {
+public class createSQLUI extends javax.swing.JFrame {
 
     private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
     private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE) VALUES(";
@@ -50,7 +50,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     private ArrayList<String> sql;
     private DatabaseManager dbm = DatabaseManager.getInstance();
     /** Creates new form createUnitSQLUI */
-    public createUnitSQLUI() {
+    public createSQLUI() {
             initComponents();
             sql = new ArrayList<String>();
             raceBox.addItem("Select race");
@@ -59,6 +59,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             utilTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            tableEquipment.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             String[] model = new String[12];
             model[0] = "N/A";
             int pos = 1;
@@ -101,13 +102,21 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         generateSQL = new javax.swing.JButton();
         executeSQL = new javax.swing.JButton();
         loadButton = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tabbedPane = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         utilTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tableAssocUnit_Util = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tableEquipment = new javax.swing.JTable();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tableAssocUnit_Equipment = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        tableSpecialRules = new javax.swing.JTable();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        tableAssoc_unit_rule = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -122,8 +131,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
         });
 
-        addUnit.setText("Add unit");
-        addUnit.setEnabled(false);
+        addUnit.setText("Add");
         addUnit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addUnitActionPerformed(evt);
@@ -131,7 +139,6 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         });
 
         generateSQL.setText("Generate sql file");
-        generateSQL.setEnabled(false);
         generateSQL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 generateSQLActionPerformed(evt);
@@ -139,7 +146,6 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         });
 
         executeSQL.setText("Execute sql");
-        executeSQL.setEnabled(false);
         executeSQL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 executeSQLActionPerformed(evt);
@@ -153,9 +159,9 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             }
         });
 
-        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTabbedPane1StateChanged(evt);
+                tabbedPaneStateChanged(evt);
             }
         });
 
@@ -178,7 +184,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         table.setRowHeight(20);
         jScrollPane1.setViewportView(table);
 
-        jTabbedPane1.addTab("Create unit", jScrollPane1);
+        tabbedPane.addTab("Create unit", jScrollPane1);
 
         utilTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -206,7 +212,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         utilTable.setRowHeight(20);
         jScrollPane2.setViewportView(utilTable);
 
-        jTabbedPane1.addTab("Create util unit", jScrollPane2);
+        tabbedPane.addTab("Create util unit", jScrollPane2);
 
         tableAssocUnit_Util.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -219,7 +225,89 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         tableAssocUnit_Util.setRowHeight(20);
         jScrollPane3.setViewportView(tableAssocUnit_Util);
 
-        jTabbedPane1.addTab("Associate unit and utility", jScrollPane3);
+        tabbedPane.addTab("Associate unit and utility", jScrollPane3);
+
+        tableEquipment.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Cost", "ItemType", "Usable by", "Benefit"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(tableEquipment);
+
+        tabbedPane.addTab("Create Equipment", jScrollPane4);
+
+        tableAssocUnit_Equipment.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(tableAssocUnit_Equipment);
+
+        tabbedPane.addTab("Associate unit and equipment", jScrollPane5);
+
+        tableSpecialRules.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Rule"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane6.setViewportView(tableSpecialRules);
+
+        tabbedPane.addTab("Special Rules", jScrollPane6);
+
+        tableAssoc_unit_rule.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Unit", "Rule"
+            }
+        ));
+        tableAssoc_unit_rule.setRowHeight(20);
+        jScrollPane7.setViewportView(tableAssoc_unit_rule);
+
+        tabbedPane.addTab("Associate unit with rule", jScrollPane7);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -238,7 +326,9 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                         .addComponent(executeSQL)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadButton))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 859, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -251,9 +341,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                     .addComponent(loadButton)
                     .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addUnit))
-                .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(29, 29, 29)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
         );
 
         pack();
@@ -274,6 +363,15 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         }
         else if(pane==2){
             tab = tableAssocUnit_Util;
+            row = new Object[]{"N/A","N/A"};
+        }
+        else if(pane==5){
+            tab= tableSpecialRules;
+            id++;
+            row = new Object[]{id,null};
+        }
+        else if(pane==6){
+            tab = tableAssoc_unit_rule;
             row = new Object[]{"N/A","N/A"};
         }
         if(tab!=null){
@@ -299,6 +397,14 @@ public class createUnitSQLUI extends javax.swing.JFrame {
             parseSQLFromUnit_UtilityTable();
             org.Warhammer.File.SQLFileWriter.write_Unit_UtilitySQLFile(raceBox.getSelectedItem().toString(), sql);
         }
+        else if(pane==5){
+            parseSQLFromSpecialRules();
+            org.Warhammer.File.SQLFileWriter.writeRule(sql);
+        }
+        else if(pane==6){
+            parseSQLFromAssocUnit_Rule();
+            org.Warhammer.File.SQLFileWriter.write_unit_ruleSQLFile(raceBox.getSelectedItem().toString(), sql);
+        }
         
     }//GEN-LAST:event_generateSQLActionPerformed
 
@@ -313,6 +419,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 if(pane==0){filter = "race_units";}
                 if(pane==1){filter = "utilityunits";}
                 if(pane==2){filter = "unit_utility";}
+                if(pane==5){filter = "specialRules";}
+                if(pane==6){filter="unit_rules_";}
                 if(name.startsWith(filter))
                     return true;
                 else
@@ -334,21 +442,18 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 populateUtilityTable(result);
             else if(pane==2)
                 populateUnit_UtilityTable(result);
+            else if(pane==5){
+                populateRuleTable(result);
+            }
+            else if(pane==6)
+                populateUnit_RuleTable(result);
         }
 
     }//GEN-LAST:event_loadButtonActionPerformed
 
     private void raceBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_raceBoxActionPerformed
-        if(raceBox.getSelectedIndex()==0){
-            addUnit.setEnabled(false);
-            generateSQL.setEnabled(false);
-            executeSQL.setEnabled(false);
-        }
-        else{
-            addUnit.setEnabled(true);
-            generateSQL.setEnabled(true);
-            executeSQL.setEnabled(true);
-        }
+        if(pane==2)
+            tabbedPaneStateChanged(null);
     }//GEN-LAST:event_raceBoxActionPerformed
 
     private void executeSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeSQLActionPerformed
@@ -359,16 +464,21 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 parseSQLFromUtilityTable();
             else if(pane==2)
                 parseSQLFromUnit_UtilityTable();
+            else if(pane==5)
+                parseSQLFromSpecialRules();
+            else if(pane==6)
+                parseSQLFromAssocUnit_Rule();
             for (String string : sql) {
                 dbm.executeSQL(string, org.Warhammer.Database.DatabaseManager.UPDATE_QUERY);
             }
             dbm.commit();
         }
+
         catch (SQLException ex) {
-            Logger.getLogger(createUnitSQLUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(createSQLUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (NullPointerException ex) {
-            Logger.getLogger(createUnitSQLUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(createSQLUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_executeSQLActionPerformed
 
@@ -376,8 +486,8 @@ public class createUnitSQLUI extends javax.swing.JFrame {
         org.Warhammer.Database.DatabaseManager.getInstance().disconnectNoHibernate(false);
     }//GEN-LAST:event_formWindowClosing
 
-    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        pane = jTabbedPane1.getSelectedIndex();
+    private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
+        pane = tabbedPane.getSelectedIndex();
         try{
             if(pane==1){
                 ResultSet res = dbm.executeSQL("Select * from UTILITYUNIT", DatabaseManager.SELECT_QUERY);
@@ -405,9 +515,35 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 comp = util.toArray(comp);
                 tableAssocUnit_Util.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
             }
+            else if(pane==5){
+                ResultSet res = dbm.executeSQL("Select * from SPECIALRULES", DatabaseManager.SELECT_QUERY);
+                id=0;
+                while(res.next()){
+                    id = res.getInt("ID");
+                }
+            }
+            else if(pane==6){
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM UNIT WHERE RACE='"+raceBox.getSelectedItem().toString()+"'", dbm.SELECT_QUERY);
+                ArrayList<String> util = new ArrayList<String>();
+                util.add("N/A");
+                while(res.next()){
+                    util.add(res.getString("Name"));
+                }
+                String[] comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssoc_unit_rule.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
+                util.clear();
+                util.add("N/A");
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", dbm.SELECT_QUERY);
+                while(res.next())
+                    util.add(res.getString("Specialrule"));
+                comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssoc_unit_rule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 1));
+            }
         }
         catch(SQLException ex){}
-    }//GEN-LAST:event_jTabbedPane1StateChanged
+    }//GEN-LAST:event_tabbedPaneStateChanged
 
     /**
     * @param args the command line arguments
@@ -415,7 +551,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new createUnitSQLUI().setVisible(true);
+                new createSQLUI().setVisible(true);
             }
         });
     }
@@ -481,11 +617,19 @@ public class createUnitSQLUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JButton loadButton;
     private javax.swing.JComboBox raceBox;
+    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable table;
+    private javax.swing.JTable tableAssocUnit_Equipment;
     private javax.swing.JTable tableAssocUnit_Util;
+    private javax.swing.JTable tableAssoc_unit_rule;
+    private javax.swing.JTable tableEquipment;
+    private javax.swing.JTable tableSpecialRules;
     private javax.swing.JTable utilTable;
     // End of variables declaration//GEN-END:variables
 
@@ -549,7 +693,7 @@ public class createUnitSQLUI extends javax.swing.JFrame {
                 break;
             }
         }
-        jTabbedPane1StateChanged(null);
+        tabbedPaneStateChanged(null);
         for (String string : result) {
             String[] s = parseQuery(string);
             ResultSet res = dbm.executeSQL("SELECT NAME FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
@@ -562,16 +706,12 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
     }
     private String[] parseQuery(String q){
-        System.out.println("Query: "+q);
         int idx = q.indexOf("VALUES");
         String insert = q.substring(idx+7,q.length()-1);
-        System.out.println("Insert:"+insert);
         String clean = insert.replaceAll("'", "");
-        System.out.println("Clean:"+clean);
         idx = clean.indexOf(":");
         if(pane==0)
             return clean.substring(idx+1).split(",");
-
         return clean.split(",");
     }
 
@@ -661,6 +801,84 @@ public class createUnitSQLUI extends javax.swing.JFrame {
 
         }
     }
+
+    private void parseSQLFromSpecialRules() {
+        int rows = tableSpecialRules.getRowCount();
+        sql.clear();
+        for (int i = 0; i < rows; i++) {
+            if(tableSpecialRules.getValueAt(i, 1)==null)
+                continue;
+            int ID = (Integer)tableSpecialRules.getValueAt(i, 0);
+            String rule = tableSpecialRules.getValueAt(i, 1).toString();
+            
+            String query = "INSERT INTO SPECIALRULES(ID,SPECIALRULE)VALUES("+ID+",'"+rule+"')";
+            System.out.println(query);
+            sql.add(query);
+        }
+    }
+
+    private void populateRuleTable(ArrayList<String> result) {
+        DefaultTableModel tm = (DefaultTableModel) tableSpecialRules.getModel();
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            tm.addRow(new Object[]{Integer.parseInt(s[0]),s[1]});
+        }
+    }
+
+    private void parseSQLFromAssocUnit_Rule() {
+        int rows = tableAssoc_unit_rule.getRowCount();
+        sql.clear();
+        for(int i = 0 ; i  < rows ; i++ ){
+            String unit = (String) tableAssoc_unit_rule.getValueAt(i, 0);
+            String rule = (String) tableAssoc_unit_rule.getValueAt(i, 1);
+            if(unit.contentEquals("N/A")||rule.contentEquals("N/A"))
+                continue;
+            ResultSet res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", dbm.SELECT_QUERY);
+            int ID = -1;
+            try {
+                while (res.next()) {
+                    ID = res.getInt("ID");
+                }
+            } catch (SQLException ex) {}
+            if(ID==-1)
+                continue;
+            String query = "INSERT INTO UNIT_RULE(NAME,RULE_ID) VALUES('"+unit+"',"+ID+")";
+            sql.add(query);
+        }
+    }
+
+    private void populateUnit_RuleTable(ArrayList<String> result) {
+        DefaultTableModel tm = (DefaultTableModel) tableAssoc_unit_rule.getModel();
+        String[] q = parseQuery(result.get(0));
+        q = q[0].split(":");
+        String race = q[0];
+        for (int i = 0; i < raceBox.getItemCount() ; i++) {
+            Object object = raceBox.getItemAt(i);
+            String s = object.toString();
+            if(s.equalsIgnoreCase(race)){
+                raceBox.setSelectedItem(object);
+                break;
+            }
+        }
+        tabbedPaneStateChanged(null);
+        raceBox.setSelectedItem(pane);
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            int ID = Integer.parseInt(s[1]);
+            ResultSet res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+ID, dbm.SELECT_QUERY);
+            String rule="N/A";
+            try {
+                while (res.next()) {
+                    rule = res.getString("SPECIALRULE");
+                }
+            } catch (SQLException ex) {}
+            tm.addRow(new Object[]{s[0],rule});
+        }
+    }
+
+
+
+
 
 
 }

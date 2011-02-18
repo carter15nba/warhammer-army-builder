@@ -34,51 +34,35 @@ import java.util.logging.Logger;
 public class SQLFileWriter {
 
     public static void writeRaceUnitSQLFile(String race, ArrayList<String> sql){
-        PrintStream ps = null;
-        try {
-            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/race_units_" + race + ".sql");
-            OutputStream os = new FileOutputStream(file);
-            ps = new PrintStream(os, true, "UTF-8");
-            for (String string : sql) {
-                String print = string+";";
-                ps.println(print);
-            }
-        }
-        catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (FileNotFoundException ex) {
-            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally {
-            ps.close();
-        }
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/race_units_" + race + ".sql");
+        print(file, sql);
     }
+    
     public static void writeUtilityUnitSQLFile(String race,ArrayList<String> sql){
-        PrintStream ps = null;
-        try {
-            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/utilityunits_"+race+".sql");
-            OutputStream os = new FileOutputStream(file);
-            ps = new PrintStream(os, true, "UTF-8");
-            for (String string : sql) {
-                String print = string+";";
-                ps.println(print);
-            }
-        }
-        catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (FileNotFoundException ex) {
-            Logger.getLogger(SQLFileWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally {
-            ps.close();
-        }
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/utilityunits_"+race+".sql");
+        print(file, sql);
     }
+
     public static void write_Unit_UtilitySQLFile(String race,ArrayList<String> sql){
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_utility_"+race+".sql");
+        print(file, sql);
+
+    }
+
+    public static void writeRule(ArrayList<String> sql) {
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/specialRules.sql");
+        print(file, sql);
+        
+    }
+
+    public static void write_unit_ruleSQLFile(String race,ArrayList<String> sql){
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_rules_"+race+".sql");
+        print(file, sql);
+    }
+
+    private static void print(java.io.File file, ArrayList<String> sql){
         PrintStream ps = null;
         try {
-            java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_utility_"+race+".sql");
             OutputStream os = new FileOutputStream(file);
             ps = new PrintStream(os, true, "UTF-8");
             for (String string : sql) {

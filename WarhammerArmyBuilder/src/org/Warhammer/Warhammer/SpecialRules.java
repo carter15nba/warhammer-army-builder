@@ -24,10 +24,10 @@ import jcolibri.cbrcore.Attribute;
  * @author Glenn Rune
  */
 public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
-    private int idx=0;
+    private int id=0;
     private String rule="";
     public Attribute getIdAttribute() {
-         return new Attribute("idx", this.getClass());
+         return new Attribute("id", this.getClass());
     }
 
     public SpecialRules() {
@@ -40,15 +40,15 @@ public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the idx
      */
-    public int getIdx() {
-        return idx;
+    public int getId() {
+        return id;
     }
                                                                                                                     
     /**
      * @param idx the idx to set
      */
-    public void setIdx(int idx) {
-        this.idx = idx;
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**

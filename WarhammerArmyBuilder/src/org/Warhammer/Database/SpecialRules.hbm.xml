@@ -6,7 +6,7 @@
 
 <hibernate-mapping>
     <class name="org.Warhammer.Warhammer.SpecialRules" table="SpecialRules">
-    <id name="idx" type="integer" unsaved-value="0">
+    <id name="id" type="integer" unsaved-value="0">
       <!--      <generator class=""/>-->
     </id>
     <property name="rule" column="specialRule" length="30"/>

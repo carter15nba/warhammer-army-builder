@@ -5,7 +5,7 @@
     <id name="ID" type="integer">
       <generator class="increment"/>
     </id>
-    <property column="NAME" name="name" length="30"/>
+    <property column="NAME" name="name" length="50"/>
     <property column="COST" name="cost"/>
     <property column="MINUNITS" name="minNumber"/>
     <property column="ATTACK" name="attack" length="7"/>
