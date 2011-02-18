@@ -17,11 +17,9 @@
 
 package org.Warhammer.Warhammer;
 
-import java.util.ArrayList;
 import org.Warhammer.Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,7 +43,7 @@ public class Unit extends CoreCase{
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
-    private List<SpecialRules> specialRules;
+    private Set<SpecialRules> specialRules;
     
     /**
      * @return the movement
@@ -346,14 +344,14 @@ public class Unit extends CoreCase{
     /**
      * @return the specialRules
      */
-    public List<SpecialRules> getSpecialRules() {
+    public Set<SpecialRules> getSpecialRules() {
         return specialRules;
     }
 
     /**
      * @param specialRules the specialRules to set
      */
-    public void setSpecialRules(List<SpecialRules> specialRules) {
+    public void setSpecialRules(Set<SpecialRules> specialRules) {
         this.specialRules = specialRules;
     }
 }

@@ -5,8 +5,14 @@
     <id name="equipmentID" type="integer">
       <generator class="increment"/>
     </id>
-    <property column="TYPE" name="equipmentType" length="20"/>
     <property column="COST" name="cost"/>
     <property column="NAME" name="name" length="30"/>
+    <property name="benefit" column="BENEFIT" length="50"/>
+    <property name="usableBy" column="USABLEBY" length="50"/>
+    <property column="ITEMTYPE" name="itemType" length="20">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">org.Warhammer.Warhammer.Equipment$itemType</param>
+      </type>
+    </property>
   </class>
 </hibernate-mapping>

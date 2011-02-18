@@ -17,9 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
-import javax.persistence.DiscriminatorValue;
 import jcolibri.cbrcore.Attribute;
-import org.hibernate.annotations.Entity;
 
 /**
  *
@@ -28,25 +26,14 @@ import org.hibernate.annotations.Entity;
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
 
+    public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items};
     private int equipmentID;
     private int cost;
     private String name;
-    private String equipmentType;
-
-    /**
-     * @return the equipmentType
-     */
-    public String getEquipmentType() {
-        return equipmentType;
-    }
-    /**
-     * The type of equiment e.g.: Sword, Shield, Spear, Armour,
-     * Two-handed sword etc.
-     * @param equipmentType the equipmentType to set
-     */
-    public void setEquipmentType(String equipmentType) {
-        this.equipmentType = equipmentType;
-    }
+    private itemType itemType;
+    private String usableBy;
+    private String benefit;
+    
 
     public Attribute getIdAttribute() {
         return new Attribute("equipmentID", this.getClass());
@@ -96,6 +83,48 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
 
     @Override
     public String toString(){
-        return "*Name: "+name+", type: "+equipmentType+", cost: "+cost;
+        return "*Name: "+name+", type: "+itemType+", cost: "+cost+", usable by: "+usableBy+", benefit: "+benefit;
+    }
+
+    /**
+     * @return the itemType
+     */
+    public itemType getItemType() {
+        return itemType;
+    }
+
+    /**
+     * @param itemType the itemType to set
+     */
+    public void setItemType(itemType itemType) {
+        this.itemType = itemType;
+    }
+
+    /**
+     * @return the usableBy
+     */
+    public String getUsableBy() {
+        return usableBy;
+    }
+
+    /**
+     * @param usableBy the usableBy to set
+     */
+    public void setUsableBy(String usableBy) {
+        this.usableBy = usableBy;
+    }
+
+    /**
+     * @return the benefit
+     */
+    public String getBenefit() {
+        return benefit;
+    }
+
+    /**
+     * @param benefit the benefit to set
+     */
+    public void setBenefit(String benefit) {
+        this.benefit = benefit;
     }
 }
