@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
 /**
@@ -29,10 +30,12 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items};
     private int equipmentID;
     private int cost;
+    private int range;
     private String name;
     private itemType itemType;
     private String usableBy;
-    private String benefit;
+    private String modifier;
+    private Set<SpecialRules> rules;
     
 
     public Attribute getIdAttribute() {
@@ -81,11 +84,6 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
         this.name = name;
     }
 
-    @Override
-    public String toString(){
-        return "*Name: "+name+", type: "+itemType+", cost: "+cost+", usable by: "+usableBy+", benefit: "+benefit;
-    }
-
     /**
      * @return the itemType
      */
@@ -117,14 +115,51 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the benefit
      */
-    public String getBenefit() {
-        return benefit;
+    public String getModifier() {
+        return modifier;
     }
 
     /**
      * @param benefit the benefit to set
      */
-    public void setBenefit(String benefit) {
-        this.benefit = benefit;
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+        /**
+     * @return the range
+     */
+    public int getRange() {
+        return range;
+    }
+
+    /**
+     * @param range the range to set
+     */
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    /**
+     * @return the rules
+     */
+    public Set<SpecialRules> getRules() {
+        return rules;
+    }
+
+    /**
+     * @param rules the rules to set
+     */
+    public void setRules(Set<SpecialRules> rules) {
+        this.rules = rules;
+    }
+
+    @Override
+    public String toString(){
+        String rule="";
+        for (SpecialRules specialRules : rules) {
+            rule += " "+specialRules.getRule()+",";
+        }
+        return "Name: "+name+", type: "+itemType+", modifier: "+modifier+", rules: "+rule;
     }
 }
