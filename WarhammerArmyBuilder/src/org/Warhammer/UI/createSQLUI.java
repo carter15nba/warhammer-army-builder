@@ -35,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.Warhammer.Database.DatabaseManager;
+import org.Warhammer.Warhammer.Equipment.itemType;
 
 /**
  *
@@ -81,6 +82,14 @@ public class createSQLUI extends javax.swing.JFrame {
                 pos++;
             }
             table.getColumnModel().getColumn(14).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 14));
+            model = new String[9];
+            model[0] = "N/A";
+            pos=1;
+            for(org.Warhammer.Warhammer.Equipment.itemType it : itemType.values()){
+                model[pos] = it.toString();
+                pos++;
+            }
+            tableEquipment.getColumnModel().getColumn(5).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(model, 5));
             dbm.connectWithoutHibernate();
             addUnit.doClick();
             addUnit.setMnemonic('a');
@@ -117,6 +126,15 @@ public class createSQLUI extends javax.swing.JFrame {
         tableSpecialRules = new javax.swing.JTable();
         jScrollPane7 = new javax.swing.JScrollPane();
         tableAssoc_unit_rule = new javax.swing.JTable();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        tableAssocEqRule = new javax.swing.JTable();
+        ccase = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -159,6 +177,8 @@ public class createSQLUI extends javax.swing.JFrame {
             }
         });
 
+        tabbedPane.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        tabbedPane.setToolTipText("null");
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPaneStateChanged(evt);
@@ -225,21 +245,21 @@ public class createSQLUI extends javax.swing.JFrame {
         tableAssocUnit_Util.setRowHeight(20);
         jScrollPane3.setViewportView(tableAssocUnit_Util);
 
-        tabbedPane.addTab("Associate unit and utility", jScrollPane3);
+        tabbedPane.addTab("Assoc unit and util", jScrollPane3);
 
         tableEquipment.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Name", "Cost", "ItemType", "Usable by", "Benefit"
+                "ID", "Name", "Cost", "Range", "Modifier", "ItemType", "Usable by"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true
+                false, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -250,24 +270,23 @@ public class createSQLUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableEquipment.setRowHeight(20);
         jScrollPane4.setViewportView(tableEquipment);
 
         tabbedPane.addTab("Create Equipment", jScrollPane4);
 
         tableAssocUnit_Equipment.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Unit", "Equipment"
             }
         ));
+        tableAssocUnit_Equipment.setRowHeight(20);
         jScrollPane5.setViewportView(tableAssocUnit_Equipment);
 
-        tabbedPane.addTab("Associate unit and equipment", jScrollPane5);
+        tabbedPane.addTab("Assoc unit and eq", jScrollPane5);
 
         tableSpecialRules.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -292,6 +311,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableSpecialRules.setRowHeight(20);
         jScrollPane6.setViewportView(tableSpecialRules);
 
         tabbedPane.addTab("Special Rules", jScrollPane6);
@@ -304,32 +324,93 @@ public class createSQLUI extends javax.swing.JFrame {
                 "Unit", "Rule"
             }
         ));
+        tableAssoc_unit_rule.setToolTipText("null");
         tableAssoc_unit_rule.setRowHeight(20);
         jScrollPane7.setViewportView(tableAssoc_unit_rule);
 
-        tabbedPane.addTab("Associate unit with rule", jScrollPane7);
+        tabbedPane.addTab("Assoc unit and rule", jScrollPane7);
+
+        tableAssocEqRule.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Equipment", "Rule"
+            }
+        ));
+        tableAssocEqRule.setRowHeight(20);
+        jScrollPane8.setViewportView(tableAssocEqRule);
+
+        tabbedPane.addTab("Assoc eq and rule", jScrollPane8);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel1.setText("Player race");
+
+        jLabel2.setText("Enemy race");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jTextField1.setText("<placeholder>");
+
+        jLabel3.setText("Army points");
+
+        javax.swing.GroupLayout ccaseLayout = new javax.swing.GroupLayout(ccase);
+        ccase.setLayout(ccaseLayout);
+        ccaseLayout.setHorizontalGroup(
+            ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ccaseLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ccaseLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ccaseLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(453, Short.MAX_VALUE))
+        );
+        ccaseLayout.setVerticalGroup(
+            ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ccaseLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(380, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Create Case", ccase);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(addUnit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(generateSQL)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(executeSQL)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 859, Short.MAX_VALUE)))
+                .addGap(30, 30, 30)
+                .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(addUnit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(generateSQL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(executeSQL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadButton)
                 .addContainerGap())
+            .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 872, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -341,8 +422,8 @@ public class createSQLUI extends javax.swing.JFrame {
                     .addComponent(loadButton)
                     .addComponent(raceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addUnit))
-                .addGap(29, 29, 29)
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
         );
 
         pack();
@@ -365,6 +446,15 @@ public class createSQLUI extends javax.swing.JFrame {
             tab = tableAssocUnit_Util;
             row = new Object[]{"N/A","N/A"};
         }
+        else if(pane==3){
+            tab = tableEquipment;
+            id++;
+            row = new Object[]{id,null,null,null,null,"N/A",null};
+        }
+        else if(pane==4){
+            tab = tableAssocUnit_Equipment;
+            row = new Object[]{"N/A","N/A"};
+        }
         else if(pane==5){
             tab= tableSpecialRules;
             id++;
@@ -372,6 +462,10 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==6){
             tab = tableAssoc_unit_rule;
+            row = new Object[]{"N/A","N/A"};
+        }
+        else if(pane==7){
+            tab = tableAssocEqRule;
             row = new Object[]{"N/A","N/A"};
         }
         if(tab!=null){
@@ -385,17 +479,26 @@ public class createSQLUI extends javax.swing.JFrame {
     }//GEN-LAST:event_addUnitActionPerformed
 
     private void generateSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSQLActionPerformed
+        String race = raceBox.getSelectedItem().toString();
         if(pane==0){
             parseSQLSFromUnitTable();
-            org.Warhammer.File.SQLFileWriter.writeRaceUnitSQLFile(raceBox.getSelectedItem().toString(), sql);
+            org.Warhammer.File.SQLFileWriter.writeRaceUnitSQLFile(race, sql);
         }
         else if(pane==1){
             parseSQLFromUtilityTable();
-            org.Warhammer.File.SQLFileWriter.writeUtilityUnitSQLFile(raceBox.getSelectedItem().toString(),sql);
+            org.Warhammer.File.SQLFileWriter.writeUtilityUnitSQLFile(race,sql);
         }
         else if(pane==2){
             parseSQLFromUnit_UtilityTable();
-            org.Warhammer.File.SQLFileWriter.write_Unit_UtilitySQLFile(raceBox.getSelectedItem().toString(), sql);
+            org.Warhammer.File.SQLFileWriter.write_Unit_UtilitySQLFile(race, sql);
+        }
+        else if(pane==3){
+            parseSQLFromEquipmentTable();
+            org.Warhammer.File.SQLFileWriter.writeEquipmentSQLFile(sql);
+        }
+        else if(pane==4){
+            parseSQLFromUnit_EquipmentTable();
+            org.Warhammer.File.SQLFileWriter.writeUnit_EquipmentSQLFile(race, sql);
         }
         else if(pane==5){
             parseSQLFromSpecialRules();
@@ -403,7 +506,11 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==6){
             parseSQLFromAssocUnit_Rule();
-            org.Warhammer.File.SQLFileWriter.write_unit_ruleSQLFile(raceBox.getSelectedItem().toString(), sql);
+            org.Warhammer.File.SQLFileWriter.write_unit_ruleSQLFile(race, sql);
+        }
+        else if(pane==7){
+            parseEQ_RuleTable();
+            org.Warhammer.File.SQLFileWriter.write_eq_ruleSQLFile(race, sql);
         }
         
     }//GEN-LAST:event_generateSQLActionPerformed
@@ -419,8 +526,11 @@ public class createSQLUI extends javax.swing.JFrame {
                 if(pane==0){filter = "race_units";}
                 if(pane==1){filter = "utilityunits";}
                 if(pane==2){filter = "unit_utility";}
+                if(pane==3){filter = "equipment";}
+                if(pane==4){filter = "unit_equipment";}
                 if(pane==5){filter = "specialRules";}
                 if(pane==6){filter="unit_rules_";}
+                if(pane==7){filter="eq_rules";}
                 if(name.startsWith(filter))
                     return true;
                 else
@@ -442,11 +552,16 @@ public class createSQLUI extends javax.swing.JFrame {
                 populateUtilityTable(result);
             else if(pane==2)
                 populateUnit_UtilityTable(result);
-            else if(pane==5){
-                populateRuleTable(result);
-            }
+            else if(pane==3)
+                populateEquipmentTable(result);
+            else if(pane==4)
+                populateUnit_EquipmentTable(result);
+            else if(pane==5)
+                populateRuleTable(result);        
             else if(pane==6)
                 populateUnit_RuleTable(result);
+            else if(pane==7)
+                populateEQ_RuleTable(result);
         }
 
     }//GEN-LAST:event_loadButtonActionPerformed
@@ -464,10 +579,16 @@ public class createSQLUI extends javax.swing.JFrame {
                 parseSQLFromUtilityTable();
             else if(pane==2)
                 parseSQLFromUnit_UtilityTable();
+            else if(pane==3)
+                parseSQLFromEquipmentTable();
+            else if(pane==4)
+                parseSQLFromUnit_EquipmentTable();
             else if(pane==5)
                 parseSQLFromSpecialRules();
             else if(pane==6)
                 parseSQLFromAssocUnit_Rule();
+            else if(pane==7)
+                parseEQ_RuleTable();
             for (String string : sql) {
                 dbm.executeSQL(string, org.Warhammer.Database.DatabaseManager.UPDATE_QUERY);
             }
@@ -515,6 +636,29 @@ public class createSQLUI extends javax.swing.JFrame {
                 comp = util.toArray(comp);
                 tableAssocUnit_Util.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
             }
+            else if(pane==3){
+                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT",dbm.SELECT_QUERY);
+                while(res.next())
+                    id = res.getInt("EQUIPMENTID");
+            }
+            else if(pane==4){
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT",dbm.SELECT_QUERY);
+                ArrayList<String> util = new ArrayList<String>();
+                util.add("N/A");
+                while(res.next())
+                    util.add(res.getString("Name"));
+                String[] comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocUnit_Equipment.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 1));
+                util.clear();
+                util.add("N/A");
+                res = dbm.executeSQL("Select name from UNIT where race ='"+raceBox.getSelectedItem().toString()+"'", DatabaseManager.SELECT_QUERY);
+                while(res.next())
+                    util.add(res.getString("Name"));
+                comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocUnit_Equipment.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
+            }
             else if(pane==5){
                 ResultSet res = dbm.executeSQL("Select * from SPECIALRULES", DatabaseManager.SELECT_QUERY);
                 id=0;
@@ -540,6 +684,25 @@ public class createSQLUI extends javax.swing.JFrame {
                 comp = new String[util.size()];
                 comp = util.toArray(comp);
                 tableAssoc_unit_rule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 1));
+            }
+            else if(pane==7){
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT ORDER BY NAME ASC", dbm.SELECT_QUERY);
+                ArrayList<String> util = new ArrayList<String>();
+                util.add("N/A");
+                while(res.next()){
+                    util.add(res.getString("Name"));
+                }
+                String[] comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocEqRule.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 0));
+                util.clear();
+                util.add("N/A");
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", dbm.SELECT_QUERY);
+                while(res.next())
+                    util.add(res.getString("Specialrule"));
+                comp = new String[util.size()];
+                comp = util.toArray(comp);
+                tableAssocEqRule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.WarhammerCheckBoxTableCellRenderer(comp, 1));
             }
         }
         catch(SQLException ex){}
@@ -612,8 +775,14 @@ public class createSQLUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addUnit;
+    private javax.swing.JPanel ccase;
     private javax.swing.JButton executeSQL;
     private javax.swing.JButton generateSQL;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -621,10 +790,13 @@ public class createSQLUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton loadButton;
     private javax.swing.JComboBox raceBox;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable table;
+    private javax.swing.JTable tableAssocEqRule;
     private javax.swing.JTable tableAssocUnit_Equipment;
     private javax.swing.JTable tableAssocUnit_Util;
     private javax.swing.JTable tableAssoc_unit_rule;
@@ -861,7 +1033,6 @@ public class createSQLUI extends javax.swing.JFrame {
             }
         }
         tabbedPaneStateChanged(null);
-        raceBox.setSelectedItem(pane);
         for (String string : result) {
             String[] s = parseQuery(string);
             int ID = Integer.parseInt(s[1]);
@@ -874,6 +1045,142 @@ public class createSQLUI extends javax.swing.JFrame {
             } catch (SQLException ex) {}
             tm.addRow(new Object[]{s[0],rule});
         }
+    }
+
+    private void parseSQLFromEquipmentTable() {
+        int rows = tableEquipment.getRowCount();
+        sql.clear();
+        for(int i = 0 ; i < rows ; i++){
+            if(tableEquipment.getValueAt(i, 1)==null)
+                continue;
+            else if(tableEquipment.getValueAt(i, 2)==null)
+                continue;
+            else if(tableEquipment.getValueAt(i, 3)==null)
+                continue;
+            else if(tableEquipment.getValueAt(i, 4)==null)
+                continue;
+            else if(tableEquipment.getValueAt(i, 5).toString().equals("N/A"))
+                continue;
+            else if(tableEquipment.getValueAt(i, 6)==null)
+                continue;
+            int ID = (Integer) tableEquipment.getValueAt(i, 0);
+            String name = tableEquipment.getValueAt(i, 1).toString();
+            int cost = (Integer) tableEquipment.getValueAt(i, 2);
+            int range = (Integer) tableEquipment.getValueAt(i, 3);
+            String mod = tableEquipment.getValueAt(i, 4).toString();
+            String type = tableEquipment.getValueAt(i, 5).toString();
+            String usable = tableEquipment.getValueAt(i, 6).toString();
+            String query = "INSERT INTO EQUIPMENT(EQUIPMENTID,NAME,COST,RANGE,MODIFIER,ITEMTYPE,USABLEBY)VALUES("+ID+",'"+name+"',"+cost+","+range+",'"+mod+"','"+type+"','"+usable+"')";
+            sql.add(query);
+        }
+    }
+
+    private void populateEquipmentTable(ArrayList<String> result) {
+        DefaultTableModel tm = (DefaultTableModel) tableEquipment.getModel();
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            tm.addRow(new Object[]{Integer.parseInt(s[0]),s[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),s[4],s[5],s[6]});
+        }
+    }
+
+    private void parseSQLFromUnit_EquipmentTable() {
+        int rows = tableAssocUnit_Equipment.getRowCount();
+        sql.clear();
+        for (int i = 0; i < rows; i++) {
+            String unit = tableAssocUnit_Equipment.getValueAt(i, 0).toString();
+            String eq = tableAssocUnit_Equipment.getValueAt(i, 1).toString();
+            if(unit.contentEquals("N/A")||eq.contentEquals("N/A"))
+                continue;
+            ResultSet res = dbm.executeSQL("select equipmentid from EQUIPMENT where name='"+eq+"'", DatabaseManager.SELECT_QUERY);
+            int ID=-1;
+            try {
+                while(res.next())
+                    ID = res.getInt("EQUIPMENTID");
+            }
+            catch (SQLException ex) {}
+            if(ID==-1)
+                continue;
+            String query = "INSERT INTO UNIT_EQUIPMENT(NAME,EQUIPMENT_ID) VALUES('"+unit+"',"+ID+")";
+            System.out.println(query);
+            sql.add(query);
+        }
+    }
+
+    private void populateUnit_EquipmentTable(ArrayList<String> result) {
+        DefaultTableModel tm = (DefaultTableModel) tableAssocUnit_Equipment.getModel();
+        String[] q = parseQuery(result.get(0));
+        q = q[0].split(":");
+        String race = q[0];
+        for (int i = 0; i < raceBox.getItemCount() ; i++) {
+            Object object = raceBox.getItemAt(i);
+            String s = object.toString();
+            if(s.equalsIgnoreCase(race)){
+                raceBox.setSelectedItem(object);
+                break;
+            }
+        }
+        tabbedPaneStateChanged(null);
+
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            int ID = Integer.parseInt(s[1]);
+            ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+ID, dbm.SELECT_QUERY);
+            String rule="N/A";
+            try {
+                while (res.next()) {
+                    rule = res.getString("NAME");
+                }
+            } catch (SQLException ex) {}
+            tm.addRow(new Object[]{s[0],rule});
+            
+        }
+
+    }
+
+    private void parseEQ_RuleTable() {
+        int rows = tableAssocEqRule.getRowCount();
+        sql.clear();
+        for(int i = 0 ; i < rows ; i++){
+            String eq = tableAssocEqRule.getValueAt(i, 0).toString();
+            String rule = tableAssocEqRule.getValueAt(i, 1).toString();
+            if(eq.contentEquals("N/A")||rule.contentEquals("N/A"))
+                continue;
+            int eqID = -1;
+            int ruleID = -1;
+            try{
+                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eq+"'", dbm.SELECT_QUERY);
+                while(res.next())
+                    eqID = res.getInt("EQUIPMENTID");
+                res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", dbm.SELECT_QUERY);
+                while(res.next())
+                    ruleID = res.getInt("ID");
+            }
+            catch(SQLException sqle){}
+            if(eqID==-1||ruleID==-1)
+                continue;
+            String query = "INSERT INTO EQUIPMENT_RULES(EQUIPMENTID,ID)VALUES("+eqID+","+ruleID+")";
+            sql.add(query);
+        }
+    }
+
+    private void populateEQ_RuleTable(ArrayList<String> result) {
+       DefaultTableModel tm = (DefaultTableModel) tableAssocUnit_Equipment.getModel();
+        for (String string : result) {
+            String[] s = parseQuery(string);
+            try{
+                String eqName="";
+                String ruleName="";
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], dbm.SELECT_QUERY);
+                while(res.next())
+                    eqName = res.getString("Name");
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULE WHERE ID="+s[1], dbm.SELECT_QUERY);
+                while(res.next())
+                    ruleName = res.getString("Name");
+                tm.addRow(new Object[]{eqName,ruleName});
+            }
+            catch(SQLException sqle){}
+        }
+
     }
 
 

@@ -80,4 +80,18 @@ public class SQLFileWriter {
             ps.close();
         }
     }
+
+    public static void writeEquipmentSQLFile(ArrayList<String> sql) {
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/equipment.sql");
+        print(file, sql);
+    }
+    public static void writeUnit_EquipmentSQLFile(String race,ArrayList<String> sql) {
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_equipment_"+race+".sql");
+        print(file, sql);
+    }
+
+    public static void write_eq_ruleSQLFile(String race, ArrayList<String> sql) {
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/eq_rules"+race+".sql");
+        print(file, sql);
+    }
 }
