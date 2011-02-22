@@ -2,10 +2,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="org.Warhammer.Warhammer.Unit" table="UNIT">
-    <id name="name" type="string" length="60">
+    <id length="60" name="name" type="string">
       <!--      <generator class=""/>-->
     </id>
-    <property column="RACE" name="race" length="20">
+    <property column="RACE" length="20" name="race">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Case$Races</param>
       </type>
@@ -13,25 +13,25 @@
     <property column="COST" name="cost"/>
     <property column="MINUNITS" name="minNumber"/>
     <property column="MAXUNITS" name="maxNumber"/>
-    <property column="ARMYTYPE" name="armyType" length="7">
+    <property column="ARMYTYPE" length="7" name="armyType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Unit$armyType</param>
       </type>
     </property>
-    <property column="ATTACK" name="attack" length="7"/>
-    <property column="BALLISTICSKILL" name="ballisticSkill" length="7"/>
-    <property column="INITIATIVE" name="initiative" length="7"/>
-    <property column="LEADERSHIP" name="leadership" length="7"/>
-    <property column="MOVEMENT" name="movement" length="7"/>
-    <property column="STRENGTH" name="strength" length="7"/>
-    <property column="TOUGHNESS" name="toughness" length="7"/>
-    <property column="UNITTYPE" name="unitType" length="3">
+    <property column="ATTACK" length="7" name="attack"/>
+    <property column="BALLISTICSKILL" length="7" name="ballisticSkill"/>
+    <property column="INITIATIVE" length="7" name="initiative"/>
+    <property column="LEADERSHIP" length="7" name="leadership"/>
+    <property column="MOVEMENT" length="7" name="movement"/>
+    <property column="STRENGTH" length="7" name="strength"/>
+    <property column="TOUGHNESS" length="7" name="toughness"/>
+    <property column="UNITTYPE" length="3" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Unit$unitType</param>
       </type>
     </property>
-    <property column="WEAPONSKILL" name="weaponSkill" length="7"/>
-    <property column="WOUNDS" name="wounds" length="7"/>
+    <property column="WEAPONSKILL" length="7" name="weaponSkill"/>
+    <property column="WOUNDS" length="7" name="wounds"/>
     <set lazy="false" name="equipment" table="UNIT_EQUIPMENT">
       <key column="name"/>
       <many-to-many class="org.Warhammer.Warhammer.Equipment" column="EQUIPMENT_ID"/>
@@ -44,10 +44,5 @@
       <key column="name"/>
       <many-to-many class="org.Warhammer.Warhammer.SpecialRules" column="RULE_ID"/>
     </set>
-<!--    <list name="specialRules" cascade="all" lazy="false" >
-      <key column="Unit_Name"/>
-      <index column="idx"/>
-      <one-to-many class="org.Warhammer.Warhammer.SpecialRules"/>
-    </list>-->
   </class>
 </hibernate-mapping>

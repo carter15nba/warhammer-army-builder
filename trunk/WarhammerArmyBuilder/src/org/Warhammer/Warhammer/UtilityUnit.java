@@ -21,7 +21,7 @@ package org.Warhammer.Warhammer;
  *
  * @author Glenn Rune Strandbåten
  */
-public class UtilityUnit extends CoreCase{
+public class UtilityUnit extends CoreUnit{
 
     /**
      * @return the required

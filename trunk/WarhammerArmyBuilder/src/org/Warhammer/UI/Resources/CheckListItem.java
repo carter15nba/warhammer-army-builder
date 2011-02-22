@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbåten
+ *  Copyright (C) 2011 Glenn Rune Strandbråten 
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,22 +19,24 @@ package org.Warhammer.UI.Resources;
 
 /**
  *
- * @author Glenn Rune Strandbåten
- * @verion 0.1
+ * @author Glenn Rune Strandbråten
+ * @version 
  */
-public class WarhammerXMLFileFilter extends javax.swing.filechooser.FileFilter{
-    @Override
-    public boolean accept(java.io.File f) {
-        String name = f.getName();
-        if(f.isDirectory())
-            return true;
-        if(name.endsWith(".xml"))
-            return true;
-        else
-            return false;
+public class CheckListItem {
+    private String label;
+    private boolean isSelected = true;
+    public CheckListItem(String label){
+        this.label = label;
+    }
+    public boolean isSelected(){
+        return isSelected;
+    }
+    public void setSelected(boolean selected){
+        isSelected = selected;
     }
     @Override
-    public String getDescription() {
-        return "Warhammer race XML files (.xml)";
+    public String toString(){
+        return label;
     }
+
 }

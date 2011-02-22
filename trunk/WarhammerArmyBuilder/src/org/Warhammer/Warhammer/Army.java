@@ -17,79 +17,77 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 0,5
+ * @version 0,1
  */
-public class Case implements jcolibri.cbrcore.CaseComponent{
-
-    public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
-    public enum Outcomes{Defeat,Draw,Victory};
+public class Army implements jcolibri.cbrcore.CaseComponent{
     private int ID;
-    private int armyID;
-    private Races opponent;
-    private Outcomes outcome;
-    
+    private Case.Races playerRace;
+    private int armyPoints;
+    private Set<ArmyUnit> armyUnits;
+
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
     }
 
     /**
-     * @return the ID
+     * @return the armyID
      */
     public int getID() {
         return ID;
     }
 
     /**
-     * @param ID the ID to set
+     * @param armyID the armyID to set
      */
     public void setID(int ID) {
         this.ID = ID;
     }
 
     /**
-     * @return the armyID
+     * @return the playerRace
      */
-    public int getArmyID() {
-        return armyID;
+    public Case.Races getPlayerRace() {
+        return playerRace;
     }
 
     /**
-     * @param armyID the armyID to set
+     * @param playerRace the playerRace to set
      */
-    public void setArmyID(int armyID) {
-        this.armyID = armyID;
+    public void setPlayerRace(Case.Races playerRace) {
+        this.playerRace = playerRace;
     }
 
     /**
-     * @return the opponent
+     * @return the armyPoints
      */
-    public Races getOpponent() {
-        return opponent;
+    public int getArmyPoints() {
+        return armyPoints;
     }
 
     /**
-     * @param opponent the opponent to set
+     * @param armyPoints the armyPoints to set
      */
-    public void setOpponent(Races opponent) {
-        this.opponent = opponent;
+    public void setArmyPoints(int armyPoints) {
+        this.armyPoints = armyPoints;
     }
 
     /**
-     * @return the outcome
+     * @return the armyUnits
      */
-    public Outcomes getOutcome() {
-        return outcome;
+    public Set<ArmyUnit> getArmyUnits() {
+        return armyUnits;
     }
 
     /**
-     * @param outcome the outcome to set
+     * @param armyUnits the armyUnits to set
      */
-    public void setOutcome(Outcomes outcome) {
-        this.outcome = outcome;
+    public void setArmyUnits(Set<ArmyUnit> armyUnits) {
+        this.armyUnits = armyUnits;
     }
 }

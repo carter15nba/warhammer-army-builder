@@ -21,6 +21,8 @@ import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.ArrayList;
 import java.util.Set;
 
+//TODO FIX ENTIRE RULESET CLASS
+
 /**
  *
  * @author Glenn Rune Strandbåten
@@ -119,31 +121,31 @@ public class RuleSet {
         }
     }
     private void calculatePointsUsage(Case caseObj){
-        duplicate = new DuplicateUnits();
-        Set<Unit> units = caseObj.getUnits();
-        for (Unit u : units) {
-            int cost = u.calculateTotalUnitCost();
-            armyType armyType = u.getArmyType();
-            switch(armyType){
-                case Core:
-                    coreCost += cost;
-                   break;
-                case Hero:
-                    heroCost += cost;
-                    break;
-                case Lord:
-                    lordCost += cost;
-                    break;
-                case Rare:
-                    rareCost += cost;
-                    duplicate.checkUnit(u);
-                    break;
-                case Special:
-                    specialCost += cost;
-                    duplicate.checkUnit(u);
-                    break;
-            }
-        }
+//        duplicate = new DuplicateUnits();
+//        Set<Unit> units = caseObj.getUnits();
+//        for (Unit u : units) {
+//            int cost = u.calculateTotalUnitCost();
+//            armyType armyType = u.getArmyType();
+//            switch(armyType){
+//                case Core:
+//                    coreCost += cost;
+//                   break;
+//                case Hero:
+//                    heroCost += cost;
+//                    break;
+//                case Lord:
+//                    lordCost += cost;
+//                    break;
+//                case Rare:
+//                    rareCost += cost;
+//                    duplicate.checkUnit(u);
+//                    break;
+//                case Special:
+//                    specialCost += cost;
+//                    duplicate.checkUnit(u);
+//                    break;
+//            }
+//        }
     }
     public messages[] getErrorCauses(){
         if(errorCount==0)

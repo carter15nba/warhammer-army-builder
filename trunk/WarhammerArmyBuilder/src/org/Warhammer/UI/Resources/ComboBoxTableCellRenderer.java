@@ -25,11 +25,11 @@ import javax.swing.JTable;
  * @author Glenn Rune Strandbråten
  * @version 
  */
-public class WarhammerCheckBoxTableCellRenderer extends javax.swing.table.DefaultTableCellRenderer{
+public class ComboBoxTableCellRenderer extends javax.swing.table.DefaultTableCellRenderer{
 
     private String[] comboBoxContent;
     private int comboBoxColumn;
-    public WarhammerCheckBoxTableCellRenderer(String[] content,int column){
+    public ComboBoxTableCellRenderer(String[] content,int column){
         comboBoxContent = content;
         comboBoxColumn = column;
     }

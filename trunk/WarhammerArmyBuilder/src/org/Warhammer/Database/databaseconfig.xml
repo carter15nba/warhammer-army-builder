@@ -9,9 +9,9 @@
 -->
 
 <DataBaseConfiguration>
-	<HibernateConfigFile>org/Warhammer/Database/hibernate.cfg.xml</HibernateConfigFile>
-	<DescriptionMappingFile>org/Warhammer/Database/Unit.hbm.xml</DescriptionMappingFile>
-	<DescriptionClassName>org.Warhammer.Warhammer.Unit</DescriptionClassName>
-<!--	<SolutionMappingFile>org/Warhammer/Database/Case.hbm.xml</SolutionMappingFile>
-	<SolutionClassName>org.Warhammer.Warhammer.Case</SolutionClassName>-->
+    <HibernateConfigFile>org/Warhammer/Database/hibernate.cfg.xml</HibernateConfigFile>
+    <DescriptionMappingFile>org/Warhammer/Database/Case.hbm.xml</DescriptionMappingFile>
+    <DescriptionClassName>org.Warhammer.Warhammer.Case</DescriptionClassName>
+    <SolutionMappingFile>org/Warhammer/Database/Case.hbm.xml</SolutionMappingFile>
+    <SolutionClassName>org.Warhammer.Warhammer.Case</SolutionClassName>
 </DataBaseConfiguration>

@@ -24,7 +24,7 @@ import jcolibri.cbrcore.Attribute;
  * @author Glenn Rune Strandbåten
  * @version 0.1
  */
-public class CoreCase implements jcolibri.cbrcore.CaseComponent{
+public class CoreUnit implements jcolibri.cbrcore.CaseComponent{
 
     private int ID;
     private String name;

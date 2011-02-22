@@ -90,8 +90,30 @@ public class SQLFileWriter {
         print(file, sql);
     }
 
-    public static void write_eq_ruleSQLFile(String race, ArrayList<String> sql) {
-        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/eq_rules"+race+".sql");
+    public static void write_eq_ruleSQLFile(ArrayList<String> sql) {
+        java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/eq_rules.sql");
+        print(file, sql);
+    }
+
+    public static void write_armySQLFile(String race, ArrayList<String> sql) {
+        int num = -1;
+        java.io.File file;
+        do{
+            num++;
+            file = new java.io.File("src/org/Warhammer/Database/Resources/army_"+race+"_"+num+".sql");
+        }
+        while(file.exists());
+        print(file, sql);
+    }
+
+    public static void write_caseSQLFile(String race, ArrayList<String> sql) {
+        int num = -1;
+        java.io.File file;
+        do{
+            num++;
+            file = new java.io.File("src/org/Warhammer/Database/Resources/case_"+num+"("+race+").sql");
+        }
+        while(file.exists());
         print(file, sql);
     }
 }
