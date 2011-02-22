@@ -17,51 +17,93 @@
 
 package org.Warhammer.Warhammer;
 
-import java.util.ArrayList;
+import java.util.Set;
+import jcolibri.cbrcore.Attribute;
 
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 0.3
  */
-public class ArmyUnit extends Unit_old{
-    private ArrayList<UtilityUnit_old> utilityUnits;
+public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
+    private int ID;
+    private int armyID;
+    private String unitName;
+    private Set<Equipment> equipment;
+    private Set<UtilityUnit> utility;
+
+    public Attribute getIdAttribute() {
+        return new Attribute("ID", this.getClass());
+    }
+
+     /**
+     * @return the ID
+     */
+    public int getID() {
+        return ID;
+    }
 
     /**
-     * Constructor to create a new ArmyUnit object and initialization of the
-     * super class.
+     * @param ID the ID to set
      */
-    public ArmyUnit(){
-        super();
-        utilityUnits = null;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     /**
-     * Method to aquire the utilitUnit objects associated with this unit.
-     * @return null if there is no crews associated with this unit, otherwise the ArrayList<UtilityUnit> containg the associated utilityUnits.
+     * @return the armyID
      */
-    public ArrayList<UtilityUnit_old> getUtilityUnits(){
-        return utilityUnits;
+    public int getArmyID() {
+        return armyID;
     }
-
 
     /**
-     * Method that associates a new utilityUnit with this unit.
-     * @param crew the UtilityUnit to associate with this unit.
+     * @param armyID the armyID to set
      */
-    public void addCrew(UtilityUnit_old utilityUnit){
-        if(utilityUnits==null)
-            utilityUnits = new ArrayList<UtilityUnit_old>();
-        utilityUnits.add(utilityUnit);
+    public void setArmyID(int armyID) {
+        this.armyID = armyID;
     }
-    
-    @Override
-    public String toString(){
-        String toString = super.toString();
-        if(utilityUnits!=null)
-            for(UtilityUnit_old utilityUnit : utilityUnits){
-                toString += "\n\t"+utilityUnit.toString();
-            }
-        return toString;
+    /**
+     * @return the unit
+     */
+    public String getUnitName() {
+        return unitName;
     }
+
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    /**
+     * @return the equipmentID
+     */
+    public Set<Equipment> getEquipment() {
+        return equipment;
+    }
+
+    /**
+     * @param equipmentID the equipmentID to set
+     */
+    public void setEquipment(Set<Equipment> equipment) {
+        this.equipment = equipment;
+    }
+
+    /**
+     * @return the utilityID
+     */
+    public Set<UtilityUnit> getUtility() {
+        return utility;
+    }
+
+    /**
+     * @param utilityID the utilityID to set
+     */
+    public void setUtility(Set<UtilityUnit> utility) {
+        this.utility = utility;
+    }
+
+
 }

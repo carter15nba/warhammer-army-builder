@@ -6,11 +6,11 @@
       <generator class="increment"/>
     </id>
     <property column="COST" name="cost"/>
-    <property column="NAME" name="name" length="30"/>
+    <property column="NAME" length="30" name="name"/>
     <property column="RANGE" name="range" type="integer"/>
-    <property column="MODIFIER" name="modifier" length="50"/>
-    <property column="USABLEBY" name="usableBy" length="50"/>
-    <property column="ITEMTYPE" name="itemType" length="20">
+    <property column="MODIFIER" length="50" name="modifier"/>
+    <property column="USABLEBY" length="50" name="usableBy"/>
+    <property column="ITEMTYPE" length="20" name="itemType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Equipment$itemType</param>
       </type>
@@ -19,6 +19,5 @@
       <key column="equipmentID"/>
       <many-to-many class="org.Warhammer.Warhammer.SpecialRules" column="ID"/>
     </set>
-
   </class>
 </hibernate-mapping>

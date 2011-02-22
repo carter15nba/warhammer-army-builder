@@ -26,7 +26,7 @@ import java.util.Set;
  *
  * @author Glenn Rune Strandbåten
  */
-public class Unit extends CoreCase{
+public class Unit extends CoreUnit{
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
     public enum armyType {Hero, Lord, Special, Rare, Core, _na};
     private String movement = "";

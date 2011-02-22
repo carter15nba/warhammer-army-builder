@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten
+ *  Copyright (C) 2011 Glenn Rune Strandbråten 
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,24 +15,30 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.Warhammer.Warhammer;
+package org.Warhammer.UI.Resources;
+
+import javax.swing.JCheckBox;
 
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 
  */
-public class UtilityUnit_old extends Unit_old{
-    /**
-     * Method to set the name of the Crew unit. This method overrides the
-     * setName method in the Unit super class.
-     * @param name String the name of the Crew unit.
-     */
-    @Override
-    public void setName(String name){
-        if(name.startsWith("-"))
-            super.setName(name);
-        else
-            super.setName("-"+name);
+public class CaseStorage {
+    private CheckListItem[] equipment;
+    private CheckListItem[] utility;
+
+
+    public CheckListItem[] getEquipment(){
+        return equipment;
+    }
+    public CheckListItem[] getUtility(){
+        return utility;
+    }
+    public void setEquipment(CheckListItem[] eq){
+        equipment = eq;
+    }
+    public void setUtility(CheckListItem[] ut){
+        utility = ut;
     }
 }
