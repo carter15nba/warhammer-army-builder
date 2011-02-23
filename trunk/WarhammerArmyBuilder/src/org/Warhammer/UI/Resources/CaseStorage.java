@@ -17,8 +17,6 @@
 
 package org.Warhammer.UI.Resources;
 
-import javax.swing.JCheckBox;
-
 /**
  *
  * @author Glenn Rune Strandbråten

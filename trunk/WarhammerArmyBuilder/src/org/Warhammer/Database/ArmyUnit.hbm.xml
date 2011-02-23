@@ -6,8 +6,8 @@
       <generator class="increment"/>
     </id>
     <property column="ARMY_ID" name="armyID" type="integer"/>
-    <property column="UNIT_NAME" name="unitName">           
-        </property>
+    <property column="UNIT_NAME" name="unitName"/>
+    <property column="NUM_UNITS" name="numberOfUnits"/>
     <set name="equipment" table="ARMY_UNIT_EQUIPMENT">
       <key column="ARMY_UNIT_ID"/>
       <many-to-many class="org.Warhammer.Warhammer.Equipment" column="EQUIPMENT_ID"/>

@@ -28,6 +28,7 @@ import jcolibri.cbrcore.Attribute;
 public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     private int ID;
     private int armyID;
+    private int numberOfUnits;
     private String unitName;
     private Set<Equipment> equipment;
     private Set<UtilityUnit> utility;
@@ -103,6 +104,20 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
      */
     public void setUtility(Set<UtilityUnit> utility) {
         this.utility = utility;
+    }
+
+    /**
+     * @return the numberOfUnits
+     */
+    public int getNumberOfUnits() {
+        return numberOfUnits;
+    }
+
+    /**
+     * @param numberOfUnits the numberOfUnits to set
+     */
+    public void setNumberOfUnits(int numberOfUnits) {
+        this.numberOfUnits = numberOfUnits;
     }
 
 

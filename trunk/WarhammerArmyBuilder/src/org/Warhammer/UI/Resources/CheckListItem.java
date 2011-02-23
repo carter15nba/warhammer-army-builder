@@ -24,9 +24,13 @@ package org.Warhammer.UI.Resources;
  */
 public class CheckListItem {
     private String label;
-    private boolean isSelected = true;
+    private boolean isSelected = false;
     public CheckListItem(String label){
         this.label = label;
+    }
+    public CheckListItem(String label, boolean selected){
+        this.label = label;
+        isSelected = selected;
     }
     public boolean isSelected(){
         return isSelected;
