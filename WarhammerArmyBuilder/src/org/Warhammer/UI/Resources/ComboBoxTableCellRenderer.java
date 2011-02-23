@@ -33,7 +33,7 @@ public class ComboBoxTableCellRenderer extends javax.swing.table.DefaultTableCel
         comboBoxContent = content;
         comboBoxColumn = column;
     }
-
+ 
     @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value,

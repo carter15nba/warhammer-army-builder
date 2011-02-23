@@ -23,7 +23,7 @@
 
 package org.Warhammer.UI;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -33,7 +33,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -42,6 +41,8 @@ import javax.swing.table.DefaultTableModel;
 import org.Warhammer.Database.DatabaseManager;
 import org.Warhammer.UI.Resources.CaseStorage;
 import org.Warhammer.UI.Resources.CheckListItem;
+import org.Warhammer.Warhammer.Case.Outcomes;
+import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment.itemType;
 
 /**
@@ -61,6 +62,8 @@ public class createSQLUI extends javax.swing.JFrame {
     /** Creates new form createUnitSQLUI */
     public createSQLUI() {
             initComponents();
+            armyPoints.setText("");
+            armyPoints.setPreferredSize(new Dimension(80,20));
             sql = new ArrayList<String>();
             raceBox.addItem("Select race");
             for (org.Warhammer.Warhammer.Case.Races race : org.Warhammer.Warhammer.Case.Races.values()) {
@@ -102,7 +105,30 @@ public class createSQLUI extends javax.swing.JFrame {
             addUnit.doClick();
             addUnit.setMnemonic('a');
             caseStore = new ArrayList<CaseStorage>();
-
+            equipmentList.setCellRenderer(new org.Warhammer.UI.Resources.CheckBoxListRenderer());
+            equipmentList.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent evt){
+                    JList list = (JList) evt.getSource();
+                    int index = list.locationToIndex(evt.getPoint());
+                    CheckListItem item =
+                            (CheckListItem) list.getModel().getElementAt(index);
+                    item.setSelected(! item.isSelected());
+                    list.repaint(list.getCellBounds(index, index));
+                }
+            });
+            utilityList.setCellRenderer(new org.Warhammer.UI.Resources.CheckBoxListRenderer());
+            utilityList.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent evt){
+                    JList list = (JList) evt.getSource();
+                    int index = list.locationToIndex(evt.getPoint());
+                    CheckListItem item =
+                            (CheckListItem) list.getModel().getElementAt(index);
+                    item.setSelected(! item.isSelected());
+                    list.repaint(list.getCellBounds(index, index));
+                }
+            });
     }
 
     /** This method is called from within the constructor to
@@ -147,10 +173,16 @@ public class createSQLUI extends javax.swing.JFrame {
         tableArmy = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
         jScrollPane12 = new javax.swing.JScrollPane();
         tableCreateCase = new javax.swing.JTable();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        armyDetails = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("!!!!!!!!!!Warning: This UI is for developers only!!!!!!!!! Create domain knowledge and cases");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -356,6 +388,8 @@ public class createSQLUI extends javax.swing.JFrame {
         tabbedPane.addTab("Assoc eq and rule", jScrollPane8);
 
         armyPoints.setText("<placeholder>");
+        armyPoints.setMaximumSize(new java.awt.Dimension(77, 20));
+        armyPoints.setMinimumSize(new java.awt.Dimension(77, 20));
 
         jLabel3.setText("Army points:");
 
@@ -380,11 +414,6 @@ public class createSQLUI extends javax.swing.JFrame {
             }
         });
         tableArmy.setRowHeight(20);
-        tableArmy.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tableArmyPropertyChange(evt);
-            }
-        });
         jScrollPane11.setViewportView(tableArmy);
 
         jLabel1.setText("<html>E<br>Q<br>U<br>I<br>P<br>M<br>E<br>N<br>T");
@@ -392,28 +421,37 @@ public class createSQLUI extends javax.swing.JFrame {
 
         jLabel2.setText("<html>U<br>T<br>I<br>L<br>I<br>T<br>Y");
 
+        jButton1.setMnemonic('g');
+        jButton1.setText("Get util/eq");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ccaseLayout = new javax.swing.GroupLayout(ccase);
         ccase.setLayout(ccaseLayout);
         ccaseLayout.setHorizontalGroup(
             ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ccaseLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(ccaseLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(armyPoints, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ccaseLayout.createSequentialGroup()
-                        .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                            .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(255, 255, 255))
+                        .addComponent(armyPoints, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane10)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addContainerGap())
         );
         ccaseLayout.setVerticalGroup(
             ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -421,22 +459,31 @@ public class createSQLUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(armyPoints, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(armyPoints, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
                     .addGroup(ccaseLayout.createSequentialGroup()
                         .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(ccaseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
         tabbedPane.addTab("Create army", ccase);
+
+        jButton2.setMnemonic('g');
+        jButton2.setText("Get army details");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         tableCreateCase.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -447,7 +494,7 @@ public class createSQLUI extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
                 false, true, true, true
@@ -461,9 +508,45 @@ public class createSQLUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableCreateCase.setRowHeight(20);
         jScrollPane12.setViewportView(tableCreateCase);
 
-        tabbedPane.addTab("Create case", jScrollPane12);
+        armyDetails.setColumns(20);
+        armyDetails.setRows(5);
+        jScrollPane13.setViewportView(armyDetails);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(423, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(360, Short.MAX_VALUE)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane13, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        tabbedPane.addTab("Create case", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -481,7 +564,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadButton)
                 .addContainerGap())
-            .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 872, Short.MAX_VALUE)
+            .addComponent(tabbedPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -544,7 +627,9 @@ public class createSQLUI extends javax.swing.JFrame {
             row = new Object[]{null,null};
         }
         else if(pane==9){
-            
+            tab = tableCreateCase;
+            id++;
+            row = new Object[]{id,"N/A","N/A","Draw"};
         }
         if(tab!=null){
             tm = (DefaultTableModel) tab.getModel();
@@ -733,12 +818,12 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssocUnit_Util.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 0));
             }
             else if(pane==3){
-                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT",dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT",DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     id = res.getInt("EQUIPMENTID");
             }
             else if(pane==4){
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT",dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT",DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next())
@@ -763,7 +848,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 }
             }
             else if(pane==6){
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM UNIT WHERE RACE='"+raceBox.getSelectedItem().toString()+"'", dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM UNIT WHERE RACE='"+raceBox.getSelectedItem().toString()+"'", DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next()){
@@ -774,7 +859,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssoc_unit_rule.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 0));
                 util.clear();
                 util.add("N/A");
-                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", dbm.SELECT_QUERY);
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     util.add(res.getString("Specialrule"));
                 comp = new String[util.size()];
@@ -782,7 +867,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssoc_unit_rule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 1));
             }
             else if(pane==7){
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT ORDER BY NAME ASC", dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT ORDER BY NAME ASC", DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next()){
@@ -793,7 +878,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssocEqRule.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 0));
                 util.clear();
                 util.add("N/A");
-                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", dbm.SELECT_QUERY);
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES ORDER BY SPECIALRULE ASC", DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     util.add(res.getString("Specialrule"));
                 comp = new String[util.size()];
@@ -801,38 +886,105 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssocEqRule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 1));
             }
             else if(pane==8){
-                String[] comp = new String[3];
-                comp[0] = "1";
-                comp[1] = "2";
-                comp[2] = "3";
+                ResultSet res = dbm.executeSQL("Select name from unit where race='"+raceBox.getSelectedItem().toString()+"'", DatabaseManager.SELECT_QUERY);
+                ArrayList<String> unit = new ArrayList<String>();
+                unit.add("N/A");
+                while(res.next()){
+                    unit.add(res.getString("Name"));
+                }
+                String[] comp = new String[unit.size()];
+                comp = unit.toArray(comp);
                 tableArmy.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 0));
-                utilityList.setBackground(this.getBackground());
-                utilityList.setListData(new CheckListItem[]{new CheckListItem("test"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest"),new CheckListItem("elveblest")});
-                utilityList.setCellRenderer(new org.Warhammer.UI.Resources.CheckBoxListRenderer());
-                utilityList.addMouseListener(new MouseAdapter(){
-                    @Override
-                    public void mouseClicked(MouseEvent event){
-                        JList list = (JList) event.getSource();
-                        int index = list.locationToIndex(event.getPoint());
-                        CheckListItem item =
-                                (CheckListItem) list.getModel().getElementAt(index);
-                        item.setSelected(! item.isSelected());
-                        list.repaint(list.getCellBounds(index, index));
-
-                    }
-                });
-                
+                res = dbm.executeSQL("SELECT ID FROM ARMIES", DatabaseManager.SELECT_QUERY);
+                while(res.next())
+                    id=res.getInt("ID");
             }
             else if(pane==9){
+                ResultSet res = dbm.executeSQL("SELECT * FROM ARMIES", DatabaseManager.SELECT_QUERY);
+                ArrayList<String> army = new ArrayList<String>();
+                army.add("N/A");
+                while(res.next()){
+                    id = res.getInt("ID");
+                    army.add(id+":"+res.getString("PLAYER_RACE"));
+                }
+                String[] cont = new String[army.size()];
+                cont = army.toArray(cont);
+                tableCreateCase.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(cont, 1));
+                Races[] ra = Races.values();
+                String[] race = new String[ra.length+1];
+                race[0] = "N/A";
+                for(int i = 0 ; i < ra.length;i++){
+                    race[i+1] = ra[i].toString();
+                }
+                tableCreateCase.getColumnModel().getColumn(2).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(race, 2));
+                Outcomes[] out = Outcomes.values();
+                String[] outcome = new String[out.length];
+                for(int i = 0 ; i < out.length;i++){
+                    outcome[i] = out[i].toString();
+                }
+                tableCreateCase.getColumnModel().getColumn(3).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(outcome, 3));
                 
             }
         }
         catch(SQLException ex){}
     }//GEN-LAST:event_tabbedPaneStateChanged
 
-    private void tableArmyPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tableArmyPropertyChange
-        System.out.println("prop change");
-    }//GEN-LAST:event_tableArmyPropertyChange
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int row = tableArmy.getSelectedRow();
+        if(row<0)
+            return;
+        ArrayList<String> equip = new ArrayList<String>();
+        ArrayList<String> util = new ArrayList<String>();
+        if(row>=caseStore.size()){
+            try{
+                String name = tableArmy.getValueAt(row, 0).toString();
+                System.out.println(name);
+                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID",DatabaseManager.SELECT_QUERY);
+                ResultSet ut = dbm.executeSQL("SELECT UTILITYUNIT.NAME,UTILITYUNIT.REQUIRED FROM UTILITYUNIT,UNIT_UTILITY WHERE UTILITYUNIT.ID = UNIT_UTILITY.UTILID AND UNIT_UTILITY.NAME='"+name+"'", DatabaseManager.SELECT_QUERY);
+                while(eq.next())
+                    equip.add(eq.getString("NAME"));
+                while(ut.next())
+                    util.add(ut.getString("NAME")+";"+ut.getString("REQUIRED"));
+                CheckListItem[] e = new CheckListItem[equip.size()];
+                for(int i = 0 ; i < equip.size() ; i++)
+                    e[i] = new CheckListItem(equip.get(i));
+                CaseStorage c = new CaseStorage();
+                c.setEquipment(e);
+                e = new CheckListItem[util.size()];
+                for(int i = 0 ; i < util.size() ; i++){
+                    String s[] = util.get(i).split(";");
+                    int j = Integer.parseInt(s[1]);
+                    boolean b = false;
+                    if(j==1)
+                        b = true;
+                    e[i] = new CheckListItem(s[0],b);
+                }
+                c.setUtility(e);
+                caseStore.add(c);
+            }
+            catch(SQLException sqle){}
+        }
+        CaseStorage item = caseStore.get(row);
+        equipmentList.setListData(item.getEquipment());
+        utilityList.setListData(item.getUtility());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int row = tableCreateCase.getSelectedRow();
+        String army = tableCreateCase.getValueAt(row, 1).toString();
+        if(army.contentEquals("N/A"))
+            return;
+        String[] s = army.split(":");
+        ResultSet res = dbm.executeSQL("Select * from armies where ID="+s[0], DatabaseManager.SELECT_QUERY);
+        armyDetails.setText("");
+        try {
+            while (res.next()) {
+                armyDetails.append("ID: "+id+"\n");
+                armyDetails.append("Race: "+res.getString("PLAYER_RACE")+"\n");
+                armyDetails.append("Points: "+res.getInt("ARMY_POINTS")+"\n");
+            }
+        } catch (SQLException ex) {}
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
     * @param args the command line arguments
@@ -901,18 +1053,23 @@ public class createSQLUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addUnit;
+    private javax.swing.JTextArea armyDetails;
     private javax.swing.JTextField armyPoints;
     private javax.swing.JPanel ccase;
     private javax.swing.JList equipmentList;
     private javax.swing.JButton executeSQL;
     private javax.swing.JButton generateSQL;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -1137,7 +1294,7 @@ public class createSQLUI extends javax.swing.JFrame {
             String rule = (String) tableAssoc_unit_rule.getValueAt(i, 1);
             if(unit.contentEquals("N/A")||rule.contentEquals("N/A"))
                 continue;
-            ResultSet res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", dbm.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", DatabaseManager.SELECT_QUERY);
             int ID = -1;
             try {
                 while (res.next()) {
@@ -1168,7 +1325,7 @@ public class createSQLUI extends javax.swing.JFrame {
         for (String string : result) {
             String[] s = parseQuery(string);
             int ID = Integer.parseInt(s[1]);
-            ResultSet res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+ID, dbm.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+ID, DatabaseManager.SELECT_QUERY);
             String rule="N/A";
             try {
                 while (res.next()) {
@@ -1256,7 +1413,7 @@ public class createSQLUI extends javax.swing.JFrame {
         for (String string : result) {
             String[] s = parseQuery(string);
             int ID = Integer.parseInt(s[1]);
-            ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+ID, dbm.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+ID, DatabaseManager.SELECT_QUERY);
             String rule="N/A";
             try {
                 while (res.next()) {
@@ -1280,10 +1437,10 @@ public class createSQLUI extends javax.swing.JFrame {
             int eqID = -1;
             int ruleID = -1;
             try{
-                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eq+"'", dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eq+"'", DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     eqID = res.getInt("EQUIPMENTID");
-                res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", dbm.SELECT_QUERY);
+                res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     ruleID = res.getInt("ID");
             }
@@ -1296,16 +1453,16 @@ public class createSQLUI extends javax.swing.JFrame {
     }
 
     private void populateEQ_RuleTable(ArrayList<String> result) {
-       DefaultTableModel tm = (DefaultTableModel) tableAssocUnit_Equipment.getModel();
+       DefaultTableModel tm = (DefaultTableModel) tableAssocEqRule.getModel();
         for (String string : result) {
             String[] s = parseQuery(string);
             try{
                 String eqName="";
                 String ruleName="";
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     eqName = res.getString("Name");
-                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+s[1], dbm.SELECT_QUERY);
+                res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     ruleName = res.getString("SPECIALRULE");
                 tm.addRow(new Object[]{eqName,ruleName});
@@ -1316,7 +1473,59 @@ public class createSQLUI extends javax.swing.JFrame {
     }
 
     private void parseArmyTable() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        int rows = tableArmy.getRowCount();
+        sql.clear();
+        int cost = Integer.parseInt(armyPoints.getText());
+        id++;
+        String armyQuery = "INSERT INTO ARMIES(ID,PLAYER_RACE,ARMY_POINTS)VALUES("+id+",'"+raceBox.getSelectedItem().toString()+"',"+cost+")";
+        sql.add(armyQuery);
+        int unitID = -1;
+        ResultSet res = dbm.executeSQL("SELECT ID FROM ARMY_UNIT", DatabaseManager.SELECT_QUERY);
+        try {
+            while (res.next()) {
+                unitID = res.getInt("ID");
+            }
+        }catch (SQLException ex) {}
+        for(int i = 0 ; i < rows; i++){
+            if(tableArmy.getValueAt(i, 1)==null)
+                continue;
+            String unit = tableArmy.getValueAt(i, 0).toString();
+            int number = Integer.parseInt(tableArmy.getValueAt(i, 1).toString());
+            if(unit.contentEquals("N/A"))
+                continue;
+            unitID++;
+            String unitQ = "INSERT INTO ARMY_UNIT(ID,ARMY_ID,UNIT_NAME,NUM_UNITS)VALUES("+unitID+","+id+",'"+unit+"',"+number+")";
+            sql.add(unitQ);
+            CaseStorage store = caseStore.get(i);
+            CheckListItem[] utility = store.getUtility();
+            for (CheckListItem checkListItem : utility) {
+                if(checkListItem.isSelected()){
+                    res = dbm.executeSQL("SELECT ID FROM UTILITYUNIT WHERE NAME='"+checkListItem.toString()+"'", DatabaseManager.SELECT_QUERY);
+                    int utilID=-1;
+                    try {
+                        while (res.next()) {
+                            utilID = res.getInt("ID");
+                        }
+                    } catch (SQLException ex) {}
+                    String query = "INSERT INTO ARMY_UNIT_UTILITY(ARMY_UNIT_ID,UTILITY_ID)VALUES("+unitID+","+utilID+")";
+                    sql.add(query);
+                }
+            }
+            CheckListItem[] eq = store.getEquipment();
+            for (CheckListItem checkListItem : eq) {
+                if(checkListItem.isSelected()){
+                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+checkListItem.toString()+"'", DatabaseManager.SELECT_QUERY);
+                    int eqID=-1;
+                    try {
+                        while (res.next()) {
+                            eqID = res.getInt("EQUIPMENTID");
+                        }
+                    } catch (SQLException ex) {}
+                    String query = "INSERT INTO ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)VALUES("+unitID+","+eqID+")";
+                    sql.add(query);
+                }
+            }
+        }
     }
 
     private void parseCaseTable() {
@@ -1346,7 +1555,7 @@ public class createSQLUI extends javax.swing.JFrame {
             try{
                 int ID = Integer.parseInt(s[0]);
                 String name=null;
-                ResultSet res = dbm.executeSQL("SELECT PLAYERRACE FROM ARMIES WHERE ID="+ID, dbm.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT PLAYERRACE FROM ARMIES WHERE ID="+ID, DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     name = res.getString("PLAYERRACE");
                 if(name==null)
