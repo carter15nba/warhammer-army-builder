@@ -44,6 +44,7 @@ public class Unit extends CoreUnit{
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
     private Set<SpecialRules> specialRules;
+    private int magicPoints;
     
     /**
      * @return the movement
@@ -353,5 +354,18 @@ public class Unit extends CoreUnit{
      */
     public void setSpecialRules(Set<SpecialRules> specialRules) {
         this.specialRules = specialRules;
+    }
+        /**
+     * @return the magicPoints
+     */
+    public int getMagicPoints() {
+        return magicPoints;
+    }
+
+    /**
+     * @param magicPoints the magicPoints to set
+     */
+    public void setMagicPoints(int magicPoints) {
+        this.magicPoints = magicPoints;
     }
 }

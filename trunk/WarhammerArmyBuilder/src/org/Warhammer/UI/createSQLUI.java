@@ -51,7 +51,7 @@ import org.Warhammer.Warhammer.Equipment.itemType;
  */
 public class createSQLUI extends javax.swing.JFrame {
 
-    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE) VALUES(";
+    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE,MAGICPOINTS) VALUES(";
     private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE) VALUES(";
     private static final String insertUnit_Util = "INSERT INTO UNIT_UTILITY(NAME,UTILID)VALUES(";
     private int pane;
@@ -93,7 +93,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 pos++;
             }
             table.getColumnModel().getColumn(14).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 14));
-            model = new String[9];
+            model = new String[10];
             model[0] = "N/A";
             pos=1;
             for(org.Warhammer.Warhammer.Equipment.itemType it : itemType.values()){
@@ -115,6 +115,7 @@ public class createSQLUI extends javax.swing.JFrame {
                             (CheckListItem) list.getModel().getElementAt(index);
                     item.setSelected(! item.isSelected());
                     list.repaint(list.getCellBounds(index, index));
+                    specialOccurence(list,item);
                 }
             });
             utilityList.setCellRenderer(new org.Warhammer.UI.Resources.CheckBoxListRenderer());
@@ -235,11 +236,11 @@ public class createSQLUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Cost", "Min number of units", "Max number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType"
+                "Name", "Cost", "Min number of units", "Max number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType", "Magic Points"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -297,14 +298,14 @@ public class createSQLUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Name", "Cost", "Range", "Modifier", "ItemType", "Usable by"
+                "ID", "Name", "Cost", "Range", "Modifier", "ItemType", "Usable by", "DefaultEQ"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -589,7 +590,7 @@ public class createSQLUI extends javax.swing.JFrame {
         Object[] row = null;
         if(pane==0){
             tab = table;
-            row = new Object[]{null,null,null,null,null,null,null,null,null,null,null,null,null,"N/A","N/A"};
+            row = new Object[]{null,null,null,null,null,null,null,null,null,null,null,null,null,"N/A","N/A",0};
         }
         else if(pane==1){
             tab = utilTable;
@@ -603,7 +604,7 @@ public class createSQLUI extends javax.swing.JFrame {
         else if(pane==3){
             tab = tableEquipment;
             id++;
-            row = new Object[]{id,null,null,null,null,"N/A",null};
+            row = new Object[]{id,null,null,null,null,"N/A",null,false};
         }
         else if(pane==4){
             tab = tableAssocUnit_Equipment;
@@ -823,11 +824,11 @@ public class createSQLUI extends javax.swing.JFrame {
                     id = res.getInt("EQUIPMENTID");
             }
             else if(pane==4){
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT",DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME, COST FROM EQUIPMENT ORDER BY NAME ASC",DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next())
-                    util.add(res.getString("Name"));
+                    util.add(res.getString("Name")+"{"+res.getInt("cost")+"}");
                 String[] comp = new String[util.size()];
                 comp = util.toArray(comp);
                 tableAssocUnit_Equipment.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 1));
@@ -867,11 +868,11 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssoc_unit_rule.getColumnModel().getColumn(1).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 1));
             }
             else if(pane==7){
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT ORDER BY NAME ASC", DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT ORDER BY NAME ASC", DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next()){
-                    util.add(res.getString("Name"));
+                    util.add(res.getString("Name")+"{"+res.getInt("cost")+"}");
                 }
                 String[] comp = new String[util.size()];
                 comp = util.toArray(comp);
@@ -935,16 +936,40 @@ public class createSQLUI extends javax.swing.JFrame {
             return;
         ArrayList<String> equip = new ArrayList<String>();
         ArrayList<String> util = new ArrayList<String>();
-        if(row>=caseStore.size()){
+        while(caseStore.size()<=row){
+            caseStore.add(null);
+        }
+        if(caseStore.get(row)==null)
+//        if(row>=caseStore.size())
+        {
             try{
                 String name = tableArmy.getValueAt(row, 0).toString();
-                System.out.println(name);
-                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID",DatabaseManager.SELECT_QUERY);
+                String[] r = name.split(":");
+                String unitRace = r[0];
+                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
                 ResultSet ut = dbm.executeSQL("SELECT UTILITYUNIT.NAME,UTILITYUNIT.REQUIRED FROM UTILITYUNIT,UNIT_UTILITY WHERE UTILITYUNIT.ID = UNIT_UTILITY.UTILID AND UNIT_UTILITY.NAME='"+name+"'", DatabaseManager.SELECT_QUERY);
                 while(eq.next())
-                    equip.add(eq.getString("NAME"));
+                    equip.add(eq.getString("NAME")+"{"+eq.getInt("COST")+"}");
                 while(ut.next())
                     util.add(ut.getString("NAME")+";"+ut.getString("REQUIRED"));
+                String selQ = "Select equipment.Name,equipment.Cost "+
+                    "from equipment,unit "+
+                    "where unit.name ='"+name+"' and "+
+                    "equipment.cost <= unit.magicpoints and "+
+                    "equipment.defaulteq=0 and "+
+                    "(equipment.itemtype='Arcane_Items' "+
+                    "or equipment.itemtype='Enchanted_Items' "+
+                    "or equipment.itemtype='Magic_Weapon' "+
+                    "or equipment.itemtype='Magic_Armour' " +
+                    "or equipment.itemtype='Standard' " +
+                    "or equipment.itemtype='Talisman')and "+
+                    "(equipment.usableby='All' "+
+                    "or equipment.usableby='Race:"+unitRace+"') order by equipment.name asc";
+                System.out.println(selQ);
+                ResultSet res = dbm.executeSQL(selQ, DatabaseManager.SELECT_QUERY);
+                while(res.next()){
+                     equip.add(res.getString("NAME")+"{"+res.getInt("COST")+"}");
+                }
                 CheckListItem[] e = new CheckListItem[equip.size()];
                 for(int i = 0 ; i < equip.size() ; i++)
                     e[i] = new CheckListItem(equip.get(i));
@@ -960,7 +985,7 @@ public class createSQLUI extends javax.swing.JFrame {
                     e[i] = new CheckListItem(s[0],b);
                 }
                 c.setUtility(e);
-                caseStore.add(c);
+                caseStore.set(row, c);
             }
             catch(SQLException sqle){}
         }
@@ -1040,13 +1065,14 @@ public class createSQLUI extends javax.swing.JFrame {
             String a = table.getValueAt(i,11).toString();
             String ld = table.getValueAt(i,12).toString();
             String ut = table.getValueAt(i,13).toString();
+            int magicPoints = Integer.parseInt(table.getValueAt(i, 15).toString());
             if(ut.contentEquals("N/A"))
                 ut="_na";
             String at = table.getValueAt(i,14).toString();
             if(at.contentEquals("N/A"))
                 at="_na";
             String race = raceBox.getSelectedItem().toString();
-            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+min+","+max+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"')";
+            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+min+","+max+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"',"+magicPoints+")";
             sql.add(stat);
         }
     }
@@ -1104,8 +1130,11 @@ public class createSQLUI extends javax.swing.JFrame {
                 s[13] = "N/A";
             if(s[14].contentEquals("_na"))
                 s[14] = "N/A";
+            int points = 0 ;
+            if(s.length==17)
+                points = Integer.parseInt(s[16]);
             //tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),null,s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
-            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15]});
+            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15],points});
         }
         for (int i = 0; i < raceBox.getItemCount() ; i++) {
             Object object = raceBox.getItemAt(i);
@@ -1359,7 +1388,11 @@ public class createSQLUI extends javax.swing.JFrame {
             String mod = tableEquipment.getValueAt(i, 4).toString();
             String type = tableEquipment.getValueAt(i, 5).toString();
             String usable = tableEquipment.getValueAt(i, 6).toString();
-            String query = "INSERT INTO EQUIPMENT(EQUIPMENTID,NAME,COST,RANGE,MODIFIER,ITEMTYPE,USABLEBY)VALUES("+ID+",'"+name+"',"+cost+","+range+",'"+mod+"','"+type+"','"+usable+"')";
+            boolean def = (Boolean)tableEquipment.getValueAt(i, 7);
+            int defEq = 0;
+            if(def)
+                defEq = 1;
+            String query = "INSERT INTO EQUIPMENT(EQUIPMENTID,NAME,COST,RANGE,MODIFIER,ITEMTYPE,USABLEBY,DEFAULTEQ)VALUES("+ID+",'"+name+"',"+cost+","+range+",'"+mod+"','"+type+"','"+usable+"',"+defEq+")";
             sql.add(query);
         }
     }
@@ -1368,7 +1401,11 @@ public class createSQLUI extends javax.swing.JFrame {
         DefaultTableModel tm = (DefaultTableModel) tableEquipment.getModel();
         for (String string : result) {
             String[] s = parseQuery(string);
-            tm.addRow(new Object[]{Integer.parseInt(s[0]),s[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),s[4],s[5],s[6]});
+            int def = Integer.parseInt(s[7]);
+            boolean defEq = false;
+            if(def==1)
+                defEq=true;
+            tm.addRow(new Object[]{Integer.parseInt(s[0]),s[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),s[4],s[5],s[6],defEq});
         }
     }
 
@@ -1380,6 +1417,8 @@ public class createSQLUI extends javax.swing.JFrame {
             String eq = tableAssocUnit_Equipment.getValueAt(i, 1).toString();
             if(unit.contentEquals("N/A")||eq.contentEquals("N/A"))
                 continue;
+            int idx = eq.indexOf("{");
+            eq = eq.substring(0, idx);
             ResultSet res = dbm.executeSQL("select equipmentid from EQUIPMENT where name='"+eq+"'", DatabaseManager.SELECT_QUERY);
             int ID=-1;
             try {
@@ -1413,11 +1452,11 @@ public class createSQLUI extends javax.swing.JFrame {
         for (String string : result) {
             String[] s = parseQuery(string);
             int ID = Integer.parseInt(s[1]);
-            ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+ID, DatabaseManager.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE EQUIPMENTID="+ID, DatabaseManager.SELECT_QUERY);
             String rule="N/A";
             try {
                 while (res.next()) {
-                    rule = res.getString("NAME");
+                    rule = res.getString("NAME")+"{"+res.getInt("cost")+"}";
                 }
             } catch (SQLException ex) {}
             tm.addRow(new Object[]{s[0],rule});
@@ -1434,6 +1473,8 @@ public class createSQLUI extends javax.swing.JFrame {
             String rule = tableAssocEqRule.getValueAt(i, 1).toString();
             if(eq.contentEquals("N/A")||rule.contentEquals("N/A"))
                 continue;
+            int idx = eq.indexOf("{");
+            eq = eq.substring(0,idx);
             int eqID = -1;
             int ruleID = -1;
             try{
@@ -1475,6 +1516,8 @@ public class createSQLUI extends javax.swing.JFrame {
     private void parseArmyTable() {
         int rows = tableArmy.getRowCount();
         sql.clear();
+        if(armyPoints.getText().length()==0)
+            return;
         int cost = Integer.parseInt(armyPoints.getText());
         id++;
         String armyQuery = "INSERT INTO ARMIES(ID,PLAYER_RACE,ARMY_POINTS)VALUES("+id+",'"+raceBox.getSelectedItem().toString()+"',"+cost+")";
@@ -1484,9 +1527,12 @@ public class createSQLUI extends javax.swing.JFrame {
         try {
             while (res.next()) {
                 unitID = res.getInt("ID");
+                System.out.println("Existing IDs: "+unitID);
             }
         }catch (SQLException ex) {}
         for(int i = 0 ; i < rows; i++){
+            if(caseStore.size()<i)
+                break;
             if(tableArmy.getValueAt(i, 1)==null)
                 continue;
             String unit = tableArmy.getValueAt(i, 0).toString();
@@ -1497,8 +1543,12 @@ public class createSQLUI extends javax.swing.JFrame {
             String unitQ = "INSERT INTO ARMY_UNIT(ID,ARMY_ID,UNIT_NAME,NUM_UNITS)VALUES("+unitID+","+id+",'"+unit+"',"+number+")";
             sql.add(unitQ);
             CaseStorage store = caseStore.get(i);
+            if(store.getUtility()==null)
+                continue;
             CheckListItem[] utility = store.getUtility();
             for (CheckListItem checkListItem : utility) {
+                if(checkListItem==null)
+                    continue;
                 if(checkListItem.isSelected()){
                     res = dbm.executeSQL("SELECT ID FROM UTILITYUNIT WHERE NAME='"+checkListItem.toString()+"'", DatabaseManager.SELECT_QUERY);
                     int utilID=-1;
@@ -1508,20 +1558,30 @@ public class createSQLUI extends javax.swing.JFrame {
                         }
                     } catch (SQLException ex) {}
                     String query = "INSERT INTO ARMY_UNIT_UTILITY(ARMY_UNIT_ID,UTILITY_ID)VALUES("+unitID+","+utilID+")";
+                    System.out.println(query);
                     sql.add(query);
                 }
             }
+            if(store.getEquipment()==null)
+                continue;
             CheckListItem[] eq = store.getEquipment();
             for (CheckListItem checkListItem : eq) {
+                if(checkListItem==null)
+                    continue;
                 if(checkListItem.isSelected()){
-                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+checkListItem.toString()+"'", DatabaseManager.SELECT_QUERY);
+                    String name = checkListItem.toString();
+                    int idx = name.indexOf("{");
+                    name = name.substring(0, idx);
+                    System.out.println("name; "+name);
+                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+name+"'", DatabaseManager.SELECT_QUERY);
                     int eqID=-1;
                     try {
                         while (res.next()) {
                             eqID = res.getInt("EQUIPMENTID");
                         }
-                    } catch (SQLException ex) {}
+                    } catch (SQLException ex) {ex.printStackTrace();}
                     String query = "INSERT INTO ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)VALUES("+unitID+","+eqID+")";
+                    System.out.println(query);
                     sql.add(query);
                 }
             }
@@ -1564,6 +1624,38 @@ public class createSQLUI extends javax.swing.JFrame {
             }
             catch(SQLException sqle){}
         }
+    }
+    private void specialOccurence(JList list, CheckListItem item){
+        if(item.toString().startsWith("Battle standard bearer")){
+            if(item.isSelected()){
+                int row = tableArmy.getSelectedRow();
+                ArrayList<String> equip = new ArrayList<String>();
+                String name = tableArmy.getValueAt(row, 0).toString();
+                String[] r = name.split(":");
+                String race = r[0];
+                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
+                ResultSet st = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT WHERE EQUIPMENT.ITEMTYPE='Standard' AND (EQUIPMENT.USABLEBY='All' or EQUIPMENT.USABLEBY='Race:"+race+"')", DatabaseManager.SELECT_QUERY);
+                try{
+                    while(eq.next())
+                        equip.add(eq.getString("NAME")+"{"+eq.getInt("COST")+"}");
+                    while(st.next())
+                        equip.add(st.getString("NAME")+"{"+st.getInt("COST")+"}");
+                }
+                catch(SQLException sqle){}
+                int idx = equip.indexOf(item.toString());
+                CheckListItem[] cEq = new CheckListItem[equip.size()];
+                for(int i = 0 ; i < equip.size() ; i++)
+                    cEq[i] = new CheckListItem(equip.get(i));
+                cEq[idx].setSelected(true);
+                CaseStorage cs = new CaseStorage();
+                cs.setEquipment(cEq);
+                cs.setUtility(caseStore.get(row).getUtility());
+                caseStore.set(row, cs);
+                equipmentList.setListData(cEq);
+            }
+        }
+        else
+            return;
     }
 
 
