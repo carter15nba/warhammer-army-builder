@@ -27,7 +27,21 @@ import jcolibri.cbrcore.Attribute;
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
 
-    public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items};
+    /**
+     * @return the isDefaultItem
+     */
+    public boolean isIsDefaultItem() {
+        return isDefaultItem;
+    }
+
+    /**
+     * @param isDefaultItem the isDefaultItem to set
+     */
+    public void setIsDefaultItem(boolean isDefaultItem) {
+        this.isDefaultItem = isDefaultItem;
+    }
+
+    public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items, Unit_Upgrade};
     private int equipmentID;
     private int cost;
     private int range;
@@ -36,6 +50,7 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     private String usableBy;
     private String modifier;
     private Set<SpecialRules> rules;
+    private boolean isDefaultItem;
     
 
     public Attribute getIdAttribute() {

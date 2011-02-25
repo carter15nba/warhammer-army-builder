@@ -42,6 +42,7 @@ import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
+import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.SpecialRules;
 /**
  *
@@ -140,21 +141,29 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
             if(args.length==0){
                 CBREngine cbrEngine = CBREngine.getInstance();
                 cbrEngine.configure();
-//                cbrEngine.preCycle();
-//
-//                CBRQuery q = new CBRQuery();
-//                Unit u = new Unit();
-//                u.setRace(Case.Races.Empire);
-////                List<SpecialRules> sr = new ArrayList<SpecialRules>();
-////                sr.add(new SpecialRules("Unbreakable"));
-////                u.setSpecialRules(sr);
+                cbrEngine.preCycle();
+
+                CBRQuery q = new CBRQuery();
+
+                Case ca = new Case();
+
+                Army arm = new Army();
+                arm.setArmyPoints(2000);
+                arm.setPlayerRace(Case.Races.Empire);
+
+
+                Unit u = new Unit();
+                u.setRace(Case.Races.Empire);
+                List<SpecialRules> sr = new ArrayList<SpecialRules>();
+                sr.add(new SpecialRules("Unbreakable"));
+//                u.setSpecialRules(sr);
 //                q.setDescription(u);
-////                Case comp = new Case();
-////                comp.setArmyPoints(2500);
-////                comp.setPlayerRace(Case.Races.Empire);
-////    //            comp.setOpponentRace(Case.Races.Wood_Elves);
-////                q.setDescription(comp);
-////                System.out.println("***************\n  QUERY: "+comp.toString()+"\n***************");
+//                Case comp = new Case();
+//                comp.setArmyPoints(2500);
+//                comp.setPlayerRace(Case.Races.Empire);
+//                comp.setOpponentRace(Case.Races.Wood_Elves);
+//                q.setDescription(comp);
+//                System.out.println("***************\n  QUERY: "+comp.toString()+"\n***************");
 //                cbrEngine.cycle(q);
 //
 //                System.out.println("\n\n\n***************\n  PREPARING TEST UNIT SIMILARITY...\n***************");
