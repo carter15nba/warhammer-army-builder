@@ -106,12 +106,12 @@ public class SQLFileWriter {
         print(file, sql);
     }
 
-    public static void write_caseSQLFile(String race, ArrayList<String> sql) {
+    public static void write_caseSQLFile(ArrayList<String> sql) {
         int num = -1;
         java.io.File file;
         do{
             num++;
-            file = new java.io.File("src/org/Warhammer/Database/Resources/case_"+num+"("+race+").sql");
+            file = new java.io.File("src/org/Warhammer/Database/Resources/case_"+num+".sql");
         }
         while(file.exists());
         print(file, sql);

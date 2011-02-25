@@ -682,7 +682,7 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==9){
             parseCaseTable();
-            org.Warhammer.File.SQLFileWriter.write_caseSQLFile(race, sql);
+            org.Warhammer.File.SQLFileWriter.write_caseSQLFile(sql);
         }
         
     }//GEN-LAST:event_generateSQLActionPerformed
@@ -924,6 +924,10 @@ public class createSQLUI extends javax.swing.JFrame {
                     outcome[i] = out[i].toString();
                 }
                 tableCreateCase.getColumnModel().getColumn(3).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(outcome, 3));
+                res = dbm.executeSQL("SELECT ID FROM CASES", DatabaseManager.SELECT_QUERY);
+                id=-1;
+                while(res.next())
+                    id=res.getInt("ID");
                 
             }
         }
@@ -1594,12 +1598,17 @@ public class createSQLUI extends javax.swing.JFrame {
         for(int i = 0 ; i < rows ; i++){
             if(tableCreateCase.getValueAt(i, 2).toString()==null)
                 continue;
-            String race = tableCreateCase.getValueAt(i, 0).toString();
-            String opponent = tableCreateCase.getValueAt(i, 1).toString();
-            String outcome = tableCreateCase.getValueAt(i, 2).toString();
+            String race = tableCreateCase.getValueAt(i, 1).toString();
+            String opponent = tableCreateCase.getValueAt(i, 2).toString();
+            String outcome = tableCreateCase.getValueAt(i, 3).toString();
+            String[] split = race.split(":");
+            race = split[1];
+            String armyID = split[0];
+            int ID = Integer.parseInt(tableCreateCase.getValueAt(i, 0).toString());
             if(race.contentEquals("N/A")||opponent.contentEquals("N/A"))
                 continue;
-            String query = "INSERT INTO ";
+            String query = "INSERT INTO CASES(ID,ARMY_ID,OPPONENT_RACE,OUTCOME)VALUES("+ID+","+armyID+",'"+opponent+"','"+outcome+"')";
+            System.out.println(query);
             sql.add(query);
         }
     }
