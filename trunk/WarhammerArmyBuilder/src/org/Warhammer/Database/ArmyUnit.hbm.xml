@@ -6,7 +6,7 @@
       <generator class="increment"/>
     </id>
     <property column="ARMY_ID" name="armyID" type="integer"/>
-    <property column="UNIT_NAME" name="unitName"/>
+    <many-to-one name="unitName" column="UNIT_NAME" cascade="all" unique="true" lazy="false" class="org.Warhammer.Warhammer.Unit" />
     <property column="NUM_UNITS" name="numberOfUnits"/>
     <set name="equipment" table="ARMY_UNIT_EQUIPMENT">
       <key column="ARMY_UNIT_ID"/>
