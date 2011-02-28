@@ -39,29 +39,35 @@ public class SimpleSimilarityMeasure {
         return nnConfig;
     }
     private void setupSimilarityConfig(){
+        //TODO: Fix dynamic (user selected) weigths.
         nnConfig = new NNConfig();
         Attribute attr;
         LocalSimilarityFunction func;
         //Player race
-        attr = new Attribute("playerRace",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Equal", 0);
+        attr = new Attribute("armyID",org.Warhammer.Warhammer.Case.class);
+        func = localSimilarityFactory("Army", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, 0.9);
         //Opponent race
-        attr = new Attribute("opponentRace",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Equal", 0);
+        attr = new Attribute("opponent",org.Warhammer.Warhammer.Case.class);
+        func = localSimilarityFactory("enum", 0);
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 0.80);
         //Points
-        attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Case.class);
+        attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Army.class);
         func = localSimilarityFactory("Interval", 500);
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 0.75);
-        //Units
-        attr = new Attribute("units",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Unit", 0);
+        //Outcome
+        attr = new Attribute("outcome",org.Warhammer.Warhammer.Case.class);
+        func = localSimilarityFactory("enum", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.3);
+        nnConfig.setWeight(attr, 0.75);
+        //Units
+//        attr = new Attribute("units",org.Warhammer.Warhammer.Case.class);
+//        func = localSimilarityFactory("Unit", 0);
+//        nnConfig.addMapping(attr, func);
+//        nnConfig.setWeight(attr, 0.3);
 
 
 
@@ -72,9 +78,12 @@ public class SimpleSimilarityMeasure {
         else if(name.equals("Interval"))
             //return new jcolibri.method.retrieve.NNretrieval.similarity.local.Interval(param);
             return new Interval(param);
-        else if(name.equals("Unit")){
+        else if(name.equals("Unit"))
             return new UnitSimilarity();
-        }
+        else if(name.equals("Army"))
+            return new ArmySimilarity();
+        else if(name.equals("enum"))
+            return new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
         return null;
     }
 }

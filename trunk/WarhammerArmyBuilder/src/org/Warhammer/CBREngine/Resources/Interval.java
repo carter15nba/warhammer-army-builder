@@ -33,36 +33,34 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
     }
 
 
-    public double compute(Object o1, Object o2) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
-        if ((o1 == null) || (o2 == null))
-                return 0;
-        if (!(o1 instanceof java.lang.Number))
-                throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), o1.getClass());
-        if (!(o2 instanceof java.lang.Number))
-                throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), o2.getClass());
+    public double compute(Object caseObject, Object queryObject) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
+        if ((caseObject == null) || (queryObject == null))
+            return 0;
+        if (!(caseObject instanceof java.lang.Number))
+            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
+        if (!(queryObject instanceof java.lang.Number))
+            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
 
-        Number i1 = (Number) o1;
-        Number i2 = (Number) o2;
-
-        double v1 = i1.doubleValue();
-        double v2 = i2.doubleValue();
-
-        if(v1==-1)
-            return 1 - ((double) Math.abs(v2) / interval);
-
-        return 1 - ((double) Math.abs(v1 - v2) / interval);
+        Number caseNumber = (Number) caseObject;
+        Number queryNumber = (Number) queryObject;
+        double caseDouble = caseNumber.doubleValue();
+        double queryDouble = queryNumber.doubleValue();
+//        
+//        if(v1==0)
+//            return 1 - ((double) Math.abs(v2) / interval);
+        return 1 - ((double) Math.abs(caseDouble - queryDouble) / interval);
     }
 
-    public boolean isApplicable(Object o1, Object o2)
+    public boolean isApplicable(Object caseObject, Object queryObject)
     {
-        if((o1==null)&&(o2==null))
+        if((caseObject==null)&&(queryObject==null))
                 return true;
-        else if(o1==null)
-                return o2 instanceof Number;
-        else if(o2==null)
-                return o1 instanceof Number;
+        else if(caseObject==null)
+                return queryObject instanceof Number;
+        else if(queryObject==null)
+                return caseObject instanceof Number;
         else
-                return (o1 instanceof Number)&&(o2 instanceof Number);
+                return (caseObject instanceof Number)&&(queryObject instanceof Number);
     }
 
 }
