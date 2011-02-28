@@ -1504,12 +1504,15 @@ public class createSQLUI extends javax.swing.JFrame {
             try{
                 String eqName="";
                 String ruleName="";
-                ResultSet res = dbm.executeSQL("SELECT NAME FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], DatabaseManager.SELECT_QUERY);
+//                System.out.println("ID:"+s[0]);
+//                System.out.println("results:"+string);
+                ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], DatabaseManager.SELECT_QUERY);
                 while(res.next())
-                    eqName = res.getString("Name");
+                    eqName = res.getString("NAME")+"{"+res.getInt("COST")+"}";
                 res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     ruleName = res.getString("SPECIALRULE");
+                System.out.println("eqName:"+eqName);
                 tm.addRow(new Object[]{eqName,ruleName});
             }
             catch(SQLException sqle){sqle.printStackTrace();}

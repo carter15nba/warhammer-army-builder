@@ -29,7 +29,7 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
     public enum Outcomes{Defeat,Draw,Victory};
     private int ID;
-    private int armyID;
+    private Army armyID;
     private Races opponent;
     private Outcomes outcome;
     
@@ -54,14 +54,14 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the armyID
      */
-    public int getArmyID() {
+    public Army getArmyID() {
         return armyID;
     }
 
     /**
      * @param armyID the armyID to set
      */
-    public void setArmyID(int armyID) {
+    public void setArmyID(Army armyID) {
         this.armyID = armyID;
     }
 
