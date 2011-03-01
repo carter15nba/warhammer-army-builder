@@ -194,7 +194,7 @@ public class UtilityUnit extends CoreUnit{
     public String toString(){
 
         return "-Name: "+getName()+", cost: "+getCost()+
-                "\n       M="+movement
+                "\n|      M="+movement
                 + " WS="+weaponSkill
                 + " BS="+ballisticSkill
                 + " S="+strength

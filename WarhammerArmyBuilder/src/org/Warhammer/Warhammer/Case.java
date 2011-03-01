@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.Iterator;
 import jcolibri.cbrcore.Attribute;
 
 /**
@@ -92,4 +93,16 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     public void setOutcome(Outcomes outcome) {
         this.outcome = outcome;
     }
+
+    @Override
+    public String toString(){
+        return "Case ID:"+ID+
+                ", Player race: "+
+                armyID.getPlayerRace()+
+                ", Army Points: "+armyID.getArmyPoints()+
+                ", Opponet race: "+opponent+
+                ", Outcome: "+outcome;
+
+    }
+
 }

@@ -43,7 +43,7 @@ public class Unit extends CoreUnit{
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
-    private Set<SpecialRules> specialRules;
+    private Set<SpecialRules> specialRules = new HashSet<SpecialRules>();
     private int magicPoints;
     
     /**
@@ -253,7 +253,7 @@ public class Unit extends CoreUnit{
     public String toString(){
 
         String retString = super.toString()+
-                "\n    M="+movement
+                "\n|   M="+movement
                 + " WS="+weaponSkill
                 + " BS="+ballisticSkill
                 + " S="+strength
@@ -267,20 +267,20 @@ public class Unit extends CoreUnit{
         if(getEquipment().size()>0){
             Iterator<Equipment> iterator = getEquipment().iterator();
             while(iterator.hasNext()){
-                retString += "\n     "+iterator.next().toString();
+                retString += "\n|    "+iterator.next().toString();
             }
         }
         if(getUtilityUnit().size()>0){
             Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
             while(iterator.hasNext()){
-                retString += "\n     "+iterator.next().toString();
+                retString += "\n|    "+iterator.next().toString();
             }
         }
         if(getSpecialRules().size()>0){
-            retString += "\n     SpecialRules:";
+            retString += "\n|    SpecialRules:";
             for (SpecialRules sr : specialRules) {
                 if(sr!=null)
-                    retString += " "+sr.getRule();
+                    retString +=" "+sr.getRule()+",";
             }
         }
 
@@ -316,19 +316,8 @@ public class Unit extends CoreUnit{
         this.utilityUnit = utilityUnit;
     }
 
-    public int calculateTotalUnitCost(){
-//        int totalCost = getCost()*getNumber();
-//        for (Equipment eq : equipment) {
-//            totalCost+=eq.getCost();
-//        }
-//        for (UtilityUnit uu : utilityUnit) {
-//            totalCost+=uu.getCost()*uu.getNumber();
-//        }
-//        return totalCost;
-        //TODO: FIX COST CALCULATION
-        return 0;
-    }
-        /**
+
+    /**
      * @return the race
      */
     public Races getRace() {

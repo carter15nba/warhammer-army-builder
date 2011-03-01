@@ -42,11 +42,9 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
          Interval interval = new Interval(500);
          double pointSim = interval.compute(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
          if(queryArmy.getArmyUnits()!=null){
-            //TODO: Add unit sim.
              ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
              double unitSim = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
              pointSim = (pointSim+unitSim)/2;
-             System.out.println("PointSim: "+pointSim);
          }
          return pointSim;
     }
