@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
@@ -27,20 +28,6 @@ import jcolibri.cbrcore.Attribute;
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
 
-    /**
-     * @return the isDefaultItem
-     */
-    public boolean isIsDefaultItem() {
-        return isDefaultItem;
-    }
-
-    /**
-     * @param isDefaultItem the isDefaultItem to set
-     */
-    public void setIsDefaultItem(boolean isDefaultItem) {
-        this.isDefaultItem = isDefaultItem;
-    }
-
     public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items, Unit_Upgrade};
     private int equipmentID;
     private int cost;
@@ -49,9 +36,8 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     private itemType itemType;
     private String usableBy;
     private String modifier;
-    private Set<SpecialRules> rules;
-    private boolean isDefaultItem;
-    
+    private Set<SpecialRules> rules = new HashSet<SpecialRules>();
+    private boolean defaultItem;    
 
     public Attribute getIdAttribute() {
         return new Attribute("equipmentID", this.getClass());
@@ -176,5 +162,19 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
             rule += " "+specialRules.getRule()+",";
         }
         return "Name: "+name+", type: "+itemType+", modifier: "+modifier+", rules: "+rule;
+    }
+
+    /**
+     * @return the isDefaultItem
+     */
+    public boolean isDefaultItem() {
+        return defaultItem;
+    }
+
+    /**
+     * @param defaultItem the isDefaultItem to set
+     */
+    public void setDefaultItem(boolean defaultItem) {
+        this.defaultItem = defaultItem;
     }
 }

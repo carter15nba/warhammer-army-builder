@@ -41,6 +41,7 @@ import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
+import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Unit;
 /**
  *
@@ -98,7 +99,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
         for (RetrievalResult retrievalResult : eval) {
             Case c = (Case) retrievalResult.get_case().getSolution();
-            System.out.println("Case: "+c.getID()+", "+c.getOpponent()+"::"+c.getOutcome()+"::Sim: "+retrievalResult.getEval());
+            org.Warhammer.Util.PrintFactory.printCase(c,false);
+           // System.out.println("Case: "+c.getID()+", "+c.getOpponent()+"::"+c.getOutcome()+"::Sim: "+retrievalResult.getEval());
 //            Unit c = (Unit) retrievalResult.get_case().getDescription();
 //            System.out.println(c.toString());
         }
@@ -106,15 +108,15 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
 //        org.Warhammer.Warhammer.RuleSet set = new RuleSet();
 //        RuleSet.messages l = RuleSet.messages.FAIL;
-        for (CBRCase cBRCase : selectedcases) {
-            
-            System.out.println(cBRCase.toString());
-            Case ca = (Case) cBRCase.getDescription();
-            System.out.println(ca.toString());
-//            System.out.println("\nTOTAL COST: "+ca.calculateCaseCost());
-//            l = set.isFollowingArmyDispositionRules(ca, 2500);
-
-        }
+//        for (CBRCase cBRCase : selectedcases) {
+//
+//            System.out.println(cBRCase.toString());
+//            Case ca = (Case) cBRCase.getDescription();
+//            System.out.println(ca.toString());
+////            System.out.println("\nTOTAL COST: "+ca.calculateCaseCost());
+////            l = set.isFollowingArmyDispositionRules(ca, 2500);
+//
+//        }
 //        if(l == RuleSet.messages.FAIL){
 //            RuleSet.messages[] r = set.getErrorCauses();
 //            for (RuleSet.messages object : r) {
@@ -143,27 +145,41 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cbrEngine.configure();
                 cbrEngine.preCycle();
 
-                CBRQuery q = new CBRQuery();
-                Case ca = new Case();
-                ca.setOutcome(Case.Outcomes.Victory);
-                ca.setOpponent(Case.Races.Wood_Elves);
+                CBRQuery cbrQuery = new CBRQuery();
+                Case queryCase = new Case();
+                queryCase.setOutcome(Case.Outcomes.Victory);
+                queryCase.setOpponent(Case.Races.Wood_Elves);
 
-                Army arm = new Army();
-                arm.setArmyPoints(0);
-                arm.setPlayerRace(Case.Races.Empire);
+                Army queryArmy = new Army();
+                queryArmy.setArmyPoints(0);
+                queryArmy.setPlayerRace(Case.Races.Empire);
 
-                Set<ArmyUnit> aus = new HashSet<ArmyUnit>();
-                ArmyUnit au = new ArmyUnit();
-                Unit u = new Unit();
-                u.setName("Empire:Greatswords");
-                au.setUnitName(u);
-                au.setNumberOfUnits(20);
-                arm.setArmyUnits(aus);
-                ca.setArmyID(arm);
+                Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
+                ArmyUnit armyUnit = new ArmyUnit();
 
-                q.setDescription(ca);
+                Unit unit = new Unit();
+                unit.setName("JALLAJALLA");
+                armyUnit.setUnitName(unit);
+                armyUnitSet.add(armyUnit);
+                armyUnit = new ArmyUnit();
+                unit = new Unit();
+                unit.setName("Empire:Greatswords");
+                armyUnit.setUnitName(unit);
+                armyUnit.setNumberOfUnits(19);
+                armyUnitSet.add(armyUnit);
+                queryArmy.setArmyUnits(armyUnitSet);
+                queryCase.setArmyID(queryArmy);
 
-                cbrEngine.cycle(q);
+                Set<Equipment> sEq = new HashSet<Equipment>();
+                Equipment eq = new Equipment();
+                eq.setName("Musician");
+                sEq.add(eq);
+                unit.setEquipment(sEq);
+
+                //org.Warhammer.Util.PrintFactory.printCase(queryCase);
+
+                cbrQuery.setDescription(queryCase);
+                cbrEngine.cycle(cbrQuery);
             }
             else if(args[0].contentEquals("sqlPrint")){
                 DatabaseManager dbm = DatabaseManager.getInstance();
@@ -173,6 +189,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 while(res.next()){
                     System.out.println(res.getString("name"));
                 }
+                dbm.disconnectNoHibernate(true);
             }
             else if(args[0].contentEquals("simTest")){
                 Set<ArmyUnit> cases = new HashSet<ArmyUnit>();
@@ -184,6 +201,15 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setNumberOfUnits(10);
                 armyUnit.setUnitName(unit);
                 cases.add(armyUnit);
+
+                Set<Equipment> eq = new HashSet<Equipment>();
+                Equipment e = new Equipment();
+                e.setName("Musician");
+                eq.add(e);
+                e = new Equipment();
+                e.setName("Standard bearer");
+                eq.add(e);
+                unit.setEquipment(eq);
 
                 armyUnit = new ArmyUnit();
                 unit = new Unit();
@@ -205,10 +231,26 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 a1.setArmyPoints(2000);
 
 
+
+
                 //QUERY
                 armyUnit = new ArmyUnit();
                 unit = new Unit();
                 unit.setName("Hangunners");
+
+                eq = new HashSet<Equipment>();
+                e = new Equipment();
+                e.setName("Repeater rifle");
+                eq.add(e);
+                e = new Equipment();
+                e.setName("Musician");
+                eq.add(e);
+                e = new Equipment();
+                e.setName("Standard bearer");
+                eq.add(e);
+                unit.setEquipment(eq);
+
+
                 armyUnit.setNumberOfUnits(10);
                 armyUnit.setUnitName(unit);
                 query.add(armyUnit);
@@ -227,12 +269,12 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setUnitName(unit);
                 query.add(armyUnit);
 
-//                armyUnit = new ArmyUnit();
-//                unit = new Unit();
-//                unit.setName("Hans Jaeger");
-//                armyUnit.setNumberOfUnits(1);
-//                armyUnit.setUnitName(unit);
-//                query.add(armyUnit);
+                armyUnit = new ArmyUnit();
+                unit = new Unit();
+                unit.setName("Hans Jaeger");
+                armyUnit.setNumberOfUnits(1);
+                armyUnit.setUnitName(unit);
+                query.add(armyUnit);
 
                 Army a2 = new Army();
                 a2.setArmyPoints(2000);

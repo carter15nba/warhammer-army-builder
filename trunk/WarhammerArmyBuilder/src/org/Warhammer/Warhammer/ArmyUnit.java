@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
@@ -30,8 +31,8 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     private int armyID;
     private int numberOfUnits;
     private Unit unitName;
-    private Set<Equipment> equipment;
-    private Set<UtilityUnit> utility;
+    private Set<Equipment> equipment = new HashSet<Equipment>();
+    private Set<UtilityUnit> utility = new HashSet<UtilityUnit>();
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
@@ -119,6 +120,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     public void setNumberOfUnits(int numberOfUnits) {
         this.numberOfUnits = numberOfUnits;
     }
+
 
 
 }
