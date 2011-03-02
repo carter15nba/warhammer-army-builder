@@ -41,6 +41,7 @@ public class PrintFactory {
         for (ArmyUnit armyUnit : array) {
             Unit unit = armyUnit.getUnitName();
             System.out.println("+-------------------------------------");
+            System.out.println("| Number of units: "+armyUnit.getNumberOfUnits());
             System.out.println("| "+unit.toString());
         }
         System.out.println("+-------------------------------------");
@@ -48,9 +49,19 @@ public class PrintFactory {
     
     public static void printCase(Case obj,boolean printArmyUnit){
         System.out.println("\n+-------------------------------------\n| "+obj.toString());
-        System.out.println("| Calculated cost: "+obj.getArmyID().calculateCost());
+        System.out.println("| Calculated cost: "+obj.getArmy().calculateCost());
         if(printArmyUnit)
-            printArmyUnit(obj.getArmyID().getArmyUnits());
+            printArmyUnit(obj.getArmy().getArmyUnits());
+        else
+            System.out.println("+-------------------------------------");
+
+    }
+    public static void printCase(Case obj,double similarity, boolean printArmyUnit){
+        System.out.println("\n+-------------------------------------\n| "+obj.toString());
+        System.out.println("| Calculated cost: "+obj.getArmy().calculateCost());
+        System.out.println("| Calculated similarity: "+similarity);
+        if(printArmyUnit)
+            printArmyUnit(obj.getArmy().getArmyUnits());
         else
             System.out.println("+-------------------------------------");
 

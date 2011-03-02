@@ -45,9 +45,15 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
         Number queryNumber = (Number) queryObject;
         double caseDouble = caseNumber.doubleValue();
         double queryDouble = queryNumber.doubleValue();
-//        
-//        if(v1==0)
-//            return 1 - ((double) Math.abs(v2) / interval);
+
+        //If wildcard value e.g.: I have no clue what I need
+        //TODO: Come up with wildcard calulation
+        if(queryDouble==0)
+            return 1;
+        //If wildcard value e.g.: I have no clue how many points I am comprised of.
+        //TODO: Come up with wildcard calculation
+        if(caseDouble==0)
+            return 1;
         return 1 - ((double) Math.abs(caseDouble - queryDouble) / interval);
     }
 

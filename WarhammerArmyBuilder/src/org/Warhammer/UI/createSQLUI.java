@@ -1422,8 +1422,10 @@ public class createSQLUI extends javax.swing.JFrame {
             if(unit.contentEquals("N/A")||eq.contentEquals("N/A"))
                 continue;
             int idx = eq.indexOf("{");
-            eq = eq.substring(0, idx);
-            ResultSet res = dbm.executeSQL("select equipmentid from EQUIPMENT where name='"+eq+"'", DatabaseManager.SELECT_QUERY);
+            int idx2 = eq.indexOf("}");
+            String equip = eq.substring(0, idx);
+            String cost = eq.substring(idx+1, idx2);
+            ResultSet res = dbm.executeSQL("select equipmentid from EQUIPMENT where name='"+equip+"' and COST="+cost, DatabaseManager.SELECT_QUERY);
             int ID=-1;
             try {
                 while(res.next())
@@ -1478,11 +1480,13 @@ public class createSQLUI extends javax.swing.JFrame {
             if(eq.contentEquals("N/A")||rule.contentEquals("N/A"))
                 continue;
             int idx = eq.indexOf("{");
-            eq = eq.substring(0,idx);
+            int idx2 = eq.indexOf("}");
+            String equip = eq.substring(0,idx);
+            String cost = eq.substring(idx+1, idx2);
             int eqID = -1;
             int ruleID = -1;
             try{
-                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eq+"'", DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+equip+"' and cost="+cost, DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     eqID = res.getInt("EQUIPMENTID");
                 res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", DatabaseManager.SELECT_QUERY);
@@ -1578,9 +1582,10 @@ public class createSQLUI extends javax.swing.JFrame {
                 if(checkListItem.isSelected()){
                     String name = checkListItem.toString();
                     int idx = name.indexOf("{");
-                    name = name.substring(0, idx);
-                    System.out.println("name; "+name);
-                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+name+"'", DatabaseManager.SELECT_QUERY);
+                    int idx2 = name.indexOf("}");
+                    String eqName = name.substring(0, idx);
+                    String eqCost = name.substring(idx+1, idx2);
+                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eqName+"' and cost="+eqCost, DatabaseManager.SELECT_QUERY);
                     int eqID=-1;
                     try {
                         while (res.next()) {

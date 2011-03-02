@@ -17,7 +17,6 @@
 
 package org.Warhammer.Warhammer;
 
-import java.util.Iterator;
 import jcolibri.cbrcore.Attribute;
 
 /**
@@ -30,7 +29,7 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
     public enum Outcomes{Defeat,Draw,Victory};
     private int ID;
-    private Army armyID;
+    private Army army = new Army();
     private Races opponent;
     private Outcomes outcome;
     
@@ -55,15 +54,15 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the armyID
      */
-    public Army getArmyID() {
-        return armyID;
+    public Army getArmy() {
+        return army;
     }
 
     /**
      * @param armyID the armyID to set
      */
-    public void setArmyID(Army armyID) {
-        this.armyID = armyID;
+    public void setArmy(Army army) {
+        this.army = army;
     }
 
     /**
@@ -98,11 +97,10 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     public String toString(){
         return "Case ID:"+ID+
                 ", Player race: "+
-                armyID.getPlayerRace()+
-                ", Army Points: "+armyID.getArmyPoints()+
-                ", Opponet race: "+opponent+
+                army.getPlayerRace()+
+                ", Army Points: "+army.getArmyPoints()+
+                ", Opponent race: "+opponent+
                 ", Outcome: "+outcome;
-
     }
 
 }
