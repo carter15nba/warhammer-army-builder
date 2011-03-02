@@ -99,10 +99,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
         for (RetrievalResult retrievalResult : eval) {
             Case c = (Case) retrievalResult.get_case().getSolution();
-            org.Warhammer.Util.PrintFactory.printCase(c,false);
-           // System.out.println("Case: "+c.getID()+", "+c.getOpponent()+"::"+c.getOutcome()+"::Sim: "+retrievalResult.getEval());
-//            Unit c = (Unit) retrievalResult.get_case().getDescription();
-//            System.out.println(c.toString());
+            org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),false);
         }
         Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
 
@@ -151,16 +148,18 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 queryCase.setOpponent(Case.Races.Wood_Elves);
 
                 Army queryArmy = new Army();
-                queryArmy.setArmyPoints(0);
+                queryArmy.setArmyPoints(2500);
                 queryArmy.setPlayerRace(Case.Races.Empire);
 
                 Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
                 ArmyUnit armyUnit = new ArmyUnit();
 
                 Unit unit = new Unit();
-                unit.setName("JALLAJALLA");
+                unit.setName("Empire:Halberdiers");
                 armyUnit.setUnitName(unit);
+                armyUnit.setNumberOfUnits(10);
                 armyUnitSet.add(armyUnit);
+
                 armyUnit = new ArmyUnit();
                 unit = new Unit();
                 unit.setName("Empire:Greatswords");
@@ -168,7 +167,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
                 queryArmy.setArmyUnits(armyUnitSet);
-                queryCase.setArmyID(queryArmy);
+                queryCase.setArmy(queryArmy);
 
                 Set<Equipment> sEq = new HashSet<Equipment>();
                 Equipment eq = new Equipment();
@@ -176,7 +175,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 sEq.add(eq);
                 unit.setEquipment(sEq);
 
-                //org.Warhammer.Util.PrintFactory.printCase(queryCase);
+                System.out.println("Query Case");
+                org.Warhammer.Util.PrintFactory.printCase(queryCase,false);
 
                 cbrQuery.setDescription(queryCase);
                 cbrEngine.cycle(cbrQuery);

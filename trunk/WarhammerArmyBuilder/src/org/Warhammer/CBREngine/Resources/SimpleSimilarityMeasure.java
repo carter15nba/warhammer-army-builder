@@ -44,46 +44,35 @@ public class SimpleSimilarityMeasure {
         Attribute attr;
         LocalSimilarityFunction func;
         //Player race
-        attr = new Attribute("armyID",org.Warhammer.Warhammer.Case.class);
+        attr = new Attribute("army",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Army", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.9);
+        nnConfig.setWeight(attr, 0.10);
         //Opponent race
         attr = new Attribute("opponent",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("enum", 0);
+        func = localSimilarityFactory("Equal", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.80);
+        nnConfig.setWeight(attr, 1.0);
         //Points
         attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Army.class);
         func = localSimilarityFactory("Interval", 500);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.75);
+        nnConfig.setWeight(attr, 1.0);
         //Outcome
         attr = new Attribute("outcome",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("enum", 0);
+        func = localSimilarityFactory("Enum", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.75);
-        //Units
-//        attr = new Attribute("units",org.Warhammer.Warhammer.Case.class);
-//        func = localSimilarityFactory("Unit", 0);
-//        nnConfig.addMapping(attr, func);
-//        nnConfig.setWeight(attr, 0.3);
-
-
-
+        nnConfig.setWeight(attr, 1.0);
     }
     private LocalSimilarityFunction localSimilarityFactory(String name, int param){
-        if(name.equals("Equal"))
-            return new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
-        else if(name.equals("Interval"))
-            //return new jcolibri.method.retrieve.NNretrieval.similarity.local.Interval(param);
+        if(name.equals("Interval"))
             return new Interval(param);
-        else if(name.equals("Unit"))
-            return new UnitSimilarity();
         else if(name.equals("Army"))
             return new ArmySimilarity();
-        else if(name.equals("enum"))
+        else if(name.equals("Enum"))
             return new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
+        else if(name.equals("Equal"))
+            return new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
         return null;
     }
 }

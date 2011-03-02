@@ -47,10 +47,10 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
      * parameters are not an instance of Set.
      */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
-         if ((caseObject == null) || (queryObject == null)){
+        if ((caseObject == null) || (queryObject == null)){
             return 0;
         }
-         if (!(caseObject instanceof Set))
+        if (!(caseObject instanceof Set))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
         if (!(queryObject instanceof Set))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
@@ -72,6 +72,7 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
                 numberSim-=1;
                 continue;
             }
+            //TODO: User specified number of units interval
             Interval interval = new Interval(10);
             numberSim += interval.compute(caseArmyUnit.getNumberOfUnits(), queryArmyUnit.getNumberOfUnits());
             equipmentSim += computeEquipmentSimilarity(caseArmyUnit.getEquipment(), queryArmyUnit.getEquipment());

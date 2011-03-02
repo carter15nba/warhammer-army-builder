@@ -17,6 +17,7 @@
 
 package org.Warhammer.Warhammer;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
@@ -31,7 +32,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
     private int ID;
     private Case.Races playerRace;
     private int armyPoints;
-    private Set<ArmyUnit> armyUnits;
+    private Set<ArmyUnit> armyUnits = new HashSet<ArmyUnit>();
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
@@ -96,6 +97,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
         Iterator armyIt = armyUnits.iterator();
         int totalCost = 0;
         while(armyIt.hasNext()){
+            boolean singleEquipmentCost = false;
             ArmyUnit next = (ArmyUnit) armyIt.next();
             int numberOfUnits = next.getNumberOfUnits();
             int baseUnitCost = next.getUnitName().getCost();
@@ -108,24 +110,23 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
                 UtilityUnit util = (UtilityUnit) utilIt.next();
                 totalCost += util.getCost();
                 utilCost += util.getCost();
-                System.out.println("Utilcost:"+util.getCost());
+                if(util.getName().equalsIgnoreCase("Empire:Marksman")){
+                    singleEquipmentCost = true;
+                }
             }
             Iterator equipIt = next.getEquipment().iterator();
             while(equipIt.hasNext()){
                 Equipment equip = (Equipment) equipIt.next();
                 if((equip.getItemType()!=itemType.Armour)&&
-                        equip.getItemType()!=itemType.Weapon){
+                        equip.getItemType()!=itemType.Weapon)
                     totalCost += equip.getCost();
-                    eqCost += equip.getCost();
-                    System.out.println("other: "+equip.getName()+equip.getCost());
-                }
                 else{
-                    totalCost += numberOfUnits*equip.getCost();
-                    eqCost+=numberOfUnits*equip.getCost();
-                    System.out.println("weapon/armour: "+equip.getName()+equip.getCost());
+                    if(singleEquipmentCost)
+                        totalCost += equip.getCost();
+                    else
+                        totalCost += numberOfUnits*equip.getCost();
                 }
             }
-            System.out.println("UnitName: "+next.getUnitName().getName()+"batalion cost: "+unitCost+", total unit cost: "+(unitCost+utilCost+eqCost));
         }
         return totalCost;
     }

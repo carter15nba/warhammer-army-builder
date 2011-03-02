@@ -33,15 +33,15 @@
     </property>
     <property column="WEAPONSKILL" length="7" name="weaponSkill"/>
     <property column="WOUNDS" length="7" name="wounds"/>
-    <set name="equipment" table="UNIT_EQUIPMENT">
+    <set name="equipment" table="UNIT_EQUIPMENT" lazy="false">
       <key column="name"/>
       <many-to-many class="org.Warhammer.Warhammer.Equipment" column="EQUIPMENT_ID"/>
     </set>
-    <set name="utilityUnit" table="UNIT_UTILITY">
+    <set name="utilityUnit" table="UNIT_UTILITY" lazy="false">
       <key column="name"/>
       <many-to-many class="org.Warhammer.Warhammer.UtilityUnit" column="UTILID"/>
     </set>
-    <set name="specialRules" table="UNIT_RULE">
+    <set name="specialRules" table="UNIT_RULE" lazy="false">
       <key column="name"/>
       <many-to-many class="org.Warhammer.Warhammer.SpecialRules" column="RULE_ID"/>
     </set>

@@ -5,8 +5,7 @@
     <id name="ID" type="integer">
       <generator class="increment"/>
     </id>
-<!--    <property column="ARMY_ID" name="armyID" type="integer"/>-->
-    <many-to-one name="armyID" column="army_ID" cascade="all" unique="true" lazy="false" class="org.Warhammer.Warhammer.Army"/>
+    <many-to-one name="army" column="army_ID" cascade="all" unique="true" lazy="false" class="org.Warhammer.Warhammer.Army"/>
     <property column="OPPONENT_RACE" length="20" name="opponent">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Case$Races</param>
