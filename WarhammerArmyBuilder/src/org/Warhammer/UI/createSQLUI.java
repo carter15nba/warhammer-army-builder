@@ -65,14 +65,21 @@ public class createSQLUI extends javax.swing.JFrame {
             armyPoints.setText("");
             armyPoints.setPreferredSize(new Dimension(80,20));
             sql = new ArrayList<String>();
+            String[] model = new String[17];
+            model[0] = "All";
             raceBox.addItem("Select race");
+            int i=1;
             for (org.Warhammer.Warhammer.Case.Races race : org.Warhammer.Warhammer.Case.Races.values()) {
                 raceBox.addItem(race);
+                model[i] = "Race:"+race;
+                i++;
             }
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             utilTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             tableEquipment.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            String[] model = new String[12];
+
+            tableEquipment.getColumnModel().getColumn(6).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 6));
+            model = new String[12];
             model[0] = "N/A";
             int pos = 1;
             for (org.Warhammer.Warhammer.Unit.unitType ut : unitType.values()) {
@@ -82,7 +89,6 @@ public class createSQLUI extends javax.swing.JFrame {
                 model[pos] = ut.toString();
                 pos++;
             }
-
             table.getColumnModel().getColumn(13).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 13));
             utilTable.getColumnModel().getColumn(14).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 14));
             model = new String[7];
@@ -604,7 +610,7 @@ public class createSQLUI extends javax.swing.JFrame {
         else if(pane==3){
             tab = tableEquipment;
             id++;
-            row = new Object[]{id,null,null,null,null,"N/A",null,false};
+            row = new Object[]{id,null,null,null,null,"N/A","All",false};
         }
         else if(pane==4){
             tab = tableAssocUnit_Equipment;
@@ -799,11 +805,11 @@ public class createSQLUI extends javax.swing.JFrame {
                 }
             }
             else if(pane==2){
-                ResultSet res = dbm.executeSQL("Select name from UTILITYUNIT where name like '"+raceBox.getSelectedItem().toString()+"%'", DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("Select name, cost from UTILITYUNIT where name like '"+raceBox.getSelectedItem().toString()+"%'", DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next()){
-                    util.add(res.getString("name"));
+                    util.add(res.getString("name")+"{"+res.getInt("cost")+"}");
                 }
                 String[] comp = new String[util.size()];
                 comp = util.toArray(comp);
@@ -1279,7 +1285,11 @@ public class createSQLUI extends javax.swing.JFrame {
             String util = tableAssocUnit_Util.getValueAt(i, 1).toString();
             if(unit.contentEquals("N/A")||util.contentEquals("N/A"))
                     continue;
-            ResultSet res = dbm.executeSQL("Select ID FROM UTILITYUNIT WHERE NAME='"+util+"'", DatabaseManager.SELECT_QUERY);
+            int idx = util.indexOf("{");
+            int idx2 = util.indexOf("}");
+            String name = util.substring(0,idx);
+            String cost = util.substring(idx+1,idx2);
+            ResultSet res = dbm.executeSQL("Select ID FROM UTILITYUNIT WHERE NAME='"+name+"' and cost="+cost, DatabaseManager.SELECT_QUERY);
             int tID=-1;
             try {
                 while (res.next()) {
