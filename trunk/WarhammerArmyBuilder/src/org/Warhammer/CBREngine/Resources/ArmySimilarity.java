@@ -38,7 +38,7 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
          Army queryArmy = (Army) queryObject;
 
          if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
-             return -1;
+             return 0;
         }
          if(queryArmy.getArmyUnits()!=null){
              ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();

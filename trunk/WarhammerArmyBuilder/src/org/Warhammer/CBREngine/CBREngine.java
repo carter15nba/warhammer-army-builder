@@ -98,36 +98,29 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         System.out.println("Case similarity:");
 
         for (RetrievalResult retrievalResult : eval) {
-            Case c = (Case) retrievalResult.get_case().getSolution();
-            if(c.getID()==5)
-                org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),true);
-            else
-                org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),false);
+            Case _case = (Case) retrievalResult.get_case().getSolution();
+            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
         }
         Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
 
-//        org.Warhammer.Warhammer.RuleSet set = new RuleSet();
-//        RuleSet.messages l = RuleSet.messages.FAIL;
-//        for (CBRCase cBRCase : selectedcases) {
-//
-//            System.out.println(cBRCase.toString());
-//            Case ca = (Case) cBRCase.getDescription();
-//            System.out.println(ca.toString());
-////            System.out.println("\nTOTAL COST: "+ca.calculateCaseCost());
-////            l = set.isFollowingArmyDispositionRules(ca, 2500);
-//
-//        }
-//        if(l == RuleSet.messages.FAIL){
-//            RuleSet.messages[] r = set.getErrorCauses();
-//            for (RuleSet.messages object : r) {
-//                System.out.println(object);
-//            }
-//
+        org.Warhammer.Warhammer.RuleSet set = new org.Warhammer.Warhammer.RuleSet();
+        org.Warhammer.Warhammer.RuleSet.messages l = org.Warhammer.Warhammer.RuleSet.messages.FAIL;
+        for (CBRCase cBRCase : selectedcases) {
+            Case _case = (Case) cBRCase.getSolution();
+            l = set.isFollowingArmyDispositionRules(_case, 2500);
+
+        }
+//        if(l == org.Warhammer.Warhammer.RuleSet.messages.FAIL){
+            org.Warhammer.Warhammer.RuleSet.messages[] r = set.getErrorCauses();
+            for (org.Warhammer.Warhammer.RuleSet.messages object : r) {
+                System.out.println(object);
+            }
+
 //        }
     }
 
     private void reuse(){
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
     private void revise(){
@@ -147,8 +140,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 CBRQuery cbrQuery = new CBRQuery();
                 Case queryCase = new Case();
-                queryCase.setOutcome(Case.Outcomes.Victory);
-                queryCase.setOpponent(Case.Races.Wood_Elves);
+                queryCase.setOutcome(Case.Outcomes.Defeat);
+                queryCase.setOpponent(Case.Races.Bretonnia);
 
                 Army queryArmy = new Army();
                 queryArmy.setArmyPoints(2500);

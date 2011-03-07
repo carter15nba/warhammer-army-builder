@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class RuleSet {
 
-    public enum messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS, TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS, TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS};
+    public enum messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS, TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS, TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,INCORRECT_NUMBER_OF_UNITS};
     private int totalCost;
     private int coreCost;
     private int specialCost;
@@ -47,15 +47,15 @@ public class RuleSet {
     private DuplicateUnits duplicate;
 
     public RuleSet(){
-        errors = new messages[7];
+        errors = messages.values();
         errorCount = 0;
     }
-
     public messages isFollowingArmyDispositionRules(Case obj, int armyPoints){
         this.armyPoints = armyPoints;
         resetCosts();
         calculatePointsUsage(obj);
         calculateTotalCost();
+
         return verifyLegalPointDistribution();
     }
     public void resetCosts(){
@@ -121,38 +121,56 @@ public class RuleSet {
         }
     }
     private void calculatePointsUsage(Case caseObj){
-//        duplicate = new DuplicateUnits();
-//        Set<Unit> units = caseObj.getUnits();
-//        for (Unit u : units) {
-//            int cost = u.calculateTotalUnitCost();
-//            armyType armyType = u.getArmyType();
-//            switch(armyType){
-//                case Core:
-//                    coreCost += cost;
-//                   break;
-//                case Hero:
-//                    heroCost += cost;
-//                    break;
-//                case Lord:
-//                    lordCost += cost;
-//                    break;
-//                case Rare:
-//                    rareCost += cost;
-//                    duplicate.checkUnit(u);
-//                    break;
-//                case Special:
-//                    specialCost += cost;
-//                    duplicate.checkUnit(u);
-//                    break;
-//            }
-//        }
+        duplicate = new DuplicateUnits();
+        Army army = caseObj.getArmy();
+        Set<ArmyUnit> armyUnits = army.getArmyUnits();
+        for (ArmyUnit u : armyUnits) {
+            int cost = army.calculateTotalUnitCost(u);
+            Unit unit = u.getUnitName();
+            followingUnitDispositionRules(unit,u.getNumberOfUnits());
+            armyType armyType = unit.getArmyType();
+            switch(armyType){
+                case Core:
+                    coreCost += cost;
+                   break;
+                case Hero:
+                    heroCost += cost;
+                    break;
+                case Lord:
+                    lordCost += cost;
+                    break;
+                case Rare:
+                    rareCost += cost;
+                    duplicate.checkUnit(unit);
+                    break;
+                case Special:
+                    specialCost += cost;
+                    duplicate.checkUnit(unit);
+                    break;
+            }
+        }
     }
     public messages[] getErrorCauses(){
         if(errorCount==0)
-            return null;
+            return new messages[]{messages.OK};
         messages ret[] = new messages[errorCount];
         System.arraycopy(errors, 0, ret, 0, errorCount);
         return ret;
+    }
+    private void followingUnitDispositionRules(Unit unit,int numberOfUnits) {
+        if((unit.getMaxNumber()<numberOfUnits)||
+                (unit.getMinNumber()>numberOfUnits)){
+            boolean exists=false;
+            for (messages object : errors) {
+                if(object==messages.INCORRECT_NUMBER_OF_UNITS){
+                    exists=true;
+                }
+            }
+            if(!exists){
+                errors[errorCount] = messages.INCORRECT_NUMBER_OF_UNITS;
+                errorCount++;
+            }
+        }
     }
 
     private class DuplicateUnits{
@@ -172,33 +190,33 @@ public class RuleSet {
             //TODO: Add logic to make it possible to have the desired number of regiments (not units) e.g: a greatswords regiment must have at the least 5 units, but only three such regiments may exist
         }
         public void checkUnit(Unit u){
-//            armyType aT =  u.getArmyType();
-//            if(aT==armyType.Rare){
-//                if(u.getNumber()>rareDuplicates){
-//                    System.out.println("Name:"+u.getName()+", number: "+u.getNumber());
-//                    addError(messages.TOO_MANY_DUPLICATE_RARE_UNITS);
-//                }
-//            }
-//            else if(aT==armyType.Special){
-//                if(u.getNumber()>specialDuplicates){
-//                    System.out.println("Name:"+u.getName()+", number: "+u.getNumber());
-//                    addError(messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
-//                }
-//            }
+            armyType aT =  u.getArmyType();
+            if(aT==armyType.Rare){
+                if(u.getMinNumber()>rareDuplicates){
+                    System.out.println("Name:"+u.getName()+", number: "+u.getMinNumber());
+                    addError(messages.TOO_MANY_DUPLICATE_RARE_UNITS);
+                }
+            }
+            else if(aT==armyType.Special){
+                if(u.getMinNumber()>specialDuplicates){
+                    System.out.println("Name:"+u.getName()+", number: "+u.getMinNumber());
+                    addError(messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
+                }
+            }
         }
         public void addError(messages m){
-//            boolean exist = false;
-//            for (int i = 0; i < errorCount; i++) {
-//                if(errors[i]==m){
-//                    exist = true;
-//                    break;
-//                }
-//            }
-//            if(!exist){
-//                errors[errorCount] = m;
-//                errorCount++;
-//                addedErrors++;
-//            }
+            boolean exist = false;
+            for (int i = 0; i < errorCount; i++) {
+                if(errors[i]==m){
+                    exist = true;
+                    break;
+                }
+            }
+            if(!exist){
+                errors[errorCount] = m;
+                errorCount++;
+                addedErrors++;
+            }
         }
         public int getAddedErrors(){
             return addedErrors;

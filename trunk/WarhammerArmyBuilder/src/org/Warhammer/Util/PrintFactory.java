@@ -59,7 +59,7 @@ public class PrintFactory {
                 System.out.println("|    Name: "+utility.getName()+", cost: "+utility.getCost());
             }
             if(parent!=null)
-                System.out.println("| Calculated unit cost: "+parent.calculateUnitCost(armyUnit));
+                System.out.println("| Calculated unit cost: "+parent.calculateTotalUnitCost(armyUnit));
 
         }
         System.out.println("+-------------------------------------");
