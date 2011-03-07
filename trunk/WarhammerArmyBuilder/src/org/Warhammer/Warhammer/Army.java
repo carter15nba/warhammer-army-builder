@@ -97,37 +97,39 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
         Iterator armyIt = armyUnits.iterator();
         int totalCost = 0;
         while(armyIt.hasNext()){
+            ArmyUnit next = (ArmyUnit)armyIt.next();
+            totalCost+=calculateUnitCost(next);
+        }
+        return totalCost;
+    }
+    public int calculateUnitCost(ArmyUnit armyUnit){
+            int unitCost = 0;
             boolean singleEquipmentCost = false;
-            ArmyUnit next = (ArmyUnit) armyIt.next();
-            int numberOfUnits = next.getNumberOfUnits();
-            int baseUnitCost = next.getUnitName().getCost();
-            totalCost += baseUnitCost*numberOfUnits;
-            int unitCost  = baseUnitCost*numberOfUnits;
-            int utilCost = 0;
-            int eqCost = 0;
-            Iterator utilIt = next.getUtility().iterator();
+            int numberOfUnits = armyUnit.getNumberOfUnits();
+            int baseUnitCost = armyUnit.getUnitName().getCost();
+            unitCost += baseUnitCost*numberOfUnits;
+
+            Iterator utilIt = armyUnit.getUtility().iterator();
             while(utilIt.hasNext()){
                 UtilityUnit util = (UtilityUnit) utilIt.next();
-                totalCost += util.getCost();
-                utilCost += util.getCost();
+                unitCost += util.getCost();
                 if(util.getName().equalsIgnoreCase("Empire:Marksman")){
                     singleEquipmentCost = true;
                 }
             }
-            Iterator equipIt = next.getEquipment().iterator();
+            Iterator equipIt = armyUnit.getEquipment().iterator();
             while(equipIt.hasNext()){
                 Equipment equip = (Equipment) equipIt.next();
                 if((equip.getItemType()!=itemType.Armour)&&
                         equip.getItemType()!=itemType.Weapon)
-                    totalCost += equip.getCost();
+                    unitCost += equip.getCost();
                 else{
                     if(singleEquipmentCost)
-                        totalCost += equip.getCost();
+                        unitCost += equip.getCost();
                     else
-                        totalCost += numberOfUnits*equip.getCost();
+                        unitCost += numberOfUnits*equip.getCost();
                 }
             }
-        }
-        return totalCost;
+            return unitCost;
     }
 }

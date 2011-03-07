@@ -1014,10 +1014,17 @@ public class createSQLUI extends javax.swing.JFrame {
         armyDetails.setText("");
         try {
             while (res.next()) {
-                armyDetails.append("ID: "+id+"\n");
+                armyDetails.append("ID: "+s[0]+"\n");
                 armyDetails.append("Race: "+res.getString("PLAYER_RACE")+"\n");
                 armyDetails.append("Points: "+res.getInt("ARMY_POINTS")+"\n");
             }
+            res = dbm.executeSQL("Select * from army_unit where Army_ID="+s[0], DatabaseManager.SELECT_QUERY);
+            while(res.next()){
+                armyDetails.append("+---------\n");
+                armyDetails.append("| Unit name: "+res.getString("UNIT_NAME")+"\n");
+                armyDetails.append("| Number of units: "+res.getInt("NUM_UNITS")+"\n");
+            }
+            armyDetails.append("+---------\n");
         } catch (SQLException ex) {}
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -1196,10 +1203,10 @@ public class createSQLUI extends javax.swing.JFrame {
         tabbedPaneStateChanged(null);
         for (String string : result) {
             String[] s = parseQuery(string);
-            ResultSet res = dbm.executeSQL("SELECT NAME FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT NAME,cost FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
             try {
                 while(res.next())
-                    tm.addRow(new Object[]{s[0], res.getString("name")});
+                    tm.addRow(new Object[]{s[0], res.getString("name")+"{"+res.getString("cost")+"}"});
             }
             catch (SQLException ex) {}
         }
@@ -1660,9 +1667,23 @@ public class createSQLUI extends javax.swing.JFrame {
                 String name = tableArmy.getValueAt(row, 0).toString();
                 String[] r = name.split(":");
                 String race = r[0];
-                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
+                ResultSet def = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
+                ResultSet eq = dbm.executeSQL("Select equipment.Name,equipment.Cost "+
+                    "from equipment,unit "+
+                    "where unit.name ='"+name+"' and "+
+                    "equipment.cost <= unit.magicpoints and "+
+                    "equipment.defaulteq=0 and "+
+                    "(equipment.itemtype='Arcane_Items' "+
+                    "or equipment.itemtype='Enchanted_Items' "+
+                    "or equipment.itemtype='Magic_Weapon' "+
+                    "or equipment.itemtype='Magic_Armour' " +
+                    "or equipment.itemtype='Talisman')and "+
+                    "(equipment.usableby='All' "+
+                    "or equipment.usableby='Race:"+race+"') order by equipment.name asc",DatabaseManager.SELECT_QUERY);
                 ResultSet st = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT WHERE EQUIPMENT.ITEMTYPE='Standard' AND (EQUIPMENT.USABLEBY='All' or EQUIPMENT.USABLEBY='Race:"+race+"')", DatabaseManager.SELECT_QUERY);
                 try{
+                    while(def.next())
+                        equip.add(def.getString("NAME")+"{"+def.getInt("COST")+"}");
                     while(eq.next())
                         equip.add(eq.getString("NAME")+"{"+eq.getInt("COST")+"}");
                     while(st.next())
@@ -1670,9 +1691,12 @@ public class createSQLUI extends javax.swing.JFrame {
                 }
                 catch(SQLException sqle){}
                 int idx = equip.indexOf(item.toString());
+                System.out.println("item: "+item.toString()+", idx: "+idx);
                 CheckListItem[] cEq = new CheckListItem[equip.size()];
-                for(int i = 0 ; i < equip.size() ; i++)
+                for(int i = 0 ; i < equip.size() ; i++){
                     cEq[i] = new CheckListItem(equip.get(i));
+                    System.out.println(equip.get(i).toString());
+                }
                 cEq[idx].setSelected(true);
                 CaseStorage cs = new CaseStorage();
                 cs.setEquipment(cEq);
