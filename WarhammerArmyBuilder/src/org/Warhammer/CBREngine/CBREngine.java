@@ -99,7 +99,10 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
         for (RetrievalResult retrievalResult : eval) {
             Case c = (Case) retrievalResult.get_case().getSolution();
-            org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),false);
+            if(c.getID()==5)
+                org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),true);
+            else
+                org.Warhammer.Util.PrintFactory.printCase(c,retrievalResult.getEval(),false);
         }
         Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
 

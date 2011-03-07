@@ -17,7 +17,6 @@
 
 package org.Warhammer.CBREngine.Resources;
 
-import org.Warhammer.CBREngine.CBREngine;
 import jcolibri.cbrcore.Attribute;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
@@ -48,21 +47,22 @@ public class SimpleSimilarityMeasure {
         func = localSimilarityFactory("Army", 0);
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 0.10);
+
         //Opponent race
         attr = new Attribute("opponent",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Equal", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, 0.8);
         //Points
         attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Army.class);
         func = localSimilarityFactory("Interval", 500);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, 0.8);
         //Outcome
         attr = new Attribute("outcome",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Enum", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, 0.8);
     }
     private LocalSimilarityFunction localSimilarityFactory(String name, int param){
         if(name.equals("Interval"))

@@ -37,17 +37,12 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
          Army caseArmy = (Army) caseObject;
          Army queryArmy = (Army) queryObject;
 
-         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace())
-             return 0;
-//         Interval interval = new Interval(500);
-//         double pointSim = interval.compute(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
+         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
+             return -1;
+        }
          if(queryArmy.getArmyUnits()!=null){
              ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
-             double unitSim = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
-             System.out.println("unit sim: "+unitSim);
-             return unitSim;
-             //Average of the army point similarity and the unit similarity
-//             pointSim = (pointSim+unitSim)/2;
+             return armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
          }
 //         return pointSim;
             return 0;
