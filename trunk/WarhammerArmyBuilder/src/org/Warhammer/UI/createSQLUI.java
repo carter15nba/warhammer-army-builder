@@ -570,7 +570,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 .addComponent(executeSQL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadButton)
-                .addContainerGap())
+                .addGap(337, 337, 337))
             .addComponent(tabbedPane)
         );
         layout.setVerticalGroup(
@@ -830,7 +830,7 @@ public class createSQLUI extends javax.swing.JFrame {
                     id = res.getInt("EQUIPMENTID");
             }
             else if(pane==4){
-                ResultSet res = dbm.executeSQL("SELECT NAME, COST FROM EQUIPMENT ORDER BY NAME ASC",DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME, COST FROM EQUIPMENT WHERE USABLEBY='Race:"+raceBox.getSelectedItem().toString()+"' or USABLEBY='All' ORDER BY NAME ASC",DatabaseManager.SELECT_QUERY);
                 ArrayList<String> util = new ArrayList<String>();
                 util.add("N/A");
                 while(res.next())
@@ -1150,7 +1150,6 @@ public class createSQLUI extends javax.swing.JFrame {
             int points = 0 ;
             if(s.length==17)
                 points = Integer.parseInt(s[16]);
-            //tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),null,s[4],s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
             tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15],points});
         }
         for (int i = 0; i < raceBox.getItemCount() ; i++) {
@@ -1203,10 +1202,11 @@ public class createSQLUI extends javax.swing.JFrame {
         tabbedPaneStateChanged(null);
         for (String string : result) {
             String[] s = parseQuery(string);
-            ResultSet res = dbm.executeSQL("SELECT NAME,cost FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
+            System.out.println(s[0]+"  "+s[1]);
+            ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM UTILITYUNIT WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
             try {
                 while(res.next())
-                    tm.addRow(new Object[]{s[0], res.getString("name")+"{"+res.getString("cost")+"}"});
+                    tm.addRow(new Object[]{s[0], res.getString("NAME")+"{"+res.getInt("COST")+"}"});
             }
             catch (SQLException ex) {}
         }
@@ -1708,10 +1708,4 @@ public class createSQLUI extends javax.swing.JFrame {
         else
             return;
     }
-
-
-
-
-
-
 }

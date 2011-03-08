@@ -106,7 +106,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
             int unitCost = 0;
             boolean singleEquipmentCost = false;
             int numberOfUnits = armyUnit.getNumberOfUnits();
-            int baseUnitCost = armyUnit.getUnitName().getCost();
+            int baseUnitCost = armyUnit.getUnit().getCost();
             unitCost += baseUnitCost*numberOfUnits;
 
             Iterator utilIt = armyUnit.getUtility().iterator();
@@ -133,7 +133,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
             return unitCost;
     }
     public int calculateUnitCost(ArmyUnit army){
-        Unit unit = army.getUnitName();
+        Unit unit = army.getUnit();
         return army.getNumberOfUnits()*unit.getCost();
     }
 }

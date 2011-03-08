@@ -18,11 +18,11 @@
 package org.Warhammer.File;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -49,15 +49,11 @@ public class RedusedHibernateParser extends DefaultHandler{
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             SAXParser parser = parserFactory.newSAXParser();
-            URL file = jcolibri.util.FileIO.findFile(path);
-            java.io.File hibernateFile = new java.io.File(file.toURI());
-            parser.parse(hibernateFile, this);
+            InputStream inStream = jcolibri.util.FileIO.openFile(path);
+            parser.parse(inStream, this);
             return hibernateProperties;
         }
         catch (IOException ex) {
-            Logger.getLogger(RedusedHibernateParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (URISyntaxException ex) {
             Logger.getLogger(RedusedHibernateParser.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (ParserConfigurationException ex) {

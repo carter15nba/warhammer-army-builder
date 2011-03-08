@@ -30,7 +30,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     private int ID;
     private int armyID;
     private int numberOfUnits;
-    private Unit unitName;
+    private Unit unit;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utility = new HashSet<UtilityUnit>();
 
@@ -68,15 +68,15 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the unit
      */
-    public Unit getUnitName() {
-        return unitName;
+    public Unit getUnit() {
+        return unit;
     }
 
     /**
      * @param unit the unit to set
      */
-    public void setUnitName(Unit unitName) {
-        this.unitName = unitName;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     /**

@@ -42,7 +42,7 @@ public class PrintFactory {
         System.out.println("+-------------------------------------");
         System.out.println("| Printing army unit");
         for (ArmyUnit armyUnit : array) {
-            Unit unit = armyUnit.getUnitName();
+            Unit unit = armyUnit.getUnit();
             System.out.println("+-------------------------------------");
             System.out.println("| Unit: "+unit.getName()+", base cost: "+unit.getCost()+", unit type: "+unit.getUnitType()+", army type: "+unit.getArmyType());
             System.out.println("| Number of units: "+armyUnit.getNumberOfUnits());

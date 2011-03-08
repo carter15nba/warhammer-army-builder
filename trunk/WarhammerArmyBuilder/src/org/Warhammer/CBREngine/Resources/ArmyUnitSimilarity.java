@@ -17,7 +17,6 @@
 
 package org.Warhammer.CBREngine.Resources;
 
-import java.util.Iterator;
 import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import org.Warhammer.Warhammer.ArmyUnit;
@@ -47,46 +46,52 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
      * parameters are not an instance of Set.
      */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
-        if ((caseObject == null) || (queryObject == null)){
+        if ((caseObject == null) || (queryObject == null))
             return 0;
-        }
         if (!(caseObject instanceof Set))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
         if (!(queryObject instanceof Set))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
         Set caseSet = (Set<ArmyUnit>) caseObject;
         Set querySet = (Set<ArmyUnit>) queryObject;
-
+        int querriedUnits = querySet.size();
         foundUnits=0;
-        Iterator it = querySet.iterator();
         double numberSim = 0;
         double equipmentSim = 0;
         double utilitySim = 0;
-        //Iterate through the query set.
-        while(it.hasNext()){
-            ArmyUnit queryArmyUnit = (ArmyUnit) it.next();
-            Unit queryUnit = queryArmyUnit.getUnitName();
-            //Find similar army unit
-            ArmyUnit caseArmyUnit = (ArmyUnit) findSimilarUnit(caseSet, queryUnit);
+        int notQueriedEquipmet=0;
+        int notQueriedUtility = 0;
+        for (Object object : querySet) {
+            ArmyUnit queryArmyUnit = (ArmyUnit) object;
+            Unit queryUnit = queryArmyUnit.getUnit();
+            ArmyUnit caseArmyUnit = findSimilarUnit(caseSet, queryUnit);
             if(caseArmyUnit==null){
-                numberSim-=1;
                 continue;
             }
-            //TODO: User specified number of units interval
-            Interval interval = new Interval(10);
+            //TODO: User specified interval.
+            Interval interval = new Interval(5);
             numberSim += interval.compute(caseArmyUnit.getNumberOfUnits(), queryArmyUnit.getNumberOfUnits());
             equipmentSim += computeEquipmentSimilarity(caseArmyUnit.getEquipment(), queryArmyUnit.getEquipment());
             utilitySim += computeUtilitySimilarity(caseArmyUnit.getUtility(), queryArmyUnit.getUtility());
+            if(!queryArmyUnit.getEquipment().isEmpty())
+                notQueriedEquipmet++;
+            if(!queryArmyUnit.getUtility().isEmpty())
+               notQueriedUtility++;
         }
-        if(foundUnits==0)
-            return numberSim;
-        else if((equipmentSim==0)&&(utilitySim==0))
-            return numberSim/foundUnits;
-        if(equipmentSim!=0)
-            numberSim = (double) numberSim*equipmentSim;
-        if(utilitySim!=0)
-            numberSim = (double) numberSim*utilitySim;
-        return (double)numberSim/foundUnits;
+        double similarity = 0;
+        double unitFractionSimilarity=0;
+        if(foundUnits==0){
+            return 0;
+        }
+        unitFractionSimilarity = (foundUnits/querriedUnits);
+        numberSim = numberSim/foundUnits;
+        int denominator=4;
+        if(notQueriedEquipmet==0)
+            denominator--;
+        if(notQueriedUtility==0)
+            denominator--;
+        similarity = (double)((unitFractionSimilarity + numberSim + equipmentSim + utilitySim)/denominator);
+        return similarity;
     }
 
     /**
@@ -107,12 +112,9 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
      * @return null if no match is found or the ArmyUnit matching the query.
      */
     private ArmyUnit findSimilarUnit(Set<ArmyUnit> caseObject, Unit queryObject){
-        Iterator it = caseObject.iterator();
-        while(it.hasNext()){
-            ArmyUnit caseArmyUnit = (ArmyUnit) it.next();
-
-            Unit caseUnit = caseArmyUnit.getUnitName();
-            if(caseUnit.getName().contentEquals(queryObject.getName())){
+        for (ArmyUnit caseArmyUnit : caseObject) {
+            Unit caseUnit = caseArmyUnit.getUnit();
+            if(caseUnit.getName().equalsIgnoreCase(queryObject.getName())){
                 foundUnits++;
                 return caseArmyUnit;
             }
@@ -121,6 +123,7 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
     }
 
     /**
+     * Computes the fraction of: (found_equipment/queried_equipment)
      * Method to compute the equipmentsimilarity measure between the found
      * case and the query case. If no equipment is presented in the query case
      * will the method return a similarity measure of 0.
@@ -132,24 +135,19 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
         int eqNumber = queryEquipment.size();
         if(eqNumber==0)
             return 0;
-        Iterator queryIt = queryEquipment.iterator();
         int foundEq=0;
-        while(queryIt.hasNext()){
-            Iterator caseIt = caseEquipment.iterator();
-            Equipment queryEq = (Equipment) queryIt.next();
-            while(caseIt.hasNext()){
-                Equipment caseEq = (Equipment) caseIt.next();
+        for (Equipment queryEq : queryEquipment){
+            for (Equipment caseEq : caseEquipment){
                 if(queryEq.getName().equalsIgnoreCase(caseEq.getName())){
-                   foundEq++;
-                   break;
+                    foundEq++;
                 }
             }
         }
-        return (double) foundEq/eqNumber;
-        
+        return (double) foundEq/eqNumber;        
     }
 
     /**
+     * Computes the fraction of: (found_utility/queried_utility)
      * Method to compute the utility unit similarity measure between the found
      * case and the query case. If no utility unit is presented in the query case
      * will the method return a similarity measure of 0.
@@ -161,16 +159,11 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
         int utNumber = queryUtility.size();
         if(utNumber==0)
             return 0;
-        Iterator queryIt = queryUtility.iterator();
         int foundUt = 0;
-        while(queryIt.hasNext()){
-            Iterator caseIt = caseUtility.iterator();
-            UtilityUnit queryUt = (UtilityUnit) queryIt.next();
-            while(caseIt.hasNext()){
-                UtilityUnit caseUt = (UtilityUnit) caseIt.next();
+        for (UtilityUnit queryUt : queryUtility) {
+            for (UtilityUnit caseUt : caseUtility) {
                 if(queryUt.getName().equalsIgnoreCase(caseUt.getName())){
                     foundUt++;
-                    break;
                 }
             }
         }
