@@ -126,7 +126,7 @@ public class RuleSet {
         Set<ArmyUnit> armyUnits = army.getArmyUnits();
         for (ArmyUnit u : armyUnits) {
             int cost = army.calculateTotalUnitCost(u);
-            Unit unit = u.getUnitName();
+            Unit unit = u.getUnit();
             followingUnitDispositionRules(unit,u.getNumberOfUnits());
             armyType armyType = unit.getArmyType();
             switch(armyType){

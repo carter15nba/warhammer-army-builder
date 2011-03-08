@@ -52,8 +52,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
     private Connector connector;
     private CBRCaseBase caseBase;
-    private SimpleSimilarityMeasure simSim;
-    private boolean debug = false;
+    private SimilarityMeasure similarityMeasure;
 
     private CBREngine(){}
     public static CBREngine getInstance(){
@@ -67,22 +66,18 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         DatabaseManager dbm = DatabaseManager.getInstance();
         connector = dbm.connect();
         caseBase = new LinealCaseBase();
-        simSim = new SimpleSimilarityMeasure();
+        similarityMeasure = new SimilarityMeasure();
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
         caseBase.init(connector);
-        java.util.Collection<CBRCase> cases = caseBase.getCases();
-        if(debug)
-            for (CBRCase c : cases) {
-                System.out.println(c);
-            }
         return caseBase;
     }
 
     public void cycle(CBRQuery cbrq) throws ExecutionException {        
-        retrieve(cbrq);
-//        reuse();
+        Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
+
+        reuse(cbrq, retrievalResults);
 //        revise();
 //        retain();
     }
@@ -91,35 +86,22 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void retrieve(CBRQuery cbrq){
-        NNConfig conf = simSim.getSimilarityConfig();
-        conf.setDescriptionSimFunction(new Average());
+    private Collection<RetrievalResult> retrieve(CBRQuery cbrq){
+        NNConfig conf = similarityMeasure.getSimilarityConfig();
+        conf.setDescriptionSimFunction(new org.Warhammer.CBREngine.Resources.Average(caseBase.getCases(),cbrq));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
-        System.out.println("Case similarity:");
-
-        for (RetrievalResult retrievalResult : eval) {
-            Case _case = (Case) retrievalResult.get_case().getSolution();
-            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
-        }
-        Collection<CBRCase> selectedcases = SelectCases.selectTopK(eval, 1);
-
-        org.Warhammer.Warhammer.RuleSet set = new org.Warhammer.Warhammer.RuleSet();
-        org.Warhammer.Warhammer.RuleSet.messages l = org.Warhammer.Warhammer.RuleSet.messages.FAIL;
-        for (CBRCase cBRCase : selectedcases) {
-            Case _case = (Case) cBRCase.getSolution();
-            l = set.isFollowingArmyDispositionRules(_case, 2500);
-
-        }
-//        if(l == org.Warhammer.Warhammer.RuleSet.messages.FAIL){
-            org.Warhammer.Warhammer.RuleSet.messages[] r = set.getErrorCauses();
-            for (org.Warhammer.Warhammer.RuleSet.messages object : r) {
-                System.out.println(object);
-            }
-
+//        Print all cases
+//        System.out.println("Case similarity:");
+//        for (RetrievalResult retrievalResult : eval) {
+//            Case _case = (Case) retrievalResult.get_case().getSolution();
+//            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
 //        }
+        //TODO: user specified k neares cases.
+        System.out.println("Retrieve phase done!");
+        return SelectCases.selectTopKRR(eval, 2);
     }
 
-    private void reuse(){
+    private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         
     }
 
@@ -140,11 +122,11 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 CBRQuery cbrQuery = new CBRQuery();
                 Case queryCase = new Case();
-                queryCase.setOutcome(Case.Outcomes.Defeat);
-                queryCase.setOpponent(Case.Races.Bretonnia);
+                queryCase.setOutcome(Case.Outcomes.Victory);
+                queryCase.setOpponent(Case.Races.Wood_Elves);
 
                 Army queryArmy = new Army();
-                queryArmy.setArmyPoints(2500);
+                queryArmy.setArmyPoints(0);
                 queryArmy.setPlayerRace(Case.Races.Empire);
 
                 Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
@@ -152,14 +134,14 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 Unit unit = new Unit();
                 unit.setName("Empire:Halberdiers");
-                armyUnit.setUnitName(unit);
+                armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(10);
                 armyUnitSet.add(armyUnit);
 
                 armyUnit = new ArmyUnit();
                 unit = new Unit();
                 unit.setName("Empire:Greatswords");
-                armyUnit.setUnitName(unit);
+                armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
                 queryArmy.setArmyUnits(armyUnitSet);
@@ -188,97 +170,96 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 dbm.disconnectNoHibernate(true);
             }
             else if(args[0].contentEquals("simTest")){
-                Set<ArmyUnit> cases = new HashSet<ArmyUnit>();
-                Set<ArmyUnit> query = new HashSet<ArmyUnit>();
-                //CASE
-                ArmyUnit armyUnit = new ArmyUnit();
-                Unit unit = new Unit();
-                unit.setName("Hangunners");
-                armyUnit.setNumberOfUnits(10);
-                armyUnit.setUnitName(unit);
-                cases.add(armyUnit);
+                //Create case 0
+                Case _case = new Case();
+                _case.setID(0);
+                _case.setOpponent(Case.Races.Empire);
+                _case.setOutcome(Case.Outcomes.Victory);
+                //Create case 0 army
+                Army army = new Army();
+                army.setArmyPoints(2500);
+                army.setID(0);
+                army.setPlayerRace(Case.Races.Dwarfs);
+                //Create case 0 army 0 units
+                ArmyUnit a0 = new ArmyUnit();
+                a0.setArmyID(0);
+                a0.setID(0);
+                a0.setNumberOfUnits(10);
+                Unit u1 = new Unit();
+                u1.setName("Jojomen");
+                u1.setCost(1);
+                a0.setUnit(u1);
 
-                Set<Equipment> eq = new HashSet<Equipment>();
-                Equipment e = new Equipment();
-                e.setName("Musician");
-                eq.add(e);
-                e = new Equipment();
-                e.setName("Standard bearer");
-                eq.add(e);
-                unit.setEquipment(eq);
+                ArmyUnit a1 = new ArmyUnit();
+                a1.setArmyID(0);
+                a1.setID(0);
+                a1.setNumberOfUnits(20);
+                Unit u2 = new Unit();
+                Equipment e1 = new Equipment();
+                e1.setName("Roboman");
+                e1.setCost(500);
+                Set<Equipment> eqset = new HashSet<Equipment>();
+                eqset.add(e1);
+                u2.setName("Herculees");
+                u2.setCost(1);
+                a1.setUnit(u2);
+                a1.setEquipment(eqset);
+                Set<ArmyUnit> auset = new HashSet<ArmyUnit>();
+                auset.add(a0);
+                auset.add(a1);
+                army.setArmyUnits(auset);
+                _case.setArmy(army);
 
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Crossbowmen");
-                armyUnit.setNumberOfUnits(50);
-                armyUnit.setUnitName(unit);
-                cases.add(armyUnit);
-
-                armyUnit = new ArmyUnit();
-                cases.add(armyUnit);
-                unit = new Unit();
-                unit.setName("Greatswords");
-                armyUnit.setNumberOfUnits(15);
-                armyUnit.setUnitName(unit);
-                cases.add(armyUnit);
-
-                Army a1 = new Army();
-                a1.setArmyUnits(cases);
-                a1.setArmyPoints(2000);
-
-
+                System.out.println("Case");
+                org.Warhammer.Util.PrintFactory.printCase(_case, true);
 
 
                 //QUERY
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Hangunners");
+                Case _case1 = new Case();
+                _case1.setID(0);
+                _case1.setOpponent(Case.Races.Empire);
+                _case1.setOutcome(Case.Outcomes.Victory);
+                //Create case 0 army
+                Army army1 = new Army();
+                army1.setArmyPoints(2500);
+                army1.setID(0);
+                army1.setPlayerRace(Case.Races.Dwarfs);
+                //Create case 0 army 0 units
+                ArmyUnit a3 = new ArmyUnit();
+                a3.setArmyID(0);
+                a3.setID(0);
+                a3.setNumberOfUnits(10);
+                Unit u3 = new Unit();
+                u3.setName("Jojomen");
+                u3.setCost(1);
+                a3.setUnit(u3);
 
-                eq = new HashSet<Equipment>();
-                e = new Equipment();
-                e.setName("Repeater rifle");
-                eq.add(e);
-                e = new Equipment();
-                e.setName("Musician");
-                eq.add(e);
-                e = new Equipment();
-                e.setName("Standard bearer");
-                eq.add(e);
-                unit.setEquipment(eq);
-
-
-                armyUnit.setNumberOfUnits(10);
-                armyUnit.setUnitName(unit);
-                query.add(armyUnit);
-
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Crossbowmen");
-                armyUnit.setNumberOfUnits(50);
-                armyUnit.setUnitName(unit);
-                query.add(armyUnit);
-//
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Karl Franz");
-                armyUnit.setNumberOfUnits(1);
-                armyUnit.setUnitName(unit);
-                query.add(armyUnit);
-
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Hans Jaeger");
-                armyUnit.setNumberOfUnits(1);
-                armyUnit.setUnitName(unit);
-                query.add(armyUnit);
-
-                Army a2 = new Army();
-                a2.setArmyPoints(2000);
-                a2.setArmyUnits(query);
+                ArmyUnit a4 = new ArmyUnit();
+                a4.setArmyID(0);
+                a4.setID(0);
+                a4.setNumberOfUnits(20);
+                Unit u4 = new Unit();
+                Equipment e2 = new Equipment();
+                e2.setName("Roboman");
+                e2.setCost(500);
+                Set<Equipment> eqset1 = new HashSet<Equipment>();
+                eqset1.add(e1);
+                u4.setName("Herculees");
+                u4.setCost(1);
+                a4.setUnit(u4);
+                a4.setEquipment(eqset1);
+                Set<ArmyUnit> auset1 = new HashSet<ArmyUnit>();
+                auset1.add(a3);
+                auset1.add(a4);
+                army1.setArmyUnits(auset1);
+                _case1.setArmy(army1);
+                
+                System.out.println("Query");
+                 org.Warhammer.Util.PrintFactory.printCase(_case1, true);
 
                 org.Warhammer.CBREngine.Resources.ArmySimilarity armySim
                         = new org.Warhammer.CBREngine.Resources.ArmySimilarity();
-                double comp = armySim.compute(a1, a2);
+                double comp = armySim.compute(army, army1);
                 System.out.println("computed similarity: "+comp);
 
             }

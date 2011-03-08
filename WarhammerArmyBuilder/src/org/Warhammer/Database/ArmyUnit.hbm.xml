@@ -6,13 +6,13 @@
       <generator class="increment"/>
     </id>
     <property column="ARMY_ID" name="armyID" type="integer"/>
-    <many-to-one name="unitName" column="UNIT_NAME" cascade="all" unique="true" lazy="false" class="org.Warhammer.Warhammer.Unit" />
+    <many-to-one cascade="all" class="org.Warhammer.Warhammer.Unit" column="UNIT_NAME" lazy="false" name="unit" unique="true"/>
     <property column="NUM_UNITS" name="numberOfUnits"/>
-    <set name="equipment" table="ARMY_UNIT_EQUIPMENT" lazy="false">
+    <set lazy="false" name="equipment" table="ARMY_UNIT_EQUIPMENT">
       <key column="ARMY_UNIT_ID"/>
       <many-to-many class="org.Warhammer.Warhammer.Equipment" column="EQUIPMENT_ID"/>
     </set>
-    <set name="utility" table="ARMY_UNIT_UTILITY" lazy="false">
+    <set lazy="false" name="utility" table="ARMY_UNIT_UTILITY">
       <key column="ARMY_UNIT_ID"/>
       <many-to-many class="org.Warhammer.Warhammer.UtilityUnit" column="UTILITY_ID"/>
     </set>

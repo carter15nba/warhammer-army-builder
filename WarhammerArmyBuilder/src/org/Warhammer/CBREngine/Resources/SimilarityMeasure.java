@@ -26,7 +26,7 @@ import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
  * @author Glenn Rune Strandbråten
  * @version 
  */
-public class SimpleSimilarityMeasure {
+public class SimilarityMeasure {
     private NNConfig nnConfig = null;
 
     public void setNNConfig(NNConfig conf){
@@ -46,23 +46,23 @@ public class SimpleSimilarityMeasure {
         attr = new Attribute("army",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Army", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.5);
+        nnConfig.setWeight(attr, 0.3);
 
         //Opponent race
         attr = new Attribute("opponent",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Equal", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.8);
+        nnConfig.setWeight(attr, 1.0);
         //Points
         attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Army.class);
         func = localSimilarityFactory("Interval", 500);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.8);
+        nnConfig.setWeight(attr, 1.0);
         //Outcome
         attr = new Attribute("outcome",org.Warhammer.Warhammer.Case.class);
         func = localSimilarityFactory("Enum", 0);
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.8);
+        nnConfig.setWeight(attr, 1.0);
     }
     private LocalSimilarityFunction localSimilarityFactory(String name, int param){
         if(name.equals("Interval"))
