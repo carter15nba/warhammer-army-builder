@@ -22,7 +22,8 @@ import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 
 /**
- *
+ * Class representing a army unit. A army unit is the unit and associated
+ * equipment, mounts and crew that is used in a particular case.
  * @author Glenn Rune Strandbråten
  * @version 0.3
  */
@@ -120,7 +121,4 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     public void setNumberOfUnits(int numberOfUnits) {
         this.numberOfUnits = numberOfUnits;
     }
-
-
-
 }

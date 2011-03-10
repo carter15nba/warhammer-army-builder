@@ -36,17 +36,18 @@ import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
-import jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
+import org.Warhammer.Warhammer.RuleSet;
+import org.Warhammer.Warhammer.RuleSet.Messages;
 import org.Warhammer.Warhammer.Unit;
 /**
- *
+ * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
- * @version 0.1
+ * @version 0.2.1
  */
 public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication{
 
@@ -54,7 +55,15 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
 
+    /**
+     * Default private constructor
+     * Use CBREngine.getInstance() to aquire an instance of this object.
+     */
     private CBREngine(){}
+    /**
+     * Method used to aquire the singleton instance of the CBREngine.
+     * @return the CBR engine singleton object reference.
+     */
     public static CBREngine getInstance(){
         return CBREngineHolder.INSTANCE;
     }
@@ -86,6 +95,12 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Method used in the CBR cycle to retrieve the most similar cases from the
+     * casebase.
+     * @param cbrq The CBRQuery object
+     * @return A collection with the retrieval results from the query.
+     */
     private Collection<RetrievalResult> retrieve(CBRQuery cbrq){
         NNConfig conf = similarityMeasure.getSimilarityConfig();
         conf.setDescriptionSimFunction(new org.Warhammer.CBREngine.Resources.Average(caseBase.getCases(),cbrq));
@@ -94,21 +109,41 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //        System.out.println("Case similarity:");
 //        for (RetrievalResult retrievalResult : eval) {
 //            Case _case = (Case) retrievalResult.get_case().getSolution();
-//            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
+//            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),true);
 //        }
         //TODO: user specified k neares cases.
         System.out.println("Retrieve phase done!");
         return SelectCases.selectTopKRR(eval, 2);
     }
 
+    /**
+     * Method used in the CBR cycle to reuse (adapt/change) the retrieved results
+     * to fit the problem (query) case
+     * @param cbrq The CBRQuery object
+     * @param retrievalResults The results of the retrieval process.
+     */
     private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
-        
+        RuleSet rs = new RuleSet();
+        for (RetrievalResult retrievalResult : retrievalResults) {
+            Case _case = (Case)retrievalResult.get_case().getSolution();
+            Messages[] msg = rs.isFollowingArmyDispositionRules(_case, _case.getArmy().getArmyPoints());
+            System.out.println("Case ID: "+_case.getID()+", messages:");
+            for (Messages object : msg) {
+                System.out.println("Message: "+object);
+            }
+        }
     }
-
+    /**
+     * Method used int the CBR cycle to revise the changes and evaluate the
+     * performance of the revised case.
+     */
     private void revise(){
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Method used in the CBR cycle to store relevant cases back into the casebase.
+     */
     private void retain(){
         throw new UnsupportedOperationException("Not supported yet.");
     }

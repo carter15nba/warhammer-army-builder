@@ -725,7 +725,7 @@ public class createSQLUI extends javax.swing.JFrame {
         int ret = jfc.showOpenDialog(this);
         if(ret==JFileChooser.APPROVE_OPTION){
             emptyTable();
-            ArrayList<String> result = org.Warhammer.File.SQLFileParser.parseRaceUnitsSQL(jfc.getSelectedFile());
+            ArrayList<String> result = org.Warhammer.File.SQLFileParser.parseSQL(jfc.getSelectedFile());
             if(pane==0)
                 populteUnitTable(result);
             else if(pane == 1)
@@ -825,9 +825,9 @@ public class createSQLUI extends javax.swing.JFrame {
                 tableAssocUnit_Util.getColumnModel().getColumn(0).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(comp, 0));
             }
             else if(pane==3){
-                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT",DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT ID FROM EQUIPMENT",DatabaseManager.SELECT_QUERY);
                 while(res.next())
-                    id = res.getInt("EQUIPMENTID");
+                    id = res.getInt("ID");
             }
             else if(pane==4){
                 ResultSet res = dbm.executeSQL("SELECT NAME, COST FROM EQUIPMENT WHERE USABLEBY='Race:"+raceBox.getSelectedItem().toString()+"' or USABLEBY='All' ORDER BY NAME ASC",DatabaseManager.SELECT_QUERY);
@@ -956,7 +956,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 String name = tableArmy.getValueAt(row, 0).toString();
                 String[] r = name.split(":");
                 String unitRace = r[0];
-                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
+                ResultSet eq = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.ID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
                 ResultSet ut = dbm.executeSQL("SELECT UTILITYUNIT.NAME,UTILITYUNIT.REQUIRED FROM UTILITYUNIT,UNIT_UTILITY WHERE UTILITYUNIT.ID = UNIT_UTILITY.UTILID AND UNIT_UTILITY.NAME='"+name+"'", DatabaseManager.SELECT_QUERY);
                 while(eq.next())
                     equip.add(eq.getString("NAME")+"{"+eq.getInt("COST")+"}");
@@ -1413,7 +1413,7 @@ public class createSQLUI extends javax.swing.JFrame {
             int defEq = 0;
             if(def)
                 defEq = 1;
-            String query = "INSERT INTO EQUIPMENT(EQUIPMENTID,NAME,COST,RANGE,MODIFIER,ITEMTYPE,USABLEBY,DEFAULTEQ)VALUES("+ID+",'"+name+"',"+cost+","+range+",'"+mod+"','"+type+"','"+usable+"',"+defEq+")";
+            String query = "INSERT INTO EQUIPMENT(ID,NAME,COST,RANGE,MODIFIER,ITEMTYPE,USABLEBY,DEFAULTEQ)VALUES("+ID+",'"+name+"',"+cost+","+range+",'"+mod+"','"+type+"','"+usable+"',"+defEq+")";
             sql.add(query);
         }
     }
@@ -1442,11 +1442,11 @@ public class createSQLUI extends javax.swing.JFrame {
             int idx2 = eq.indexOf("}");
             String equip = eq.substring(0, idx);
             String cost = eq.substring(idx+1, idx2);
-            ResultSet res = dbm.executeSQL("select equipmentid from EQUIPMENT where name='"+equip+"' and COST="+cost, DatabaseManager.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("select ID from EQUIPMENT where name='"+equip+"' and COST="+cost, DatabaseManager.SELECT_QUERY);
             int ID=-1;
             try {
                 while(res.next())
-                    ID = res.getInt("EQUIPMENTID");
+                    ID = res.getInt("ID");
             }
             catch (SQLException ex) {}
             if(ID==-1)
@@ -1475,7 +1475,7 @@ public class createSQLUI extends javax.swing.JFrame {
         for (String string : result) {
             String[] s = parseQuery(string);
             int ID = Integer.parseInt(s[1]);
-            ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE EQUIPMENTID="+ID, DatabaseManager.SELECT_QUERY);
+            ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE ID="+ID, DatabaseManager.SELECT_QUERY);
             String rule="N/A";
             try {
                 while (res.next()) {
@@ -1503,9 +1503,9 @@ public class createSQLUI extends javax.swing.JFrame {
             int eqID = -1;
             int ruleID = -1;
             try{
-                ResultSet res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+equip+"' and cost="+cost, DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT ID FROM EQUIPMENT WHERE NAME='"+equip+"' and cost="+cost, DatabaseManager.SELECT_QUERY);
                 while(res.next())
-                    eqID = res.getInt("EQUIPMENTID");
+                    eqID = res.getInt("ID");
                 res = dbm.executeSQL("SELECT ID FROM SPECIALRULES WHERE SPECIALRULE='"+rule+"'", DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     ruleID = res.getInt("ID");
@@ -1513,7 +1513,7 @@ public class createSQLUI extends javax.swing.JFrame {
             catch(SQLException sqle){}
             if(eqID==-1||ruleID==-1)
                 continue;
-            String query = "INSERT INTO EQUIPMENT_RULES(EQUIPMENTID,ID)VALUES("+eqID+","+ruleID+")";
+            String query = "INSERT INTO EQUIPMENT_RULES(ID,ID)VALUES("+eqID+","+ruleID+")";
             sql.add(query);
         }
     }
@@ -1527,7 +1527,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 String ruleName="";
 //                System.out.println("ID:"+s[0]);
 //                System.out.println("results:"+string);
-                ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE EQUIPMENTID="+s[0], DatabaseManager.SELECT_QUERY);
+                ResultSet res = dbm.executeSQL("SELECT NAME,COST FROM EQUIPMENT WHERE ID="+s[0], DatabaseManager.SELECT_QUERY);
                 while(res.next())
                     eqName = res.getString("NAME")+"{"+res.getInt("COST")+"}";
                 res = dbm.executeSQL("SELECT SPECIALRULE FROM SPECIALRULES WHERE ID="+s[1], DatabaseManager.SELECT_QUERY);
@@ -1602,11 +1602,11 @@ public class createSQLUI extends javax.swing.JFrame {
                     int idx2 = name.indexOf("}");
                     String eqName = name.substring(0, idx);
                     String eqCost = name.substring(idx+1, idx2);
-                    res = dbm.executeSQL("SELECT EQUIPMENTID FROM EQUIPMENT WHERE NAME='"+eqName+"' and cost="+eqCost, DatabaseManager.SELECT_QUERY);
+                    res = dbm.executeSQL("SELECT ID FROM EQUIPMENT WHERE NAME='"+eqName+"' and cost="+eqCost, DatabaseManager.SELECT_QUERY);
                     int eqID=-1;
                     try {
                         while (res.next()) {
-                            eqID = res.getInt("EQUIPMENTID");
+                            eqID = res.getInt("ID");
                         }
                     } catch (SQLException ex) {ex.printStackTrace();}
                     String query = "INSERT INTO ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)VALUES("+unitID+","+eqID+")";
@@ -1667,7 +1667,7 @@ public class createSQLUI extends javax.swing.JFrame {
                 String name = tableArmy.getValueAt(row, 0).toString();
                 String[] r = name.split(":");
                 String race = r[0];
-                ResultSet def = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.EQUIPMENTID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
+                ResultSet def = dbm.executeSQL("SELECT EQUIPMENT.NAME, EQUIPMENT.COST FROM EQUIPMENT, UNIT_EQUIPMENT WHERE UNIT_EQUIPMENT.NAME = '"+name+"' and UNIT_EQUIPMENT.EQUIPMENT_ID = EQUIPMENT.ID and EQUIPMENT.DEFAULTEQ=0 order by equipment.name asc",DatabaseManager.SELECT_QUERY);
                 ResultSet eq = dbm.executeSQL("Select equipment.Name,equipment.Cost "+
                     "from equipment,unit "+
                     "where unit.name ='"+name+"' and "+

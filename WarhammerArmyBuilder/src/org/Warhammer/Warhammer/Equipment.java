@@ -24,12 +24,12 @@ import jcolibri.cbrcore.Attribute;
 /**
  *
  * @author Glenn Rune Strandbåten
- * @version 0.1
+ * @version 0.3
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
 
     public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items, Unit_Upgrade};
-    private int equipmentID;
+    private int ID;
     private int cost;
     private int range;
     private String name;
@@ -40,21 +40,21 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     private boolean defaultItem;    
 
     public Attribute getIdAttribute() {
-        return new Attribute("equipmentID", this.getClass());
+        return new Attribute("ID", this.getClass());
     }
 
     /**
      * @return the equpimentID
      */
-    public int getEquipmentID() {
-        return equipmentID;
+    public int getID() {
+        return ID;
     }
 
     /**
-     * @param equpimentID the equpimentID to set
+     * @param ID the equpimentID to set
      */
-    public void setEquipmentID(int equpimentID) {
-        this.equipmentID = equpimentID;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     /**

@@ -18,24 +18,14 @@
 package org.Warhammer.Warhammer;
 
 /**
- *
+ * Class representing a utility unit. A utility unit is classified as either
+ * a mount, a crew or a unit promotion (e.g.: Warhorse, catapult crewman and
+ * Sergant).
  * @author Glenn Rune Strandbåten
+ * @version 0.2
  */
 public class UtilityUnit extends CoreUnit{
 
-    /**
-     * @return the required
-     */
-    public boolean isRequired() {
-        return required;
-    }
-
-    /**
-     * @param required the required to set
-     */
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM ,_na,};
     private String movement = "";
     private String weaponSkill = "";
@@ -188,6 +178,20 @@ public class UtilityUnit extends CoreUnit{
      */
     public void setUnitType(unitType unitType) {
         this.unitType = unitType;
+    }
+
+        /**
+     * @return the required
+     */
+    public boolean isRequired() {
+        return required;
+    }
+
+    /**
+     * @param required the required to set
+     */
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 
     @Override

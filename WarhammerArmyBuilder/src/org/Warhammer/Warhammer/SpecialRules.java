@@ -20,8 +20,9 @@ package org.Warhammer.Warhammer;
 import jcolibri.cbrcore.Attribute;
 
 /**
- *
- * @author Glenn Rune
+ * Class representing a special rule
+ * @author Glenn Rune Strandbråten
+ * @version 0.1
  */
 public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
     private int id=0;
@@ -30,22 +31,29 @@ public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
          return new Attribute("id", this.getClass());
     }
 
+    /**
+     * Default constructor
+     */
     public SpecialRules() {
     }
 
+    /**
+     * Constructor which sets the special rule
+     * @param rule The Special rule to set.
+     */
     public SpecialRules(String rule) {
         this.rule = rule;
     }
 
     /**
-     * @return the idx
+     * @return the id
      */
     public int getId() {
         return id;
     }
                                                                                                                     
     /**
-     * @param idx the idx to set
+     * @param id the idx to set
      */
     public void setId(int id) {
         this.id = id;

@@ -21,14 +21,24 @@ import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import org.Warhammer.Warhammer.Army;
 
 /**
- *
+ * Class to calculate the similarity mesaure between two armies.
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.2
  */
 public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
 
+    /**
+     * Method to compute the similarity of two Army objects.
+     * @param caseObject The Army objecct found in the case.
+     * @param queryObject The Army object found in the query.
+     * @return double with the similarity of the two army objects or 0 if no
+     * similarity were found
+     * @throws NoApplicableSimilarityFunctionException if the case object and/or
+     * the query object is not an instance of the org.Warhammer.Warhammer.Army
+     * class.
+     */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
-         if(caseObject==null||queryObject==null)
+        if(caseObject==null||queryObject==null)
             return 0;
         if(!(caseObject instanceof Army))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
@@ -37,17 +47,23 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
          Army caseArmy = (Army) caseObject;
          Army queryArmy = (Army) queryObject;
 
-         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
+        if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
              return 0;
         }
-         if(queryArmy.getArmyUnits()!=null){
-             ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
-             return armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
-         }
-//         return pointSim;
-            return 0;
+        if(queryArmy.getArmyUnits()!=null){
+            ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
+            return armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
+        }
+        return 0;
     }
 
+    /**
+     * Method to check if the two objects are applicable, allways return true
+     * as the check if performed in the compute method.
+     * @param caseObject The case object
+     * @param queryObject The query object
+     * @return true
+     */
     public boolean isApplicable(Object caseObject, Object queryObject) {
         return true;
     }

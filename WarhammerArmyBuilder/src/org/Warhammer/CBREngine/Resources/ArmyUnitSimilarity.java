@@ -97,8 +97,8 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
     /**
      * Allways returns true, as the applicability check is performed in the
      * compute method.
-     * @param caseObject
-     * @param queryObject
+     * @param caseObject any object
+     * @param queryObject any object
      * @return true
      */
     public boolean isApplicable(Object caseObject, Object queryObject) {
@@ -107,8 +107,8 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
 
     /**
      * This method searches the case for the existence of the query unit.
-     * @param caseObject
-     * @param queryObject
+     * @param caseObject A set with ArmyUnits found in the case base
+     * @param queryObject The query unit
      * @return null if no match is found or the ArmyUnit matching the query.
      */
     private ArmyUnit findSimilarUnit(Set<ArmyUnit> caseObject, Unit queryObject){

@@ -27,39 +27,74 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Class to write SQL statements to a file. Most methods overwrite any existing
+ * file by default so care should be used to ensure that any desired files are
+ * kept. E.g: By ensuring that the content of the files you want to preserve
+ * are written anew together with the new content. It is explicitly stated in
+ * methods that <b>does not</b> overwrite the file that they do not overwrite
+ * existing files.
  *
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.4
  */
 public class SQLFileWriter {
 
+    /**
+     * Method to write a SQL file with the units of a Warhammer race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void writeRaceUnitSQLFile(String race, ArrayList<String> sql){
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/race_units_" + race + ".sql");
         print(file, sql);
     }
-    
+    /**
+     * Method to write a SQL file with the utility units of a Warhammer race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void writeUtilityUnitSQLFile(String race,ArrayList<String> sql){
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/utilityunits_"+race+".sql");
         print(file, sql);
     }
-
+    /**
+     * Method to write a SQL file with the unit and utility relations of a
+     * Warhammer race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void write_Unit_UtilitySQLFile(String race,ArrayList<String> sql){
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_utility_"+race+".sql");
         print(file, sql);
 
     }
-
+    /**
+     * Method to write a SQL file with special rules.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void writeRule(ArrayList<String> sql) {
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/specialRules.sql");
         print(file, sql);
         
     }
 
+    /**
+     * Method to write a SQL file with the unit and rule relations of a Warhammer
+     * race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void write_unit_ruleSQLFile(String race,ArrayList<String> sql){
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_rules_"+race+".sql");
         print(file, sql);
     }
 
+    /**
+     * Private method resposnible for all the file writing that occurs in this
+     * class.
+     * @param file The file to be written to.
+     * @param sql The content to be written to file.
+     */
     private static void print(java.io.File file, ArrayList<String> sql){
         PrintStream ps = null;
         try {
@@ -81,20 +116,42 @@ public class SQLFileWriter {
         }
     }
 
+    /**
+     * Method to write a SQL file with all the equipment.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void writeEquipmentSQLFile(ArrayList<String> sql) {
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/equipment.sql");
         print(file, sql);
     }
+    /**
+     * Method to write a SQL file with the unit and equipment relations of a
+     * Warhammer race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void writeUnit_EquipmentSQLFile(String race,ArrayList<String> sql) {
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/unit_equipment_"+race+".sql");
         print(file, sql);
     }
 
+    /**
+     * Method to write a SQL file with the equipment and rule relations of a
+     * Warhammer race.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void write_eq_ruleSQLFile(ArrayList<String> sql) {
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/eq_rules.sql");
         print(file, sql);
     }
-
+    /**
+     * Method to write a SQL file with an army of units, equipment, crews and mounts.
+     * This method <b>does not</b> overwrite any existing files but create a new
+     * numbered file.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void write_armySQLFile(String race, ArrayList<String> sql) {
         int num = -1;
         java.io.File file;
@@ -105,7 +162,13 @@ public class SQLFileWriter {
         while(file.exists());
         print(file, sql);
     }
-
+    /**
+     * Method to write a SQL file with an case
+     * This method <b>does not</b> overwrite any existing files but create a new
+     * numbered file.
+     * @param race String representing the Warhammer race, used to name the file.
+     * @param sql The ArrayList with the SQL statements to be written.
+     */
     public static void write_caseSQLFile(ArrayList<String> sql) {
         int num = -1;
         java.io.File file;

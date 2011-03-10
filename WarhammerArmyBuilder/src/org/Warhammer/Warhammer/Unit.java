@@ -23,8 +23,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- *
+ * Class to represent a unit
  * @author Glenn Rune Strandbåten
+ * @version 0.5
  */
 public class Unit extends CoreUnit{
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
@@ -173,42 +174,14 @@ public class Unit extends CoreUnit{
     }
 
     /**
-     * @return one of the following strings or empty if not set:
-     * <ul>
-     *   <li>"Ca" (Cavalry)</li>
-     *   <li>"Ch" (Chariots)</li>
-     *   <li>"In" (Infantry)</li>
-     *   <li>"Mo" (Monsters)</li>
-     *   <li>"MB" (Monstrous Beasts)</li>
-     *   <li>"MC" (Monstrous Cavalry)</li>
-     *   <li>"MI" (Monstrous Infantry)</li>
-     *   <li>"Sw" (Swarm)</li>
-     *   <li>"Un" (Unique Units)</li>
-     *   <li>"WB" (War Beasts)</li>
-     *   <li>"WM" (War Machines)</li>
-     * </ul>
+     * @return the unitType
+
      */
     public unitType getUnitType() {
         return unitType;
     }
 
     /**
-     * Unit type is the categorization of the unit in respect to the
-     * different roles a unit plays on the battlefield. <br><br>
-     * Allowed values string values:
-     * <ul>
-     *   <li>"Ca" (Cavalry)</li>
-     *   <li>"Ch" (Chariots)</li>
-     *   <li>"In" (Infantry)</li>
-     *   <li>"Mo" (Monsters)</li>
-     *   <li>"MB" (Monstrous Beasts)</li>
-     *   <li>"MC" (Monstrous Cavalry)</li>
-     *   <li>"MI" (Monstrous Infantry)</li>
-     *   <li>"Sw" (Swarm)</li>
-     *   <li>"Un" (Unique Units)</li>
-     *   <li>"WB" (War Beasts)</li>
-     *   <li>"WM" (War Machines)</li>
-     * </ul>
      * @param unitType the unitType to set
      */
     public void setUnitType(unitType unitType) {
@@ -216,76 +189,17 @@ public class Unit extends CoreUnit{
     }
 
     /**
-     * Army type is the categorization of the unit in respect to the
-     * rules governing the creation of the army.
-     * @return one of the following strings or an empty string if not set:
-     *  <br>
-     * <ul>
-     *   <li>Core</li>
-     *   <li>Special</li>
-     *   <li>Rare</li>
-     *   <li>Heroes</li>
-     *   <li>Lords</li>
-     * </ul>
+     * @return the armyType
      */
     public armyType getArmyType() {
         return armyType;
     }
 
     /**
-     * Army type is the categorization of the unit in respect to the
-     * rules governing the creation of the army.  <br><br>
-     * Allowed values string values:
-     * <ul>
-     *   <li>"Core"</li>
-     *   <li>"Special"</li>
-     *   <li>"Rare"</li>
-     *   <li>"Heroes"</li>
-     *   <li>"Lords"</li>
-     * </ul>
      * @param armyType the armyType to set
      */
     public void setArmyType(armyType armyType) {
         this.armyType = armyType;
-    }
-    
-    @Override
-    public String toString(){
-
-        String retString = super.toString()+
-                "\n|   M="+movement
-                + " WS="+weaponSkill
-                + " BS="+ballisticSkill
-                + " S="+strength
-                + " T="+toughness
-                + " I="+initiative
-                + " W="+wounds
-                + " A="+attack
-                + " Ld="+leadership
-                + " UnitType="+unitType
-                + " ArmyType="+armyType;
-        if(getEquipment().size()>0){
-            Iterator<Equipment> iterator = getEquipment().iterator();
-            while(iterator.hasNext()){
-                retString += "\n|    "+iterator.next().toString();
-            }
-        }
-        if(getUtilityUnit().size()>0){
-            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
-            while(iterator.hasNext()){
-                retString += "\n|    "+iterator.next().toString();
-            }
-        }
-        if(getSpecialRules().size()>0){
-            retString += "\n|    SpecialRules:";
-            for (SpecialRules sr : specialRules) {
-                if(sr!=null)
-                    retString +=" "+sr.getRule()+",";
-            }
-        }
-
-        return retString;
-
     }
 
     /**
@@ -356,5 +270,44 @@ public class Unit extends CoreUnit{
      */
     public void setMagicPoints(int magicPoints) {
         this.magicPoints = magicPoints;
+    }
+
+    @Override
+    public String toString(){
+
+        String retString = super.toString()+
+                "\n|   M="+movement
+                + " WS="+weaponSkill
+                + " BS="+ballisticSkill
+                + " S="+strength
+                + " T="+toughness
+                + " I="+initiative
+                + " W="+wounds
+                + " A="+attack
+                + " Ld="+leadership
+                + " UnitType="+unitType
+                + " ArmyType="+armyType;
+        if(getEquipment().size()>0){
+            Iterator<Equipment> iterator = getEquipment().iterator();
+            while(iterator.hasNext()){
+                retString += "\n|    "+iterator.next().toString();
+            }
+        }
+        if(getUtilityUnit().size()>0){
+            Iterator<UtilityUnit> iterator = getUtilityUnit().iterator();
+            while(iterator.hasNext()){
+                retString += "\n|    "+iterator.next().toString();
+            }
+        }
+        if(getSpecialRules().size()>0){
+            retString += "\n|    SpecialRules:";
+            for (SpecialRules sr : specialRules) {
+                if(sr!=null)
+                    retString +=" "+sr.getRule()+",";
+            }
+        }
+
+        return retString;
+
     }
 }
