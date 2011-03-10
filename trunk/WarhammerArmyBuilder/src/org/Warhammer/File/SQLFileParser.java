@@ -27,13 +27,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Class to parse SQL statements from a file.
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.3
  */
 public class SQLFileParser {
 
-
+    /**
+     * Method to parse the SQL file specified by the file path This method will
+     * also execute the parsed SQLs
+     * @param sqlPath The file path to the sql file
+     */
     public void parseSQLFile(String sqlPath){
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -67,6 +71,10 @@ public class SQLFileParser {
             Logger.getLogger(SQLFileParser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     * Method used to qxecute the parsed SQL statements.
+     * @param sqls ArrayList with string representing the parsed SQL statements.
+     */
     private void executeSQL(ArrayList<String> sqls){
         DatabaseManager dbm = DatabaseManager.getInstance();
         dbm.connectWithoutHibernate();
@@ -74,7 +82,17 @@ public class SQLFileParser {
             dbm.executeSQL(sql,DatabaseManager.UPDATE_QUERY);
         }
     }
-    public static ArrayList<String> parseRaceUnitsSQL(java.io.File file){
+    /**
+     * This method is used to parse and return the SQL statements found in
+     * the specified file. Each statement (separated by a colon [;]) is parsed
+     * in its entirety and stored in a new position in the ArrayList. Separate
+     * parser must be implemented if information is to be extracted from the
+     * statements.
+     * @param file File The file with the sql statements to be parsed.
+     * @return The arraylist with the SQL statements represented as strings or
+     * null if an exception occured.
+     */
+    public static ArrayList<String> parseSQL(java.io.File file){
          try {
             FileInputStream reader = new FileInputStream(file);
             int i=0;

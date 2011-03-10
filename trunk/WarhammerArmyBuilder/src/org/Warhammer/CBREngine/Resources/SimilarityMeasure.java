@@ -22,21 +22,38 @@ import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 
 /**
- *
+ * Class used to assign similarity calculation objects to the different parts
+ * of the Case object so that the similarity of the parts can be calculated by
+ * the optimized functions.
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.4
  */
 public class SimilarityMeasure {
     private NNConfig nnConfig = null;
 
+    /**
+     * Method to set the NNConfig
+     * @param conf the NNConfig to set.
+     */
     public void setNNConfig(NNConfig conf){
         nnConfig = conf;
     }
+
+    /**
+     * Method to get the NN similarity configuration.
+     * @return the NN config.
+     */
     public NNConfig getSimilarityConfig(){
         if(nnConfig==null)
             setupSimilarityConfig();
         return nnConfig;
     }
+
+    /**
+     * Method to setup the similarity config by delegating the different similarity
+     * calculation functions to their appropriate elements in the case and assigning
+     * weigths to the similarity functions.
+     */
     private void setupSimilarityConfig(){
         //TODO: Fix dynamic (user selected) weigths.
         nnConfig = new NNConfig();
@@ -64,6 +81,15 @@ public class SimilarityMeasure {
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 1.0);
     }
+
+    /**
+     * Local similarity factory used to create the similarity function objects
+     * used by different components of the case.
+     * @param name String the name of the similarity function to create
+     * @param param integer A value used to configure similarity functions.
+     * @return The LocalSimilarityFunction object that were created or null, if
+     * the name specified local similarity function could not be found.
+     */
     private LocalSimilarityFunction localSimilarityFactory(String name, int param){
         if(name.equals("Interval"))
             return new Interval(param);

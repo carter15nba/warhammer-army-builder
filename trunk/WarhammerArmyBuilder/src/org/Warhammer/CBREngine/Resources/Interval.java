@@ -17,22 +17,32 @@
 
 package org.Warhammer.CBREngine.Resources;
 
-import jcolibri.exception.NoApplicableSimilarityFunctionException;
-
 /**
- *
+ * Class used to compute the local similarity Interval
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.4
  */
 public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
 
     private double interval;
 
+    /**
+     * Default constructor
+     * @param interval integer The interval to compute the Interval over.
+     */
     public Interval(double interval){
         this.interval = interval;
     }
 
-
+    /**
+     *
+     * @param caseObject The CaseObject
+     * @param queryObject The QueryObject
+     * @return double The computed local similarity, or 0 if caseObject and/or
+     * queryObject is null
+     * @throws jcolibri.exception.NoApplicableSimilarityFunctionException if caseObject
+     * and/or queryObject not is an instance of Number.
+     */
     public double compute(Object caseObject, Object queryObject) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
         if ((caseObject == null) || (queryObject == null))
             return 0;
@@ -57,16 +67,14 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
         return 1 - ((double) Math.abs(caseDouble - queryDouble) / interval);
     }
 
-    public boolean isApplicable(Object caseObject, Object queryObject)
-    {
-        if((caseObject==null)&&(queryObject==null))
-                return true;
-        else if(caseObject==null)
-                return queryObject instanceof Number;
-        else if(queryObject==null)
-                return caseObject instanceof Number;
-        else
-                return (caseObject instanceof Number)&&(queryObject instanceof Number);
+    /**
+     * Allways return true
+     * @param caseObject any object
+     * @param queryObject any object
+     * @return true
+     */
+    public boolean isApplicable(Object caseObject, Object queryObject){
+        return true;
     }
 
 }

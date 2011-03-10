@@ -36,14 +36,21 @@ import org.Warhammer.Warhammer.UtilityUnit;
  */
 public class PrintFactory {
 
-    public static void printArmyUnit(Set<ArmyUnit> army,Army parent){
-        ArmyUnit[] array = new ArmyUnit[army.size()];
-        array = army.toArray(array);
-        System.out.println("+-------------------------------------");
+    private static final String LINE="+-------------------------------------";
+    /**
+     * Method to print the supplied army unit to a structured list using
+     * the standard System.out
+     * @param armyUnits The set of army units to be printed
+     * @param army The army the army units belong to.
+     */
+    public static void printArmyUnit(Set<ArmyUnit> armyUnits,Army army){
+        ArmyUnit[] array = new ArmyUnit[armyUnits.size()];
+        array = armyUnits.toArray(array);
+        System.out.println(LINE);
         System.out.println("| Printing army unit");
         for (ArmyUnit armyUnit : array) {
             Unit unit = armyUnit.getUnit();
-            System.out.println("+-------------------------------------");
+            System.out.println(LINE);
             System.out.println("| Unit: "+unit.getName()+", base cost: "+unit.getCost()+", unit type: "+unit.getUnitType()+", army type: "+unit.getArmyType());
             System.out.println("| Number of units: "+armyUnit.getNumberOfUnits());
             System.out.println("|   Equipment:");
@@ -58,30 +65,44 @@ public class PrintFactory {
             for (UtilityUnit utility : util) {
                 System.out.println("|    Name: "+utility.getName()+", cost: "+utility.getCost());
             }
-            if(parent!=null)
-                System.out.println("| Calculated unit cost: "+parent.calculateTotalUnitCost(armyUnit));
-
+            if(army!=null)
+                System.out.println("| Calculated unit cost: "+army.calculateTotalUnitCost(armyUnit));
         }
-        System.out.println("+-------------------------------------");
+        System.out.println(LINE);
     }
-    
-    public static void printCase(Case obj,boolean printArmyUnit){
-        System.out.println("\n+-------------------------------------\n| "+obj.toString());
-        System.out.println("| Calculated cost: "+obj.getArmy().calculateCost());
+
+    /**
+     * Method to print the contents of the case in a structured list using
+     * the standard System.out
+     * @param _case The Case to be printed
+     * @param printArmyUnit Boolean dictating if each unit should be printed or not
+     */
+    public static void printCase(Case _case,boolean printArmyUnit){
+        System.out.println(LINE+"\n| "+_case.toString());
+        System.out.println("| Calculated cost: "+_case.getArmy().calculateCost());
         if(printArmyUnit)
-            printArmyUnit(obj.getArmy().getArmyUnits(),obj.getArmy());
+            printArmyUnit(_case.getArmy().getArmyUnits(),_case.getArmy());
         else
-            System.out.println("+-------------------------------------");
+            System.out.println(LINE);
 
     }
-    public static void printCase(Case obj,double similarity, boolean printArmyUnit){
-        System.out.println("\n+-------------------------------------\n| "+obj.toString());
-        System.out.println("| Calculated cost: "+obj.getArmy().calculateCost());
+
+    /**
+     * Method to print the contents of the case in a structured list using the
+     * standard System.out. This method will also print the calculated
+     * similarity into that list.
+     * @param _case The case to be printed
+     * @param similarity double The calculated similarity value for the case.
+     * @param printArmyUnit Boolean dictating if each unit should be printed or not
+     */
+    public static void printCase(Case _case,double similarity, boolean printArmyUnit){
+        System.out.println(LINE+"\n| "+_case.toString());
+        System.out.println("| Calculated cost: "+_case.getArmy().calculateCost());
         System.out.println("| Calculated similarity: "+similarity);
         if(printArmyUnit)
-            printArmyUnit(obj.getArmy().getArmyUnits(),obj.getArmy());
+            printArmyUnit(_case.getArmy().getArmyUnits(),_case.getArmy());
         else
-            System.out.println("+-------------------------------------");
+            System.out.println(LINE);
 
     }
 

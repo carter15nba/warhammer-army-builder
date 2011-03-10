@@ -18,15 +18,14 @@
 package org.Warhammer.Warhammer;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
 import org.Warhammer.Warhammer.Equipment.itemType;
 
 /**
- *
+ * Class representing an army
  * @author Glenn Rune Strandbråten
- * @version 0,1
+ * @version 0.2
  */
 public class Army implements jcolibri.cbrcore.CaseComponent{
     private int ID;
@@ -39,14 +38,14 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @return the armyID
+     * @return the ID
      */
     public int getID() {
         return ID;
     }
 
     /**
-     * @param armyID the armyID to set
+     * @param ID the ID to set
      */
     public void setID(int ID) {
         this.ID = ID;
@@ -93,45 +92,55 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
     public void setArmyUnits(Set<ArmyUnit> armyUnits) {
         this.armyUnits = armyUnits;
     }
+
+    /**
+     * Method to calculate the total cost of the army by calculating the cost 
+     * of each unit in the army (unit cost, equipment, mounts and crew).
+     * @return integer The total army cost
+     */
     public int calculateCost(){
-        Iterator armyIt = armyUnits.iterator();
         int totalCost = 0;
-        while(armyIt.hasNext()){
-            ArmyUnit next = (ArmyUnit)armyIt.next();
-            totalCost+=calculateTotalUnitCost(next);
+        for (ArmyUnit armyUnit : armyUnits) {
+            totalCost+=calculateTotalUnitCost(armyUnit);
         }
         return totalCost;
     }
-    public int calculateTotalUnitCost(ArmyUnit armyUnit){
-            int unitCost = 0;
-            boolean singleEquipmentCost = false;
-            int numberOfUnits = armyUnit.getNumberOfUnits();
-            int baseUnitCost = armyUnit.getUnit().getCost();
-            unitCost += baseUnitCost*numberOfUnits;
 
-            Iterator utilIt = armyUnit.getUtility().iterator();
-            while(utilIt.hasNext()){
-                UtilityUnit util = (UtilityUnit) utilIt.next();
-                unitCost += util.getCost();
-                if(util.getName().equalsIgnoreCase("Empire:Marksman")){
+    /**
+     * Method to calculate the total unit cost (unit, equipment, crew and mounts)
+     *
+     * @param armyUnit The armyUnit to be calculated
+     * @return integer The calculated cost.
+     */
+    public int calculateTotalUnitCost(ArmyUnit armyUnit){
+        int unitCost = 0;
+        boolean singleEquipmentCost = false;
+        unitCost += calculateUnitCost(armyUnit);
+        for (UtilityUnit utilityUnit : armyUnit.getUtility()) {
+            unitCost += utilityUnit.getCost();
+                if(utilityUnit.getName().equalsIgnoreCase("Empire:Marksman")){
                     singleEquipmentCost = true;
                 }
+        }
+        for(Equipment equipment : armyUnit.getEquipment()){
+            if((equipment.getItemType()!=itemType.Armour)&&
+                    equipment.getItemType()!=itemType.Weapon)
+                unitCost += equipment.getCost();
+            else{
+                if(singleEquipmentCost)
+                    unitCost += equipment.getCost();
+                else
+                    unitCost += armyUnit.getNumberOfUnits()*equipment.getCost();
             }
-            Iterator equipIt = armyUnit.getEquipment().iterator();
-            while(equipIt.hasNext()){
-                Equipment equip = (Equipment) equipIt.next();
-                if((equip.getItemType()!=itemType.Armour)&&
-                        equip.getItemType()!=itemType.Weapon)
-                    unitCost += equip.getCost();
-                else{
-                    if(singleEquipmentCost)
-                        unitCost += equip.getCost();
-                    else
-                        unitCost += numberOfUnits*equip.getCost();
-                }
-            }
-            return unitCost;
+        }
+        return unitCost;
     }
+    /**
+     * Method to calculate only the unit cost
+     * cost_per_unit*number_of_units
+     * @param army The ArmyUnit whose cost is to be calculated
+     * @return integer the calculated unit cost.
+     */
     public int calculateUnitCost(ArmyUnit army){
         Unit unit = army.getUnit();
         return army.getNumberOfUnits()*unit.getCost();

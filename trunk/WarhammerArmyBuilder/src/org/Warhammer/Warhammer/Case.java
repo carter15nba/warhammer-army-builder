@@ -20,9 +20,9 @@ package org.Warhammer.Warhammer;
 import jcolibri.cbrcore.Attribute;
 
 /**
- *
+ * Class representing a CBR case.
  * @author Glenn Rune Strandbråten
- * @version 0,5
+ * @version 0.5
  */
 public class Case implements jcolibri.cbrcore.CaseComponent{
 

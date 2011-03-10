@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -31,9 +30,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- *
+ * Class used to parse parts of the hibernate configuration file:
+ * hibernate.cfg.xml
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.3
  */
 public class RedusedHibernateParser extends DefaultHandler{
     private String tempVal;
@@ -41,10 +41,20 @@ public class RedusedHibernateParser extends DefaultHandler{
     private property type;
     private Properties hibernateProperties;
 
+    /**
+     * Default constructor
+     */
     public RedusedHibernateParser(){
         hibernateProperties = new Properties();
         type = property.none;
     }
+    /**
+     * Method used to get the Properties aquired by parsing the xml file.
+     * This method will also initiate the parsing.
+     * @param path String The path of the hibernate.cfg.xml file
+     * @return Properties The properties parsed from the xml file or null if
+     * an exception occured while parsing.
+     */
     public Properties parseHibernate(String path){
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
@@ -64,6 +74,7 @@ public class RedusedHibernateParser extends DefaultHandler{
         }
         return null;
     }
+
     @Override
     public void startElement(String uri,
             String localName,

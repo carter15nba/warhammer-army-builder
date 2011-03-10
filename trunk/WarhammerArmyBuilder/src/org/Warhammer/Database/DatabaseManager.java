@@ -37,9 +37,10 @@ import jcolibri.util.FileIO;
 import jcolibri.cbrcore.Connector;
 
 /**
- *
+ * Singleton class responsible for the connections and executions of
+ * statements to the database.
  * @author Glenn Rune Strandbåten
- * @version 0.2
+ * @version 0.4
  */
 public class DatabaseManager {
 

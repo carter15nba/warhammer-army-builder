@@ -20,16 +20,18 @@ package org.Warhammer.Warhammer;
 import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.ArrayList;
 import java.util.Set;
+import org.Warhammer.Warhammer.Resources.Causes;
 
-//TODO FIX ENTIRE RULESET CLASS
+//TODO Add logic to prevent too many lord and heor units based on army points.
 
 /**
- *
+ * Class to verify if the rules governing the creation of an army are adhered
  * @author Glenn Rune Strandbåten
+ * @version 0.4
  */
 public class RuleSet {
 
-    public enum messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS, TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS, TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,INCORRECT_NUMBER_OF_UNITS};
+    public enum Messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS, TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS, TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS, TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP};
     private int totalCost;
     private int coreCost;
     private int specialCost;
@@ -41,65 +43,127 @@ public class RuleSet {
     private double LIMIT_HEROES_MAX = 0.25;
     private double LIMIT_CORE_MIN = 0.25;
     private double LIMIT_SPECIAL_MAX = 0.50;
-    private double LIMIT_RARE_MAX = 0.25;
-    private messages[] errors;
-    private int errorCount;
-    private DuplicateUnits duplicate;
+    private double LIMIT_RARE_MAX = 0.25; 
+    private ErrorManager errorManager;
 
+    /**
+     * Default constructor
+     */
     public RuleSet(){
-        errors = messages.values();
-        errorCount = 0;
+        errorManager = new ErrorManager();
     }
-    public messages isFollowingArmyDispositionRules(Case obj, int armyPoints){
-        this.armyPoints = armyPoints;
-        resetCosts();
-        calculatePointsUsage(obj);
-        calculateTotalCost();
 
-        return verifyLegalPointDistribution();
+    /**
+     * This method is verifies that the created army follows the army
+     * disposition rules, e.g.: that no more than the alowed number of
+     * points are used on lords/heroes and core units etc. The method
+     * returns an array containing all (if any) error that have been found
+     * during the verification. If no errors is found an array with a single OK
+     * message is returned.
+     *
+     * @param _case The Case object to be verified
+     * @param armyPoints The number of points available to create the army. If army points are 0
+     * the calculated case cost is used as a reference value.
+     * @return Messages[] array with all the errors found in the army disposition,
+     * single entry array with an OK message if no errors where found.
+     */
+    public Messages[] isFollowingArmyDispositionRules(Case _case, int armyPoints){
+        if(armyPoints==0){
+            this.armyPoints = _case.getArmy().calculateCost();
+        }
+        else
+            this.armyPoints = armyPoints;
+        resetCosts();
+        errorManager.calculateNumberOfDuplicates();
+        calculatePointsUsage(_case);
+        calculateTotalCost();
+        verifyLegalPointDistribution();
+        return getErrors();
     }
+
+    /**
+     * Method to reset all the individual- and total cost values back to 0.
+     */
     public void resetCosts(){
         totalCost = coreCost = specialCost = rareCost = lordCost = heroCost = 0;
     }
+
+    /**
+     * Method to calculate the different unit group costs. The total
+     * cost is both stored in the object and returned to the caller.
+     * @return Integer with the total cost.
+     */
     public int calculateTotalCost(){
         totalCost = coreCost + specialCost + rareCost + lordCost + heroCost;
         return totalCost;
     }
-    public messages verifyLegalPointDistribution(){
+
+    /**
+     * Method to verify if any of the groups have used too much/few points
+     * when creating the army. If any group violates the rules an appropriate
+     * error message is added to the error list.
+     */
+    public void verifyLegalPointDistribution(){
         double[][] dist = calculatePointDistribution();
-        if(duplicate!=null)
-            errorCount=duplicate.getAddedErrors();
-        else
-            errorCount=0;
         if(dist[0][0]>dist[1][0]){
-            errors[errorCount] = messages.TOO_FEW_CORE_POINTS;
-            errorCount++;
+            errorManager.addError(Messages.TOO_FEW_CORE_POINTS);
         }
         for(int i = 1 ; i < 5 ; i++){
             if(dist[0][i]<dist[1][i]){
                 if(i==1)
-                    errors[errorCount] = messages.TOO_MANY_SPECIAL_POINTS;
+                    errorManager.addError(Messages.TOO_MANY_SPECIAL_POINTS);
                 else if(i == 2)
-                    errors[errorCount] = messages.TOO_MANY_RARE_POINTS;
+                    errorManager.addError(Messages.TOO_MANY_RARE_POINTS);
                 else if(i == 3)
-                    errors[errorCount] = messages.TOO_MANY_HERO_POINTS;
+                    errorManager.addError(Messages.TOO_MANY_HERO_POINTS);
                 else if(i == 4)
-                    errors[errorCount] = messages.TOO_MANY_LORD_POINTS;
-                errorCount++;
+                    errorManager.addError(Messages.TOO_MANY_LORD_POINTS);
             }
         }
-        if(errorCount==0)
-            return messages.OK;
-        else
-            return messages.FAIL;
     }
 
+    /**
+     * Method to aquire the point distributions and point usage. This method returns
+     * the following matrix:
+     * <table border="1">
+     * <tr>
+     * <td>Min core points</td>
+     * <td>Max special points</td>
+     * <td>Max rare points</td>
+     * <td>Max hero points</td>
+     * <td>Max lord points</td>
+     * </tr>
+     * <tr>
+     * <td>Used core points</td>
+     * <td>Used special points</td>
+     * <td>Used rare points</td>
+     * <td>Used hero points</td>
+     * <td>Used lord points</td>
+     * </tr>
+     * </table>
+     * @return The above matrix represented as double values.
+     */
     public double[][] calculatePointDistribution(){
         double legal[][] = new double[2][];
         legal[0] = calculateAllowedPointDistribution();
         legal[1] = new double[]{coreCost,specialCost,rareCost,heroCost,lordCost};
         return legal;
     }
+
+    /**
+     * This method calculates the allowed points distribution based on the
+     * available army points. The method returns the following double list;
+     * <table border="1">
+     * <tr>
+     * <td>Min core points</td>
+     * <td>Max special points</td>
+     * <td>Max rare points</td>
+     * <td>Max hero points</td>
+     * <td>Max lord points</td>
+     * </tr>
+     * </table>
+     * @return The abowe double list.
+     */
     public double[] calculateAllowedPointDistribution(){
         double cCost=0;
         double sCost=0;
@@ -113,21 +177,19 @@ public class RuleSet {
         lCost = armyPoints*LIMIT_LORDS_MAX;
         return new double[]{cCost,sCost,rCost,hCost,lCost};
     }
-    public static void main(String[] args){
-        RuleSet r = new RuleSet();
-        messages[] errorCauses = r.getErrorCauses();
-        for (messages object : errorCauses) {
-            System.out.println(object);
-        }
-    }
-    private void calculatePointsUsage(Case caseObj){
-        duplicate = new DuplicateUnits();
-        Army army = caseObj.getArmy();
+
+    /**
+     * Method to calculate the points used by the different groups present
+     * in the army.
+     * @param _case The case containing the army to be calculated.
+     */
+    private void calculatePointsUsage(Case _case){
+        errorManager = new ErrorManager();
+        Army army = _case.getArmy();
         Set<ArmyUnit> armyUnits = army.getArmyUnits();
         for (ArmyUnit u : armyUnits) {
             int cost = army.calculateTotalUnitCost(u);
             Unit unit = u.getUnit();
-            followingUnitDispositionRules(unit,u.getNumberOfUnits());
             armyType armyType = unit.getArmyType();
             switch(armyType){
                 case Core:
@@ -141,44 +203,60 @@ public class RuleSet {
                     break;
                 case Rare:
                     rareCost += cost;
-                    duplicate.checkUnit(unit);
                     break;
                 case Special:
                     specialCost += cost;
-                    duplicate.checkUnit(unit);
                     break;
             }
-        }
-    }
-    public messages[] getErrorCauses(){
-        if(errorCount==0)
-            return new messages[]{messages.OK};
-        messages ret[] = new messages[errorCount];
-        System.arraycopy(errors, 0, ret, 0, errorCount);
-        return ret;
-    }
-    private void followingUnitDispositionRules(Unit unit,int numberOfUnits) {
-        if((unit.getMaxNumber()<numberOfUnits)||
-                (unit.getMinNumber()>numberOfUnits)){
-            boolean exists=false;
-            for (messages object : errors) {
-                if(object==messages.INCORRECT_NUMBER_OF_UNITS){
-                    exists=true;
-                }
-            }
-            if(!exists){
-                errors[errorCount] = messages.INCORRECT_NUMBER_OF_UNITS;
-                errorCount++;
-            }
+            errorManager.checkUnit(unit,u.getNumberOfUnits());
         }
     }
 
-    private class DuplicateUnits{
+    /**
+     * Method to aquire the errors encountered while verifying the case.
+     *
+     * @return array containg all the encoutered errors or a single element array
+     * with an OK message if no errors were found.
+     */
+    public Messages[] getErrors(){
+        return errorManager.getErrors();
+    }
+
+    /**
+     * Method to aquire the causes for the errors encountered while verifying the case.
+     * The case objects holds the error message and the unit that caused the error message,
+     * and these causes should be resolved before any errors regarding the points usage are
+     * resolved since these may indirectly affect the points usage.
+     * @return an arry with the cause objects or null if no causes were found.
+     */
+    public Causes[] getCauses(){
+        return errorManager.getCauses();
+    }
+
+    /**
+     * Private inner class to manage the error and causes. This class also
+     * dictates how many duplicates of a given unit (special/rare) you can
+     * have based on the number of army points.
+     */
+    private class ErrorManager{
         private int rareDuplicates;
         private int specialDuplicates;
-        private int addedErrors;
-        public DuplicateUnits(){
-            addedErrors = 0;
+        private ArrayList<String> unitNames;
+        private ArrayList<Integer> unitNumber;
+        private ArrayList<Messages> errors;
+        private ArrayList<Causes> causes;
+        public ErrorManager(){
+            unitNames = new ArrayList<String>();
+            unitNumber = new ArrayList<Integer>();
+            errors = new ArrayList<Messages>();
+            causes = new ArrayList<Causes>();
+        }
+        /**
+         * This method calculates the amount of rare and special unit duplicates
+         * that can be present on the battlefield. Based on the the available
+         * army points set in the main object (outer class).
+         */
+        public void calculateNumberOfDuplicates(){
             if(armyPoints>=3000){
                 rareDuplicates = 4;
                 specialDuplicates = 6;
@@ -187,39 +265,97 @@ public class RuleSet {
                 rareDuplicates = 2;
                 specialDuplicates = 3;
             }
-            //TODO: Add logic to make it possible to have the desired number of regiments (not units) e.g: a greatswords regiment must have at the least 5 units, but only three such regiments may exist
         }
-        public void checkUnit(Unit u){
-            armyType aT =  u.getArmyType();
-            if(aT==armyType.Rare){
-                if(u.getMinNumber()>rareDuplicates){
-                    System.out.println("Name:"+u.getName()+", number: "+u.getMinNumber());
-                    addError(messages.TOO_MANY_DUPLICATE_RARE_UNITS);
+
+        /**
+         * Method used to check if the unit follows the disposition rules. This
+         * includes if it have too few or too many units in the unit group and
+         * if the special and rare duplicates are within bounds.  This method
+         * adds appropriate errors to the error list when errors are found.
+         * @param unit The unit to be checked
+         * @param numberOfUnits The number of units in the group.
+         */
+        public void checkUnit(Unit unit, int numberOfUnits){
+            armyType aT =  unit.getArmyType();
+            int min = unit.getMinNumber();
+            int max = unit.getMaxNumber();
+            if((numberOfUnits>max)&&(max!=0)){
+                addError(Messages.TOO_MANY_UNITS_IN_GROUP);
+                causes.add(new Causes(unit, Messages.TOO_MANY_UNITS_IN_GROUP));
+            }
+            else if(numberOfUnits<min){
+                addError(Messages.TOO_FEW_UNITS_IN_GROUP);
+                causes.add(new Causes(unit, Messages.TOO_FEW_UNITS_IN_GROUP));
+            }
+            if(aT==armyType.Rare||aT==armyType.Special){
+                boolean contains = unitNames.contains(unit.getName());
+                if(contains){
+                    int idx = unitNames.indexOf(unit.getName());
+                    unitNumber.set(idx, (unitNumber.get(idx)+1));
+                    verifyDuplicateUnits(unit,idx);
+                }
+                else{
+                    unitNames.add(unit.getName());
+                    unitNumber.add(1);
                 }
             }
-            else if(aT==armyType.Special){
-                if(u.getMinNumber()>specialDuplicates){
-                    System.out.println("Name:"+u.getName()+", number: "+u.getMinNumber());
-                    addError(messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
-                }
-            }
         }
-        public void addError(messages m){
-            boolean exist = false;
-            for (int i = 0; i < errorCount; i++) {
-                if(errors[i]==m){
-                    exist = true;
+        /**
+         * This private method is used by the checkUnit method to verify if
+         * no more than the alloted number of rare and duplicate units are
+         * used in the creation of the army.
+         * @param unit The unit to check
+         * @param index The index in the list where the number of unit groups
+         * resides.
+         */
+        private void verifyDuplicateUnits(Unit unit,int index){
+            armyType aT =  unit.getArmyType();
+            int number = unitNumber.get(index);
+            switch(aT){
+                case Special:
+                    if(number>specialDuplicates){
+                        addError(Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
+                        causes.add(new Causes(unit, Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS));
+                    }
                     break;
-                }
-            }
-            if(!exist){
-                errors[errorCount] = m;
-                errorCount++;
-                addedErrors++;
+                case Rare:
+                    if(number>rareDuplicates){
+                        addError(Messages.TOO_MANY_DUPLICATE_RARE_UNITS);
+                        causes.add(new Causes(unit, Messages.TOO_MANY_DUPLICATE_RARE_UNITS));
+                    }
+                    break;
             }
         }
-        public int getAddedErrors(){
-            return addedErrors;
+        /**
+         * Method to add an error to the error list if and only if the
+         * error is not already present.
+         * @param m The error message to add to the list.
+         */
+        public void addError(Messages m){
+            if(!errors.contains(m)){
+                errors.add(m);
+            }
+        }
+        /**
+         * Method to get all the errors found in the case.
+         * @return The array with the errors found, or a single entry array
+         * with and OK message if no errors were found.
+         */
+        public Messages[] getErrors(){
+            if(errors.isEmpty())
+                return new Messages[]{Messages.OK};
+            Messages[] array = new Messages[errors.size()];
+            return errors.toArray(array);        
+        }
+        /**
+         * Method to get all the error causes found in the case.
+         * @return The array with the causes or null if no causes where found.
+         */
+        public Causes[] getCauses(){
+            if(causes.isEmpty())
+                return null;
+            Causes[] array = new Causes[causes.size()];
+            return causes.toArray(array);
         }
     }
 }

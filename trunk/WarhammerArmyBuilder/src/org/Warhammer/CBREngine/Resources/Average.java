@@ -24,9 +24,9 @@ import jcolibri.method.retrieve.NNretrieval.similarity.StandardGlobalSimilarityF
 import org.Warhammer.Warhammer.Case;
 
 /**
- *
+ * Class to compute the global average of all the local similarity functions.
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.3
  */
 public class Average extends StandardGlobalSimilarityFunction {
 
@@ -34,6 +34,11 @@ public class Average extends StandardGlobalSimilarityFunction {
     private Case.Races playerRace;
     private Case[] cases;
 
+    /**
+     * Default constructor
+     * @param cases The collection of cases found in the case base
+     * @param cbrq The CBR query
+     */
     public Average(Collection<CBRCase> cases, CBRQuery cbrq) {
         this.cases = new Case[cases.size()];
         Case query = (Case) cbrq.getDescription();
@@ -43,11 +48,20 @@ public class Average extends StandardGlobalSimilarityFunction {
             this.cases[count++] = (Case) _case.getDescription();
         }
     }
-    
+
+    /**
+     * Method used to compute the global average of the local similarity functions.
+     * @param values double array with the local similarity calculation results.
+     * @param weigths double array with the weigths of the local similarity calculations.
+     * @param ivalue integer with the number of elements in the arrays.
+     * @return double with the global similarity value.
+     */
     public double computeSimilarity(double[] values, double[] weigths, int ivalue){
         double acum = 0;
         double weigthsAcum = 0;
         double weigthAdjust = 1;
+        //Check if the query player race is equal to the case player race, if
+        //not punish the similarity by increasing the weigths up 50%.
         if(playerRace!=cases[numCalled++].getArmy().getPlayerRace())
             weigthAdjust = 1.5;
         for(int i=0; i<ivalue; i++){
