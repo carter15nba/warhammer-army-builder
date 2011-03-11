@@ -61,21 +61,19 @@ public class RuleSet {
      * during the verification. If no errors is found an array with a single OK
      * message is returned.
      *
-     * @param _case The Case object to be verified
-     * @param armyPoints The number of points available to create the army. If army points are 0
-     * the calculated case cost is used as a reference value.
+     * @param army The Army object to be verified
      * @return Messages[] array with all the errors found in the army disposition,
      * single entry array with an OK message if no errors where found.
      */
-    public Messages[] isFollowingArmyDispositionRules(Case _case, int armyPoints){
+    public Messages[] isFollowingArmyDispositionRules(Army army){
         if(armyPoints==0){
-            this.armyPoints = _case.getArmy().calculateCost();
+            this.armyPoints = army.calculateCost();
         }
         else
-            this.armyPoints = armyPoints;
+            this.armyPoints = army.getArmyPoints();
         resetCosts();
         errorManager.calculateNumberOfDuplicates();
-        calculatePointsUsage(_case);
+        calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution();
         return getErrors();
@@ -181,11 +179,10 @@ public class RuleSet {
     /**
      * Method to calculate the points used by the different groups present
      * in the army.
-     * @param _case The case containing the army to be calculated.
+     * @param army The Army to be calculated.
      */
-    private void calculatePointsUsage(Case _case){
+    private void calculatePointsUsage(Army army){
         errorManager = new ErrorManager();
-        Army army = _case.getArmy();
         Set<ArmyUnit> armyUnits = army.getArmyUnits();
         for (ArmyUnit u : armyUnits) {
             int cost = army.calculateTotalUnitCost(u);
@@ -250,13 +247,14 @@ public class RuleSet {
             unitNumber = new ArrayList<Integer>();
             errors = new ArrayList<Messages>();
             causes = new ArrayList<Causes>();
+            calculateNumberOfDuplicates();
         }
         /**
          * This method calculates the amount of rare and special unit duplicates
          * that can be present on the battlefield. Based on the the available
          * army points set in the main object (outer class).
          */
-        public void calculateNumberOfDuplicates(){
+        public final void calculateNumberOfDuplicates(){
             if(armyPoints>=3000){
                 rareDuplicates = 4;
                 specialDuplicates = 6;
@@ -283,7 +281,7 @@ public class RuleSet {
                 addError(Messages.TOO_MANY_UNITS_IN_GROUP);
                 causes.add(new Causes(unit, Messages.TOO_MANY_UNITS_IN_GROUP));
             }
-            else if(numberOfUnits<min){
+            if(numberOfUnits<min){
                 addError(Messages.TOO_FEW_UNITS_IN_GROUP);
                 causes.add(new Causes(unit, Messages.TOO_FEW_UNITS_IN_GROUP));
             }
@@ -353,7 +351,7 @@ public class RuleSet {
          */
         public Causes[] getCauses(){
             if(causes.isEmpty())
-                return null;
+                return new Causes[0];
             Causes[] array = new Causes[causes.size()];
             return causes.toArray(array);
         }
