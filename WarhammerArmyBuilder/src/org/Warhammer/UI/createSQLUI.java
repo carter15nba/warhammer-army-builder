@@ -600,7 +600,7 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==1){
             tab = utilTable;
-            id++;
+            id+= tab.getRowCount()+1;
             row = new Object[]{id,null,null,null,false,null,null,null,null,null,null,null,null,null,"N/A"};
         }
         else if(pane==2){
@@ -609,7 +609,7 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==3){
             tab = tableEquipment;
-            id++;
+            id+= tab.getRowCount()+1;
             row = new Object[]{id,null,null,null,null,"N/A","All",false};
         }
         else if(pane==4){
@@ -618,7 +618,7 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==5){
             tab= tableSpecialRules;
-            id++;
+            id+= tab.getRowCount()+1;
             row = new Object[]{id,null};
         }
         else if(pane==6){
@@ -635,7 +635,7 @@ public class createSQLUI extends javax.swing.JFrame {
         }
         else if(pane==9){
             tab = tableCreateCase;
-            id++;
+            id+= tab.getRowCount()+1;
             row = new Object[]{id,"N/A","N/A","Draw"};
         }
         if(tab!=null){
@@ -1513,7 +1513,7 @@ public class createSQLUI extends javax.swing.JFrame {
             catch(SQLException sqle){}
             if(eqID==-1||ruleID==-1)
                 continue;
-            String query = "INSERT INTO EQUIPMENT_RULES(ID,ID)VALUES("+eqID+","+ruleID+")";
+            String query = "INSERT INTO EQUIPMENT_RULES(EQUIPMENT_ID,RULE_ID)VALUES("+eqID+","+ruleID+")";
             sql.add(query);
         }
     }

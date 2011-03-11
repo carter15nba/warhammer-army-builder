@@ -27,12 +27,29 @@ import jcolibri.cbrcore.Attribute;
 public class Case implements jcolibri.cbrcore.CaseComponent{
 
     public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
-    public enum Outcomes{Defeat,Draw,Victory};
+    public enum Outcomes{Unknown,Defeat,Draw,Victory};
     private int ID;
     private Army army = new Army();
     private Races opponent;
     private Outcomes outcome;
-    
+
+    /**
+     * Static method to create an exact copy of the supplied case object.
+     * The resulting object will behave as if it was created with a constructor
+     * and filled with the data of the old case. A call to change the content
+     * in the old or new object will not change the same data in the other object.
+     * @param copy Case the object to be copied.
+     * @return Case the resulting object from the copy process.
+     */
+    public static Case copy(Case copy){
+        Case _case = new Case();
+        _case.ID = copy.ID;
+        _case.army = copy.army;
+        _case.opponent = copy.opponent;
+        _case.outcome = copy.outcome;
+        return _case;
+    }
+
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
     }

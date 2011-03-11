@@ -28,10 +28,28 @@ import org.Warhammer.Warhammer.Equipment.itemType;
  * @version 0.2
  */
 public class Army implements jcolibri.cbrcore.CaseComponent{
+
     private int ID;
     private Case.Races playerRace;
     private int armyPoints;
     private Set<ArmyUnit> armyUnits = new HashSet<ArmyUnit>();
+
+   /**
+     * Static method to create an exact copy of the supplied Army object.
+     * The resulting object will behave as if it was created with a constructor
+     * and filled with the data of the old case. A call to change the content
+     * in the old or new object will not change the same data in the other object.
+     * @param copy Army the object to be copied.
+     * @return Army the resulting object from the copy process.
+     */
+    public static Army copy(Army copy) {
+        Army army = new Army();
+        army.ID = copy.ID;
+        army.playerRace = copy.playerRace;
+        army.armyPoints = copy.armyPoints;
+        army.armyUnits = copy.armyUnits;
+        return army;
+    }
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());
