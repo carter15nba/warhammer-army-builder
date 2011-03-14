@@ -55,9 +55,7 @@ public class AdaptionEngine {
             for (Causes causes : ca) {
                 System.out.println(causes);
             }
-
         }
-
         return adaptedArmy;
     }
 }

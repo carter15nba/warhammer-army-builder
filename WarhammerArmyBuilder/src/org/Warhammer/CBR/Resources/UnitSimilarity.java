@@ -24,6 +24,7 @@ import org.Warhammer.Warhammer.Unit;
 
 /**
  * Class to calculate the unit similarity (all characteristics)
+ * Used during adaptation.
  * @author Glenn Rune Strandbråten
  * @version 0.5
  */
@@ -31,7 +32,16 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
 
     private Unit caseUnit;
     private Unit queryUnit;
-    
+
+    /**
+     * Computes the similarity between the two supplied units. This similarity
+     * is based on the: unit characteristics, army type and unit type.
+     * @param caseObject Unit The case unit
+     * @param queryObject Unit The query unit
+     * @return double in the range of: [0:1];
+     * @throws NoApplicableSimilarityFunctionException if the supplied objects
+     * not are an instance of org.Warhammer.Warhammer.Unit.class
+     */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
         if(caseObject==null||queryObject==null)
             return 0;
@@ -46,12 +56,19 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         double[] queryValues = queryUnit.getCharacteristics();
         
         double characterisitcs = computeCharacteristicsSimilarity(caseValues, queryValues);
-        double unitTypeSimilarity = computeUnitTypeSimilarity(unitType.Ca, unitType.Ca);
-        double armyTypeSimilarity = computeArmyTypeSimilarity(armyType.Hero, armyType.Hero);
-
+        double unitTypeSimilarity = computeUnitTypeSimilarity(caseUnit.getUnitType(),queryUnit.getUnitType());
+        double armyTypeSimilarity = computeArmyTypeSimilarity(caseUnit.getArmyType(), queryUnit.getArmyType());
+        
         double similarity = (characterisitcs+unitTypeSimilarity+armyTypeSimilarity)/3;
         return similarity;
     }
+    
+    /**
+     * Allways return true
+     * @param caseObject Any object
+     * @param queryObject Any object
+     * @return true
+     */
     public boolean isApplicable(Object caseObject, Object queryObject) {
         return true;
     }
@@ -63,7 +80,7 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @return int The average of the similarty
      * @throws NoApplicableSimilarityFunctionException
      */
-    public double computeCharacteristicsSimilarity(double[] caseValues, double[] queryValues)
+    private double computeCharacteristicsSimilarity(double[] caseValues, double[] queryValues)
             throws NoApplicableSimilarityFunctionException{
         Interval characteristicsInterval = new Interval(1);
         double characterisitcs = 0 ;
@@ -82,15 +99,123 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         return characterisitcs/9;
     }
 
-    public double computeUnitTypeSimilarity(unitType caseType, unitType queryType){
-
+    /**
+     * Method that return the similarity between unit type. (if applicable).
+     * @param caseType unitType The unit type of the case unit.
+     * @param queryType unitType The unit type of the query unit.
+     * @return double in the range: [0:1]
+     */
+    private double computeUnitTypeSimilarity(unitType caseType, unitType queryType){
+        if(caseType==queryType)
+            return 1;
+        if(caseType==unitType.Ca){
+            if(queryType==unitType.Ch)
+                return 0.75;
+            if(queryType==unitType.MC)
+                return 0.65;
+        }
+        if(caseType==unitType.Ch){
+            if(queryType==unitType.Ca)
+                return 0.75;
+            if(queryType==unitType.MC)
+                return 0.50;
+        }
+        if(caseType==unitType.In){
+            if(queryType==unitType.MI)
+                return 0.65;
+        }
+        if(caseType==unitType.MB){
+            if(queryType==unitType.MC)
+                return 0.5;
+            if(queryType==unitType.MI)
+                return 0.65;
+            if(queryType==unitType.Mo)
+                return 0.8;
+        }
+        if(caseType==unitType.MC){
+            if(queryType==unitType.Ca)
+                return 0.65;
+            if(queryType==unitType.Ch)
+                return 0.5;
+            if(queryType==unitType.MB)
+                return 0.5;
+            if(queryType==unitType.MI)
+                return 0.5;
+            if(queryType==unitType.Mo)
+                return 0.8;
+        }
+        if(caseType==unitType.MI){
+            if(queryType==unitType.In)
+                return 0.65;
+            if(queryType==unitType.MB)
+                return 0.5;
+            if(queryType==unitType.MC)
+                return 0.5;
+            if(queryType==unitType.Mo)
+                return 0.8;
+        }
+        if(caseType==unitType.Mo){
+            if(queryType==unitType.MB)
+                return 0.8;
+            if(queryType==unitType.MC)
+                return 0.8;
+            if(queryType==unitType.MI)
+                return 0.8;
+        }
+        if(caseType==unitType.Un){
+            if(queryType==unitType.WB)
+                return 0.45;
+            if(queryType==unitType.WM)
+                return 0.45;
+        }
+        if(caseType==unitType.WB){
+            if(queryType==unitType.Un)
+                return 0.45;
+            if(queryType==unitType.WM)
+                return 0.35;
+        }
+        if(caseType==unitType.WM){
+            if(queryType==unitType.Un)
+                return 0.45;
+            if(queryType==unitType.WB)
+                return 0.35;
+        }
         return 0;
     }
 
-    public double computeArmyTypeSimilarity(armyType caseArmy, armyType queryArmy){
-
+    /**
+     * Method that return the similarity between army type. (if applicable).
+     * @param caseType armyType The army type of the case unit.
+     * @param queryType armyType The amry type of the query unit.
+     * @return double in the range: [0:1]
+     */
+    private double computeArmyTypeSimilarity(armyType caseArmy, armyType queryArmy){
+        if(caseArmy==queryArmy)
+            return 1;
+        if(caseArmy==armyType.Lord||queryArmy==armyType.Lord){
+            if(caseArmy==armyType.Hero)
+                return 0.75;
+            if(queryArmy==armyType.Hero)
+                return 0.75;
+        }
+        if(caseArmy==armyType.Hero||queryArmy==armyType.Hero){
+            if(caseArmy==armyType.Lord)
+                return 0.75;
+            if(queryArmy==armyType.Lord)
+                return 0.75;
+        }
+        if(caseArmy==armyType.Rare||queryArmy==armyType.Rare){
+            if(caseArmy==armyType.Special)
+                return 0.50;
+            if(queryArmy==armyType.Special)
+                return 0.50;
+        }
+        if(caseArmy==armyType.Special||queryArmy==armyType.Special){
+            if(caseArmy==armyType.Rare)
+                return 0.50;
+            if(queryArmy==armyType.Rare)
+                return 0.50;
+        }
         return 0;
     }
-
-
 }

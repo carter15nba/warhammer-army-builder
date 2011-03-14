@@ -81,7 +81,7 @@ public class CoreUnit implements jcolibri.cbrcore.CaseComponent{
 
     @Override
     public String toString(){
-        return "ID: "+ID+", name: "+name+"," + "cost: "+cost;
+        return "| ID: "+ID+", name: "+name+"," + "cost: "+cost;
     }
 
     /**
