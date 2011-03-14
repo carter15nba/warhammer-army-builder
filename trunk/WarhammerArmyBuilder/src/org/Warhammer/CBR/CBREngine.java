@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
-import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
@@ -41,9 +40,6 @@ import jcolibri.method.retrieve.selection.SelectCases;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
-import org.Warhammer.Warhammer.Resources.Causes;
-import org.Warhammer.Warhammer.RuleSet;
-import org.Warhammer.Warhammer.RuleSet.Messages;
 import org.Warhammer.Warhammer.Unit;
 /**
  * Singleton class responsible for all the CBR related functionality.
@@ -107,11 +103,11 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         conf.setDescriptionSimFunction(new org.Warhammer.CBR.Resources.Average(caseBase.getCases(),cbrq));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
 //        Print all cases
-//        System.out.println("Case similarity:");
-//        for (RetrievalResult retrievalResult : eval) {
-//            Case _case = (Case) retrievalResult.get_case().getSolution();
-//            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),true);
-//        }
+        System.out.println("Case similarity:");
+        for (RetrievalResult retrievalResult : eval) {
+            Case _case = (Case) retrievalResult.get_case().getSolution();
+            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
+        }
         //TODO: user specified k neares cases.
         System.out.println("Retrieve phase done!");
         return SelectCases.selectTopKRR(eval, 2);
@@ -126,7 +122,11 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
-        adaptionEngine.adaptCase(new Case(), cbrq, retrievalResults);
+        for (RetrievalResult retrievalResult : retrievalResults) {
+            Case _case = (Case) retrievalResult.get_case().getDescription();
+            adaptionEngine.adaptCase(_case, cbrq, retrievalResults);
+        }
+        
 //        RuleSet rs = new RuleSet();
 //        for (RetrievalResult retrievalResult : retrievalResults) {
 //            Case _case = (Case)retrievalResult.get_case().getSolution();
@@ -172,32 +172,33 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 queryCase.setOpponent(Case.Races.Warriors_of_Chaos);
 
                 Army queryArmy = new Army();
-                queryArmy.setArmyPoints(0);
+                queryArmy.setArmyPoints(1500);
                 queryArmy.setPlayerRace(Case.Races.High_Elves);
 
-                Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
-                ArmyUnit armyUnit = new ArmyUnit();
-
-                Unit unit = new Unit();
-                unit.setName("Empire:Halberdiers");
-                armyUnit.setUnit(unit);
-                armyUnit.setNumberOfUnits(10);
-                armyUnitSet.add(armyUnit);
-
-                armyUnit = new ArmyUnit();
-                unit = new Unit();
-                unit.setName("Empire:Greatswords");
-                armyUnit.setUnit(unit);
-                armyUnit.setNumberOfUnits(19);
-                armyUnitSet.add(armyUnit);
-                queryArmy.setArmyUnits(armyUnitSet);
+//                Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
+//                ArmyUnit armyUnit = new ArmyUnit();
+//
+//                Unit unit = new Unit();
+//                unit.setName("Empire:Halberdiers");
+//                armyUnit.setUnit(unit);
+//                armyUnit.setNumberOfUnits(10);
+//                armyUnitSet.add(armyUnit);
+//
+//                armyUnit = new ArmyUnit();
+//                unit = new Unit();
+//                unit.setName("Empire:Greatswords");
+//                armyUnit.setUnit(unit);
+//                armyUnit.setNumberOfUnits(19);
+//                armyUnitSet.add(armyUnit);
+//                queryArmy.setArmyUnits(armyUnitSet);
+//                Set<Equipment> sEq = new HashSet<Equipment>();
+//                Equipment eq = new Equipment();
+//                eq.setName("Musician");
+//                sEq.add(eq);
+//                unit.setEquipment(sEq);
                 queryCase.setArmy(queryArmy);
 
-                Set<Equipment> sEq = new HashSet<Equipment>();
-                Equipment eq = new Equipment();
-                eq.setName("Musician");
-                sEq.add(eq);
-                unit.setEquipment(sEq);
+
 
                 System.out.println("Query Case");
                 org.Warhammer.Util.PrintFactory.printCase(queryCase,false);
@@ -304,7 +305,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                  org.Warhammer.Util.PrintFactory.printCase(_case1, true);
 
                 org.Warhammer.CBR.Resources.ArmySimilarity armySim
-                        = new org.Warhammer.CBR.Resources.ArmySimilarity();
+                        = new org.Warhammer.CBR.Resources.ArmySimilarity(1.0,1.0);
                 double comp = armySim.compute(army, army1);
                 System.out.println("computed similarity: "+comp);
             }

@@ -61,23 +61,18 @@ public class SimilarityMeasure {
         LocalSimilarityFunction func;
         //Player race
         attr = new Attribute("army",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Army", 0);
+        func = localSimilarityFactory("Army");
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 0.3);
+        nnConfig.setWeight(attr, 1.0);
 
         //Opponent race
         attr = new Attribute("opponent",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Equal", 0);
-        nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
-        //Points
-        attr = new Attribute("armyPoints",org.Warhammer.Warhammer.Army.class);
-        func = localSimilarityFactory("Interval", 500);
+        func = localSimilarityFactory("Equal");
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 1.0);
         //Outcome
         attr = new Attribute("outcome",org.Warhammer.Warhammer.Case.class);
-        func = localSimilarityFactory("Enum", 0);
+        func = localSimilarityFactory("Enum");
         nnConfig.addMapping(attr, func);
         nnConfig.setWeight(attr, 1.0);
     }
@@ -90,11 +85,10 @@ public class SimilarityMeasure {
      * @return The LocalSimilarityFunction object that were created or null, if
      * the name specified local similarity function could not be found.
      */
-    private LocalSimilarityFunction localSimilarityFactory(String name, int param){
-        if(name.equals("Interval"))
-            return new Interval(param);
-        else if(name.equals("Army"))
-            return new ArmySimilarity();
+    private LocalSimilarityFunction localSimilarityFactory(String name){
+        //TODO: Dynamuc user selected weigths
+        if(name.equals("Army"))
+            return new ArmySimilarity(1.0,1.0);
         else if(name.equals("Enum"))
             return new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
         else if(name.equals("Equal"))

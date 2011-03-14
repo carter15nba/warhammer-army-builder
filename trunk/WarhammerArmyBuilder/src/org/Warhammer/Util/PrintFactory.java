@@ -98,7 +98,7 @@ public class PrintFactory {
     public static void printCase(Case _case,double similarity, boolean printArmyUnit){
         System.out.println(LINE+"\n| "+_case.toString());
         System.out.println("| Calculated cost: "+_case.getArmy().calculateCost());
-        System.out.println("| Calculated similarity: "+similarity);
+        System.out.format("| Calculated similarity: %.5f%s%n", similarity*100,"%");
         if(printArmyUnit)
             printArmyUnit(_case.getArmy().getArmyUnits(),_case.getArmy());
         else
