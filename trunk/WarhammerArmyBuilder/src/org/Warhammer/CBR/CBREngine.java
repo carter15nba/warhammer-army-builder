@@ -309,6 +309,40 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 double comp = armySim.compute(army, army1);
                 System.out.println("computed similarity: "+comp);
             }
+            else if(args[0].equalsIgnoreCase("unitSimTest")){
+                Unit unit1 = new Unit();
+                unit1.setName("Unit1");
+                unit1.setArmyType(Unit.armyType.Hero);
+                unit1.setUnitType(Unit.unitType.In);
+                unit1.setAttack("4");
+                unit1.setBallisticSkill("5");
+                unit1.setInitiative("7");
+                unit1.setLeadership("8");
+                unit1.setMovement("4");
+                unit1.setStrength("4");;
+                unit1.setToughness("4");
+                unit1.setWeaponSkill("5");
+                unit1.setWounds("5");
+
+                Unit unit2 = new Unit();
+                unit2.setName("Unit2");
+                unit2.setArmyType(Unit.armyType.Special);
+                unit2.setUnitType(Unit.unitType.WM);
+                unit2.setAttack("4");
+                unit2.setBallisticSkill("5");
+                unit2.setInitiative("7");
+                unit2.setLeadership("10");
+                unit2.setMovement("4");
+                unit2.setStrength("4");
+                unit2.setToughness("4");
+                unit2.setWeaponSkill("3");
+                unit2.setWounds("8");
+                UnitSimilarity us = new UnitSimilarity();
+                double sim = us.compute(unit1, unit2);
+                org.Warhammer.Util.PrintFactory.printUnit(unit1);
+                org.Warhammer.Util.PrintFactory.printUnit(unit2);
+                System.out.println("Simil: "+sim);
+            }
             System.exit(0);
         }
         catch (ExecutionException ex) {

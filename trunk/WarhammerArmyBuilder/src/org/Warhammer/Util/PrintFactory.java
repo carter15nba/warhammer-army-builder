@@ -106,4 +106,15 @@ public class PrintFactory {
 
     }
 
+    /**
+     * Method to print the contents of the unit in a structured list by
+     * using the unit.toString() function call.
+     * @param unit The unit to be printed
+     */
+    public static void printUnit(Unit unit){
+            System.out.println(LINE);
+            System.out.println(unit.toString());
+            System.out.println(LINE);
+    }
+
 }
