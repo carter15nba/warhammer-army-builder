@@ -20,64 +20,77 @@ package org.Warhammer.CBR.Resources;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.Unit.unitType;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import org.Warhammer.Warhammer.Unit;
 
 /**
- *
+ * Class to calculate the unit similarity (all characteristics)
  * @author Glenn Rune Strandbråten
- * @version
- * @deprecated Use ArmySimilarity
+ * @version 0.5
  */
 public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
 
-    @Deprecated
+    private Unit caseUnit;
+    private Unit queryUnit;
+    
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
         if(caseObject==null||queryObject==null)
             return 0;
-        if(!(caseObject instanceof org.Warhammer.Warhammer.Unit))
+        if(!(caseObject instanceof Unit))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
-        if(!(queryObject instanceof org.Warhammer.Warhammer.Unit))
+        if(!(queryObject instanceof Unit))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
+        caseUnit = (Unit) caseObject;
+        queryUnit = (Unit) queryObject;
 
-        double sim = 0;
-        org.Warhammer.Warhammer.Unit cU = (org.Warhammer.Warhammer.Unit) caseObject;
-        org.Warhammer.Warhammer.Unit qU = (org.Warhammer.Warhammer.Unit) queryObject;
-        sim += simText(cU.getName(), qU.getName());
-       // sim += simNumber(cU.getNumber(), qU.getNumber(), 5);
-        sim += simArmyType(cU.getArmyType(), qU.getArmyType());
-        sim += simUnitType(cU.getUnitType(), qU.getUnitType());
+        double[] caseValues = caseUnit.getCharacteristics();
+        double[] queryValues = queryUnit.getCharacteristics();
+        
+        double characterisitcs = computeCharacteristicsSimilarity(caseValues, queryValues);
+        double unitTypeSimilarity = computeUnitTypeSimilarity(unitType.Ca, unitType.Ca);
+        double armyTypeSimilarity = computeArmyTypeSimilarity(armyType.Hero, armyType.Hero);
 
-        return sim/6;
+        double similarity = (characterisitcs+unitTypeSimilarity+armyTypeSimilarity)/3;
+        return similarity;
     }
-    @Deprecated
     public boolean isApplicable(Object caseObject, Object queryObject) {
         return true;
     }
-    @Deprecated
-    private double simText(String caseObj, String queryObj) throws NoApplicableSimilarityFunctionException{
-        jcolibri.method.retrieve.NNretrieval.similarity.local.Equal e =
-                new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
-        return e.compute(caseObj, queryObj);
+
+    /**
+     * Method that returns the average of the unit charcteristics similarity.
+     * @param caseValues double[] the case unit characterisitcs
+     * @param queryValues double[] the query unit characteristics.
+     * @return int The average of the similarty
+     * @throws NoApplicableSimilarityFunctionException
+     */
+    public double computeCharacteristicsSimilarity(double[] caseValues, double[] queryValues)
+            throws NoApplicableSimilarityFunctionException{
+        Interval characteristicsInterval = new Interval(1);
+        double characterisitcs = 0 ;
+        for(int i = 0 ; i < 9 ; i++){
+            double caseValue = caseValues[i];
+            double queryValue = queryValues[i];
+            if((caseValue!=-1)||(queryValue!=-1))
+                characterisitcs += characteristicsInterval.compute(caseValue, queryValue);
+            else{
+                jcolibri.method.retrieve.NNretrieval.similarity.local.Equal equal 
+                        = new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
+                characterisitcs +=
+                        equal.compute(caseUnit.getCharactersitic(i), queryUnit.getCharactersitic(i));
+            }
+        }
+        return characterisitcs/9;
     }
-    @Deprecated
-    private double simNumber(Number caseObj, Number queryObj, int interval) throws NoApplicableSimilarityFunctionException{
-        Interval i = new Interval(interval);
-        return i.compute(caseObj, queryObj);
-    }
-    @Deprecated
-    public double simArmyType(org.Warhammer.Warhammer.Unit.armyType caseObj, org.Warhammer.Warhammer.Unit.armyType queryObj) throws NoApplicableSimilarityFunctionException{
-        jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance ed =
-                new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
-        return ed.compute(caseObj, queryObj);
-    }
-    @Deprecated
-    public double simUnitType(org.Warhammer.Warhammer.Unit.unitType caseObj, org.Warhammer.Warhammer.Unit.unitType queryObj) throws NoApplicableSimilarityFunctionException{
-//        jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance ed =
-//                new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
-//        return ed.compute(caseObj, queryObj);
-        if(caseObj==queryObj)
-            return 1;
-        else if((caseObj==unitType.In && queryObj==unitType.MI)||(caseObj==unitType.MI && queryObj==unitType.In))
-            return 0.3;
+
+    public double computeUnitTypeSimilarity(unitType caseType, unitType queryType){
+
         return 0;
     }
+
+    public double computeArmyTypeSimilarity(armyType caseArmy, armyType queryArmy){
+
+        return 0;
+    }
+
+
 }

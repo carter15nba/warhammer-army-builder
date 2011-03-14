@@ -46,10 +46,14 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
     public double compute(Object caseObject, Object queryObject) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
         if ((caseObject == null) || (queryObject == null))
             return 0;
-        if (!(caseObject instanceof java.lang.Number))
+        if (!(caseObject instanceof java.lang.Number)){
+            System.out.println("case nan");
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
-        if (!(queryObject instanceof java.lang.Number))
+        }
+        if (!(queryObject instanceof java.lang.Number)){
+            System.out.println("query nan");
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
+        }
 
         Number caseNumber = (Number) caseObject;
         Number queryNumber = (Number) queryObject;

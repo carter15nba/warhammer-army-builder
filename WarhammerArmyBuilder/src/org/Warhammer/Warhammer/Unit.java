@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Class to represent a unit
  * @author Glenn Rune Strandbåten
- * @version 0.5
+ * @version 0.5.1
  */
 public class Unit extends CoreUnit{
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
@@ -309,5 +309,111 @@ public class Unit extends CoreUnit{
 
         return retString;
 
+    }
+
+    /**
+     * Method to get the String representation of the desired characteristic. The
+     * positions follow:
+     * <table boder="1">
+     *  <tr>
+     *    <td>Movement</td>
+     *  </tr>
+     * <tr>
+     *    <td>Weapon skill</td>
+     *  </tr>
+     * <tr>
+     *    <td>Ballistic skill</td>
+     *  </tr>
+     * <tr>
+     *    <td>Strength</td>
+     *  </tr>
+     * <tr>
+     *    <td>Toughness</td>
+     *  </tr>
+     * <tr>
+     *    <td>Wounds</td>
+     *  </tr>
+     * <tr>
+     *    <td>Initiative</td>
+     *  </tr>
+     * <tr>
+     *    <td>Attack</td>
+     *  </tr>
+     * <tr>
+     *    <td>Leadership</td>
+     *  </tr>
+     * </table>
+     * @param pos int The position of the characteristic
+     * @return String The indicated string representation of the characteristic.
+     */
+    public String getCharactersitic(int pos){
+        String[] stats = new String[]{movement,
+            weaponSkill,
+            ballisticSkill,
+            strength,
+            toughness,
+            wounds,
+            initiative,
+            attack,
+            leadership};
+        return stats[pos];
+    }
+
+    /**
+     * Method to get all the characteristics of the unit represented as doubles.
+     * The positions follow:
+     * <table boder="1">
+     *  <tr>
+     *    <td>Movement</td>
+     *  </tr>
+     * <tr>
+     *    <td>Weapon skill</td>
+     *  </tr>
+     * <tr>
+     *    <td>Ballistic skill</td>
+     *  </tr>
+     * <tr>
+     *    <td>Strength</td>
+     *  </tr>
+     * <tr>
+     *    <td>Toughness</td>
+     *  </tr>
+     * <tr>
+     *    <td>Wounds</td>
+     *  </tr>
+     * <tr>
+     *    <td>Initiative</td>
+     *  </tr>
+     * <tr>
+     *    <td>Attack</td>
+     *  </tr>
+     * <tr>
+     *    <td>Leadership</td>
+     *  </tr>
+     * </table>
+     * @return double[] The array with the double representations of all the
+     * unit characteristics. An index with value -1 could not be transformed
+     * into a double and holds e.g.: a 2D6 value.
+     */
+    public double[] getCharacteristics(){
+        String[] characteristics = new String[]{movement,
+            weaponSkill,
+            ballisticSkill,
+            strength,
+            toughness,
+            wounds,
+            initiative,
+            attack,
+            leadership};
+        double[] _return = new double[9];
+        int pos = 0;
+        for (String characteristic : characteristics) {
+            try{
+                double parsed = Double.parseDouble(characteristic);
+                _return[pos++] = parsed;
+            }
+            catch(NumberFormatException nfe){_return[pos++]=-1;}
+        }
+        return _return;
     }
 }

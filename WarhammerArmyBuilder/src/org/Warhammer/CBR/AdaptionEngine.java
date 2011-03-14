@@ -22,6 +22,7 @@ import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.RetrievalResult;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.Case;
+import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.RuleSet;
 import org.Warhammer.Warhammer.RuleSet.Messages;
 
@@ -47,6 +48,15 @@ public class AdaptionEngine {
         adaptedArmy.setArmyPoints(queryCase.getArmy().getArmyPoints());
         RuleSet rs = new RuleSet();
         Messages[] ms = rs.isFollowingArmyDispositionRules(adaptedArmy);
+        System.out.println("Case id: "+_case.getID());
+        for (Messages messages : ms) {
+            System.out.println(messages);
+            Causes[] ca = rs.getCauses();
+            for (Causes causes : ca) {
+                System.out.println(causes);
+            }
+
+        }
 
         return adaptedArmy;
     }

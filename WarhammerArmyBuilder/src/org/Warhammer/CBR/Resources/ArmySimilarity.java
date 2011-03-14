@@ -27,6 +27,16 @@ import org.Warhammer.Warhammer.Army;
  */
 public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
 
+    private double armyWeigth;
+    private double pointWeigth;
+    private double accumulatedWeigth;
+    public ArmySimilarity(double armyWeigth, double pointWeigth){
+        this.armyWeigth = armyWeigth;
+        this.pointWeigth = pointWeigth;
+        this.accumulatedWeigth = this.armyWeigth + this.pointWeigth;
+    }
+
+
     /**
      * Method to compute the similarity of two Army objects.
      * @param caseObject The Army objecct found in the case.
@@ -50,11 +60,16 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
              return 0;
         }
+        Interval armyPointsSimilarity = new Interval(500);
+        double armyPointSimilarityValue = armyPointsSimilarity.compute(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
         if(queryArmy.getArmyUnits()!=null){
             ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
-            return armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
+            double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
+            double armySimilarity = ((armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyWeigth))/
+                    accumulatedWeigth;
+            return armySimilarity;
         }
-        return 0;
+        return (armyPointSimilarityValue);
     }
 
     /**

@@ -56,15 +56,17 @@ public class Average extends StandardGlobalSimilarityFunction {
      * @param ivalue integer with the number of elements in the arrays.
      * @return double with the global similarity value.
      */
-    public double computeSimilarity(double[] values, double[] weigths, int ivalue){
+    public double computeSimilarity(double[] values, double[] weigths, int iValue){
         double acum = 0;
         double weigthsAcum = 0;
         double weigthAdjust = 1;
         //Check if the query player race is equal to the case player race, if
         //not punish the similarity by increasing the weigths up 50%.
-        if(playerRace!=cases[numCalled++].getArmy().getPlayerRace())
+        if(playerRace!=cases[numCalled++].getArmy().getPlayerRace()){
             weigthAdjust = 1.5;
-        for(int i=0; i<ivalue; i++){
+            //return 0;
+        }
+        for(int i=0; i<iValue; i++){
             acum += values[i] * weigths[i];
             weigthsAcum += weigthAdjust * weigths[i];
         }

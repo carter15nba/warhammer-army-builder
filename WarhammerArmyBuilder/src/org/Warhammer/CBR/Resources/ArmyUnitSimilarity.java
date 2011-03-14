@@ -61,6 +61,8 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
         double utilitySim = 0;
         int notQueriedEquipmet=0;
         int notQueriedUtility = 0;
+        if(querySet.isEmpty())
+            return 1;
         for (Object object : querySet) {
             ArmyUnit queryArmyUnit = (ArmyUnit) object;
             Unit queryUnit = queryArmyUnit.getUnit();
