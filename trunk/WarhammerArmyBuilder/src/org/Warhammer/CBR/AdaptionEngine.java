@@ -17,14 +17,13 @@
 
 package org.Warhammer.CBR;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Set;
 import jcolibri.cbrcore.CBRQuery;
-import jcolibri.method.retrieve.RetrievalResult;
-import org.Warhammer.Warhammer.Army;
-import org.Warhammer.Warhammer.Case;
-import org.Warhammer.Warhammer.Resources.Causes;
-import org.Warhammer.Warhammer.RuleSet;
-import org.Warhammer.Warhammer.RuleSet.Messages;
+import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import org.Warhammer.CBR.Resources.UnitSimilarity;
+import org.Warhammer.Util.CollectionControl;
+import org.Warhammer.Warhammer.*;
 
 /**
  * Class to perform the case adaption (testing stages only)
@@ -34,27 +33,87 @@ import org.Warhammer.Warhammer.RuleSet.Messages;
 public class AdaptionEngine {
 
 
-    public Case adaptCase(Case _case, CBRQuery query, Collection<RetrievalResult> retrieval){
+    public Case adaptCase(Case _case, CBRQuery query){
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Case.Outcomes.Unknown);
-        adaptedCase.setArmy(adaptArmy(_case, queryCase, retrieval));
+        adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
         return adaptedCase;
     }
 
-    private Army adaptArmy(Case _case, Case queryCase, Collection<RetrievalResult> retrieval){
+    private Army adaptArmyFromQuery(Case _case, Case queryCase){
         Army adaptedArmy = Army.copy(_case.getArmy());
         adaptedArmy.setArmyPoints(queryCase.getArmy().getArmyPoints());
-        RuleSet rs = new RuleSet();
-        Messages[] ms = rs.isFollowingArmyDispositionRules(adaptedArmy);
-        System.out.println("Case id: "+_case.getID());
-        for (Messages messages : ms) {
-            System.out.println(messages);
-            Causes[] ca = rs.getCauses();
-            for (Causes causes : ca) {
-                System.out.println(causes);
+        Set<ArmyUnit> queryUnits = queryCase.getArmy().getArmyUnits();
+        boolean[] isAdapted = new boolean[queryUnits.size()];
+        int pos=0;
+        //Find and replace units in the case with query units
+        //(Adapt present units e.g.: queried units already present in the case).
+        for(ArmyUnit queryUnit : queryUnits){
+            Unit query = queryUnit.getUnit();
+            for(ArmyUnit adaptedUnit : adaptedArmy.getArmyUnits()){
+                Unit adapted = adaptedUnit.getUnit();
+                if(query.getName().equals(adapted.getName())){
+                    adaptedUnit.setNumberOfUnits(queryUnit.getNumberOfUnits());
+                    //Replace the equipment/utility if and only if the queried
+                    //unit have specified equipment/utility, otherwise keep the
+                    //case equipment/utility.
+                    if(!queryUnit.getEquipment().isEmpty())
+                        adaptedUnit.setEquipment(queryUnit.getEquipment());
+                    if(!queryUnit.getUtility().isEmpty())
+                        adaptedUnit.setUtility(queryUnit.getUtility());
+                    isAdapted[pos] = true;
+                }
             }
+            pos++;
+        }
+        //If units in query not adapted, find possible replacement candidates
+        //and perform the adaption.
+        pos = 0;
+        for(ArmyUnit queryUnit : queryUnits){
+            if(isAdapted[pos++])
+                continue;
+            Unit query = queryUnit.getUnit();
+            UnitSimilarity unitSimilarity = new UnitSimilarity();
+            ArrayList<Double> similarity = new ArrayList<Double>();
+            try{
+                //Calculate the similarity between all units in the army and the
+                //current query unit.
+                for (ArmyUnit adaptedUnit : adaptedArmy.getArmyUnits()) {
+                    boolean calculate = true;
+                    //Do not calculate the similarity on any unit that is
+                    //present in the query.
+                    for(ArmyUnit isQuery : queryUnits){
+                        if(adaptedUnit.getUnit().getName().equals(isQuery.getUnit().getName())){
+                            calculate = false;
+                            break;
+                        }
+                    }
+                    double sim = 0;
+                    if(calculate)
+                        sim = unitSimilarity.compute(query, adaptedUnit.getUnit());
+                    similarity.add(sim);
+                }
+                //Find most similar
+                int index = -1;
+                double highest = -1;
+                for(int i = 0; i < similarity.size(); i++){
+                    double sim = similarity.get(i);
+                    if(highest<sim){
+                        highest = sim;
+                        index = i;
+                    }
+                }
+                //Adapt most similar
+                ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(adaptedArmy.getArmyUnits(), index);
+                System.out.println("   changed unit: "+armyUnit.getUnit().getName()+", to unit: "+query.getName());
+                armyUnit.setUnit(query);
+                armyUnit.setUtility(queryUnit.getUtility());
+                armyUnit.setEquipment(queryUnit.getEquipment());
+                armyUnit.setNumberOfUnits(queryUnit.getNumberOfUnits());
+            }
+            catch(NoApplicableSimilarityFunctionException e){}
         }
         return adaptedArmy;
     }
