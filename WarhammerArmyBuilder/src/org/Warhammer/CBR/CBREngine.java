@@ -37,10 +37,15 @@ import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
+import org.Warhammer.Util.*;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
+import org.Warhammer.Warhammer.RuleSet;
+import org.Warhammer.Warhammer.RuleSet.Messages;
 import org.Warhammer.Warhammer.Unit;
+import org.Warhammer.Warhammer.Unit.armyType;
+import org.Warhammer.Warhammer.Unit.unitType;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
@@ -103,13 +108,12 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         conf.setDescriptionSimFunction(new org.Warhammer.CBR.Resources.Average(caseBase.getCases(),cbrq));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
 //        Print all cases
-        System.out.println("Case similarity:");
         for (RetrievalResult retrievalResult : eval) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
-            org.Warhammer.Util.PrintFactory.printCase(_case,retrievalResult.getEval(),false);
+            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
         }
         //TODO: user specified k neares cases.
-        System.out.println("Retrieve phase done!");
+        System.err.println("Retrieve phase done!");
         return SelectCases.selectTopKRR(eval, 2);
     }
 
@@ -124,7 +128,12 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getDescription();
-            adaptionEngine.adaptCase(_case, cbrq, retrievalResults);
+            Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
+            RuleSet rs = new RuleSet();
+            Messages[] msg = rs.isFollowingArmyDispositionRules(adaptedCase.getArmy());
+            for (Messages object : msg) {
+                System.out.println("Message: "+object);
+            }
         }
         
 //        RuleSet rs = new RuleSet();
@@ -169,39 +178,43 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 CBRQuery cbrQuery = new CBRQuery();
                 Case queryCase = new Case();
                 queryCase.setOutcome(Case.Outcomes.Victory);
-                queryCase.setOpponent(Case.Races.Warriors_of_Chaos);
+                queryCase.setOpponent(Case.Races.Wood_Elves);
 
                 Army queryArmy = new Army();
-                queryArmy.setArmyPoints(1500);
-                queryArmy.setPlayerRace(Case.Races.High_Elves);
+                queryArmy.setArmyPoints(2500);
+                queryArmy.setPlayerRace(Case.Races.Empire);
 
-//                Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
-//                ArmyUnit armyUnit = new ArmyUnit();
-//
-//                Unit unit = new Unit();
-//                unit.setName("Empire:Halberdiers");
-//                armyUnit.setUnit(unit);
-//                armyUnit.setNumberOfUnits(10);
-//                armyUnitSet.add(armyUnit);
-//
-//                armyUnit = new ArmyUnit();
-//                unit = new Unit();
-//                unit.setName("Empire:Greatswords");
-//                armyUnit.setUnit(unit);
-//                armyUnit.setNumberOfUnits(19);
-//                armyUnitSet.add(armyUnit);
-//                queryArmy.setArmyUnits(armyUnitSet);
-//                Set<Equipment> sEq = new HashSet<Equipment>();
-//                Equipment eq = new Equipment();
-//                eq.setName("Musician");
-//                sEq.add(eq);
-//                unit.setEquipment(sEq);
+                Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
+                ArmyUnit armyUnit = new ArmyUnit();
+
+                Unit unit = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
+                armyUnit.setUnit(unit);
+                armyUnit.setNumberOfUnits(10);
+                armyUnitSet.add(armyUnit);
+
+                armyUnit = new ArmyUnit();
+                unit = CreateUnitFromDB.createUnitFromDB("Empire:Greatswords");
+                armyUnit.setUnit(unit);
+                armyUnit.setNumberOfUnits(19);
+                armyUnitSet.add(armyUnit);
+                queryArmy.setArmyUnits(armyUnitSet);
+                Set<Equipment> sEq = new HashSet<Equipment>();
+                Equipment eq = new Equipment();
+                eq.setName("Musician");
+                sEq.add(eq);
+                unit.setEquipment(sEq);
+
+                armyUnit = new ArmyUnit();
+                unit = CreateUnitFromDB.createUnitFromDB("Empire:Steam Tank");
+                armyUnit.setNumberOfUnits(1);
+                armyUnit.setUnit(unit);
+                armyUnitSet.add(armyUnit);
                 queryCase.setArmy(queryArmy);
 
 
 
                 System.out.println("Query Case");
-                org.Warhammer.Util.PrintFactory.printCase(queryCase,false);
+                PrintFactory.printCase(queryCase,true);
 
                 cbrQuery.setDescription(queryCase);
                 cbrEngine.cycle(cbrQuery);
@@ -258,7 +271,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 _case.setArmy(army);
 
                 System.out.println("Case");
-                org.Warhammer.Util.PrintFactory.printCase(_case, true);
+                PrintFactory.printCase(_case, true);
 
 
                 //QUERY
@@ -302,7 +315,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 _case1.setArmy(army1);
                 
                 System.out.println("Query");
-                 org.Warhammer.Util.PrintFactory.printCase(_case1, true);
+                PrintFactory.printCase(_case1, true);
 
                 org.Warhammer.CBR.Resources.ArmySimilarity armySim
                         = new org.Warhammer.CBR.Resources.ArmySimilarity(1.0,1.0);
@@ -319,7 +332,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 unit1.setInitiative("7");
                 unit1.setLeadership("8");
                 unit1.setMovement("4");
-                unit1.setStrength("4");;
+                unit1.setStrength("4");
                 unit1.setToughness("4");
                 unit1.setWeaponSkill("5");
                 unit1.setWounds("5");
@@ -337,10 +350,17 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 unit2.setToughness("4");
                 unit2.setWeaponSkill("3");
                 unit2.setWounds("8");
-                UnitSimilarity us = new UnitSimilarity();
+                UnitSimilarity us = new UnitSimilarity(0.1,1,1,0.1);
                 double sim = us.compute(unit1, unit2);
-                org.Warhammer.Util.PrintFactory.printUnit(unit1);
-                org.Warhammer.Util.PrintFactory.printUnit(unit2);
+                PrintFactory.printUnit(unit1);
+                PrintFactory.printUnit(unit2);
+                System.out.println("Simil: "+sim);
+
+                unit1 = CreateUnitFromDB.createUnitFromDB("Empire:Archers");
+                unit2 = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
+                sim = us.compute(unit1,unit2);
+                PrintFactory.printUnit(unit1);
+                PrintFactory.printUnit(unit2);
                 System.out.println("Simil: "+sim);
             }
             System.exit(0);

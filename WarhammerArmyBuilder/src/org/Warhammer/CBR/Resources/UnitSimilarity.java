@@ -20,6 +20,7 @@ package org.Warhammer.CBR.Resources;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.Unit.unitType;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import jcolibri.method.retrieve.NNretrieval.similarity.local.Threshold;
 import org.Warhammer.Warhammer.Unit;
 
 /**
@@ -32,6 +33,25 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
 
     private Unit caseUnit;
     private Unit queryUnit;
+    private double characteristicsWeigth;
+    private double unitTypeWeigth;
+    private double armyTypeWeigth;
+    private double costWeigth;
+    private double totalWeigth;
+    public UnitSimilarity(){
+        characteristicsWeigth = 1;
+        unitTypeWeigth = 1;
+        armyTypeWeigth = 1;
+        costWeigth = 1;
+        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth;
+    }
+    public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth){
+        this.characteristicsWeigth = charWeigth;
+        this.armyTypeWeigth = armyTypeWeigth;
+        this.costWeigth = costWeigth;
+        this.unitTypeWeigth = unitTypeWeigth;
+        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth;
+    }
 
     /**
      * Computes the similarity between the two supplied units. This similarity
@@ -54,12 +74,18 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
 
         double[] caseValues = caseUnit.getCharacteristics();
         double[] queryValues = queryUnit.getCharacteristics();
-        
+
+        Threshold costSimilarity = new Threshold(2);
+
         double characterisitcs = computeCharacteristicsSimilarity(caseValues, queryValues);
         double unitTypeSimilarity = computeUnitTypeSimilarity(caseUnit.getUnitType(),queryUnit.getUnitType());
         double armyTypeSimilarity = computeArmyTypeSimilarity(caseUnit.getArmyType(), queryUnit.getArmyType());
-        
-        double similarity = (characterisitcs+unitTypeSimilarity+armyTypeSimilarity)/3;
+        double costSimilarityValue = costSimilarity.compute(caseUnit.getCost(), queryUnit.getCost());
+        double similarity = ((characterisitcs*characteristicsWeigth)+
+                (unitTypeSimilarity*unitTypeWeigth)+
+                (armyTypeSimilarity*armyTypeWeigth)+
+                (costSimilarityValue*costWeigth))/
+                (totalWeigth);
         return similarity;
     }
     
@@ -82,13 +108,13 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      */
     private double computeCharacteristicsSimilarity(double[] caseValues, double[] queryValues)
             throws NoApplicableSimilarityFunctionException{
-        Interval characteristicsInterval = new Interval(1);
+        Threshold characteristicsInterval = new Threshold(2); //TODO: User selected threshold value?
         double characterisitcs = 0 ;
         for(int i = 0 ; i < 9 ; i++){
             double caseValue = caseValues[i];
             double queryValue = queryValues[i];
             if((caseValue!=-1)||(queryValue!=-1))
-                characterisitcs += characteristicsInterval.compute(caseValue, queryValue);
+                characterisitcs += characteristicsInterval.compute((int)caseValue, (int)queryValue);
             else{
                 jcolibri.method.retrieve.NNretrieval.similarity.local.Equal equal 
                         = new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
