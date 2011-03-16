@@ -22,6 +22,7 @@ import org.Warhammer.Warhammer.Unit.unitType;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.similarity.local.Threshold;
 import org.Warhammer.Warhammer.Unit;
+import org.Warhammer.Warhammer.Unit.weaponType;
 
 /**
  * Class to calculate the unit similarity (all characteristics)
@@ -37,20 +38,23 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
     private double unitTypeWeigth;
     private double armyTypeWeigth;
     private double costWeigth;
+    private double weaponWeigth;
     private double totalWeigth;
     public UnitSimilarity(){
         characteristicsWeigth = 1;
         unitTypeWeigth = 1;
         armyTypeWeigth = 1;
         costWeigth = 1;
-        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth;
+        weaponWeigth = 1;
+        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth + weaponWeigth;
     }
-    public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth){
+    public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth,double weaponWeigth){
         this.characteristicsWeigth = charWeigth;
         this.armyTypeWeigth = armyTypeWeigth;
         this.costWeigth = costWeigth;
         this.unitTypeWeigth = unitTypeWeigth;
-        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth;
+        this.weaponWeigth = weaponWeigth;
+        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth + weaponWeigth;
     }
 
     /**
@@ -75,16 +79,18 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         double[] caseValues = caseUnit.getCharacteristics();
         double[] queryValues = queryUnit.getCharacteristics();
 
-        Threshold costSimilarity = new Threshold(2);
+        Threshold costSimilarity = new Threshold(1);
 
         double characterisitcs = computeCharacteristicsSimilarity(caseValues, queryValues);
         double unitTypeSimilarity = computeUnitTypeSimilarity(caseUnit.getUnitType(),queryUnit.getUnitType());
         double armyTypeSimilarity = computeArmyTypeSimilarity(caseUnit.getArmyType(), queryUnit.getArmyType());
         double costSimilarityValue = costSimilarity.compute(caseUnit.getCost(), queryUnit.getCost());
+        double weaponSimilarity = computeWeaponSimilarity(caseUnit.getWeaponType(), queryUnit.getWeaponType());
         double similarity = ((characterisitcs*characteristicsWeigth)+
                 (unitTypeSimilarity*unitTypeWeigth)+
                 (armyTypeSimilarity*armyTypeWeigth)+
-                (costSimilarityValue*costWeigth))/
+                (costSimilarityValue*costWeigth)+
+                (weaponSimilarity*weaponWeigth))/
                 (totalWeigth);
         return similarity;
     }
@@ -241,6 +247,36 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
                 return 0.50;
             if(queryArmy==armyType.Rare)
                 return 0.50;
+        }
+        return 0;
+    }
+
+    /**
+     * Method that return the similarity between weapon type. (if applicable).
+     * @param caseType weaponType The weapon type of the case unit.
+     * @param queryType weaponType The weapon type of the query unit.
+     * @return double in the range: [0:1]
+     */
+    private double computeWeaponSimilarity(weaponType caseWeapon, weaponType queryWeapon){
+        if(caseWeapon==queryWeapon)
+            return 1;
+        if(caseWeapon==weaponType.Mele){
+            if(queryWeapon==weaponType.Great_weapon)
+                return 0.5;
+            if(queryWeapon==weaponType.Long_weapon)
+                return 0.3;
+        }
+        if(caseWeapon==weaponType.Great_weapon){
+            if(queryWeapon==weaponType.Mele)
+                return 0.5;
+            if(queryWeapon==weaponType.Long_weapon)
+                return 0.55;
+        }
+        if(caseWeapon==weaponType.Long_weapon){
+            if(queryWeapon==weaponType.Mele)
+                return 0.3;
+            if(queryWeapon==weaponType.Great_weapon)
+                return 0.55;
         }
         return 0;
     }

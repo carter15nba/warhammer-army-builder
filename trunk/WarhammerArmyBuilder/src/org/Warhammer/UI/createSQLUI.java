@@ -51,7 +51,7 @@ import org.Warhammer.Warhammer.Equipment.itemType;
  */
 public class createSQLUI extends javax.swing.JFrame {
 
-    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE,MAGICPOINTS) VALUES(";
+    private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE,MAGICPOINTS,WEAPONTYPE) VALUES(";
     private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE) VALUES(";
     private static final String insertUnit_Util = "INSERT INTO UNIT_UTILITY(NAME,UTILID)VALUES(";
     private int pane;
@@ -77,8 +77,14 @@ public class createSQLUI extends javax.swing.JFrame {
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             utilTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             tableEquipment.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
             tableEquipment.getColumnModel().getColumn(6).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 6));
+            model = new String[5];
+            model[0] = "N/A";
+            i=1;
+            for(org.Warhammer.Warhammer.Unit.weaponType wpn : org.Warhammer.Warhammer.Unit.weaponType.values()){
+                model[i++] = wpn.toString();
+            }
+            table.getColumnModel().getColumn(16).setCellRenderer(new org.Warhammer.UI.Resources.ComboBoxTableCellRenderer(model, 16));
             model = new String[12];
             model[0] = "N/A";
             int pos = 1;
@@ -242,11 +248,11 @@ public class createSQLUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Cost", "Min number of units", "Max number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType", "Magic Points"
+                "Name", "Cost", "Min number of units", "Max number of units", "M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "UnitType", "ArmyType", "Magic Points", "WeaponType"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1088,8 +1094,11 @@ public class createSQLUI extends javax.swing.JFrame {
             String at = table.getValueAt(i,14).toString();
             if(at.contentEquals("N/A"))
                 at="_na";
+            String wpnType = table.getValueAt(i, 16).toString();
+            if(wpnType.equals("N/A"))
+                continue;
             String race = raceBox.getSelectedItem().toString();
-            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+min+","+max+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"',"+magicPoints+")";
+            String stat = insertUnit+"'"+race+":"+name+"','"+race+"',"+cost+","+min+","+max+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"','"+at+"',"+magicPoints+",'"+wpnType+"')";
             sql.add(stat);
         }
     }
@@ -1148,9 +1157,12 @@ public class createSQLUI extends javax.swing.JFrame {
             if(s[14].contentEquals("_na"))
                 s[14] = "N/A";
             int points = 0 ;
-            if(s.length==17)
+            if(s.length>=17)
                 points = Integer.parseInt(s[16]);
-            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15],points});
+            String wpn = "N/A";
+            if(s.length==18)
+                wpn = s[17];
+            tm.addRow(new Object[]{s[0],Integer.parseInt(s[2]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],s[15],points,wpn});
         }
         for (int i = 0; i < raceBox.getItemCount() ; i++) {
             Object object = raceBox.getItemAt(i);

@@ -31,6 +31,11 @@
         <param name="enumClassName">org.Warhammer.Warhammer.Unit$unitType</param>
       </type>
     </property>
+    <property column="WEAPONTYPE" length="12" name="weaponType">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">org.Warhammer.Warhammer.Unit$weaponType</param>
+      </type>
+    </property>
     <property column="WEAPONSKILL" length="7" name="weaponSkill"/>
     <property column="WOUNDS" length="7" name="wounds"/>
     <set lazy="false" name="equipment" table="UNIT_EQUIPMENT">

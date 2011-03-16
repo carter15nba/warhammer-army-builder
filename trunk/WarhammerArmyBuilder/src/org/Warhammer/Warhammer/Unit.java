@@ -30,6 +30,7 @@ import java.util.Set;
 public class Unit extends CoreUnit{
     public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
     public enum armyType {Hero, Lord, Special, Rare, Core, _na};
+    public enum weaponType{Mele, Ranged, Great_weapon, Long_weapon};
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -41,6 +42,7 @@ public class Unit extends CoreUnit{
     private String leadership = "";
     private unitType unitType;
     private armyType armyType;
+    private weaponType weaponType;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
@@ -258,7 +260,7 @@ public class Unit extends CoreUnit{
     public void setSpecialRules(Set<SpecialRules> specialRules) {
         this.specialRules = specialRules;
     }
-        /**
+    /**
      * @return the magicPoints
      */
     public int getMagicPoints() {
@@ -270,6 +272,21 @@ public class Unit extends CoreUnit{
      */
     public void setMagicPoints(int magicPoints) {
         this.magicPoints = magicPoints;
+    }
+
+    /**
+     * @return the weaponType
+     */
+    public weaponType getWeaponType(){
+        return weaponType;
+    }
+
+    /**
+     *
+     * @param weaponType the weaponType to set
+     */
+    public void setWeaponType(weaponType weaponType){
+        this.weaponType = weaponType;
     }
 
     @Override
@@ -286,7 +303,8 @@ public class Unit extends CoreUnit{
                 + " A="+attack
                 + " Ld="+leadership
                 + " UnitType="+unitType
-                + " ArmyType="+armyType;
+                + " ArmyType="+armyType
+                + " WeaponType="+weaponType;
         if(getEquipment().size()>0){
             Iterator<Equipment> iterator = getEquipment().iterator();
             while(iterator.hasNext()){

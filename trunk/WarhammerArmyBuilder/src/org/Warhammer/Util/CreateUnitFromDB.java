@@ -26,6 +26,7 @@ import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Unit;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.Unit.unitType;
+import org.Warhammer.Warhammer.Unit.weaponType;
 
 /**
  * Class to create a unit with all the unit data from the database
@@ -68,6 +69,7 @@ public class CreateUnitFromDB {
                 unit.setMaxNumber(result.getInt("MAXUNITS"));
                 unit.setMinNumber(result.getInt("MINUNITS"));
                 unit.setRace(Races.valueOf(result.getString("RACE")));
+                unit.setWeaponType(weaponType.valueOf(result.getString("WEAPONTYPE")));
             }
         }
         catch (SQLException ex) {
