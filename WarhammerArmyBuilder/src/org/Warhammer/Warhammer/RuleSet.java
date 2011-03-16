@@ -31,7 +31,11 @@ import org.Warhammer.Warhammer.Resources.Causes;
  */
 public class RuleSet {
 
-    public enum Messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS, TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS, TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS, TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP};
+    public enum Messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS,
+    TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS,
+    TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,
+    TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP,TOO_FEW_POINTS_TOTAL,
+    TOO_MANY_POINTS_TOTAL,TOO_MANY_HEROES,TOO_MANY_LORDS};
     private int totalCost;
     private int coreCost;
     private int specialCost;
@@ -39,17 +43,31 @@ public class RuleSet {
     private int heroCost;
     private int lordCost;
     private int armyPoints;
+    private int threshold;
+    private int maxCharacters;
+    private int maxHeroes;
+    private int maxLords;
     private double LIMIT_LORDS_MAX = 0.25;
     private double LIMIT_HEROES_MAX = 0.25;
     private double LIMIT_CORE_MIN = 0.25;
     private double LIMIT_SPECIAL_MAX = 0.50;
-    private double LIMIT_RARE_MAX = 0.25; 
+    private double LIMIT_RARE_MAX = 0.25;
+
     private ErrorManager errorManager;
 
     /**
-     * Default constructor
+     * Default constructor (sets threshold value of 25)
      */
     public RuleSet(){
+        threshold = 25;
+        errorManager = new ErrorManager();
+    }
+    /**
+     * Constructor
+     * @param threshold int The threshold value
+     */
+    public RuleSet(int threshold){
+        this.threshold = threshold;
         errorManager = new ErrorManager();
     }
 
@@ -71,11 +89,16 @@ public class RuleSet {
         }
         else
             this.armyPoints = army.getArmyPoints();
+        calculateCharacterLimits();
         resetCosts();
         errorManager.calculateNumberOfDuplicates();
         calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution();
+        if(totalCost>armyPoints)
+            errorManager.addError(Messages.TOO_MANY_POINTS_TOTAL);
+        else if(totalCost<(armyPoints-threshold))
+            errorManager.addError(Messages.TOO_FEW_POINTS_TOTAL);
         return getErrors();
     }
 
@@ -228,6 +251,14 @@ public class RuleSet {
      */
     public Causes[] getCauses(){
         return errorManager.getCauses();
+    }
+
+    private void calculateCharacterLimits(){
+        if(armyPoints<2000){
+            maxLords = 0;
+            maxHeroes = 3;
+        }
+        maxCharacters = maxLords + maxHeroes;
     }
 
     /**

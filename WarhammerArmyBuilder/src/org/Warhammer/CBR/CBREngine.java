@@ -350,14 +350,14 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 unit2.setToughness("4");
                 unit2.setWeaponSkill("3");
                 unit2.setWounds("8");
-                UnitSimilarity us = new UnitSimilarity(0.1,1,1,0.1);
+                UnitSimilarity us = new UnitSimilarity(1,1,1,1,1);
                 double sim = us.compute(unit1, unit2);
                 PrintFactory.printUnit(unit1);
                 PrintFactory.printUnit(unit2);
                 System.out.println("Simil: "+sim);
 
-                unit1 = CreateUnitFromDB.createUnitFromDB("Empire:Archers");
-                unit2 = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
+                unit1 = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
+                unit2 = CreateUnitFromDB.createUnitFromDB("High_Elves:Spearmen");
                 sim = us.compute(unit1,unit2);
                 PrintFactory.printUnit(unit1);
                 PrintFactory.printUnit(unit2);

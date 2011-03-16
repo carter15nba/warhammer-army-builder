@@ -24,6 +24,8 @@ import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Warhammer.*;
+import org.Warhammer.Warhammer.RuleSet.Messages;
+import org.apache.derby.iapi.services.i18n.MessageService;
 
 /**
  * Class to perform the case adaption (testing stages only)
@@ -34,11 +36,21 @@ public class AdaptionEngine {
 
 
     public Case adaptCase(Case _case, CBRQuery query){
+        Case adaptedCase = naiveAdaption(_case, query);
+        return refineAdaption(adaptedCase, query);
+    }
+
+    private Case naiveAdaption(Case _case, CBRQuery query){
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Case.Outcomes.Unknown);
         adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
+        return adaptedCase;
+    }
+    private Case refineAdaption(Case adaptedCase, CBRQuery query){
+        adaptedCase.setArmy(refineArmy(adaptedCase.getArmy()));
+        //TODO: whatever goes here
         return adaptedCase;
     }
 
@@ -116,5 +128,19 @@ public class AdaptionEngine {
             catch(NoApplicableSimilarityFunctionException e){}
         }
         return adaptedArmy;
+    }
+
+    private Army refineArmy(Army army){
+        RuleSet rule = new RuleSet();
+        Messages[] messages = rule.isFollowingArmyDispositionRules(army);
+        while(messages[0]!=Messages.OK){
+            //
+
+
+
+            messages = rule.isFollowingArmyDispositionRules(army);
+        }
+
+        return army;
     }
 }
