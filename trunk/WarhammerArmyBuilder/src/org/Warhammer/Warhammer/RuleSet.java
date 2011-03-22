@@ -44,9 +44,6 @@ public class RuleSet {
     private int lordCost;
     private int armyPoints;
     private int threshold;
-    private int maxCharacters;
-    private int maxHeroes;
-    private int maxLords;
     private double LIMIT_LORDS_MAX = 0.25;
     private double LIMIT_HEROES_MAX = 0.25;
     private double LIMIT_CORE_MIN = 0.25;
@@ -89,7 +86,6 @@ public class RuleSet {
         }
         else
             this.armyPoints = army.getArmyPoints();
-        calculateCharacterLimits();
         resetCosts();
         errorManager.calculateNumberOfDuplicates();
         calculatePointsUsage(army);
@@ -251,14 +247,6 @@ public class RuleSet {
      */
     public Causes[] getCauses(){
         return errorManager.getCauses();
-    }
-
-    private void calculateCharacterLimits(){
-        if(armyPoints<2000){
-            maxLords = 0;
-            maxHeroes = 3;
-        }
-        maxCharacters = maxLords + maxHeroes;
     }
 
     /**
