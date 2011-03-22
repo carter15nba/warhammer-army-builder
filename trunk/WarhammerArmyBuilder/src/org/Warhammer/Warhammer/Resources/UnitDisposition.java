@@ -24,7 +24,7 @@ package org.Warhammer.Warhammer.Resources;
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class RaceUnitDisposition {
+public class UnitDisposition {
     private int maxCharacters;
     private int maxHeroes;
     private int maxLords;
@@ -35,8 +35,8 @@ public class RaceUnitDisposition {
     private int maxRare;
 
     /**
-     * Default constructor, use RaceUnitDispositionFactory to create a
-     * disposition object.
+     * Default constructor, use UnitDispositionFactory to create a disposition
+     * object.
      * @param maxCharacters int The max number of Lords + Heroes the army can
      * have
      * @param maxLords int The max number of Lords the army can have
@@ -47,7 +47,7 @@ public class RaceUnitDisposition {
      * @param minRare int The min number of rare units the army must have
      * @param maxRare int The max number of rare units the army can have
      */
-    public RaceUnitDisposition(int maxCharacters, int maxLords, int maxHeroes,
+    public UnitDisposition(int maxCharacters, int maxLords, int maxHeroes,
             int minCore, int minSpecial, int maxSpecial, int minRare, int maxRare){
         this.maxHeroes = maxHeroes;
         this.maxLords = maxLords;
@@ -113,5 +113,15 @@ public class RaceUnitDisposition {
      */
     public int getMaxRare() {
         return maxRare;
+    }
+
+
+    @Override
+    public String toString(){
+        return "Characters Lords Heroes\n"
+                + maxCharacters+"          "+maxLords+"     "+maxHeroes+"\n"
+                + "Core Special Rare\n"
+                +minCore+"    "+minSpecial+"-"+maxSpecial+"     "+minRare+"-"+maxRare;
+                
     }
 }
