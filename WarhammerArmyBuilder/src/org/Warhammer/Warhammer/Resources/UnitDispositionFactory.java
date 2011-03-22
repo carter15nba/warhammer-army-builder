@@ -20,12 +20,13 @@ package org.Warhammer.Warhammer.Resources;
 import org.Warhammer.Warhammer.Case.Races;
 
 /**
- * Factory class to create objectes of the RaceUnitDisposition class.
+ * Factory class to create objectes of the UnitDisposition class.
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class RaceUnitDispositionFactory {
-      /**
+public class UnitDispositionFactory {
+
+    /**
      * Method that creates a great army (5000 points or more)
      * @param incrementCharacters int The number that the characters increment
      * with per 1000 additional points
@@ -47,11 +48,11 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition greatArmy(int incrementCharacters,
+    private static UnitDisposition greatArmy(int incrementCharacters,
             int incrementLords, int incrementHeroes, int incrementCore,
             int incrementSpecialMin, int incrementSpecialMax,
             int incrementRareMin, int incrementRareMax, Races race, int armyPoints){
-        RaceUnitDisposition tmp = getRaceArmy(race,4000);
+        UnitDisposition tmp = getRaceArmy(race,4000);
         int multiplier = 0;
         int nextPointIterator=4000;
         do{
@@ -75,7 +76,7 @@ public class RaceUnitDispositionFactory {
         minRare += incrementRareMin*multiplier;
         maxSpecial += incrementSpecialMax*multiplier;
         minSpecial += incrementSpecialMin*multiplier;
-        return new RaceUnitDisposition(maxCharacters, maxLords, maxHeroes,
+        return new UnitDisposition(maxCharacters, maxLords, maxHeroes,
                 minCore, minSpecial, maxSpecial, minRare, maxRare);
     }
 
@@ -85,8 +86,8 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    public static RaceUnitDisposition getRaceArmy(Races race,int armyPoints){
-        RaceUnitDisposition _return = null;
+    public static UnitDisposition getRaceArmy(Races race,int armyPoints){
+        UnitDisposition _return = null;
         switch(race){
             case Beastmen:
                 _return = getBeastmen(armyPoints);
@@ -142,21 +143,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getBeastmen(int armyPoints) {
+    private static UnitDisposition getBeastmen(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Beastmen,armyPoints);
     }
 
     /**
@@ -164,21 +164,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getWoodElves(int armyPoints) {
+    private static UnitDisposition getWoodElves(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Wood_Elves,armyPoints);
     }
 
     /**
@@ -186,18 +185,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getWarriorsOfChaos(int armyPoints) {
+    private static UnitDisposition getWarriorsOfChaos(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         //return greatArmy();
         throw new UnsupportedOperationException("Not yet implemented");
@@ -208,21 +207,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getVampireCounts(int armyPoints) {
+    private static UnitDisposition getVampireCounts(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Vampire_Counts,armyPoints);
     }
 
     /**
@@ -230,21 +228,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getTombKings(int armyPoints) {
+    private static UnitDisposition getTombKings(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Tomb_Kings,armyPoints);
     }
 
     /**
@@ -252,18 +249,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getSkaven(int armyPoints) {
+    private static UnitDisposition getSkaven(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         //return greatArmy();
         throw new UnsupportedOperationException("Not yet implemented");
@@ -274,21 +271,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getBretonnia(int armyPoints) {
+    private static UnitDisposition getBretonnia(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,0,4,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(5,1,5,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(7,2,7,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(9,3,9,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Bretonnia,armyPoints);
     }
 
     /**
@@ -296,18 +292,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getDaemonsOfChaos(int armyPoints) {
+    private static UnitDisposition getDaemonsOfChaos(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         //return greatArmy();
         throw new UnsupportedOperationException("Not yet implemented");
@@ -318,21 +314,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getDarkElves(int armyPoints) {
+    private static UnitDisposition getDarkElves(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Dark_Elves,armyPoints);
     }
 
     /**
@@ -340,21 +335,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getDwarfs(int armyPoints) {
+    private static UnitDisposition getDwarfs(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Dwarfs,armyPoints);
     }
 
     /**
@@ -362,18 +356,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getEmpire(int armyPoints) {
+    private static UnitDisposition getEmpire(int armyPoints) {
         if(armyPoints<2000){
-            return new RaceUnitDisposition(3,0,3,2,0,3,0,1);
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            return new RaceUnitDisposition(4,1,4,3,0,4,0,2);
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            return new RaceUnitDisposition(6,2,6,4,0,5,0,3);
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            return new RaceUnitDisposition(8,3,8,5,0,6,0,4);
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
         return greatArmy(2,1,2,1,0,1,0,1,Races.Empire,armyPoints);
     }
@@ -383,18 +377,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getLizardmen(int armyPoints) {
+    private static UnitDisposition getLizardmen(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         //return greatArmy();
         throw new UnsupportedOperationException("Not yet implemented");
@@ -405,18 +399,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getOgreKingdoms(int armyPoints) {
+    private static UnitDisposition getOgreKingdoms(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            //return new UnitDisposition();
         }
         //return greatArmy();
         throw new UnsupportedOperationException("Not yet implemented");
@@ -427,21 +421,20 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getOrcsAndGoblins(int armyPoints) {
+    private static UnitDisposition getOrcsAndGoblins(int armyPoints) {
         if(armyPoints<2000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(3,0,3,2,0,3,0,1);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(4,1,4,3,0,4,0,2);
         }
         if(armyPoints>=3000 && armyPoints<4000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(6,2,6,4,0,5,0,3);
         }
         if(armyPoints>=4000 && armyPoints<5000){
-            //return new RaceUnitDisposition();
+            return new UnitDisposition(8,3,8,5,0,6,0,4);
         }
-        //return greatArmy();
-        throw new UnsupportedOperationException("Not yet implemented");
+        return greatArmy(2,1,2,1,0,1,0,1,Races.Orcs_and_Goblins,armyPoints);
     }
 
     /**
@@ -449,18 +442,18 @@ public class RaceUnitDispositionFactory {
      * @param armyPoints int The army points
      * @return RaceUnitDispositon The requested army disposition
      */
-    private static RaceUnitDisposition getHighElves(int armyPoints){
+    private static UnitDisposition getHighElves(int armyPoints){
         if(armyPoints<2000){
-            return new RaceUnitDisposition(3,0,3,1,0,5,0,2);
+            return new UnitDisposition(3,0,3,1,0,5,0,2);
         }
         if(armyPoints>=2000 && armyPoints<3000){
-            return new RaceUnitDisposition(4,1,4,2,0,6,0,4);
+            return new UnitDisposition(4,1,4,2,0,6,0,4);
         }
         if(armyPoints>=3000 && armyPoints<armyPoints){
-            return new RaceUnitDisposition(6,2,6,3,0,7,0,6);
+            return new UnitDisposition(6,2,6,3,0,7,0,6);
         }
         if(armyPoints>=armyPoints && armyPoints<5000){
-            return new RaceUnitDisposition(8,3,8,4,0,8,0,8);
+            return new UnitDisposition(8,3,8,4,0,8,0,8);
         }
         return greatArmy(2,1,2,1,0,1,0,2,Races.High_Elves,armyPoints);
     }

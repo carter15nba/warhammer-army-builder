@@ -23,7 +23,7 @@ import java.util.Set;
 import org.Warhammer.Warhammer.Resources.Causes;
 
 //TODO Add logic to prevent too many lord and heor units based on army points.
-
+//TODO: Assign utility unit number if units == 0, to mean that all units in the group gets the promotion at points/model
 /**
  * Class to verify if the rules governing the creation of an army are adhered
  * @author Glenn Rune Strandbåten
