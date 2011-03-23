@@ -34,55 +34,6 @@ import java.util.logging.Logger;
 public class SQLFileParser {
 
     /**
-     * Method to parse the SQL file specified by the file path This method will
-     * also execute the parsed SQLs
-     * @param sqlPath The file path to the sql file
-     */
-    public void parseSQLFile(String sqlPath){
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                getClass().getResourceAsStream(sqlPath)));
-            int i=0;
-            ArrayList<String> statements = new ArrayList<String>();
-            String sql="";
-            boolean comment = false;
-            while((i=reader.read())!=-1){
-                if(i=='-'){
-                    comment=true;
-                }
-                if((i=='\n')||(i=='\r')){
-                    comment=false;
-                    continue;
-                }
-                if(!comment){
-                    if(';'==i){
-                        sql+=" ";
-                        statements.add(sql);
-                        sql="";
-                    }
-                    else{
-                        sql+=(char)i;
-                    }
-                }
-            }
-            executeSQL(statements);
-        }
-        catch (IOException ex) {
-            Logger.getLogger(SQLFileParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    /**
-     * Method used to qxecute the parsed SQL statements.
-     * @param sqls ArrayList with string representing the parsed SQL statements.
-     */
-    private void executeSQL(ArrayList<String> sqls){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        for (String sql : sqls) {
-            dbm.executeSQL(sql,DatabaseManager.UPDATE_QUERY);
-        }
-    }
-    /**
      * This method is used to parse and return the SQL statements found in
      * the specified file. Each statement (separated by a colon [;]) is parsed
      * in its entirety and stored in a new position in the ArrayList. Separate

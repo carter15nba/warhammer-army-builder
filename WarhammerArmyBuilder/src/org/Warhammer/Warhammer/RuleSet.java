@@ -17,25 +17,24 @@
 
 package org.Warhammer.Warhammer;
 
-import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.ArrayList;
+import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.Set;
+import org.Warhammer.Database.DatabaseManager;
+import org.Warhammer.Warhammer.Resources.ArmyDisposition;
 import org.Warhammer.Warhammer.Resources.Causes;
+import org.Warhammer.Warhammer.Resources.ErrorManager;
+import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
+import org.Warhammer.Warhammer.Resources.UnitDispositionFactory;
 
-//TODO Add logic to prevent too many lord and heor units based on army points.
 //TODO: Assign utility unit number if units == 0, to mean that all units in the group gets the promotion at points/model
 /**
  * Class to verify if the rules governing the creation of an army are adhered
  * @author Glenn Rune Strandbåten
- * @version 0.4
+ * @version 0.5
  */
 public class RuleSet {
 
-    public enum Messages{OK, FAIL, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS,
-    TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS,
-    TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,
-    TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP,TOO_FEW_POINTS_TOTAL,
-    TOO_MANY_POINTS_TOTAL,TOO_MANY_HEROES,TOO_MANY_LORDS};
     private int totalCost;
     private int coreCost;
     private int specialCost;
@@ -44,13 +43,18 @@ public class RuleSet {
     private int lordCost;
     private int armyPoints;
     private int threshold;
+    private int rareDuplicates;
+    private int specialDuplicates;
     private double LIMIT_LORDS_MAX = 0.25;
     private double LIMIT_HEROES_MAX = 0.25;
     private double LIMIT_CORE_MIN = 0.25;
     private double LIMIT_SPECIAL_MAX = 0.50;
     private double LIMIT_RARE_MAX = 0.25;
 
+    private ArrayList<String> unitNames;
+    private ArrayList<Integer> unitNumber;
     private ErrorManager errorManager;
+    private ArmyDisposition armyDisposition;
 
     /**
      * Default constructor (sets threshold value of 25)
@@ -58,6 +62,9 @@ public class RuleSet {
     public RuleSet(){
         threshold = 25;
         errorManager = new ErrorManager();
+        armyDisposition = new ArmyDisposition(errorManager);
+        unitNames = new ArrayList<String>();
+        unitNumber = new ArrayList<Integer>();
     }
     /**
      * Constructor
@@ -66,31 +73,51 @@ public class RuleSet {
     public RuleSet(int threshold){
         this.threshold = threshold;
         errorManager = new ErrorManager();
+        armyDisposition = new ArmyDisposition(errorManager);
     }
 
     /**
-     * This method is verifies that the created army follows the army
-     * disposition rules, e.g.: that no more than the alowed number of
-     * points are used on lords/heroes and core units etc. The method
-     * returns an array containing all (if any) error that have been found
-     * during the verification. If no errors is found an array with a single OK
-     * message is returned.
-     *
-     * @param army The Army object to be verified
-     * @return Messages[] array with all the errors found in the army disposition,
-     * single entry array with an OK message if no errors where found.
+     * Method that initializes (resets) the resources which is required to check
+     * if an army is following its disposition rules.
+     * @param army
      */
-    public Messages[] isFollowingArmyDispositionRules(Army army){
+    private void initResources(Army army){
         if(armyPoints==0){
             this.armyPoints = army.calculateCost();
         }
         else
             this.armyPoints = army.getArmyPoints();
+        errorManager.resetErrors();
         resetCosts();
-        errorManager.calculateNumberOfDuplicates();
+        calculateNumberOfDuplicates();
+        unitNames.clear();
+        unitNumber.clear();
+    }
+
+    /**
+     * This method is verifies that the created army follows the army
+     * disposition rules, e.g.: that no more than the allowed number of
+     * points are used on lords/heroes and core units etc. The method
+     * returns an array containing all (if any) error that have been found
+     * during the verification. If no errors is found an array with a single OK
+     * message is returned.
+     * @param army The Army object to be verified
+     * @return Messages[] array with all the errors found in the army disposition,
+     * single entry array with an OK message if no errors where found.
+     */
+    public Messages[] isFollowingArmyDispositionRules(Army army){
+        initResources(army);
         calculatePointsUsage(army);
         calculateTotalCost();
-        verifyLegalPointDistribution();
+        verifyLegalPointDistribution(); 
+        boolean b = armyDisposition.isFollowingDispositionRules(army,
+                UnitDispositionFactory.getRaceArmy(army.getPlayerRace(), armyPoints));
+        if(b){
+            System.out.println("+--------------");
+            System.out.println(toString());
+            System.out.println("+--------------");
+
+        }
         if(totalCost>armyPoints)
             errorManager.addError(Messages.TOO_MANY_POINTS_TOTAL);
         else if(totalCost<(armyPoints-threshold))
@@ -201,7 +228,6 @@ public class RuleSet {
      * @param army The Army to be calculated.
      */
     private void calculatePointsUsage(Army army){
-        errorManager = new ErrorManager();
         Set<ArmyUnit> armyUnits = army.getArmyUnits();
         for (ArmyUnit u : armyUnits) {
             int cost = army.calculateTotalUnitCost(u);
@@ -224,7 +250,7 @@ public class RuleSet {
                     specialCost += cost;
                     break;
             }
-            errorManager.checkUnit(unit,u.getNumberOfUnits());
+            checkUnit(unit,u.getNumberOfUnits());
         }
     }
 
@@ -250,129 +276,83 @@ public class RuleSet {
     }
 
     /**
-     * Private inner class to manage the error and causes. This class also
-     * dictates how many duplicates of a given unit (special/rare) you can
-     * have based on the number of army points.
+     * This method calculates the amount of rare and special unit duplicates
+     * that can be present on the battlefield. Based on the the available
+     * army points set in the main object (outer class).
      */
-    private class ErrorManager{
-        private int rareDuplicates;
-        private int specialDuplicates;
-        private ArrayList<String> unitNames;
-        private ArrayList<Integer> unitNumber;
-        private ArrayList<Messages> errors;
-        private ArrayList<Causes> causes;
-        public ErrorManager(){
-            unitNames = new ArrayList<String>();
-            unitNumber = new ArrayList<Integer>();
-            errors = new ArrayList<Messages>();
-            causes = new ArrayList<Causes>();
-            calculateNumberOfDuplicates();
+    public final void calculateNumberOfDuplicates(){
+        if(armyPoints>=3000){
+            rareDuplicates = 4;
+            specialDuplicates = 6;
         }
-        /**
-         * This method calculates the amount of rare and special unit duplicates
-         * that can be present on the battlefield. Based on the the available
-         * army points set in the main object (outer class).
-         */
-        public final void calculateNumberOfDuplicates(){
-            if(armyPoints>=3000){
-                rareDuplicates = 4;
-                specialDuplicates = 6;
+        else{
+            rareDuplicates = 2;
+            specialDuplicates = 3;
+        }
+    }
+
+    /**
+     * Method used to check if the unit follows the disposition rules. This
+     * includes if it have too few or too many units in the unit group and
+     * if the special and rare duplicates are within bounds.  This method
+     * adds appropriate errors to the error list when errors are found.
+     * @param unit The unit to be checked
+     * @param numberOfUnits The number of units in the group.
+     */
+    public void checkUnit(Unit unit, int numberOfUnits){
+        armyType aT =  unit.getArmyType();
+        int min = unit.getMinNumber();
+        int max = unit.getMaxNumber();
+        if((numberOfUnits>max)&&(max!=0)){
+            errorManager.addError(Messages.TOO_MANY_UNITS_IN_GROUP);
+            errorManager.addCause(new Causes(unit, Messages.TOO_MANY_UNITS_IN_GROUP));
+        }
+        if(numberOfUnits<min){
+            errorManager.addError(Messages.TOO_FEW_UNITS_IN_GROUP);
+            errorManager.addCause(new Causes(unit, Messages.TOO_FEW_UNITS_IN_GROUP));
+        }
+        if(aT==armyType.Rare||aT==armyType.Special){
+            boolean contains = unitNames.contains(unit.getName());
+            if(contains){
+                int idx = unitNames.indexOf(unit.getName());
+                unitNumber.set(idx, (unitNumber.get(idx)+1));
+                verifyDuplicateUnits(unit,idx);
             }
             else{
-                rareDuplicates = 2;
-                specialDuplicates = 3;
+                unitNames.add(unit.getName());
+                unitNumber.add(1);
             }
         }
-
-        /**
-         * Method used to check if the unit follows the disposition rules. This
-         * includes if it have too few or too many units in the unit group and
-         * if the special and rare duplicates are within bounds.  This method
-         * adds appropriate errors to the error list when errors are found.
-         * @param unit The unit to be checked
-         * @param numberOfUnits The number of units in the group.
-         */
-        public void checkUnit(Unit unit, int numberOfUnits){
-            armyType aT =  unit.getArmyType();
-            int min = unit.getMinNumber();
-            int max = unit.getMaxNumber();
-            if((numberOfUnits>max)&&(max!=0)){
-                addError(Messages.TOO_MANY_UNITS_IN_GROUP);
-                causes.add(new Causes(unit, Messages.TOO_MANY_UNITS_IN_GROUP));
-            }
-            if(numberOfUnits<min){
-                addError(Messages.TOO_FEW_UNITS_IN_GROUP);
-                causes.add(new Causes(unit, Messages.TOO_FEW_UNITS_IN_GROUP));
-            }
-            if(aT==armyType.Rare||aT==armyType.Special){
-                boolean contains = unitNames.contains(unit.getName());
-                if(contains){
-                    int idx = unitNames.indexOf(unit.getName());
-                    unitNumber.set(idx, (unitNumber.get(idx)+1));
-                    verifyDuplicateUnits(unit,idx);
+    }
+    /**
+     * This private method is used by the checkUnit method to verify if
+     * no more than the alloted number of rare and duplicate units are
+     * used in the creation of the army.
+     * @param unit The unit to check
+     * @param index The index in the list where the number of unit groups
+     * resides.
+     */
+    private void verifyDuplicateUnits(Unit unit,int index){
+        armyType aT =  unit.getArmyType();
+        int number = unitNumber.get(index);
+        switch(aT){
+            case Special:
+                if(number>specialDuplicates){
+                    errorManager.addError(Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
+                    errorManager.addCause(new Causes(unit, Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS));
                 }
-                else{
-                    unitNames.add(unit.getName());
-                    unitNumber.add(1);
+                break;
+            case Rare:
+                if(number>rareDuplicates){
+                    errorManager.addError(Messages.TOO_MANY_DUPLICATE_RARE_UNITS);
+                    errorManager.addCause(new Causes(unit, Messages.TOO_MANY_DUPLICATE_RARE_UNITS));
                 }
-            }
+                break;
         }
-        /**
-         * This private method is used by the checkUnit method to verify if
-         * no more than the alloted number of rare and duplicate units are
-         * used in the creation of the army.
-         * @param unit The unit to check
-         * @param index The index in the list where the number of unit groups
-         * resides.
-         */
-        private void verifyDuplicateUnits(Unit unit,int index){
-            armyType aT =  unit.getArmyType();
-            int number = unitNumber.get(index);
-            switch(aT){
-                case Special:
-                    if(number>specialDuplicates){
-                        addError(Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS);
-                        causes.add(new Causes(unit, Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS));
-                    }
-                    break;
-                case Rare:
-                    if(number>rareDuplicates){
-                        addError(Messages.TOO_MANY_DUPLICATE_RARE_UNITS);
-                        causes.add(new Causes(unit, Messages.TOO_MANY_DUPLICATE_RARE_UNITS));
-                    }
-                    break;
-            }
-        }
-        /**
-         * Method to add an error to the error list if and only if the
-         * error is not already present.
-         * @param m The error message to add to the list.
-         */
-        public void addError(Messages m){
-            if(!errors.contains(m)){
-                errors.add(m);
-            }
-        }
-        /**
-         * Method to get all the errors found in the case.
-         * @return The array with the errors found, or a single entry array
-         * with and OK message if no errors were found.
-         */
-        public Messages[] getErrors(){
-            if(errors.isEmpty())
-                return new Messages[]{Messages.OK};
-            Messages[] array = new Messages[errors.size()];
-            return errors.toArray(array);        
-        }
-        /**
-         * Method to get all the error causes found in the case.
-         * @return The array with the causes or null if no causes where found.
-         */
-        public Causes[] getCauses(){
-            if(causes.isEmpty())
-                return new Causes[0];
-            Causes[] array = new Causes[causes.size()];
-            return causes.toArray(array);
-        }
+    }
+    @Override
+    public String toString(){
+        //TODO: complete toString()
+        return armyDisposition.toString();
     }
 }
