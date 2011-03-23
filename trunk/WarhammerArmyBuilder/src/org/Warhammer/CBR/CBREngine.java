@@ -41,18 +41,14 @@ import org.Warhammer.Util.*;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
-import org.Warhammer.Warhammer.RuleSet;
-import org.Warhammer.Warhammer.RuleSet.Messages;
 import org.Warhammer.Warhammer.Unit;
-import org.Warhammer.Warhammer.Unit.armyType;
-import org.Warhammer.Warhammer.Unit.unitType;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
  * @version 0.2.1
  */
 public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication{
-
+    //TODO: REMOVE ALL System.out.println() from all classes. 
     private Connector connector;
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
@@ -129,11 +125,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getDescription();
             Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
-            RuleSet rs = new RuleSet();
-            Messages[] msg = rs.isFollowingArmyDispositionRules(adaptedCase.getArmy());
-            for (Messages object : msg) {
-                System.out.println("Message: "+object);
-            }
+            PrintFactory.printCase(adaptedCase, true);
         }
         
 //        RuleSet rs = new RuleSet();

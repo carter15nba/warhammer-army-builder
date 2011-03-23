@@ -17,7 +17,7 @@
 
 package org.Warhammer.Warhammer.Resources;
 
-import org.Warhammer.Warhammer.RuleSet.Messages;
+import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 import org.Warhammer.Warhammer.Unit;
 
 /**

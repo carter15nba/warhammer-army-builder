@@ -86,7 +86,7 @@ public class SimilarityMeasure {
      * the name specified local similarity function could not be found.
      */
     private LocalSimilarityFunction localSimilarityFactory(String name){
-        //TODO: Dynamuc user selected weigths
+        //TODO: User spesified weigth
         if(name.equals("Army"))
             return new ArmySimilarity(1.0,1.0);
         else if(name.equals("Enum"))

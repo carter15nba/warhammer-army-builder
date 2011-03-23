@@ -6,9 +6,9 @@
       <generator class="increment"/>
     </id>
     <property column="COST" name="cost"/>
-    <property column="NAME" length="30" name="name"/>
+    <property column="NAME" length="35" name="name"/>
     <property column="RANGE" name="range" type="integer"/>
-    <property column="MODIFIER" length="50" name="modifier"/>
+    <property column="MODIFIER" length="60" name="modifier"/>
     <property column="USABLEBY" length="50" name="usableBy"/>
     <property column="ITEMTYPE" length="20" name="itemType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">

@@ -5,6 +5,6 @@
     <id name="id" type="integer" unsaved-value="0">
       <!--      <generator class=""/>-->
     </id>
-    <property column="specialRule" length="30" name="rule"/>
+    <property column="specialRule" length="35" name="rule"/>
   </class>
 </hibernate-mapping>

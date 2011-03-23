@@ -17,6 +17,7 @@
 
 package org.Warhammer.CBR;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import jcolibri.cbrcore.CBRQuery;
@@ -24,8 +25,7 @@ import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Warhammer.*;
-import org.Warhammer.Warhammer.RuleSet.Messages;
-import org.apache.derby.iapi.services.i18n.MessageService;
+import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 
 /**
  * Class to perform the case adaption (testing stages only)
@@ -117,7 +117,7 @@ public class AdaptionEngine {
                         index = i;
                     }
                 }
-                //Adapt most similar
+                //Adapt most similar unit to be the requested unit
                 ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(adaptedArmy.getArmyUnits(), index);
                 System.out.println("   changed unit: "+armyUnit.getUnit().getName()+", to unit: "+query.getName());
                 armyUnit.setUnit(query);
@@ -134,10 +134,11 @@ public class AdaptionEngine {
         RuleSet rule = new RuleSet();
         Messages[] messages = rule.isFollowingArmyDispositionRules(army);
         while(messages[0]!=Messages.OK){
-            //
-
-
-
+            for (Messages message : messages) {
+                //TODO: Create logic that changes the case based on the broken rules.
+                
+            }
+            //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
         }
 
