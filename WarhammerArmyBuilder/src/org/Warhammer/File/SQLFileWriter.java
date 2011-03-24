@@ -138,8 +138,7 @@ public class SQLFileWriter {
     /**
      * Method to write a SQL file with the equipment and rule relations of a
      * Warhammer race.
-     * @param race String representing the Warhammer race, used to name the file.
-     * @param sql The ArrayList with the SQL statements to be written.
+     * @param sql ArrayList with the SQL statements to be written.
      */
     public static void write_eq_ruleSQLFile(ArrayList<String> sql) {
         java.io.File file = new java.io.File("src/org/Warhammer/Database/Resources/eq_rules.sql");
@@ -166,8 +165,7 @@ public class SQLFileWriter {
      * Method to write a SQL file with an case
      * This method <b>does not</b> overwrite any existing files but create a new
      * numbered file.
-     * @param race String representing the Warhammer race, used to name the file.
-     * @param sql The ArrayList with the SQL statements to be written.
+     * @param sql ArrayList with the SQL statements to be written.
      */
     public static void write_caseSQLFile(ArrayList<String> sql) {
         int num = -1;

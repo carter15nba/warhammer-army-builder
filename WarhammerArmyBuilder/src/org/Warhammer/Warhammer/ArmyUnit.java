@@ -88,7 +88,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @param equipmentID the equipmentID to set
+     * @param equipment the equipmentID to set
      */
     public void setEquipment(Set<Equipment> equipment) {
         this.equipment = equipment;
@@ -102,7 +102,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @param utilityID the utilityID to set
+     * @param utility the utility to set
      */
     public void setUtility(Set<UtilityUnit> utility) {
         this.utility = utility;
@@ -120,5 +120,30 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
      */
     public void setNumberOfUnits(int numberOfUnits) {
         this.numberOfUnits = numberOfUnits;
+    }
+
+    /**
+     * Method that determines if the unit have full command and return the
+     * results
+     * @return <ul><li>true - if the unit have full command</li>
+     * <li>false - id the unit does not have full command</li></ul>
+     */
+    public boolean haveFullCommand(){
+        boolean stdb = false;
+        boolean music = false;
+        boolean promo = false;
+        for (Equipment eq : equipment) {
+            if(eq.getName().contains("Standard bearer"))
+                stdb = true;
+            if(eq.getName().contains("Musician"))
+                music = true;
+        }
+        for(UtilityUnit util : utility){
+            if(util.isPromotionUnit())
+                promo = true;
+        }
+        if(stdb&&music&&promo)
+            return true;
+        return false;
     }
 }

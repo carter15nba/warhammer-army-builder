@@ -20,7 +20,7 @@ package org.Warhammer.UI.Resources;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.3
  */
 public class CheckListItem {
     private String label;

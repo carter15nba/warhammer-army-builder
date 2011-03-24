@@ -34,6 +34,11 @@ public class RecreateDatabase {
     private DatabaseManager dbm;
     private File[] files;
 
+    public static void main(String[] args){
+        RecreateDatabase rd = new RecreateDatabase();
+        rd.recreateDatabase();
+    }
+
     /**
      * Method which loads all the sql files within the application.
      */

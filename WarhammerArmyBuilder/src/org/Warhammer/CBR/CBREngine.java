@@ -48,7 +48,9 @@ import org.Warhammer.Warhammer.Unit;
  * @version 0.2.1
  */
 public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication{
-    //TODO: REMOVE ALL System.out.println() from all classes. 
+    //TODO: REMOVE ALL System.out.println() used for testing from all classes.
+    //TODO: REMOVE ALL TODO'S (if they are completed/redundant/no longer valid)
+    //TODO: Promote all(most) classes to version 1.0 at launch
     private Connector connector;
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
@@ -179,13 +181,13 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
                 ArmyUnit armyUnit = new ArmyUnit();
 
-                Unit unit = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
+                Unit unit = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
                 armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(10);
                 armyUnitSet.add(armyUnit);
 
                 armyUnit = new ArmyUnit();
-                unit = CreateUnitFromDB.createUnitFromDB("Empire:Greatswords");
+                unit = CreateObjectFromDB.createUnitFromDB("Empire:Greatswords");
                 armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
@@ -197,7 +199,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 unit.setEquipment(sEq);
 
                 armyUnit = new ArmyUnit();
-                unit = CreateUnitFromDB.createUnitFromDB("Empire:Steam Tank");
+                unit = CreateObjectFromDB.createUnitFromDB("Empire:Steam Tank");
                 armyUnit.setNumberOfUnits(1);
                 armyUnit.setUnit(unit);
                 armyUnitSet.add(armyUnit);
@@ -348,8 +350,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 PrintFactory.printUnit(unit2);
                 System.out.println("Simil: "+sim);
 
-                unit1 = CreateUnitFromDB.createUnitFromDB("Empire:Halberdiers");
-                unit2 = CreateUnitFromDB.createUnitFromDB("High_Elves:Spearmen");
+                unit1 = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
+                unit2 = CreateObjectFromDB.createUnitFromDB("High_Elves:Spearmen");
                 sim = us.compute(unit1,unit2);
                 PrintFactory.printUnit(unit1);
                 PrintFactory.printUnit(unit2);

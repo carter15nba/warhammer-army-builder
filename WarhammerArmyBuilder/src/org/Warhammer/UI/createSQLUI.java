@@ -52,7 +52,7 @@ import org.Warhammer.Warhammer.Equipment.itemType;
 public class createSQLUI extends javax.swing.JFrame {
 
     private static final String insertUnit = "INSERT INTO UNIT(NAME,RACE,COST,MINUNITS,MAXUNITS,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,ARMYTYPE,MAGICPOINTS,WEAPONTYPE) VALUES(";
-    private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE) VALUES(";
+    private static final String insertUtility = "INSERT INTO UTILITYUNIT(ID,NAME,COST,MINUNITS,REQUIRED,MOVEMENT,WEAPONSKILL,BALLISTICSKILL,STRENGTH,TOUGHNESS,WOUNDS,INITIATIVE,ATTACK,LEADERSHIP,UNITTYPE,PROMOTIONUNIT) VALUES(";
     private static final String insertUnit_Util = "INSERT INTO UNIT_UTILITY(NAME,UTILID)VALUES(";
     private int pane;
     private int id=0;
@@ -269,14 +269,14 @@ public class createSQLUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Name", "Cost", "Number of Units", "Required", "M", "WS", "BS", "S", "T", "W", "I", "A", "LD", "Unit type"
+                "ID", "Name", "Cost", "Number of Units", "Required", "M", "WS", "BS", "S", "T", "W", "I", "A", "LD", "Unit type", "Promotion Unit"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -607,7 +607,7 @@ public class createSQLUI extends javax.swing.JFrame {
         else if(pane==1){
             tab = utilTable;
             id+= 1;
-            row = new Object[]{id,null,null,null,false,null,null,null,null,null,null,null,null,null,"N/A"};
+            row = new Object[]{id,null,null,null,false,null,null,null,null,null,null,null,null,null,"N/A",false};
         }
         else if(pane==2){
             tab = tableAssocUnit_Util;
@@ -1182,11 +1182,15 @@ public class createSQLUI extends javax.swing.JFrame {
             if(s[14].contentEquals("_na"))
                 s[14] = "N/A";
             boolean req;
+            boolean promo = false;
             if(Integer.parseInt(s[4])==0)
                 req=false;
             else
                 req=true;
-            tm.addRow(new Object[]{Integer.parseInt(s[0]),name[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),req,s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14]});
+            if(s.length>15)
+            if(Integer.parseInt(s[15])==1)
+                promo=true;
+            tm.addRow(new Object[]{Integer.parseInt(s[0]),name[1],Integer.parseInt(s[2]),Integer.parseInt(s[3]),req,s[5],s[6],s[7],s[8],s[9],s[10],s[11],s[12],s[13],s[14],promo});
         }
 
         for (int i = 0; i < raceBox.getItemCount() ; i++) {
@@ -1288,10 +1292,14 @@ public class createSQLUI extends javax.swing.JFrame {
             String a = utilTable.getValueAt(i,12).toString();
             String ld = utilTable.getValueAt(i,13).toString();
             String ut = utilTable.getValueAt(i,14).toString();
+            boolean promo = (Boolean)utilTable.getValueAt(i,15);
             String race = raceBox.getSelectedItem().toString();
             if(ut.contentEquals("N/A"))
                 ut="_na";
-            String stat = insertUtility+idx+",'"+race+":"+name+"',"+cost+","+min+","+iReq+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"')";
+            int promotion = 0;
+            if(promo)
+                promotion=1;
+            String stat = insertUtility+idx+",'"+race+":"+name+"',"+cost+","+min+","+iReq+",'"+m+"','"+ws+"','"+bs+"','"+s+"','"+t+"','"+w+"','"+in+"','"+a+"','"+ld+"','"+ut+"',"+promotion+")";
             System.out.println(stat);
             sql.add(stat);
     }}

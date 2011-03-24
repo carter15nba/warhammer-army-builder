@@ -217,8 +217,8 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
 
     /**
      * Method that return the similarity between army type. (if applicable).
-     * @param caseType armyType The army type of the case unit.
-     * @param queryType armyType The amry type of the query unit.
+     * @param caseArmy armyType The army type of the case unit.
+     * @param queryArmy armyType The amry type of the query unit.
      * @return double in the range: [0:1]
      */
     private double computeArmyTypeSimilarity(armyType caseArmy, armyType queryArmy){
@@ -253,8 +253,8 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
 
     /**
      * Method that return the similarity between weapon type. (if applicable).
-     * @param caseType weaponType The weapon type of the case unit.
-     * @param queryType weaponType The weapon type of the query unit.
+     * @param caseWeapon weaponType The weapon type of the case unit.
+     * @param queryWeapon weaponType The weapon type of the query unit.
      * @return double in the range: [0:1]
      */
     private double computeWeaponSimilarity(weaponType caseWeapon, weaponType queryWeapon){

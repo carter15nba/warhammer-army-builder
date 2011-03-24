@@ -92,7 +92,7 @@ public class CoreUnit implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @param number the number to set
+     * @param maxNumber the number to set
      */
     public void setMaxNumber(int maxNumber) {
         this.maxNumber = maxNumber;

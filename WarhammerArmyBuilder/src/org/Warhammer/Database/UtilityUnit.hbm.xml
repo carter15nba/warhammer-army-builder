@@ -17,11 +17,12 @@
     <property column="TOUGHNESS" length="7" name="toughness"/>
     <property column="UNITTYPE" length="3" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">org.Warhammer.Warhammer.UtilityUnit$unitType</param>
+        <param name="enumClassName">org.Warhammer.Warhammer.Unit$unitType</param>
       </type>
     </property>
     <property column="WEAPONSKILL" length="7" name="weaponSkill"/>
     <property column="WOUNDS" length="7" name="wounds"/>
     <property column="REQUIRED" name="required" type="boolean"/>
+    <property column="PROMOTIONUNIT" name="promotionUnit" type="boolean"/>
   </class>
 </hibernate-mapping>

@@ -20,7 +20,6 @@ package org.Warhammer.Warhammer;
 import java.util.ArrayList;
 import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.Set;
-import org.Warhammer.Database.DatabaseManager;
 import org.Warhammer.Warhammer.Resources.ArmyDisposition;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager;
@@ -120,8 +119,9 @@ public class RuleSet {
         }
         if(totalCost>armyPoints)
             errorManager.addError(Messages.TOO_MANY_POINTS_TOTAL);
-        else if(totalCost<(armyPoints-threshold))
+        else if(totalCost<(armyPoints-threshold)){
             errorManager.addError(Messages.TOO_FEW_POINTS_TOTAL);
+        }
         return getErrors();
     }
 
