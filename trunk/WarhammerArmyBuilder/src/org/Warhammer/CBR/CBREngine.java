@@ -205,8 +205,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnitSet.add(armyUnit);
                 queryCase.setArmy(queryArmy);
 
-
-
                 System.out.println("Query Case");
                 PrintFactory.printCase(queryCase,true);
 
@@ -216,152 +214,24 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
             else if(args[0].contentEquals("sqlPrint")){
                 DatabaseManager dbm = DatabaseManager.getInstance();
                 dbm.connectWithoutHibernate();
-                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT order by NAME ASC", DatabaseManager.SELECT_QUERY);
-                
+                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT order by NAME ASC", DatabaseManager.SELECT_QUERY);             
                 while(res.next()){
                     System.out.println(res.getString("name"));
                 }
                 dbm.disconnectNoHibernate(true);
             }
-            else if(args[0].contentEquals("simTest")){
-                //Create case 0
-                Case _case = new Case();
-                _case.setID(0);
-                _case.setOpponent(Case.Races.Empire);
-                _case.setOutcome(Case.Outcomes.Victory);
-                //Create case 0 army
-                Army army = new Army();
-                army.setArmyPoints(2500);
-                army.setID(0);
-                army.setPlayerRace(Case.Races.Dwarfs);
-                //Create case 0 army 0 units
-                ArmyUnit a0 = new ArmyUnit();
-                a0.setArmyID(0);
-                a0.setID(0);
-                a0.setNumberOfUnits(10);
-                Unit u1 = new Unit();
-                u1.setName("Jojomen");
-                u1.setCost(1);
-                a0.setUnit(u1);
-
-                ArmyUnit a1 = new ArmyUnit();
-                a1.setArmyID(0);
-                a1.setID(0);
-                a1.setNumberOfUnits(20);
-                Unit u2 = new Unit();
-                Equipment e1 = new Equipment();
-                e1.setName("Roboman");
-                e1.setCost(500);
-                Set<Equipment> eqset = new HashSet<Equipment>();
-                eqset.add(e1);
-                u2.setName("Herculees");
-                u2.setCost(1);
-                a1.setUnit(u2);
-                a1.setEquipment(eqset);
-                Set<ArmyUnit> auset = new HashSet<ArmyUnit>();
-                auset.add(a0);
-                auset.add(a1);
-                army.setArmyUnits(auset);
-                _case.setArmy(army);
-
-                System.out.println("Case");
-                PrintFactory.printCase(_case, true);
-
-
-                //QUERY
-                Case _case1 = new Case();
-                _case1.setID(0);
-                _case1.setOpponent(Case.Races.Empire);
-                _case1.setOutcome(Case.Outcomes.Victory);
-                //Create case 0 army
-                Army army1 = new Army();
-                army1.setArmyPoints(2500);
-                army1.setID(0);
-                army1.setPlayerRace(Case.Races.Dwarfs);
-                //Create case 0 army 0 units
-                ArmyUnit a3 = new ArmyUnit();
-                a3.setArmyID(0);
-                a3.setID(0);
-                a3.setNumberOfUnits(10);
-                Unit u3 = new Unit();
-                u3.setName("Jojomen");
-                u3.setCost(1);
-                a3.setUnit(u3);
-
-                ArmyUnit a4 = new ArmyUnit();
-                a4.setArmyID(0);
-                a4.setID(0);
-                a4.setNumberOfUnits(20);
-                Unit u4 = new Unit();
-                Equipment e2 = new Equipment();
-                e2.setName("Roboman");
-                e2.setCost(500);
-                Set<Equipment> eqset1 = new HashSet<Equipment>();
-                eqset1.add(e1);
-                u4.setName("Herculees");
-                u4.setCost(1);
-                a4.setUnit(u4);
-                a4.setEquipment(eqset1);
-                Set<ArmyUnit> auset1 = new HashSet<ArmyUnit>();
-                auset1.add(a3);
-                auset1.add(a4);
-                army1.setArmyUnits(auset1);
-                _case1.setArmy(army1);
-                
-                System.out.println("Query");
-                PrintFactory.printCase(_case1, true);
-
-                org.Warhammer.CBR.Resources.ArmySimilarity armySim
-                        = new org.Warhammer.CBR.Resources.ArmySimilarity(1.0,1.0);
-                double comp = armySim.compute(army, army1);
-                System.out.println("computed similarity: "+comp);
-            }
             else if(args[0].equalsIgnoreCase("unitSimTest")){
-                Unit unit1 = new Unit();
-                unit1.setName("Unit1");
-                unit1.setArmyType(Unit.armyType.Hero);
-                unit1.setUnitType(Unit.unitType.In);
-                unit1.setAttack("4");
-                unit1.setBallisticSkill("5");
-                unit1.setInitiative("7");
-                unit1.setLeadership("8");
-                unit1.setMovement("4");
-                unit1.setStrength("4");
-                unit1.setToughness("4");
-                unit1.setWeaponSkill("5");
-                unit1.setWounds("5");
-
-                Unit unit2 = new Unit();
-                unit2.setName("Unit2");
-                unit2.setArmyType(Unit.armyType.Special);
-                unit2.setUnitType(Unit.unitType.WM);
-                unit2.setAttack("4");
-                unit2.setBallisticSkill("5");
-                unit2.setInitiative("7");
-                unit2.setLeadership("10");
-                unit2.setMovement("4");
-                unit2.setStrength("4");
-                unit2.setToughness("4");
-                unit2.setWeaponSkill("3");
-                unit2.setWounds("8");
                 UnitSimilarity us = new UnitSimilarity(1,1,1,1,1);
-                double sim = us.compute(unit1, unit2);
-                PrintFactory.printUnit(unit1);
-                PrintFactory.printUnit(unit2);
-                System.out.println("Simil: "+sim);
-
-                unit1 = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
-                unit2 = CreateObjectFromDB.createUnitFromDB("High_Elves:Spearmen");
-                sim = us.compute(unit1,unit2);
+                Unit unit1 = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
+                Unit unit2 = CreateObjectFromDB.createUnitFromDB("High_Elves:Spearmen");
+                double sim = us.compute(unit1,unit2);
                 PrintFactory.printUnit(unit1);
                 PrintFactory.printUnit(unit2);
                 System.out.println("Simil: "+sim);
             }
             System.exit(0);
         }
-        catch (ExecutionException ex) {
-            Logger.getLogger(CBREngine.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        catch (ExecutionException ex) {}
         System.exit(-1);
     }
 }
