@@ -22,6 +22,7 @@ import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.NNretrieval.similarity.StandardGlobalSimilarityFunction;
 import org.Warhammer.Warhammer.Case;
+import org.Warhammer.Warhammer.Case.Outcomes;
 
 /**
  * Class to compute the global average of all the local similarity functions.
@@ -33,6 +34,7 @@ public class Average extends StandardGlobalSimilarityFunction {
     private int numCalled;
     private Case.Races playerRace;
     private Case[] cases;
+    private Outcomes[] outcome;
 
     /**
      * Default constructor
@@ -41,11 +43,14 @@ public class Average extends StandardGlobalSimilarityFunction {
      */
     public Average(Collection<CBRCase> cases, CBRQuery cbrq) {
         this.cases = new Case[cases.size()];
+        this.outcome = new Outcomes[cases.size()];
         Case query = (Case) cbrq.getDescription();
         playerRace = query.getArmy().getPlayerRace();
         int count = 0;
         for (CBRCase _case : cases) {
-            this.cases[count++] = (Case) _case.getDescription();
+            Case desc = (Case) _case.getDescription();
+            this.cases[count] = desc;
+            this.outcome[count++] = desc.getOutcome();
         }
     }
 
@@ -53,7 +58,7 @@ public class Average extends StandardGlobalSimilarityFunction {
      * Method used to compute the global average of the local similarity functions.
      * @param values double array with the local similarity calculation results.
      * @param weigths double array with the weigths of the local similarity calculations.
-     * @param ivalue integer with the number of elements in the arrays.
+     * @param iValue integer with the number of elements in the arrays.
      * @return double with the global similarity value.
      */
     public double computeSimilarity(double[] values, double[] weigths, int iValue){
@@ -62,10 +67,14 @@ public class Average extends StandardGlobalSimilarityFunction {
         double weigthAdjust = 1;
         //Check if the query player race is equal to the case player race, if
         //not punish the similarity by increasing the weigths up 50%.
-        if(playerRace!=cases[numCalled++].getArmy().getPlayerRace()){
+        if(playerRace!=cases[numCalled].getArmy().getPlayerRace()){
             weigthAdjust = 1.5;
             //return 0;
         }
+        //Return 0 if the outcome is unknown, unknown outcomes are cases
+        //which have not been played (reported by the user).
+        if(outcome[numCalled++]==Outcomes.Unknown)
+            return 0;
         for(int i=0; i<iValue; i++){
             acum += values[i] * weigths[i];
             weigthsAcum += weigthAdjust * weigths[i];

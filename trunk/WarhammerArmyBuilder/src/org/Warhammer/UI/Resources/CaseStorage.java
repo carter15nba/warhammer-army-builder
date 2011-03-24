@@ -20,7 +20,7 @@ package org.Warhammer.UI.Resources;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.2
  */
 public class CaseStorage {
     private CheckListItem[] equipment;

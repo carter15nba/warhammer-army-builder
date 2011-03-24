@@ -76,7 +76,7 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @param armyID the armyID to set
+     * @param army the armyID to set
      */
     public void setArmy(Army army) {
         this.army = army;

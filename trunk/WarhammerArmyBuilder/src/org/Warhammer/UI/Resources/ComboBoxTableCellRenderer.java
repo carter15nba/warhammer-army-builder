@@ -23,7 +23,7 @@ import javax.swing.JTable;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.3
  */
 public class ComboBoxTableCellRenderer extends javax.swing.table.DefaultTableCellRenderer{
 

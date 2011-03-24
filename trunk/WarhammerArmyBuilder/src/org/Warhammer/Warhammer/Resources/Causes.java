@@ -71,7 +71,7 @@ public class Causes {
     }
     /**
      * Method to set the error being caused
-     * @param The error being caused
+     * @param cause Message error being caused
      */
     public void setCause(Messages cause){
         this.cause = cause;

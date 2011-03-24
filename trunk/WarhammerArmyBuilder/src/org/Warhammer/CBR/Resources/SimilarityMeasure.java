@@ -81,7 +81,6 @@ public class SimilarityMeasure {
      * Local similarity factory used to create the similarity function objects
      * used by different components of the case.
      * @param name String the name of the similarity function to create
-     * @param param integer A value used to configure similarity functions.
      * @return The LocalSimilarityFunction object that were created or null, if
      * the name specified local similarity function could not be found.
      */

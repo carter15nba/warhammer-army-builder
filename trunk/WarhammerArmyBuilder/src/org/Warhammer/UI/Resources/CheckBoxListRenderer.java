@@ -26,7 +26,7 @@ import javax.swing.ListCellRenderer;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 
+ * @version 0.2
  */
 public class CheckBoxListRenderer extends JCheckBox
         implements ListCellRenderer{

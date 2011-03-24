@@ -121,7 +121,7 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     }
 
     /**
-     * @param benefit the benefit to set
+     * @param modifier the benefit to set
      */
     public void setModifier(String modifier) {
         this.modifier = modifier;
