@@ -31,7 +31,8 @@ public class ErrorManager{
     TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,
     TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP,TOO_FEW_POINTS_TOTAL,
     TOO_MANY_POINTS_TOTAL,TOO_MANY_HEROES,TOO_MANY_LORDS, TOO_MANY_CHARACTERS,
-    TOO_FEW_CORE_GROUPS, TOO_MANY_SPECIAL_GROUPS, TOO_MANY_RARE_GROUPS};
+    TOO_FEW_CORE_GROUPS, TOO_MANY_SPECIAL_GROUPS, TOO_MANY_RARE_GROUPS,
+    NO_ARMY_GENERAL};
     private ArrayList<Messages> errors;
     private ArrayList<Causes> causes;
 
@@ -81,6 +82,22 @@ public class ErrorManager{
             return new Causes[0];
         Causes[] array = new Causes[causes.size()];
         return causes.toArray(array);
+    }
+
+    /**
+     * Method to get all the causes for the specified error messaqe.
+     * @param causedBy The Message that caused the error
+     * @return Array with the Causes of the specified error.
+     */
+    public Causes[] getCauses(Messages causedBy){
+        ArrayList<Causes> tmpList = new ArrayList<Causes>();
+        for (Causes cause : causes) {
+            Messages m = cause.getCause();
+            if(m==causedBy)
+                tmpList.add(cause);
+        }
+        Causes[] ret = new Causes[tmpList.size()];
+        return tmpList.toArray(ret);
     }
 
     /**

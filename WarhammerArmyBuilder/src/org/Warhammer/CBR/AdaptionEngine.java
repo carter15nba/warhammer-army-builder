@@ -26,23 +26,37 @@ import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
 import org.Warhammer.Warhammer.*;
+import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 import org.Warhammer.Warhammer.Unit.armyType;
 
 /**
- * Class to perform the case adaption (testing stages only)
+ * Class to perform the case adaption
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.3
  */
 public class AdaptionEngine {
 
     private double fullCommandPercentage = 0.8;
 
+    /**
+     * Method to adapt a case to fit the query.
+     * @param _case The case to be adapted
+     * @param query The query to adapt the case over.
+     * @return Case - The adapted case
+     */
     public Case adaptCase(Case _case, CBRQuery query){
         Case adaptedCase = naiveAdaption(_case, query);
         return refineAdaption(adaptedCase, query);
     }
 
+    /**
+     * Method to perfor a naïve preliminary case adaption. The player race,
+     * army points, and army is changed to reflect the querty.
+     * @param _case The case to be adapted
+     * @param query The query to adapt the case over
+     * @return Case - The adapted case
+     */
     private Case naiveAdaption(Case _case, CBRQuery query){
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
@@ -51,12 +65,29 @@ public class AdaptionEngine {
         adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
         return adaptedCase;
     }
+
+    /**
+     * Method to refine the results of the naïve adaption by changeing the case
+     * to adhere to the rules of the army creation process.
+     * @param adaptedCase The results of the naïve adaption
+     * @param query The query to adapt the case over
+     * @return Case - The adapted case
+     */
     private Case refineAdaption(Case adaptedCase, CBRQuery query){
         adaptedCase.setArmy(refineArmy(adaptedCase.getArmy()));
         //TODO: whatever goes here
         return adaptedCase;
     }
 
+    /**
+     * This method changes the army to contain all the units requested in the
+     * query, this methodd take no responsibility for that the adapted army
+     * adheres to the rules of the army creation process and is part of the naïve
+     * adaption.
+     * @param _case The case to adapt
+     * @param queryCase The query to adapt the case over
+     * @return Army - The adapted army.
+     */
     private Army adaptArmyFromQuery(Case _case, Case queryCase){
         Army adaptedArmy = Army.copy(_case.getArmy());
         adaptedArmy.setArmyPoints(queryCase.getArmy().getArmyPoints());
@@ -122,7 +153,6 @@ public class AdaptionEngine {
                 }
                 //Adapt most similar unit to be the requested unit
                 ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(adaptedArmy.getArmyUnits(), index);
-                System.out.println("   changed unit: "+armyUnit.getUnit().getName()+", to unit: "+query.getName());
                 armyUnit.setUnit(query);
                 armyUnit.setUtility(queryUnit.getUtility());
                 armyUnit.setEquipment(queryUnit.getEquipment());
@@ -133,13 +163,22 @@ public class AdaptionEngine {
         return adaptedArmy;
     }
 
+    /**
+     * This method is responsible for refining the army and ensures that all
+     * the rules are followed. This method will change, remove or add units
+     * to the army to ensure that the rules are followed. The results of this
+     * method is the final adapated case returned from the adaption engine. 
+     * @param army - The army to refine
+     * @return Army - The refined army.
+     */
     private Army refineArmy(Army army){
         RuleSet rule = new RuleSet();
         Messages[] messages = rule.isFollowingArmyDispositionRules(army);
         ArrayList<Unit> units;
+        //TODO: UNCOMMENT ADAPTION WHILE LOOP
 //        while(messages[0]!=Messages.OK){
             for (Messages message : messages) {
-                System.out.println(message.toString());
+                Causes[] causes;
                 switch(message){
                     case TOO_FEW_CORE_GROUPS:
                         units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
@@ -157,12 +196,16 @@ public class AdaptionEngine {
                         addUnitGroup(army, units, armyType.Core);
                         break;
                     case TOO_FEW_UNITS_IN_GROUP:
-                        break;
-                    case TOO_MANY_CHARACTERS:
+                        causes = rule.getCauses(message);
+                        increaseGroupUnits(army,causes);
                         break;
                     case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
+                        causes = rule.getCauses(message);
+                        decreaseDuplicates(army,causes);
                         break;
                     case TOO_MANY_DUPLICATE_RARE_UNITS:
+                        causes = rule.getCauses(message);
+                        decreaseDuplicates(army,causes);
                         break;
                     case TOO_MANY_HEROES:
                         break;
@@ -184,6 +227,8 @@ public class AdaptionEngine {
                         break;
                     case TOO_MANY_UNITS_IN_GROUP:
                         break;
+                    case NO_ARMY_GENERAL:
+                        break;
                     default:
                         continue;
                 }
@@ -193,6 +238,16 @@ public class AdaptionEngine {
         }
         return army;
     }
+
+    /**
+     * This method adds a new unit group to the army, the new unit will be
+     * placed in a full command group if full command is available and if the
+     * full command threshold is not reached
+     * @param army - The army to add a new unit group to
+     * @param availableUnits - The list of available units (based on race and
+     * army type)
+     * @param aT - The army type for the unit group to be added
+     */
     private void addUnitGroup(Army army, ArrayList<Unit> availableUnits, 
             armyType aT){
         UnitSimilarity unitSim = new UnitSimilarity();
@@ -249,6 +304,13 @@ public class AdaptionEngine {
         }
         armyUnits.add(newArmyUnit);
     }
+
+    /**
+     * This method determines if the full command threshold have been reached
+     * @param army -The army to check the full command threshold
+     * @return <ul><li>true - if a new full command group can be created</li>
+     * <li>false - if a nee full command group cannot be created</li></ul>
+     */
     private boolean applyFullCommand(Army army){
         int numberOfUnitsInArmy = army.getArmyUnits().size();
         int unitsWithFullCommand = 0;
@@ -260,5 +322,50 @@ public class AdaptionEngine {
         if(fraction<fullCommandPercentage)
             return true;
         return false;
+    }
+
+    /**
+     * Method to increase the number of units in a group. (used when too few
+     * units is present)
+     * @param army - The army which contains the group with the low number of
+     * units
+     * @param causes - The causes for the error, contains information of which
+     * group contains to few units.
+     */
+    private void increaseGroupUnits(Army army, Causes[] causes) {
+        for(Causes cause : causes){
+            Unit causeUnit = cause.getUnit();
+            Set<ArmyUnit> armyUnits = army.getArmyUnits();
+            for(ArmyUnit armyUnit : armyUnits){
+                if(armyUnit.getUnit().getName().contentEquals(causeUnit.getName())){
+                    if(armyUnit.getNumberOfUnits()<causeUnit.getMinNumber()){
+                        armyUnit.setNumberOfUnits(causeUnit.getMinNumber());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to decrease the number of duplicate special/rare units by one.
+     * @param army The army to alter
+     * @param causes The causes for the army to be altered.
+     */
+    private void decreaseDuplicates(Army army, Causes[] causes) {
+        boolean decreased = false;
+        for(Causes cause : causes){
+            Unit causeUnit = cause.getUnit();
+            Set<ArmyUnit> armyUnits = army.getArmyUnits();
+            for(ArmyUnit armyUnit : armyUnits){
+                if(armyUnit.getUnit().getName().contentEquals(causeUnit.getName())){
+                    armyUnits.remove(armyUnit);
+                    decreased = true;
+                    break;
+                }
+            }
+            if(decreased)
+                break;
+        }
     }
 }

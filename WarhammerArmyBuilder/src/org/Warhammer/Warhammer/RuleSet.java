@@ -109,14 +109,10 @@ public class RuleSet {
         calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution(); 
-        boolean b = armyDisposition.isFollowingDispositionRules(army,
+        armyDisposition.isFollowingDispositionRules(army,
                 UnitDispositionFactory.getRaceArmy(army.getPlayerRace(), armyPoints));
-        if(b){
-            System.out.println("+--------------");
-            System.out.println(toString());
-            System.out.println("+--------------");
-
-        }
+        if(heroCost==0&&lordCost==0)
+            errorManager.addError(Messages.NO_ARMY_GENERAL);
         if(totalCost>armyPoints)
             errorManager.addError(Messages.TOO_MANY_POINTS_TOTAL);
         else if(totalCost<(armyPoints-threshold)){
@@ -273,6 +269,15 @@ public class RuleSet {
      */
     public Causes[] getCauses(){
         return errorManager.getCauses();
+    }
+
+    /**
+     * Method to get all the causes for the specified error messaqe.
+     * @param causedBy The Message that caused the error
+     * @return Array with the Causes of the specified error.
+     */
+    public Causes[] getCauses(Messages causedBy){
+        return errorManager.getCauses(causedBy);
     }
 
     /**
