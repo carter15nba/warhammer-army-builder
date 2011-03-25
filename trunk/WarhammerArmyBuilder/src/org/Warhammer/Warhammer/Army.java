@@ -135,10 +135,16 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
         boolean singleEquipmentCost = false;
         unitCost += calculateUnitCost(armyUnit);
         for (UtilityUnit utilityUnit : armyUnit.getUtility()) {
-            unitCost += utilityUnit.getCost();
-                if(utilityUnit.getName().equalsIgnoreCase("Empire:Marksman")){
-                    singleEquipmentCost = true;
-                }
+            //If the utility unit is a promotoion unit and min number of units is 0
+            //then all units in the group gets the promotion at promotion cost/unit
+            if((utilityUnit.getMinNumber()==0)&&(utilityUnit.isPromotionUnit()))
+                unitCost += utilityUnit.getCost()*armyUnit.getNumberOfUnits();
+            else
+                unitCost += utilityUnit.getCost();
+            //TODO: Find a better more universal method to assign single equipment cost
+            if(utilityUnit.getName().equalsIgnoreCase("Empire:Marksman")){
+                singleEquipmentCost = true;
+            }
         }
         for(Equipment equipment : armyUnit.getEquipment()){
             if((equipment.getItemType()!=itemType.Armour)&&

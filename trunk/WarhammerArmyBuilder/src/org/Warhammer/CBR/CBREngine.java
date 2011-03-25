@@ -19,8 +19,6 @@ package org.Warhammer.CBR;
 
 import org.Warhammer.Database.DatabaseManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
@@ -92,7 +90,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     }
 
     public void postCycle() throws ExecutionException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        dbm.disconnect();
+        dbm.disconnectNoHibernate(false);
     }
 
     /**
@@ -210,6 +210,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 cbrQuery.setDescription(queryCase);
                 cbrEngine.cycle(cbrQuery);
+
+                cbrEngine.postCycle();
             }
             else if(args[0].contentEquals("sqlPrint")){
                 DatabaseManager dbm = DatabaseManager.getInstance();

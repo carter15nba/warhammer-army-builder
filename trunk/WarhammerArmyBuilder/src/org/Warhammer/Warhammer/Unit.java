@@ -21,6 +21,7 @@ import org.Warhammer.Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.Warhammer.Util.CreateObjectFromDB;
 
 /**
  * Class to represent a unit
@@ -434,4 +435,31 @@ public class Unit extends CoreUnit{
         }
         return _return;
     }
+
+    /**
+     * Method to check if this unit is eligible for full command
+     * @return <ul><li>true - if the unit is eligible for full command</li>
+     * <li>false - if the unit not is eligible for full command</li></ul>
+     */
+    public boolean isEligibleForFullCommand(){
+        if(armyType==armyType.Hero||armyType==armyType.Lord)
+            return false;
+        boolean standard = false;
+        boolean musician = false;
+        boolean promotion = false;
+        for (Equipment eq : equipment) {
+            if(eq.getName().contains("Musician"))
+                musician = true;
+            if(eq.getName().contains("Standard bearer"))
+                standard = true;
+        }
+        for(UtilityUnit utility : utilityUnit){
+            if(utility.isPromotionUnit())
+                promotion = true;
+        }
+        if(standard&&musician&&promotion)
+            return true;
+        return false;
+    }
+
 }

@@ -129,20 +129,22 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
      * <li>false - id the unit does not have full command</li></ul>
      */
     public boolean haveFullCommand(){
-        boolean stdb = false;
-        boolean music = false;
-        boolean promo = false;
+        if(!unit.isEligibleForFullCommand())
+            return false;
+        boolean standard = false;
+        boolean musician = false;
+        boolean promotion = false;
         for (Equipment eq : equipment) {
             if(eq.getName().contains("Standard bearer"))
-                stdb = true;
+                standard = true;
             if(eq.getName().contains("Musician"))
-                music = true;
+                musician = true;
         }
         for(UtilityUnit util : utility){
             if(util.isPromotionUnit())
-                promo = true;
+                promotion = true;
         }
-        if(stdb&&music&&promo)
+        if(standard&&musician&&promotion)
             return true;
         return false;
     }
