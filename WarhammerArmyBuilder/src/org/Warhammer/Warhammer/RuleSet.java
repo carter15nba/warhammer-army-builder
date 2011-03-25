@@ -20,13 +20,13 @@ package org.Warhammer.Warhammer;
 import java.util.ArrayList;
 import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.Set;
+import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Resources.ArmyDisposition;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 import org.Warhammer.Warhammer.Resources.UnitDispositionFactory;
 
-//TODO: Assign utility unit number if units == 0, to mean that all units in the group gets the promotion at points/model
 /**
  * Class to verify if the rules governing the creation of an army are adhered
  * @author Glenn Rune Strandbåten
@@ -106,6 +106,7 @@ public class RuleSet {
      */
     public Messages[] isFollowingArmyDispositionRules(Army army){
         initResources(army);
+        checkRace(army);
         calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution(); 
@@ -136,6 +137,53 @@ public class RuleSet {
     public int calculateTotalCost(){
         totalCost = coreCost + specialCost + rareCost + lordCost + heroCost;
         return totalCost;
+    }
+
+    /**
+     * @return int - The cost of all the special units in the army
+     */
+    public int getSpecialCost(){
+        return specialCost;
+    }
+
+    /**
+     * @return int - The cost of all the rare units in the army
+     */
+    public int getRareCost(){
+        return rareCost;
+    }
+
+    /**
+     * @return int - The cost of all the core units in the army
+     */
+    public int getCoreCost(){
+        return coreCost;
+    }
+
+    /**
+     * @return int - The cost of all the lord units in the army
+     */
+    public int getLordCost(){
+        return lordCost;
+    }
+
+    /**
+     * @return int - The cost of all the hero units in the army
+     */
+    public int getHeroCost(){
+        return heroCost;
+    }
+
+    /**
+     * This method returns the difference between total army points and used
+     * army points (army_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getDifferenceOfTotalPointsAndUsedPoints(){
+        calculateTotalCost();
+        return (armyPoints-totalCost);
     }
 
     /**
@@ -316,7 +364,7 @@ public class RuleSet {
             errorManager.addError(Messages.TOO_FEW_UNITS_IN_GROUP);
             errorManager.addCause(new Causes(unit, Messages.TOO_FEW_UNITS_IN_GROUP));
         }
-        if(aT==armyType.Rare||aT==armyType.Special){
+        if(aT==aT.Rare||aT==aT.Special){
             boolean contains = unitNames.contains(unit.getName());
             if(contains){
                 int idx = unitNames.indexOf(unit.getName());
@@ -329,6 +377,7 @@ public class RuleSet {
             }
         }
     }
+
     /**
      * This private method is used by the checkUnit method to verify if
      * no more than the alloted number of rare and duplicate units are
@@ -355,6 +404,22 @@ public class RuleSet {
                 break;
         }
     }
+    
+    /**
+     * Method wich verifies that each and every unit in the army belong to the
+     * same race as the army. 
+     * @param army
+     */
+    private void checkRace(Army army){
+        Races playerRace = army.getPlayerRace();
+        for(ArmyUnit armyUnit : army.getArmyUnits()){
+            Unit unit = armyUnit.getUnit();
+            Races unitRace = unit.getRace();
+            if(playerRace!=unitRace)
+                errorManager.addError(Messages.WRONG_RACE);
+        }
+    }
+
     @Override
     public String toString(){
         //TODO: complete toString()

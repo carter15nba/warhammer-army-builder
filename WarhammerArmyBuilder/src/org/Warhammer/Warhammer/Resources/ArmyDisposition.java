@@ -94,11 +94,7 @@ public class ArmyDisposition {
             }
         }
         characters = lords + heroes;
-
-        if(characters>unitDisposition.getMaxCharacters()){
-            errorManager.addError(Messages.TOO_MANY_CHARACTERS);
-            addedError = true;
-        }
+        
         if(lords>unitDisposition.getMaxLords()){
             errorManager.addError(Messages.TOO_MANY_LORDS);
             addedError = true;

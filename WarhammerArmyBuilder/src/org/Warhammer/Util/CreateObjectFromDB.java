@@ -77,13 +77,15 @@ public class CreateObjectFromDB {
             unit.setWeaponType(weaponType.valueOf(result.getString("WEAPONTYPE")));
         }
         catch (SQLException ex) {}
+        unit.setEquipment(getUnitEquipment(unitName));
+        unit.setUtilityUnit(getUtilityUnits(unitName));
         return unit;
     }
     
     /**
      * Method that aquire a list of units based on the race and army type.
      * @param race The race of the units
-     * @param aT The ArmyType of the units
+     * @param armyType The ArmyType of the units
      * @return <ul><li>An empty ArrayList if an exception occurs</li>
      * <li>ArrayList with the units matching the requirements</li></ul>
      */
@@ -100,7 +102,6 @@ public class CreateObjectFromDB {
                 Unit unit = CreateObjectFromDB.createUnitFromDB(name);
                 units.add(unit);
             }
-            dbm.disconnectNoHibernate(false);
         }
         catch (SQLException ex) {}
         return units;
