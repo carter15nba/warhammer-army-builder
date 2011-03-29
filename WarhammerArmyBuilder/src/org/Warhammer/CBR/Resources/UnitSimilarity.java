@@ -40,6 +40,10 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
     private double costWeigth;
     private double weaponWeigth;
     private double totalWeigth;
+
+    /**
+     * Default constructor sets all similarity weigths to 1
+     */
     public UnitSimilarity(){
         characteristicsWeigth = 1;
         unitTypeWeigth = 1;
@@ -48,13 +52,30 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         weaponWeigth = 1;
         totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth + weaponWeigth;
     }
+
+    /**
+     * Constructor sets all the similarity weigths as requested
+     * All weigths must be in the range 0 to 1 [0,1], all weigths outside this
+     * range is automatically adjusted.
+     * @param charWeigth
+     * @param unitTypeWeigth
+     * @param armyTypeWeigth
+     * @param costWeigth
+     * @param weaponWeigth
+     */
     public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth,double weaponWeigth){
-        this.characteristicsWeigth = charWeigth;
-        this.armyTypeWeigth = armyTypeWeigth;
-        this.costWeigth = costWeigth;
-        this.unitTypeWeigth = unitTypeWeigth;
-        this.weaponWeigth = weaponWeigth;
-        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth + weaponWeigth;
+        this.characteristicsWeigth = (charWeigth < 0) ? 0 : charWeigth;
+        this.characteristicsWeigth = (charWeigth > 1) ? 1 : charWeigth;
+        this.armyTypeWeigth = (unitTypeWeigth < 0) ? 0 : unitTypeWeigth;
+        this.armyTypeWeigth = (unitTypeWeigth > 1) ? 1 : unitTypeWeigth;
+        this.costWeigth = (costWeigth < 0) ? 0 : costWeigth;
+        this.costWeigth = (costWeigth > 1) ? 1 : costWeigth;
+        this.unitTypeWeigth = (unitTypeWeigth < 0) ? 0 : unitTypeWeigth;
+        this.unitTypeWeigth = (unitTypeWeigth > 1) ? 1 : unitTypeWeigth;
+        this.weaponWeigth = (weaponWeigth < 0) ? 0 : weaponWeigth;
+        this.weaponWeigth = (weaponWeigth > 1) ? 1 : weaponWeigth;
+        totalWeigth = characteristicsWeigth + this.unitTypeWeigth +
+                this.armyTypeWeigth + this.costWeigth + this.weaponWeigth;
     }
 
     /**

@@ -35,7 +35,9 @@ public class UnitDisposition {
     private int maxRare;
 
     /**
-     * Default constructor, use UnitDispositionFactory to create a disposition
+     * Default constructor.
+     * Hint:
+     * @see UnitDispositionFactory UnitDispositionFactory to create a disposition
      * object.
      * @param maxCharacters int The max number of Lords + Heroes the army can
      * have
@@ -114,8 +116,7 @@ public class UnitDisposition {
     public int getMaxRare() {
         return maxRare;
     }
-
-
+    
     @Override
     public String toString(){
         return "Characters Lords Heroes\n"

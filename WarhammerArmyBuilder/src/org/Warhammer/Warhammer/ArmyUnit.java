@@ -32,6 +32,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     private int armyID;
     private int numberOfUnits;
     private Unit unit;
+    private int fullCommandCost = 0;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utility = new HashSet<UtilityUnit>();
 
@@ -134,18 +135,78 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
         boolean standard = false;
         boolean musician = false;
         boolean promotion = false;
+        fullCommandCost=0;
         for (Equipment eq : equipment) {
-            if(eq.getName().contains("Standard bearer"))
+            if(eq.getName().contains("Standard bearer")){
                 standard = true;
-            if(eq.getName().contains("Musician"))
+                fullCommandCost+=eq.getCost();
+            }
+            if(eq.getName().contains("Musician")){
                 musician = true;
+                fullCommandCost+=eq.getCost();
+            }
         }
         for(UtilityUnit util : utility){
-            if(util.isPromotionUnit())
+            if(util.isPromotionUnit()){
                 promotion = true;
+                fullCommandCost+=util.getCost();
+            }
         }
         if(standard&&musician&&promotion)
             return true;
+        fullCommandCost=0;
         return false;
     }
+
+    /**
+     * Method to get the full command cost of this unit. If the cost is 0 it
+     * will assume that the cost is not yet calculated and calculate it before
+     * returning.
+     * @return <ul><li>0 - if the unit does not have full command</li>
+     * <li>int value with the full command cost</li></ul>
+     */
+    public int getFullCommandCost() {
+        if(fullCommandCost==0)
+            haveFullCommand();
+        return fullCommandCost;
+    }
+
+    /**
+     * Method which removes full command from this unit. Musician, standard
+     * bearer and the promoted unit is removed.
+     */
+    public void removeFullCommand(){
+        for (Equipment eq : equipment) {
+            if(eq.getName().contains("Standard bearer"))
+                equipment.remove(eq);
+            if(eq.getName().contains("Musician"))
+                equipment.remove(eq);
+        }
+        for(UtilityUnit util : utility){
+            if(util.isPromotionUnit())
+                utility.remove(util);
+        }
+    }
+
+    /**
+     * Method which assigns full command to the unit if the unit is
+     * eligible for full command and does not allready have full command.
+     */
+    public void giveUnitFullCommand(){
+        if(unit.isEligibleForFullCommand()&&!haveFullCommand()){
+            removeFullCommand();
+            for(Equipment eq : unit.getEquipment()){
+                if(eq.getName().contains("Musician"))
+                    equipment.add(eq);
+                if(eq.getName().contains("Standard bearer"))
+                    equipment.add(eq);
+            }
+            for(UtilityUnit util : unit.getUtilityUnit()){
+                if(util.isPromotionUnit())
+                    utility.add(util);
+            }
+        }
+    }
+
+
 }

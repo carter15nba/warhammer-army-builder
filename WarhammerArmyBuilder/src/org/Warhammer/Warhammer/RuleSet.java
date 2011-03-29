@@ -56,10 +56,10 @@ public class RuleSet {
     private ArmyDisposition armyDisposition;
 
     /**
-     * Default constructor (sets threshold value of 25)
+     * Default constructor (sets threshold value of 10 points)
      */
     public RuleSet(){
-        threshold = 25;
+        threshold = 10;
         errorManager = new ErrorManager();
         armyDisposition = new ArmyDisposition(errorManager);
         unitNames = new ArrayList<String>();
@@ -181,9 +181,64 @@ public class RuleSet {
      * available</li><li>Negative integer if you have spent more points than
      * available</li></ul>
      */
-    public int getDifferenceOfTotalPointsAndUsedPoints(){
+    public int getTotalPointDifference(){
         calculateTotalCost();
         return (armyPoints-totalCost);
+    }
+    /**
+     * This method returns the difference between total rare points and used
+     * rare points (rare_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getRarePointDifference(){
+        double[] diff = calculateAllowedPointDistribution();
+        return (int)(diff[2]-rareCost);
+    }
+    /**
+     * This method returns the difference between total core points and used
+     * core points (core_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getCorePointDifference(){
+        double[] diff = calculateAllowedPointDistribution();
+        return (int)(diff[0]-coreCost);
+    }
+    /**
+     * This method returns the difference between total special points and used
+     * special points (special_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getSpecialPointDifference(){
+        double[] diff = calculateAllowedPointDistribution();
+        return (int)(diff[1]-specialCost);
+    }
+    /**
+     * This method returns the difference between total lord points and used
+     * lord points (lord_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getLordPointDifference(){
+        double[] diff = calculateAllowedPointDistribution();
+        return (int)(diff[4]-lordCost);
+    }
+    /**
+     * This method returns the difference between total hero points and used
+     * hero points (hero_points - used_points)
+     * @return <ul><li>Positive integer if you have spent less points than
+     * available</li><li>Negative integer if you have spent more points than
+     * available</li></ul>
+     */
+    public int getHeroPointDifference(){
+        double[] diff = calculateAllowedPointDistribution();
+        return (int)(diff[3]-heroCost);
     }
 
     /**

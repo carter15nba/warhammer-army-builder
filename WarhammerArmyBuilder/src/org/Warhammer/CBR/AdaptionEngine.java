@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import org.Warhammer.CBR.Resources.ExchangeRace;
 import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
+import org.Warhammer.Util.PrintFactory;
 import org.Warhammer.Warhammer.*;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
@@ -62,6 +64,7 @@ public class AdaptionEngine {
         Case queryCase = (Case) query.getDescription();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Case.Outcomes.Unknown);
+        adaptedCase.getArmy().setPlayerRace(queryCase.getArmy().getPlayerRace());
         adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
         return adaptedCase;
     }
@@ -232,7 +235,7 @@ public class AdaptionEngine {
                 case TOO_MANY_RARE_POINTS:
                     causes = rule.getCauses(message);
                     reduceSpecialOrRareGroupPoints(army, armyType.Rare, 
-                            messages, message, causes);
+                            messages, message, causes, rule);
                     break;
                 case TOO_MANY_SPECIAL_GROUPS:
                     removeGroup(army, armyType.Special);
@@ -240,7 +243,7 @@ public class AdaptionEngine {
                 case TOO_MANY_SPECIAL_POINTS:
                     causes = rule.getCauses();
                     reduceSpecialOrRareGroupPoints(army, armyType.Special,
-                            messages, message, causes);
+                            messages, message, causes, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
                     causes = rule.getCauses();
@@ -249,10 +252,13 @@ public class AdaptionEngine {
                 case NO_ARMY_GENERAL:
                     break;
                 case WRONG_RACE:
+                    ExchangeRace exRace = new ExchangeRace();
+                    army = exRace.adaptRace(army);
+                    PrintFactory.printArmyUnit(army.getArmyUnits(), army);
                     break;
+                //If an unknown or untreatable error message is encountered.
                 default:
-                    continue;
-                
+                    return army;
             }
             //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
@@ -505,7 +511,7 @@ public class AdaptionEngine {
     }
 
     private void reduceSpecialOrRareGroupPoints(Army army, armyType aT,
-            Messages[] messages, Messages message, Causes[] causes){
+            Messages[] messages, Messages message, Causes[] causes, RuleSet rs){
         Messages special = Messages.OK;
         Messages rare = Messages.OK;
         Messages duplicateR = Messages.OK;
@@ -546,11 +552,80 @@ public class AdaptionEngine {
         //If neither of the above reductions helped solve the problem, remove
         //the special or rare unit which costs the least alternatively reduce
         //the number of units in the group.
-        //TODO: Implement rest of method
-        throw new UnsupportedOperationException("Not yet implemented exception");
+        int diff=0;
+        if(message==Messages.TOO_MANY_RARE_POINTS)
+            diff = rs.getRarePointDifference();
+        if(message==Messages.TOO_MANY_SPECIAL_POINTS)
+            diff = rs.getSpecialPointDifference();
+        for(ArmyUnit armyUnit : army.getArmyUnits()){
+            Unit unit = armyUnit.getUnit();
+            if(unit.getArmyType()==aT){
+                //If the unit have full command, and the removal of full
+                //command is sufficient (but not to large a point reduction)
+                //remove the full command from the unit.
+                if(armyUnit.haveFullCommand()){
+                    int fcc = armyUnit.getFullCommandCost();
+                    if(fcc==Math.abs(diff)||
+                            ((fcc>Math.abs(diff))&&(fcc<Math.abs(diff)+10))){
+                        armyUnit.removeFullCommand();
+                        System.out.println("Removing full command from: "+
+                                unit.getName());
+                        return;
+                    }
+                }
+                else{
+                    int numU = armyUnit.getNumberOfUnits();
+                    int oldU = numU;
+                    int minU = unit.getMinNumber();
+                    //Check if the reduction in group unit is sufficient to
+                    //remove the error
+                    boolean found = false;
+                    while(numU>minU){
+                        numU--;
+                        armyUnit.setNumberOfUnits(numU);
+                        int totalCost = army.calculateTotalUnitCost(armyUnit);
+                        if(totalCost<Math.abs(diff))
+                            found = true;
+                    }
+                    if(found){
+                        System.out.println("Reduced number of units in "+
+                                unit.getName()+" group with: "+(oldU-numU));
+                        return;
+                    }
+                    else
+                        armyUnit.setNumberOfUnits(oldU);
+                }
+            }
+        }
+        //If nothing of the above works, find the unit with the
+        //lowest cost and remove it completly.
+        removeGroup(army, aT);
     }
 
+    /**
+     * Method which reduces the number of units in a group if the unit group
+     * have more units than is legal. The unit group size is set to the
+     * max number of allowed units.
+     * @param army The Army which may contain unit group that may have to many units
+     * @param causes The array of causes that may contain a cause which tells
+     * that the unit group have to many units.
+     */
     private void reduceNumberOfUnitsInGroup(Army army, Causes[] causes) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        for (Causes cause : causes) {
+            Messages msg = cause.getCause();
+            if(msg==Messages.TOO_MANY_UNITS_IN_GROUP){
+                for (ArmyUnit armyUnit : army.getArmyUnits()) {
+                    Unit unit = armyUnit.getUnit();
+                    if(unit.getName().contentEquals(cause.getUnit().getName())){
+                        int maxN = unit.getMaxNumber();
+                        int numU = armyUnit.getNumberOfUnits();
+                        if(numU>maxN&&maxN!=0){
+                            armyUnit.setNumberOfUnits(maxN);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

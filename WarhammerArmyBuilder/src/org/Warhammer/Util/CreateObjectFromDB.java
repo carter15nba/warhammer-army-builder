@@ -22,8 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.Warhammer.Database.DatabaseManager;
 import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment;
@@ -125,6 +123,7 @@ public class CreateObjectFromDB {
                 + "UNIT_EQUIPMENT.NAME = UNIT.NAME AND "
                 + "UNIT.NAME='"+unitName+"'";
         ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
+
         try {
             while (res.next()) {
                 Equipment eq = new Equipment();
@@ -136,6 +135,7 @@ public class CreateObjectFromDB {
                 eq.setName(res.getString("NAME"));
                 eq.setUsableBy(res.getString("USABLEBY"));
                 eqSet.add(eq);
+                System.out.println(eq.toString());
             }
         }
         catch (SQLException ex) {}
@@ -190,4 +190,39 @@ public class CreateObjectFromDB {
         return null;
     }
 
+    /**
+     * Method which gets all the equipment a unit can equip based on which
+     * race and the available magic points.
+     * @param unitRace - The race of the unit
+     * @param magicPoints - The number of points the unit can spend on magical items
+     * @return A hash set with the equipment the unit can by
+     */
+    public static Set<Equipment> getEquipment(Races unitRace, int magicPoints){
+        Set<Equipment> eqSet = new HashSet<Equipment>();
+        String query = "SELECT * FROM EQUIPMENT "
+                + "WHERE EQUIPMENT.COST <= "+magicPoints
+                + " AND (EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
+                + " OR EQUIPMENT.USABLEBY='All')"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'";
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        dbm.connectWithoutHibernate();
+        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
+        try {
+            while (res.next()) {
+                Equipment eq = new Equipment();
+                eq.setCost(res.getInt("COST"));
+                eq.setDefaultItem(res.getBoolean("DEFAULTEQ"));
+                eq.setID(res.getInt("ID"));
+                eq.setItemType(itemType.valueOf(res.getString("ITEMTYPE")));
+                eq.setModifier(res.getString("MODIFIER"));
+                eq.setName(res.getString("NAME"));
+                eq.setUsableBy(res.getString("USABLEBY"));
+                eqSet.add(eq);
+                System.out.println(eq.toString());
+            }
+        }
+        catch (SQLException ex) {}
+        return eqSet;
+    }
 }
