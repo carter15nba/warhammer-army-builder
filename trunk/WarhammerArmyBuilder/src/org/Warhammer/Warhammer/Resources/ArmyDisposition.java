@@ -115,9 +115,27 @@ public class ArmyDisposition {
             errorManager.addError(Messages.TOO_MANY_RARE_GROUPS);
             addedError = true;
         }
+        if(!isContaingThreeOrMoreGroups())
+            addedError = true;
         if(addedError)
             return false;
         return true;
+    }
+
+    /**
+     * Method which checks if the number of groups (excluding lords and heroes)
+     * is greater than 3. If the return statement is false, a new error message
+     * have also been added in the error manager.
+     * @return <ul><li>true - if 3 or more groups (exculind lords and heroes)
+     * is present in the army</li><li>false - if less than 3 groups are present
+     * in the army</li></ul>
+     */
+    public boolean isContaingThreeOrMoreGroups(){
+        int groups = core + special + rare;
+        if(groups>=3)
+            return true;
+        errorManager.addError(Messages.TOO_FEW_GROUPS);
+        return false;
     }
 
     @Override

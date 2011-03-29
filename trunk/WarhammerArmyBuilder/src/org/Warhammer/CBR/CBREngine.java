@@ -112,7 +112,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         }
         //TODO: user specified k neares cases.
         System.err.println("Retrieve phase done!");
-        return SelectCases.selectTopKRR(eval, 2);
+        return SelectCases.selectTopKRR(eval, 4);
     }
 
     /**
