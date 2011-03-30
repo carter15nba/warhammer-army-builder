@@ -191,18 +191,53 @@ public class CreateObjectFromDB {
 
     /**
      * Method which gets all the equipment a unit can equip based on which
-     * race and the available magic points.
+     * race and the available magic points. (common and race spesific items)
      * @param unitRace - The race of the unit
      * @param magicPoints - The number of points the unit can spend on magical items
-     * @return A hash set with the equipment the unit can by
+     * @return A hash set with the equipment the unit can purchase
      */
-    public static Set<Equipment> getEquipment(Races unitRace, int magicPoints){
+    public static Set<Equipment> getAllEquipment(Races unitRace, int magicPoints){
         Set<Equipment> eqSet = new HashSet<Equipment>();
         String query = "SELECT * FROM EQUIPMENT "
                 + "WHERE EQUIPMENT.COST <= "+magicPoints
                 + " AND EQUIPMENT.COST <> 0"
                 + " AND (EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
                 + " OR EQUIPMENT.USABLEBY='All')"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'";
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        dbm.connectWithoutHibernate();
+        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
+        try {
+            while (res.next()) {
+                Equipment eq = new Equipment();
+                eq.setCost(res.getInt("COST"));
+                eq.setDefaultItem(res.getBoolean("DEFAULTEQ"));
+                eq.setID(res.getInt("ID"));
+                eq.setItemType(itemType.valueOf(res.getString("ITEMTYPE")));
+                eq.setModifier(res.getString("MODIFIER"));
+                eq.setName(res.getString("NAME"));
+                eq.setUsableBy(res.getString("USABLEBY"));
+                eqSet.add(eq);
+            }
+        }
+        catch (SQLException ex) {}
+        return eqSet;
+    }
+
+        /**
+     * Method which gets all the equipment a unit can equip based on which
+     * race and the available magic points. (race spesific items only)
+     * @param unitRace - The race of the unit
+     * @param magicPoints - The number of points the unit can spend on magical items
+     * @return A hash set with the equipment the unit can purchase
+     */
+    public static Set<Equipment> getRaceEquipment(Races unitRace, int magicPoints){
+        Set<Equipment> eqSet = new HashSet<Equipment>();
+        String query = "SELECT * FROM EQUIPMENT "
+                + "WHERE EQUIPMENT.COST <= "+magicPoints
+                + " AND EQUIPMENT.COST <> 0"
+                + " AND EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
                 + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
                 + " AND EQUIPMENT.ITEMTYPE <> 'Armour'";
         DatabaseManager dbm = DatabaseManager.getInstance();
