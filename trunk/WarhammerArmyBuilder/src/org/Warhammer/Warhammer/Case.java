@@ -119,5 +119,4 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
                 ", Opponent race: "+opponent+
                 ", Outcome: "+outcome;
     }
-
 }

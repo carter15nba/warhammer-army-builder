@@ -207,6 +207,4 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
             }
         }
     }
-
-
 }

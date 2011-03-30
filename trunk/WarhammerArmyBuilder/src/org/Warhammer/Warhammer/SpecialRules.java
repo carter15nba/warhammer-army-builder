@@ -72,6 +72,4 @@ public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
     public void setRule(String rule) {
         this.rule = rule;
     }
-
-
 }

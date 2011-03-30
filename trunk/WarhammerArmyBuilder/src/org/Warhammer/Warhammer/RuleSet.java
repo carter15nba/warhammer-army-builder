@@ -21,11 +21,9 @@ import java.util.ArrayList;
 import org.Warhammer.Warhammer.Unit.armyType;
 import java.util.Set;
 import org.Warhammer.Warhammer.Case.Races;
-import org.Warhammer.Warhammer.Resources.ArmyDisposition;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
-import org.Warhammer.Warhammer.Resources.UnitDispositionFactory;
 
 /**
  * Class to verify if the rules governing the creation of an army are adhered
@@ -53,7 +51,6 @@ public class RuleSet {
     private ArrayList<String> unitNames;
     private ArrayList<Integer> unitNumber;
     private ErrorManager errorManager;
-    private ArmyDisposition armyDisposition;
 
     /**
      * Default constructor (sets threshold value of 10 points)
@@ -61,7 +58,6 @@ public class RuleSet {
     public RuleSet(){
         threshold = 10;
         errorManager = new ErrorManager();
-        armyDisposition = new ArmyDisposition(errorManager);
         unitNames = new ArrayList<String>();
         unitNumber = new ArrayList<Integer>();
     }
@@ -72,7 +68,6 @@ public class RuleSet {
     public RuleSet(int threshold){
         this.threshold = threshold;
         errorManager = new ErrorManager();
-        armyDisposition = new ArmyDisposition(errorManager);
     }
 
     /**
@@ -110,8 +105,6 @@ public class RuleSet {
         calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution(); 
-        armyDisposition.isFollowingDispositionRules(army,
-                UnitDispositionFactory.getRaceArmy(army.getPlayerRace(), armyPoints));
         if(heroCost==0&&lordCost==0)
             errorManager.addError(Messages.NO_ARMY_GENERAL);
         if(totalCost>armyPoints)
@@ -478,6 +471,6 @@ public class RuleSet {
     @Override
     public String toString(){
         //TODO: complete toString()
-        return armyDisposition.toString();
+        return "";
     }
 }

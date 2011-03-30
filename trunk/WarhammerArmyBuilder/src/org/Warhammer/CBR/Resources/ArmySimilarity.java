@@ -82,6 +82,4 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
     public boolean isApplicable(Object caseObject, Object queryObject) {
         return true;
     }
-
-
 }
