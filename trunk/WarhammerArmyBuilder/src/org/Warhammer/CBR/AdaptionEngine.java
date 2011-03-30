@@ -26,8 +26,8 @@ import org.Warhammer.CBR.Resources.ExchangeRace;
 import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
-import org.Warhammer.Util.PrintFactory;
 import org.Warhammer.Warhammer.*;
+import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 import org.Warhammer.Warhammer.Unit.armyType;
@@ -178,7 +178,7 @@ public class AdaptionEngine {
         RuleSet rule = new RuleSet();
         Messages[] messages = rule.isFollowingArmyDispositionRules(army);
         ArrayList<Unit> units;
-        //while(messages[0]!=Messages.OK){
+        while(messages[0]!=Messages.OK){
             //Only check the first error each loop iteration as one change may
             //affect other error messages.
             Messages message = messages[0];
@@ -210,10 +210,10 @@ public class AdaptionEngine {
                     decreaseDuplicates(army,causes);
                     break;
                 case TOO_MANY_HERO_POINTS:
-                    reduceCharacterPoints(army, armyType.Hero, messages);
+                    reduceCharacterPoints(army, armyType.Hero, rule);
                     break;
                 case TOO_MANY_LORD_POINTS:
-                    reduceCharacterPoints(army, armyType.Hero, messages);
+                    reduceCharacterPoints(army, armyType.Lord, rule);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
                     reducePointsTotal(army, messages, rule);
@@ -231,6 +231,7 @@ public class AdaptionEngine {
                     reduceNumberOfUnitsInGroup(army, causes);
                     break;
                 case NO_ARMY_GENERAL:
+                    addGeneral(army);
                     break;
                 case WRONG_RACE:
                     ExchangeRace exRace = new ExchangeRace();
@@ -242,7 +243,7 @@ public class AdaptionEngine {
             }
             //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
-        //}
+        }
         return army;
     }
 
@@ -404,7 +405,18 @@ public class AdaptionEngine {
         }
     }
 
-    private void reduceCharacterPoints(Army army, armyType aT, Messages[] messages) {
+    private void reduceCharacterPoints(Army army, armyType aT, RuleSet rs) {
+        int diff=0;
+        if(aT==armyType.Lord)
+            diff = rs.getLordPointDifference();
+        if(aT==armyType.Hero)
+            diff = rs.getHeroPointDifference();
+        //If the difference in used points are more than 100, remove the cheapest
+        //character
+        if(Math.abs(diff)>100){
+            removeOneCharacter(army, aT);
+            return;
+        }
         //Remove the cheapest equipment or unit from the lord/hero wich have
         //spent the most points. 
         int cost = 0;
@@ -586,10 +598,10 @@ public class AdaptionEngine {
         for (Messages message : messages) {
             switch(message){
                 case TOO_MANY_HERO_POINTS:
-                    reduceCharacterPoints(army, armyType.Hero, messages);
+                    reduceCharacterPoints(army, armyType.Hero, rs);
                     return;
                 case TOO_MANY_LORD_POINTS:
-                    reduceCharacterPoints(army, armyType.Lord, messages);
+                    reduceCharacterPoints(army, armyType.Lord, rs);
                     return;
                 case TOO_MANY_RARE_POINTS:
                     reduceSpecialOrRareGroupPoints(army, armyType.Rare,
@@ -601,5 +613,74 @@ public class AdaptionEngine {
                     return;
             }
         }
+    }
+
+    private void addGeneral(Army army) {
+        ArrayList<Unit> units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
+                army.getPlayerRace(), armyType.Lord);
+        java.util.Random random = new java.util.Random();
+        int generalIndex = random.nextInt(units.size());
+        Unit general = (Unit) CollectionControl.getItemAt(units, generalIndex);
+        ArmyUnit newArmyUnit = new ArmyUnit();
+        newArmyUnit.setUnit(general);
+        //Give the general a mount
+        if(!general.getUtilityUnit().isEmpty()){
+            int giveMount = random.nextInt(2);
+            if(giveMount==1){
+                int mountIndex = random.nextInt(general.getUtilityUnit().size());
+                UtilityUnit mount = (UtilityUnit) CollectionControl.getItemAt(
+                        general.getUtilityUnit(), mountIndex);
+                Set<UtilityUnit> newUtility = new HashSet<UtilityUnit>();
+                newUtility.add(mount);
+                newArmyUnit.setUtility(newUtility);
+            }
+        }
+        Set<Equipment> eqSet = new HashSet<Equipment>();
+        //Give the general some equipment from his equipment list
+        if(!general.getEquipment().isEmpty()){
+            int numEq = random.nextInt(general.getEquipment().size()/2);
+            for(int i = 0; i<numEq; i++){
+                int nextEq = random.nextInt(general.getEquipment().size());
+                Equipment eq = (Equipment)CollectionControl.getItemAt(
+                        general.getEquipment(), nextEq);
+                if(!eqSet.contains(eq))
+                    eqSet.add(eq);
+                else
+                    i--;
+            }
+        }
+        //Purcase some items from the generals available items
+        int magicPoints = general.getMagicPoints();
+        int usedPoints = 0;
+        Set<Equipment> purchaseEq;
+        if(general.getRace()==Races.Dwarfs)
+            purchaseEq = CreateObjectFromDB.getRaceEquipment(general.getRace(),
+                    magicPoints);
+        else
+            purchaseEq = CreateObjectFromDB.getAllEquipment(general.getRace(),
+                    magicPoints);
+        int eqToPurchase = random.nextInt(3)+1;
+        for(int i = 0; i<eqToPurchase; i++){
+            if(purchaseEq.isEmpty())
+                return;
+            int nextEq = random.nextInt(purchaseEq.size());
+            Equipment eq = (Equipment)CollectionControl.getItemAt(
+                    purchaseEq, nextEq);
+            if(!usedEquipment.contains(eq)){
+                if((eq.getCost()+usedPoints)<=magicPoints){
+                    if(!haveSimilarEquipment(eqSet, eq)){
+                        usedEquipment.add(eq);
+                        eqSet.add(eq);
+                        usedPoints += eq.getCost();
+                        System.out.println("Added: "+eq.getName()+", to: "+
+                                newArmyUnit.getUnit().getName());
+                    }
+                }
+            }
+        }
+
+
+        Set<ArmyUnit> armyUnits = army.getArmyUnits();
+        armyUnits.add(newArmyUnit);
     }
 }

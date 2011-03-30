@@ -26,6 +26,7 @@
     <property column="STRENGTH" length="7" name="strength"/>
     <property column="TOUGHNESS" length="7" name="toughness"/>
     <property column="MAGICPOINTS" name="magicPoints"/>
+    <property column="MAGICIAN" name="magician" type="boolean"/>
     <property column="UNITTYPE" length="3" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
         <param name="enumClassName">org.Warhammer.Warhammer.Unit$unitType</param>

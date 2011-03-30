@@ -21,7 +21,6 @@ import org.Warhammer.Warhammer.Case.Races;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import org.Warhammer.Util.CreateObjectFromDB;
 
 /**
  * Class to represent a unit
@@ -49,6 +48,7 @@ public class Unit extends CoreUnit{
     private Races race;
     private Set<SpecialRules> specialRules = new HashSet<SpecialRules>();
     private int magicPoints;
+    private boolean magician;
     
     /**
      * @return the movement
@@ -290,6 +290,20 @@ public class Unit extends CoreUnit{
         this.weaponType = weaponType;
     }
 
+    /**
+     * @return the magician
+     */
+    public boolean isMagician() {
+        return magician;
+    }
+
+    /**
+     * @param magician the magician to set
+     */
+    public void setMagician(boolean magician) {
+        this.magician = magician;
+    }
+
     @Override
     public String toString(){
 
@@ -464,19 +478,28 @@ public class Unit extends CoreUnit{
 
     /**
      * Method to check if the unit is a battle standard bearer (BSB).
-     * Only lord/heroes may be BSB's.
      * @return <ul><li>true - if the unit is a BSB</li>
      * <li>false - if the unit not is a BSB</li></ul>
      */
     public boolean isBattleStandardBearer(){
-        if(armyType==armyType.Hero||armyType==armyType.Lord){
+        if(canBeBattleStandardBearer()){
             for(Equipment eq : equipment){
                 if(eq.getName().equalsIgnoreCase("Battle standard bearer"))
                     return true;
             }
-            return false;
         }
-        else
-            return false;
+        return false;
+    }
+
+    /**
+     * Method to check if the unit can be a battle standard bearer (BSB).
+     * Only non magician heroes may be BSB's
+     * @return <ul><li>true - if the unit is a BSB</li>
+     * <li>false - if the unit not is a BSB</li></ul>
+     */
+    public boolean canBeBattleStandardBearer(){
+        if(armyType==armyType.Hero&&!magician)
+            return true;
+        return false;
     }
 }

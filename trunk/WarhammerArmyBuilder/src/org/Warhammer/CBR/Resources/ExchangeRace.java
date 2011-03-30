@@ -25,6 +25,7 @@ import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
+import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Equipment.itemType;
 import org.Warhammer.Warhammer.Unit;
@@ -118,7 +119,7 @@ public class ExchangeRace {
                 newArmyUnit.setUnit(mostSimilarUnit);
                 newArmyUnit.setNumberOfUnits(1);
                 Set<Equipment> possibleEquipment =
-                        CreateObjectFromDB.getEquipment(mostSimilarUnit.getRace(),
+                        CreateObjectFromDB.getAllEquipment(mostSimilarUnit.getRace(),
                         mostSimilarUnit.getMagicPoints());
                 System.out.println("exchanged: "+armyUnit.getUnit().getName()+
                         " with: "+mostSimilarUnit.getName());
@@ -149,9 +150,18 @@ public class ExchangeRace {
                 ArmyUnit newArmyUnit = new ArmyUnit();
                 newArmyUnit.setUnit(mostSimilarUnit);
                 newArmyUnit.setNumberOfUnits(1);
-                Set<Equipment> possibleEquipment =
-                        CreateObjectFromDB.getEquipment(mostSimilarUnit.getRace(),
-                        mostSimilarUnit.getMagicPoints());
+                Set<Equipment> possibleEquipment;
+                //Dwarfs cannon use magical items, only the magic runes they
+                //can inscribe on their equipment. And should then only get
+                //access to those runes. 
+                if(army.getPlayerRace()==Races.Dwarfs)
+                    possibleEquipment = CreateObjectFromDB.getRaceEquipment(
+                            mostSimilarUnit.getRace(),
+                            mostSimilarUnit.getMagicPoints());
+                else
+                    possibleEquipment = CreateObjectFromDB.getAllEquipment(
+                            mostSimilarUnit.getRace(),
+                            mostSimilarUnit.getMagicPoints());
                 System.out.println("exchanged: "+armyUnit.getUnit().getName()+
                         " with: "+mostSimilarUnit.getName());
                 assignEquipment(newArmyUnit, possibleEquipment);
