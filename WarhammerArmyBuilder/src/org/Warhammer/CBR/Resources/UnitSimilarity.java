@@ -57,11 +57,11 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * Constructor sets all the similarity weigths as requested
      * All weigths must be in the range 0 to 1 [0,1], all weigths outside this
      * range is automatically adjusted.
-     * @param charWeigth
-     * @param unitTypeWeigth
-     * @param armyTypeWeigth
-     * @param costWeigth
-     * @param weaponWeigth
+     * @param charWeigth The weigth of the characteristics similarity
+     * @param unitTypeWeigth The weigth of the unit type similarity
+     * @param armyTypeWeigth The weigth of the army type similarity
+     * @param costWeigth The weigth of the cost similarity
+     * @param weaponWeigth The weigth of the weapon similarity
      */
     public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth,double weaponWeigth){
         this.characteristicsWeigth = (charWeigth < 0) ? 0 : charWeigth;

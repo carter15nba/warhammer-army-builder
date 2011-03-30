@@ -83,7 +83,7 @@ public class CreateObjectFromDB {
     /**
      * Method that aquire a list of units based on the race and army type.
      * @param race The race of the units
-     * @param armyType The ArmyType of the units
+     * @param aT The ArmyType of the units
      * @return <ul><li>An empty ArrayList if an exception occurs</li>
      * <li>ArrayList with the units matching the requirements</li></ul>
      */
@@ -135,7 +135,6 @@ public class CreateObjectFromDB {
                 eq.setName(res.getString("NAME"));
                 eq.setUsableBy(res.getString("USABLEBY"));
                 eqSet.add(eq);
-                System.out.println(eq.toString());
             }
         }
         catch (SQLException ex) {}
@@ -201,6 +200,7 @@ public class CreateObjectFromDB {
         Set<Equipment> eqSet = new HashSet<Equipment>();
         String query = "SELECT * FROM EQUIPMENT "
                 + "WHERE EQUIPMENT.COST <= "+magicPoints
+                + " AND EQUIPMENT.COST <> 0"
                 + " AND (EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
                 + " OR EQUIPMENT.USABLEBY='All')"
                 + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
@@ -219,7 +219,6 @@ public class CreateObjectFromDB {
                 eq.setName(res.getString("NAME"));
                 eq.setUsableBy(res.getString("USABLEBY"));
                 eqSet.add(eq);
-                System.out.println(eq.toString());
             }
         }
         catch (SQLException ex) {}

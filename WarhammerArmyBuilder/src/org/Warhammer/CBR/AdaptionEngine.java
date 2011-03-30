@@ -178,7 +178,7 @@ public class AdaptionEngine {
         RuleSet rule = new RuleSet();
         Messages[] messages = rule.isFollowingArmyDispositionRules(army);
         ArrayList<Unit> units;
-        while(messages[0]!=Messages.OK){
+        //while(messages[0]!=Messages.OK){
             //Only check the first error each loop iteration as one change may
             //affect other error messages.
             Messages message = messages[0];
@@ -188,11 +188,6 @@ public class AdaptionEngine {
                 System.out.println(rule.calculateTotalCost());
             }
             switch(message){
-                case TOO_FEW_CORE_GROUPS:
-                    units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                        army.getPlayerRace(), armyType.Core);
-                    addUnitGroup(army, units, armyType.Core);
-                    break;
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                         army.getPlayerRace(), armyType.Core);
@@ -214,36 +209,22 @@ public class AdaptionEngine {
                     causes = rule.getCauses(message);
                     decreaseDuplicates(army,causes);
                     break;
-                case TOO_MANY_HEROES:
-                    removeOneCharacter(army, armyType.Hero);
-                    break;
                 case TOO_MANY_HERO_POINTS:
                     reduceCharacterPoints(army, armyType.Hero, messages);
-                    break;
-                case TOO_MANY_LORDS:
-                    removeOneCharacter(army, armyType.Lord);
                     break;
                 case TOO_MANY_LORD_POINTS:
                     reduceCharacterPoints(army, armyType.Hero, messages);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
-
-                    break;
-                case TOO_MANY_RARE_GROUPS:
-                    removeGroup(army, armyType.Rare);
+                    reducePointsTotal(army, messages, rule);
                     break;
                 case TOO_MANY_RARE_POINTS:
-                    causes = rule.getCauses(message);
                     reduceSpecialOrRareGroupPoints(army, armyType.Rare, 
-                            messages, message, causes, rule);
-                    break;
-                case TOO_MANY_SPECIAL_GROUPS:
-                    removeGroup(army, armyType.Special);
+                            messages, message, rule);
                     break;
                 case TOO_MANY_SPECIAL_POINTS:
-                    causes = rule.getCauses();
                     reduceSpecialOrRareGroupPoints(army, armyType.Special,
-                            messages, message, causes, rule);
+                            messages, message, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
                     causes = rule.getCauses();
@@ -254,7 +235,6 @@ public class AdaptionEngine {
                 case WRONG_RACE:
                     ExchangeRace exRace = new ExchangeRace();
                     army = exRace.adaptRace(army);
-                    PrintFactory.printArmyUnit(army.getArmyUnits(), army);
                     break;
                 //If an unknown or untreatable error message is encountered.
                 default:
@@ -262,7 +242,7 @@ public class AdaptionEngine {
             }
             //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
-        }
+        //}
         return army;
     }
 
@@ -273,7 +253,7 @@ public class AdaptionEngine {
      * @param army - The army to add a new unit group to
      * @param availableUnits - The list of available units (based on race and
      * army type)
-     * @param armyType - The army type for the unit group to be added
+     * @param aT - The army type for the unit group to be added
      */
     private void addUnitGroup(Army army, ArrayList<Unit> availableUnits, 
             armyType aT){
@@ -425,30 +405,6 @@ public class AdaptionEngine {
     }
 
     private void reduceCharacterPoints(Army army, armyType aT, Messages[] messages) {
-        Messages hero = Messages.OK;
-        Messages lord = Messages.OK;
-        boolean heroAndOrLord = false;
-        //Check if there are too many lords and/or heroes and remove one
-        //hero and/or lord if there is.
-        for (Messages message : messages) {
-            switch(message){
-                case TOO_MANY_LORDS:
-                    lord = Messages.TOO_MANY_LORDS;
-                    heroAndOrLord = true;
-                    break;
-                case TOO_MANY_HEROES:
-                    hero = Messages.TOO_MANY_HEROES;
-                    heroAndOrLord=true;
-                    break;
-            }
-        }
-        if(hero==Messages.TOO_MANY_HEROES)
-            removeOneCharacter(army, aT.Hero);
-        if(lord==Messages.TOO_MANY_LORDS)
-            removeOneCharacter(army, aT.Lord);
-        //If there were a hero or lord too many do not perform any other adaption.
-        if(heroAndOrLord)
-            return;
         //Remove the cheapest equipment or unit from the lord/hero wich have
         //spent the most points. 
         int cost = 0;
@@ -511,21 +467,16 @@ public class AdaptionEngine {
     }
 
     private void reduceSpecialOrRareGroupPoints(Army army, armyType aT,
-            Messages[] messages, Messages message, Causes[] causes, RuleSet rs){
+            Messages[] messages, Messages message, RuleSet rs){
         Messages special = Messages.OK;
         Messages rare = Messages.OK;
         Messages duplicateR = Messages.OK;
         Messages duplicateS = Messages.OK;
+        Causes[] causes = rs.getCauses();
         //Check if there is another reason for the special/rare groups to have
         //too many poinst
         for (Messages msg : messages) {
             switch(msg){
-                case TOO_MANY_SPECIAL_GROUPS:
-                    special = Messages.TOO_MANY_SPECIAL_GROUPS;
-                    break;
-                case TOO_MANY_RARE_GROUPS:
-                    rare = Messages.TOO_MANY_RARE_GROUPS;
-                    break;
                 case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
                     duplicateS = Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS;
                     break;
@@ -625,6 +576,29 @@ public class AdaptionEngine {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void reducePointsTotal(Army army, Messages[] messages, RuleSet rs) {
+        //Check if either of the army type groups have too many points
+        //allocated to them.
+        for (Messages message : messages) {
+            switch(message){
+                case TOO_MANY_HERO_POINTS:
+                    reduceCharacterPoints(army, armyType.Hero, messages);
+                    return;
+                case TOO_MANY_LORD_POINTS:
+                    reduceCharacterPoints(army, armyType.Lord, messages);
+                    return;
+                case TOO_MANY_RARE_POINTS:
+                    reduceSpecialOrRareGroupPoints(army, armyType.Rare,
+                            messages, message, rs);
+                    return;
+                case TOO_MANY_SPECIAL_POINTS:
+                    reduceSpecialOrRareGroupPoints(army, armyType.Special,
+                            messages, message, rs);
+                    return;
             }
         }
     }

@@ -76,5 +76,4 @@ public class Causes {
     public void setCause(Messages cause){
         this.cause = cause;
     }
-
 }

@@ -45,5 +45,4 @@ public class CollectionControl {
         obj = collection.toArray(obj);
         return obj[index];
     }
-
 }

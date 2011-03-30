@@ -111,5 +111,4 @@ public class CoreUnit implements jcolibri.cbrcore.CaseComponent{
     public void setMinNumber(int minNumber) {
         this.minNumber = minNumber;
     }
-
 }

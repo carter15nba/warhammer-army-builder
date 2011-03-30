@@ -112,7 +112,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         }
         //TODO: user specified k neares cases.
         System.err.println("Retrieve phase done!");
-        return SelectCases.selectTopKRR(eval, 4);
+        return SelectCases.selectTopKRR(eval, 1);
     }
 
     /**
@@ -191,7 +191,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
-                queryArmy.setArmyUnits(armyUnitSet);
+//                queryArmy.setArmyUnits(armyUnitSet);
                 Set<Equipment> sEq = new HashSet<Equipment>();
                 Equipment eq = new Equipment();
                 eq.setName("Musician");

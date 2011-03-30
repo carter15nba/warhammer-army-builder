@@ -462,4 +462,21 @@ public class Unit extends CoreUnit{
         return false;
     }
 
+    /**
+     * Method to check if the unit is a battle standard bearer (BSB).
+     * Only lord/heroes may be BSB's.
+     * @return <ul><li>true - if the unit is a BSB</li>
+     * <li>false - if the unit not is a BSB</li></ul>
+     */
+    public boolean isBattleStandardBearer(){
+        if(armyType==armyType.Hero||armyType==armyType.Lord){
+            for(Equipment eq : equipment){
+                if(eq.getName().equalsIgnoreCase("Battle standard bearer"))
+                    return true;
+            }
+            return false;
+        }
+        else
+            return false;
+    }
 }
