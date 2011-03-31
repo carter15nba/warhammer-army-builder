@@ -183,10 +183,6 @@ public class AdaptionEngine {
             //affect other error messages.
             Messages message = messages[0];
             Causes[] causes;
-            for (Messages msg : messages) {
-                System.out.println("Error message: "+msg);
-                System.out.println(rule.calculateTotalCost());
-            }
             switch(message){
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
@@ -194,8 +190,7 @@ public class AdaptionEngine {
                     addUnitGroup(army, units, armyType.Core);
                     break;
                 case TOO_FEW_POINTS_TOTAL:
-                    //TODO: Exchange method to one that are more flexible and
-                    //not only adds core units.
+                    increasePointUsage(army, messages, rule);
                     break;
                 case TOO_FEW_UNITS_IN_GROUP:
                     causes = rule.getCauses(message);
@@ -232,6 +227,9 @@ public class AdaptionEngine {
                     break;
                 case NO_ARMY_GENERAL:
                     addGeneral(army);
+                    break;
+                case TOO_FEW_GROUPS:
+                    increasePointUsage(army, messages, rule);
                     break;
                 case WRONG_RACE:
                     ExchangeRace exRace = new ExchangeRace();
@@ -447,16 +445,16 @@ public class AdaptionEngine {
                     ut = utility;
                 }
             }
-            System.out.println("Removing cheapest util/eq from: "+
+            if(eCost<uCost){
+                mostExpensiveUnit.getUtility().remove(ut);
+                System.out.println("Removing cheapest util from: "+
                     mostExpensiveUnit.getUnit().getName());
-            if(eCost<uCost&&eq!=null)
-                mostExpensiveUnit.getEquipment().remove(eq);
-            else if(uCost<eCost&&ut!=null)
-                mostExpensiveUnit.getUtility().remove(ut);
-            else if(eq==null&&ut!=null)
-                mostExpensiveUnit.getUtility().remove(ut);
-            else if(ut==null&&eq!=null)
-                mostExpensiveUnit.getEquipment().remove(eq);
+            }
+            else {
+                boolean s = mostExpensiveUnit.getEquipment().remove(eq);
+                System.out.println("Removing cheapest eq ("+eq.getName()+") from: "+
+                    mostExpensiveUnit.getUnit().getName()+", success:"+s);
+            }
             
         }
     }
@@ -474,8 +472,10 @@ public class AdaptionEngine {
                 }
             }
         }
-        System.out.println("Removing: "+removeUnit.getUnit().getName());
-        army.getArmyUnits().remove(removeUnit);
+        if(removeUnit!=null){
+            System.out.println("Removing: "+removeUnit.getUnit().getName());
+            army.getArmyUnits().remove(removeUnit);
+        }
     }
 
     private void reduceSpecialOrRareGroupPoints(Army army, armyType aT,
@@ -599,19 +599,58 @@ public class AdaptionEngine {
             switch(message){
                 case TOO_MANY_HERO_POINTS:
                     reduceCharacterPoints(army, armyType.Hero, rs);
+                    System.out.println("too many hero");
                     return;
                 case TOO_MANY_LORD_POINTS:
                     reduceCharacterPoints(army, armyType.Lord, rs);
+                    System.out.println("too many lord");
                     return;
                 case TOO_MANY_RARE_POINTS:
                     reduceSpecialOrRareGroupPoints(army, armyType.Rare,
                             messages, message, rs);
+                    System.out.println("reduce rare");
                     return;
                 case TOO_MANY_SPECIAL_POINTS:
                     reduceSpecialOrRareGroupPoints(army, armyType.Special,
                             messages, message, rs);
+                    System.out.println("reduce special");
                     return;
             }
+        }
+        int totalDiff = Math.abs(rs.getTotalPointDifference());
+
+        if(totalDiff<=20){
+            armyType aT = armyType.Core;
+            for(ArmyUnit armyUnit : army.getArmyUnits()){
+                Unit unit = armyUnit.getUnit();
+                if(unit.getArmyType()==aT){
+                    int numUnits = armyUnit.getNumberOfUnits();
+                    if(numUnits>unit.getMinNumber()){
+                        armyUnit.setNumberOfUnits(numUnits-1);
+                        rs.isFollowingArmyDispositionRules(army);
+                        if(rs.getTotalPointDifference()>0)
+                            return;
+                    }
+                }
+            }
+        }
+        if(totalDiff>20&&totalDiff<300){
+            java.util.Random random = new java.util.Random();
+            int r = random.nextInt(3);
+            if(r==0)
+                removeGroup(army, armyType.Core);
+            if(r==1)
+                removeGroup(army, armyType.Special);
+            if(r==2)
+                removeGroup(army, armyType.Rare);
+        }
+        if(totalDiff>=300){
+            java.util.Random random = new java.util.Random();
+            int r = random.nextInt(2);
+            if(r==0)
+                removeOneCharacter(army, armyType.Hero);
+            if(r==1)
+                removeOneCharacter(army, armyType.Lord);
         }
     }
 
@@ -638,15 +677,18 @@ public class AdaptionEngine {
         Set<Equipment> eqSet = new HashSet<Equipment>();
         //Give the general some equipment from his equipment list
         if(!general.getEquipment().isEmpty()){
-            int numEq = random.nextInt(general.getEquipment().size()/2);
-            for(int i = 0; i<numEq; i++){
-                int nextEq = random.nextInt(general.getEquipment().size());
-                Equipment eq = (Equipment)CollectionControl.getItemAt(
-                        general.getEquipment(), nextEq);
-                if(!eqSet.contains(eq))
-                    eqSet.add(eq);
-                else
-                    i--;
+            int randomLimit = general.getEquipment().size()/2;
+            if(randomLimit>0){
+                int numEq = random.nextInt(general.getEquipment().size()/2);
+                for(int i = 0; i<numEq; i++){
+                    int nextEq = random.nextInt(general.getEquipment().size());
+                    Equipment eq = (Equipment)CollectionControl.getItemAt(
+                            general.getEquipment(), nextEq);
+                    if(!eqSet.contains(eq))
+                        eqSet.add(eq);
+                    else
+                        i--;
+                }
             }
         }
         //Purcase some items from the generals available items
@@ -663,24 +705,107 @@ public class AdaptionEngine {
         for(int i = 0; i<eqToPurchase; i++){
             if(purchaseEq.isEmpty())
                 return;
+            boolean success = false;
             int nextEq = random.nextInt(purchaseEq.size());
             Equipment eq = (Equipment)CollectionControl.getItemAt(
                     purchaseEq, nextEq);
-            if(!usedEquipment.contains(eq)){
-                if((eq.getCost()+usedPoints)<=magicPoints){
-                    if(!haveSimilarEquipment(eqSet, eq)){
-                        usedEquipment.add(eq);
-                        eqSet.add(eq);
-                        usedPoints += eq.getCost();
-                        System.out.println("Added: "+eq.getName()+", to: "+
-                                newArmyUnit.getUnit().getName());
+            if((eq.getCost()+usedPoints)<=magicPoints){
+                if(!ExchangeRace.haveSimilarEquipment(eqSet, eq)){
+                    success = eqSet.add(eq);
+                    usedPoints += eq.getCost();
+                    System.out.println("Added: "+eq.getName()+", to: "+
+                        newArmyUnit.getUnit().getName());
+                }
+            }
+            if(!success)
+                i--;
+        }
+        newArmyUnit.setEquipment(eqSet);
+        Set<ArmyUnit> armyUnits = army.getArmyUnits();
+        armyUnits.add(newArmyUnit);
+    }
+
+    private void increasePointUsage(Army army, Messages[] messages, RuleSet rule) {
+        ArrayList<Unit> units;
+        //Check if any messages that influence the too few total points message
+        //is present and address those first.
+        for (Messages message : messages) {
+            switch(message){
+                case TOO_FEW_CORE_POINTS:
+                    units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
+                        army.getPlayerRace(), armyType.Core);
+                    addUnitGroup(army, units, armyType.Core);
+                    return;
+                case TOO_FEW_GROUPS:
+                    addRandomGroup(army, rule);
+                    return;
+                case TOO_FEW_UNITS_IN_GROUP:
+                    Causes[] causes = rule.getCauses(message);
+                    increaseGroupUnits(army,causes);
+                    return;
+                case NO_ARMY_GENERAL:
+                    addGeneral(army);
+                    return;
+            }
+        }
+        int totalPointDifference = Math.abs(rule.getTotalPointDifference());
+        //if the difference in used points is less than 150 point, increase
+        //the unit sizes where applicable (give full command) instead of
+        //generating a new unit group/formation
+        if(totalPointDifference<150){
+            if(applyFullCommand(army)){
+                for(ArmyUnit armyUnit : army.getArmyUnits()){
+                    Unit unit = armyUnit.getUnit();
+                    if(unit.isEligibleForFullCommand()&&!armyUnit.haveFullCommand())
+                        armyUnit.giveUnitFullCommand();
+                }
+                return;
+            }
+            while(true){
+                java.util.Random random = new java.util.Random();
+                int next = random.nextInt(army.getArmyUnits().size());
+                ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(
+                        army.getArmyUnits(), next);
+                Unit unit = armyUnit.getUnit();
+                armyType uAT = unit.getArmyType();
+                if(uAT!=armyType.Hero||uAT!=armyType.Lord){
+                    int numUnits = armyUnit.getNumberOfUnits();
+                    if(numUnits<unit.getMaxNumber()||unit.getMaxNumber()==0){
+                        armyUnit.setNumberOfUnits(numUnits+5);
+                        break;
                     }
                 }
             }
         }
-
-
-        Set<ArmyUnit> armyUnits = army.getArmyUnits();
-        armyUnits.add(newArmyUnit);
+        else{
+            addRandomGroup(army, rule);
+        }
+    }
+    private void addRandomGroup(Army army, RuleSet rule){
+        ArrayList<Unit> units;
+        java.util.Random random = new java.util.Random();
+        int newFormation = random.nextInt(5);
+        int rareDifference = rule.getRarePointDifference();
+        int specialDifference = rule.getSpecialPointDifference();
+        int heroDifference = rule.getHeroPointDifference();
+        int lordDifference = rule.getLordPointDifference();
+        armyType aT=armyType.Core;
+        if(newFormation==0&&lordDifference>199){
+            addGeneral(army);
+            return;
+        }
+        else if(newFormation==1&&heroDifference>149){
+            addGeneral(army);
+            return;
+        }
+        else if(newFormation==2)
+            aT=armyType.Core;
+        else if(newFormation==3&&specialDifference>99)
+            aT=armyType.Special;
+        else if(newFormation==4&&rareDifference>99)
+            aT=armyType.Rare;
+        units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
+                    army.getPlayerRace(), aT);
+        addUnitGroup(army, units, aT);
     }
 }

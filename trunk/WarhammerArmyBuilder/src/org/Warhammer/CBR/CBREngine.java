@@ -112,7 +112,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         }
         //TODO: user specified k neares cases.
         System.err.println("Retrieve phase done!");
-        return SelectCases.selectTopKRR(eval, 1);
+        return SelectCases.selectTopKRR(eval, 5);
     }
 
     /**
@@ -124,10 +124,14 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
+        for(int i = 0 ; i<1000; i++){
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getDescription();
             Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
             PrintFactory.printCase(adaptedCase, true);
+        }
+        System.err.append("Testing run#"+i);
+        System.err.flush();
         }
         
 //        RuleSet rs = new RuleSet();

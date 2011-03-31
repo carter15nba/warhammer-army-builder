@@ -326,7 +326,8 @@ public class ExchangeRace {
      * purchase
      */
     private void assignEquipment(ArmyUnit armyUnit, 
-            Set<Equipment> purchasableEquipment) {
+        Set<Equipment> purchasableEquipment) {
+        System.out.println("venturing into add equipment");
         java.util.Random random = new java.util.Random();
         Set<Equipment> unitEquipment = armyUnit.getUnit().getEquipment();
         Set<Equipment> newUnitEquipment = new HashSet<Equipment>();
@@ -337,6 +338,7 @@ public class ExchangeRace {
         int uSpesificNum = random.nextInt(uSpesific)+1;
         if(unitEquipment.isEmpty())
             uSpesificNum = 0;
+        int errorCount = 0;
         for(int i = 0 ; i < uSpesificNum; i++){
             int nextEq = random.nextInt(unitEquipment.size());
             Equipment eq = (Equipment)CollectionControl.getItemAt(unitEquipment,
@@ -344,17 +346,23 @@ public class ExchangeRace {
             boolean success = newUnitEquipment.add(eq);
             //The adding will only fail if the equipment have been added in a
             //previous iteration
-            if(!success)
+            if(!success){
                 i--;
+                errorCount++;
+            }
+            if(errorCount>5)
+                break;
         }
         //Add magical items.
         //TODO: Logic for battle standard bearers.
         int numberOfMagicalItems = random.nextInt(3)+1;
         int magicPoints = armyUnit.getUnit().getMagicPoints();
         int usedMagicPoints = 0;
+        errorCount=0;
         for(int i = 0; i<numberOfMagicalItems; i++){
             if(purchasableEquipment.isEmpty())
                 return;
+            boolean success=false;
             int nextEq = random.nextInt(purchasableEquipment.size());
             Equipment eq = (Equipment)CollectionControl.getItemAt(
                     purchasableEquipment, nextEq);
@@ -362,12 +370,19 @@ public class ExchangeRace {
                 if((eq.getCost()+usedMagicPoints)<=magicPoints){
                     if(!haveSimilarEquipment(newUnitEquipment, eq)){
                         usedEquipment.add(eq);
-                        newUnitEquipment.add(eq);
+                        success = newUnitEquipment.add(eq);
                         usedMagicPoints += eq.getCost();
                         System.out.println("Added: "+eq.getName()+", to: "+
                                 armyUnit.getUnit().getName());
                     }
                 }
+            }
+            if(!success){
+                i--;
+                errorCount++;
+            }
+            if(errorCount>5){
+                break;
             }
         }
         armyUnit.setEquipment(newUnitEquipment);
@@ -381,7 +396,7 @@ public class ExchangeRace {
      * @return <ul><li>true - if the equipment can be purchased</li>
      * <li>false - if the equipment cannot be purchased.</li></ul>
      */
-    private boolean haveSimilarEquipment(Set<Equipment> sEq, Equipment eq){
+    public static boolean haveSimilarEquipment(Set<Equipment> sEq, Equipment eq){
         for (Equipment equipment : sEq) {
             if(equipment.getItemType()==eq.getItemType())
                 return true;
