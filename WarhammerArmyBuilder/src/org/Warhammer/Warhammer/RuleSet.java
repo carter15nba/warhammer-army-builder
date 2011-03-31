@@ -190,15 +190,15 @@ public class RuleSet {
         return (int)(diff[2]-rareCost);
     }
     /**
-     * This method returns the difference between total core points and used
-     * core points (core_points - used_points)
-     * @return <ul><li>Positive integer if you have spent less points than
-     * available</li><li>Negative integer if you have spent more points than
-     * available</li></ul>
+     * This method returns the difference between used core points and the
+     * minimum core point usage (used_points - core_points)
+     * @return <ul><li>Positive integer if you have spent more points than
+     * required</li><li>Negative integer if you have spent less points than
+     * required</li></ul>
      */
     public int getCorePointDifference(){
         double[] diff = calculateAllowedPointDistribution();
-        return (int)(diff[0]-coreCost);
+        return (int)(coreCost-diff[0]);
     }
     /**
      * This method returns the difference between total special points and used

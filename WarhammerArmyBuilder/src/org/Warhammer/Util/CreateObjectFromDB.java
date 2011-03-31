@@ -204,7 +204,8 @@ public class CreateObjectFromDB {
                 + " AND (EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
                 + " OR EQUIPMENT.USABLEBY='All')"
                 + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'";
+                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Unit_Upgrade'";
         DatabaseManager dbm = DatabaseManager.getInstance();
         dbm.connectWithoutHibernate();
         ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
@@ -239,7 +240,8 @@ public class CreateObjectFromDB {
                 + " AND EQUIPMENT.COST <> 0"
                 + " AND EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
                 + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'";
+                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'"
+                + " AND EQUIPMENT.ITEMTYPE <> 'Unit_Upgrade'";
         DatabaseManager dbm = DatabaseManager.getInstance();
         dbm.connectWithoutHibernate();
         ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
