@@ -502,4 +502,12 @@ public class Unit extends CoreUnit{
             return true;
         return false;
     }
+
+    public boolean compareTo(Unit obj){
+        if(!(obj instanceof Unit))
+            return false;
+        if(getName().equals(obj.getName()))
+            return true;
+        return false;
+    }
 }

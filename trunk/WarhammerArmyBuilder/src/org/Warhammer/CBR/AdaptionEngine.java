@@ -18,16 +18,14 @@
 package org.Warhammer.CBR;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.CBRQuery;
-import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import org.Warhammer.CBR.Resources.CommonAdaptionFunctions;
 import org.Warhammer.CBR.Resources.ExchangeRace;
 import org.Warhammer.CBR.Resources.UnitSimilarity;
 import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
 import org.Warhammer.Warhammer.*;
-import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Resources.Causes;
 import org.Warhammer.Warhammer.Resources.ErrorManager.Messages;
 import org.Warhammer.Warhammer.Unit.armyType;
@@ -39,7 +37,16 @@ import org.Warhammer.Warhammer.Unit.armyType;
  */
 public class AdaptionEngine {
 
-    private double fullCommandPercentage = 0.8;
+
+
+    private CommonAdaptionFunctions cAF;
+
+    public AdaptionEngine(){
+        cAF = new CommonAdaptionFunctions(new UnitSimilarity());
+    }
+    public AdaptionEngine(UnitSimilarity unitSimilarity){
+        cAF = new CommonAdaptionFunctions(unitSimilarity);
+    }
 
     /**
      * Method to adapt a case to fit the query.
@@ -48,8 +55,9 @@ public class AdaptionEngine {
      * @return Case - The adapted case
      */
     public Case adaptCase(Case _case, CBRQuery query){
+        cAF.resetUsedMagicalEquipment();
         Case adaptedCase = naiveAdaption(_case, query);
-        return refineAdaption(adaptedCase, query);
+        return refineAdaption(adaptedCase);
     }
 
     /**
@@ -73,12 +81,11 @@ public class AdaptionEngine {
      * Method to refine the results of the naïve adaption by changeing the case
      * to adhere to the rules of the army creation process.
      * @param adaptedCase The results of the naïve adaption
-     * @param query The query to adapt the case over
      * @return Case - The adapted case
      */
-    private Case refineAdaption(Case adaptedCase, CBRQuery query){
-        adaptedCase.setArmy(refineArmy(adaptedCase.getArmy()));
-        //TODO: whatever goes here
+    private Case refineAdaption(Case adaptedCase){
+        Army refinedArmy = refineArmy(adaptedCase.getArmy());
+        adaptedCase.setArmy(refinedArmy);
         return adaptedCase;
     }
 
@@ -95,8 +102,6 @@ public class AdaptionEngine {
         Army adaptedArmy = Army.copy(_case.getArmy());
         adaptedArmy.setArmyPoints(queryCase.getArmy().getArmyPoints());
         Set<ArmyUnit> queryUnits = queryCase.getArmy().getArmyUnits();
-        boolean[] isAdapted = new boolean[queryUnits.size()];
-        int pos=0;
         //Find and replace units in the case with query units
         //(Adapt present units e.g.: queried units already present in the case).
         for(ArmyUnit queryUnit : queryUnits){
@@ -112,56 +117,21 @@ public class AdaptionEngine {
                         adaptedUnit.setEquipment(queryUnit.getEquipment());
                     if(!queryUnit.getUtility().isEmpty())
                         adaptedUnit.setUtility(queryUnit.getUtility());
-                    isAdapted[pos] = true;
                 }
             }
-            pos++;
         }
         //If units in query not adapted, find possible replacement candidates
         //and perform the adaption.
-        pos = 0;
+        Set<ArmyUnit> armyUnits = adaptedArmy.getArmyUnits();
+        ArmyUnit mostSimilarUnit = null;
         for(ArmyUnit queryUnit : queryUnits){
-            if(isAdapted[pos++])
-                continue;
-            Unit query = queryUnit.getUnit();
-            UnitSimilarity unitSimilarity = new UnitSimilarity();
-            ArrayList<Double> similarity = new ArrayList<Double>();
-            try{
-                //Calculate the similarity between all units in the army and the
-                //current query unit.
-                for (ArmyUnit adaptedUnit : adaptedArmy.getArmyUnits()) {
-                    boolean calculate = true;
-                    //Do not calculate the similarity on any unit that is
-                    //present in the query.
-                    for(ArmyUnit isQuery : queryUnits){
-                        if(adaptedUnit.getUnit().getName().equals(isQuery.getUnit().getName())){
-                            calculate = false;
-                            break;
-                        }
-                    }
-                    double sim = 0;
-                    if(calculate)
-                        sim = unitSimilarity.compute(query, adaptedUnit.getUnit());
-                    similarity.add(sim);
-                }
-                //Find most similar
-                int index = -1;
-                double highest = -1;
-                for(int i = 0; i < similarity.size(); i++){
-                    double sim = similarity.get(i);
-                    if(highest<sim){
-                        highest = sim;
-                        index = i;
-                    }
-                }
-                //Adapt most similar unit to be the requested unit
-                ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(adaptedArmy.getArmyUnits(), index);
-                armyUnit.setUnit(query);
-                armyUnit.setUtility(queryUnit.getUtility());
-                armyUnit.setEquipment(queryUnit.getEquipment());
-                armyUnit.setNumberOfUnits(queryUnit.getNumberOfUnits());
+            if(!armyUnits.contains(queryUnit)){
+                mostSimilarUnit = cAF.findMostSimilarArmyUnit(queryUnit, armyUnits);
+                mostSimilarUnit.setUnit(queryUnit.getUnit());
+                mostSimilarUnit.setNumberOfUnits(queryUnit.getNumberOfUnits());
+                mostSimilarUnit.setEquipment(queryUnit.getEquipment());
+                mostSimilarUnit.setUtility(queryUnit.getUtility());
             }
-            catch(NoApplicableSimilarityFunctionException e){}
         }
         return adaptedArmy;
     }
@@ -187,7 +157,7 @@ public class AdaptionEngine {
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                         army.getPlayerRace(), armyType.Core);
-                    addUnitGroup(army, units, armyType.Core);
+                    addUnitGroup(army, units);
                     break;
                 case TOO_FEW_POINTS_TOTAL:
                     increasePointUsage(army, messages, rule);
@@ -252,89 +222,21 @@ public class AdaptionEngine {
      * @param army - The army to add a new unit group to
      * @param availableUnits - The list of available units (based on race and
      * army type)
-     * @param aT - The army type for the unit group to be added
      */
-    private void addUnitGroup(Army army, ArrayList<Unit> availableUnits, 
-            armyType aT){
-        UnitSimilarity unitSim = new UnitSimilarity();
+    private void addUnitGroup(Army army, ArrayList<Unit> availableUnits){
         Set<ArmyUnit> armyUnits = army.getArmyUnits();
-        double sim = 1;
-        int pos=0;
-        int armyId=0;
         //Find the unit which is least similar to the core units already in the
         //army, this is probably a unit you could have need of.
-
-        for (ArmyUnit armyUnit : armyUnits) {
-            Unit unit = armyUnit.getUnit();
-            armyId = armyUnit.getArmyID();
-            if(unit.getArmyType()==aT){
-                for(int i = 0; i < availableUnits.size(); i++){
-                    try {
-                        double tmp = unitSim.compute(unit, availableUnits.get(i));
-                        if(tmp<sim){
-                            sim=tmp;
-                            pos=i;
-                        }
-                    }
-                    catch (NoApplicableSimilarityFunctionException ex) {}
-                }
-            }
-        }
-        Unit newUnit = availableUnits.get(pos);
-        ArmyUnit newArmyUnit = new ArmyUnit();
-        newArmyUnit.setUnit(newUnit);
-        newArmyUnit.setArmyID(armyId);
-        int numUnits = newUnit.getMinNumber()*2;
-        //if the number of untis are more than the max number of units
-        //decrement by 1.
-        while(numUnits>newUnit.getMaxNumber()&&newUnit.getMaxNumber()!=0)
-            numUnits--;
-        newArmyUnit.setNumberOfUnits(numUnits);
-        if(applyFullCommand(army)){
-            Set<Equipment> eq = CreateObjectFromDB.getUnitEquipment(newUnit.getName());
-            Set<UtilityUnit> ut = CreateObjectFromDB.getUtilityUnits(newUnit.getName());
-            Set<Equipment> newEq = new HashSet<Equipment>();
-            Set<UtilityUnit> newUt = new HashSet<UtilityUnit>();
-            for (UtilityUnit utilityUnit : ut) {
-                if(utilityUnit.isPromotionUnit())
-                    newUt.add(utilityUnit);
-            }
-            for (Equipment equipment : eq) {
-                String name = equipment.getName();
-                if(name.contains("Musician"))
-                    newEq.add(equipment);
-                if(name.contains("Standard bearer"))
-                    newEq.add(equipment);
-            }
-            newArmyUnit.setEquipment(newEq);
-            newArmyUnit.setUtility(newUt);
-        }
-        System.out.println("Adding new "+aT+" group: "+newUnit.getName()+
-                ", num units: "+newArmyUnit.getNumberOfUnits()+
-                ", full command: "+newArmyUnit.haveFullCommand());
+        Unit leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, true);
+        if(leastSimilarUnit==null)
+            leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, false);
+        ArmyUnit newArmyUnit = cAF.createNewUnit(army, leastSimilarUnit);
         armyUnits.add(newArmyUnit);
+        System.out.println("Adding new: "+leastSimilarUnit.getArmyType()+
+                " group: "+leastSimilarUnit.getName()+", gave full command: "+
+                newArmyUnit.haveFullCommand());
     }
 
-    /**
-     * This method determines if the full command threshold have been reached
-     * @param army -The army to check the full command threshold
-     * @return <ul><li>true - if a new full command group can be created</li>
-     * <li>false - if a nee full command group cannot be created</li></ul>
-     */
-    private boolean applyFullCommand(Army army){
-        int eligibleFullCommandUnits = 0;
-        int unitsWithFullCommand = 0;
-        for (ArmyUnit au : army.getArmyUnits()) {
-            if(au.getUnit().isEligibleForFullCommand())
-                eligibleFullCommandUnits++;
-            if(au.haveFullCommand())
-                unitsWithFullCommand++;
-        }
-        double fraction = (double) unitsWithFullCommand/eligibleFullCommandUnits;
-        if(fraction<fullCommandPercentage)
-            return true;
-        return false;
-    }
 
     /**
      * Method to increase the number of units in a group. (used when too few
@@ -403,6 +305,7 @@ public class AdaptionEngine {
         }
     }
 
+    //TODO: START HERE AND CONTINUE DOWN THE CLASS FILE TO UPDATE IT WITH NEW IMPORVED FUNCTIONS AND THE COMMONADAPTATIONFUNCTIONS CLASS
     private void reduceCharacterPoints(Army army, armyType aT, RuleSet rs) {
         int diff=0;
         if(aT==armyType.Lord)
@@ -454,8 +357,7 @@ public class AdaptionEngine {
                 boolean s = mostExpensiveUnit.getEquipment().remove(eq);
                 System.out.println("Removing cheapest eq ("+eq.getName()+") from: "+
                     mostExpensiveUnit.getUnit().getName()+", success:"+s);
-            }
-            
+            }            
         }
     }
 
@@ -660,69 +562,8 @@ public class AdaptionEngine {
         java.util.Random random = new java.util.Random();
         int generalIndex = random.nextInt(units.size());
         Unit general = (Unit) CollectionControl.getItemAt(units, generalIndex);
-        ArmyUnit newArmyUnit = new ArmyUnit();
-        newArmyUnit.setUnit(general);
-        //Give the general a mount
-        if(!general.getUtilityUnit().isEmpty()){
-            int giveMount = random.nextInt(2);
-            if(giveMount==1){
-                int mountIndex = random.nextInt(general.getUtilityUnit().size());
-                UtilityUnit mount = (UtilityUnit) CollectionControl.getItemAt(
-                        general.getUtilityUnit(), mountIndex);
-                Set<UtilityUnit> newUtility = new HashSet<UtilityUnit>();
-                newUtility.add(mount);
-                newArmyUnit.setUtility(newUtility);
-            }
-        }
-        Set<Equipment> eqSet = new HashSet<Equipment>();
-        //Give the general some equipment from his equipment list
-        if(!general.getEquipment().isEmpty()){
-            int randomLimit = general.getEquipment().size()/2;
-            if(randomLimit>0){
-                int numEq = random.nextInt(general.getEquipment().size()/2);
-                for(int i = 0; i<numEq; i++){
-                    int nextEq = random.nextInt(general.getEquipment().size());
-                    Equipment eq = (Equipment)CollectionControl.getItemAt(
-                            general.getEquipment(), nextEq);
-                    if(!eqSet.contains(eq))
-                        eqSet.add(eq);
-                    else
-                        i--;
-                }
-            }
-        }
-        //Purcase some items from the generals available items
-        int magicPoints = general.getMagicPoints();
-        int usedPoints = 0;
-        Set<Equipment> purchaseEq;
-        if(general.getRace()==Races.Dwarfs)
-            purchaseEq = CreateObjectFromDB.getRaceEquipment(general.getRace(),
-                    magicPoints);
-        else
-            purchaseEq = CreateObjectFromDB.getAllEquipment(general.getRace(),
-                    magicPoints);
-        int eqToPurchase = random.nextInt(3)+1;
-        for(int i = 0; i<eqToPurchase; i++){
-            if(purchaseEq.isEmpty())
-                return;
-            boolean success = false;
-            int nextEq = random.nextInt(purchaseEq.size());
-            Equipment eq = (Equipment)CollectionControl.getItemAt(
-                    purchaseEq, nextEq);
-            if((eq.getCost()+usedPoints)<=magicPoints){
-                if(!ExchangeRace.haveSimilarEquipment(eqSet, eq)){
-                    success = eqSet.add(eq);
-                    usedPoints += eq.getCost();
-                    System.out.println("Added: "+eq.getName()+", to: "+
-                        newArmyUnit.getUnit().getName());
-                }
-            }
-            if(!success)
-                i--;
-        }
-        newArmyUnit.setEquipment(eqSet);
-        Set<ArmyUnit> armyUnits = army.getArmyUnits();
-        armyUnits.add(newArmyUnit);
+        ArmyUnit newArmyUnit = cAF.createNewCharacter(army, general);
+        army.getArmyUnits().add(newArmyUnit);
     }
 
     private void increasePointUsage(Army army, Messages[] messages, RuleSet rule) {
@@ -734,7 +575,7 @@ public class AdaptionEngine {
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                         army.getPlayerRace(), armyType.Core);
-                    addUnitGroup(army, units, armyType.Core);
+                    addUnitGroup(army, units);
                     return;
                 case TOO_FEW_GROUPS:
                     addRandomGroup(army, rule);
@@ -753,7 +594,7 @@ public class AdaptionEngine {
         //the unit sizes where applicable (give full command) instead of
         //generating a new unit group/formation
         if(totalPointDifference<150){
-            if(applyFullCommand(army)){
+            if(cAF.applyFullCommand(army)){
                 for(ArmyUnit armyUnit : army.getArmyUnits()){
                     Unit unit = armyUnit.getUnit();
                     if(unit.isEligibleForFullCommand()&&!armyUnit.haveFullCommand())
@@ -806,6 +647,6 @@ public class AdaptionEngine {
             aT=armyType.Rare;
         units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                     army.getPlayerRace(), aT);
-        addUnitGroup(army, units, aT);
+        addUnitGroup(army, units);
     }
 }
