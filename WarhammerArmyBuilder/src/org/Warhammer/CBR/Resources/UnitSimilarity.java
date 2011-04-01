@@ -40,6 +40,7 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
     private double costWeigth;
     private double weaponWeigth;
     private double totalWeigth;
+    private double magicWeigth;
 
     /**
      * Default constructor sets all similarity weigths to 1
@@ -50,7 +51,9 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         armyTypeWeigth = 1;
         costWeigth = 1;
         weaponWeigth = 1;
-        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + costWeigth + weaponWeigth;
+        magicWeigth = 1;
+        totalWeigth = characteristicsWeigth + unitTypeWeigth + armyTypeWeigth + 
+                costWeigth + weaponWeigth + magicWeigth;
     }
 
     /**
@@ -62,8 +65,11 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @param armyTypeWeigth The weigth of the army type similarity
      * @param costWeigth The weigth of the cost similarity
      * @param weaponWeigth The weigth of the weapon similarity
+     * @param magicWeight The weight of the magic similarity
      */
-    public UnitSimilarity(double charWeigth, double unitTypeWeigth, double armyTypeWeigth, double costWeigth,double weaponWeigth){
+    public UnitSimilarity(double charWeigth, double unitTypeWeigth, 
+            double armyTypeWeigth, double costWeigth,double weaponWeigth,
+            double magicWeigth){
         this.characteristicsWeigth = (charWeigth < 0) ? 0 : charWeigth;
         this.characteristicsWeigth = (charWeigth > 1) ? 1 : charWeigth;
         this.armyTypeWeigth = (unitTypeWeigth < 0) ? 0 : unitTypeWeigth;
@@ -74,8 +80,11 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         this.unitTypeWeigth = (unitTypeWeigth > 1) ? 1 : unitTypeWeigth;
         this.weaponWeigth = (weaponWeigth < 0) ? 0 : weaponWeigth;
         this.weaponWeigth = (weaponWeigth > 1) ? 1 : weaponWeigth;
+        this.magicWeigth = (magicWeigth < 0) ? 0 : magicWeigth;
+        this.magicWeigth = (magicWeigth > 1) ? 1 : magicWeigth;
         totalWeigth = characteristicsWeigth + this.unitTypeWeigth +
-                this.armyTypeWeigth + this.costWeigth + this.weaponWeigth;
+                this.armyTypeWeigth + this.costWeigth + this.weaponWeigth +
+                this.magicWeigth;
     }
 
     /**
@@ -87,13 +96,16 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @throws NoApplicableSimilarityFunctionException if the supplied objects
      * not are an instance of org.Warhammer.Warhammer.Unit.class
      */
-    public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
+    public double compute(Object caseObject, Object queryObject)
+            throws NoApplicableSimilarityFunctionException {
         if(caseObject==null||queryObject==null)
             return 0;
         if(!(caseObject instanceof Unit))
-            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
+            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(
+                    this.getClass(), caseObject.getClass());
         if(!(queryObject instanceof Unit))
-            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
+            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(
+                    this.getClass(), queryObject.getClass());
         caseUnit = (Unit) caseObject;
         queryUnit = (Unit) queryObject;
 
@@ -107,11 +119,15 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         double armyTypeSimilarity = computeArmyTypeSimilarity(caseUnit.getArmyType(), queryUnit.getArmyType());
         double costSimilarityValue = costSimilarity.compute(caseUnit.getCost(), queryUnit.getCost());
         double weaponSimilarity = computeWeaponSimilarity(caseUnit.getWeaponType(), queryUnit.getWeaponType());
+        double magicSimilarity=0;
+        if(caseUnit.isMagician()==queryUnit.isMagician())
+            magicSimilarity = 1;
         double similarity = ((characterisitcs*characteristicsWeigth)+
                 (unitTypeSimilarity*unitTypeWeigth)+
                 (armyTypeSimilarity*armyTypeWeigth)+
                 (costSimilarityValue*costWeigth)+
-                (weaponSimilarity*weaponWeigth))/
+                (weaponSimilarity*weaponWeigth)+
+                (magicSimilarity*magicWeigth))/
                 (totalWeigth);
         return similarity;
     }

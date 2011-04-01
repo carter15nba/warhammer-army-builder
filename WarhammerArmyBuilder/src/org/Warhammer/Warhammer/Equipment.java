@@ -177,4 +177,22 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     public void setDefaultItem(boolean defaultItem) {
         this.defaultItem = defaultItem;
     }
+
+    /**
+     * Method which checks if the supplied object is equal to this object.
+     * @param eq The equipment to compare to this one.
+     * @return <ul><li>true - if the two objects are equal</li>
+     * false - if the two object not is equal, or if the supplied object
+     * not is an instance of Equipment<li></li></ul>
+     */
+    public boolean compareTo(Equipment eq) {
+        if(!(eq instanceof Equipment))
+            return false;
+        if(name.equals(eq.name))
+            if(cost==eq.cost)
+                if(itemType==eq.itemType)
+                    if(usableBy.equals(eq.usableBy))
+                        return true;
+        return false;
+    }
 }

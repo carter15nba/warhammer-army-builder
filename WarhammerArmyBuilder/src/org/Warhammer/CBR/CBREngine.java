@@ -124,15 +124,15 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
-        for(int i = 0 ; i<1000; i++){
+      //  for(int i = 0 ; i<1000; i++){
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getDescription();
             Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
             PrintFactory.printCase(adaptedCase, true);
         }
-        System.err.append("Testing run#"+i);
-        System.err.flush();
-        }
+        //System.err.append("Testing run#"+i);
+        //System.err.flush();
+        //}
         
 //        RuleSet rs = new RuleSet();
 //        for (RetrievalResult retrievalResult : retrievalResults) {
@@ -227,7 +227,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 dbm.disconnectNoHibernate(true);
             }
             else if(args[0].equalsIgnoreCase("unitSimTest")){
-                UnitSimilarity us = new UnitSimilarity(1,1,1,1,1);
+                UnitSimilarity us = new UnitSimilarity(1,1,1,1,1,1);
                 Unit unit1 = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
                 Unit unit2 = CreateObjectFromDB.createUnitFromDB("High_Elves:Spearmen");
                 double sim = us.compute(unit1,unit2);
