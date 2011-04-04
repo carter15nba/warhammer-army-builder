@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="org.Warhammer.Warhammer.Equipment" table="EQUIPMENT">
+  <class name="org.Warhammer.Warhammer.Equipment" table="EQUIPMENT" mutable="false">
     <id name="ID" type="integer">
       <generator class="increment"/>
     </id>
@@ -19,6 +19,24 @@
       <key column="EQUIPMENT_ID"/>
       <many-to-many class="org.Warhammer.Warhammer.SpecialRules" column="RULE_ID"/>
     </set>
-    <property column="DEFAULTEQ" length="1" name="defaultItem"/>
+    <property column="DEFAULTEQ" length="1" name="defaultItem" type="boolean"/>
   </class>
+      <query name="Equipment.all">
+        <![CDATA[select eq from Equipment eq where 
+        (eq.usableBy='All' or eq.usableBy=:race)
+        and eq.defaultItem<>1
+        and eq.cost<:cost
+        and eq.itemType <> 'Weapon'
+        and eq.itemType <> 'Armour'
+        and eq.itemType <> 'Unit_Upgrade']]>
+    </query>
+    <query name="Equipment.Race">
+        <![CDATA[select eq from Equipment eq where
+        eq.usableBy=:race
+        and eq.defaultItem<>1
+        and eq.cost<:cost
+        and eq.itemType <> 'Weapon'
+        and eq.itemType <> 'Armour'
+        and eq.itemType <> 'Unit_Upgrade']]>
+    </query>
 </hibernate-mapping>

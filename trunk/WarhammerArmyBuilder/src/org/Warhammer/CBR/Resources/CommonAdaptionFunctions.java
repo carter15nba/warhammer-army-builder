@@ -30,6 +30,7 @@ import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.Case.Races;
+import org.Warhammer.Warhammer.RuleSet;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.UtilityUnit;
 
@@ -42,6 +43,7 @@ import org.Warhammer.Warhammer.UtilityUnit;
 public class CommonAdaptionFunctions {
     private Set<Equipment> usedMagicalEquipment;
     private Set<Unit> usedUnits;
+    private Set<Unit> reducedUnits;
     private UnitSimilarity unitSimilarity;
     private Random random;
     private int errorThreshold = 5;
@@ -56,6 +58,8 @@ public class CommonAdaptionFunctions {
      */
     public CommonAdaptionFunctions(){
         usedMagicalEquipment = new HashSet<Equipment>();
+        usedUnits = new HashSet<Unit>();
+        reducedUnits = new HashSet<Unit>();
         unitSimilarity = new UnitSimilarity();
         random = new Random();
     }
@@ -68,6 +72,7 @@ public class CommonAdaptionFunctions {
     public CommonAdaptionFunctions(UnitSimilarity unitSimilarity){
         usedMagicalEquipment = new HashSet<Equipment>();
         usedUnits = new HashSet<Unit>();
+        reducedUnits = new HashSet<Unit>();
         this.unitSimilarity = unitSimilarity;
         random = new Random();
     }
@@ -79,8 +84,25 @@ public class CommonAdaptionFunctions {
         usedMagicalEquipment.clear();
     }
 
+    /**
+     * Method which clears the list of units which have been added to the army
+     */
     public void resetUsedUnits(){
         usedUnits.clear();
+    }
+    /**
+     * Method which clears the list of units which have been altered
+     */
+    public void resetReducedUnits(){
+        reducedUnits.clear();
+    }
+    /**
+     * Method which clears all the list of used objects
+     */
+    public void resetAll(){
+        resetReducedUnits();
+        resetUsedMagicalEquipment();
+        resetUsedUnits();
     }
 
     /**
@@ -125,12 +147,13 @@ public class CommonAdaptionFunctions {
                     if(simil<leastSimilar||leastSimilar==0){
                         leastSimilar = simil;
                         returnUnit = availableUnit;
-                        usedUnits.add(returnUnit);
                     }
                 }
                 catch (NoApplicableSimilarityFunctionException ex) {}
             }
         }
+        if(returnUnit!=null)
+            usedUnits.add(returnUnit);
         return returnUnit;
     }
 
@@ -165,19 +188,26 @@ public class CommonAdaptionFunctions {
      * @param aT The army type to find the most expensive unit in
      * @return The most expensive army unit
      */
-    public ArmyUnit findMostExpensiveUnit(Army army, armyType aT){
+    public ArmyUnit findMostExpensiveUnit(Army army, armyType aT,
+            boolean restrictUsedUnits){
         ArmyUnit _return = null;
         int mostExpensive = 0;
         for(ArmyUnit armyUnit : army.getArmyUnits()){
             Unit unit = armyUnit.getUnit();
             if(unit.getArmyType()==aT){
+                if((restrictUsedUnits)&&
+                        (unitIsInSet(reducedUnits, unit)))
+                        continue;
                 int cost = army.calculateTotalUnitCost(armyUnit);
                 if(cost>mostExpensive||mostExpensive==0){
                     mostExpensive = cost;
                     _return = armyUnit;
+                    
                 }
             }
         }
+        if(_return!=null)
+            reducedUnits.add(_return.getUnit());
         return _return;
     }
 
@@ -241,6 +271,7 @@ public class CommonAdaptionFunctions {
      * @param armyUnit The army unit to assign equipment/items to
      */
     public void assignReqularEquipment(ArmyUnit armyUnit){
+        //TODO: Debug assign regular equipment, found "contious-loop"
         Set<Equipment> selectedEquipment = armyUnit.getEquipment();
         Set<Equipment> availableEquipment = armyUnit.getUnit().getEquipment();
         int errorCount = 0;
@@ -255,13 +286,13 @@ public class CommonAdaptionFunctions {
             int next = random.nextInt(availableEquipment.size());
             Equipment nextEq = (Equipment) CollectionControl.getItemAt(
                     availableEquipment, next);
+            if(errorCount>errorThreshold)
+                return;
             if(equipmentIsInSet(selectedEquipment, nextEq)){
                 errorCount++;
                 i--;
                 continue;
             }
-            if(errorCount>errorThreshold)
-                return;
             selectedEquipment.add(nextEq);
             System.out.println("Added equipment: "+nextEq.getName()+
                     ", to: "+armyUnit.getUnit().getName());
@@ -438,11 +469,12 @@ public class CommonAdaptionFunctions {
         //set number of units to max number of units.
         if((numUnits>maxNumber)&&(maxNumber!=0))
             numUnits = maxNumber;
-        if((newCharacter.isEligibleForFullCommand())&&(applyFullCommand(army)))
+        if((newCharacter.isEligibleForFullCommand())&&
+                (applyFullCommand(army,newArmyUnit)))
             newArmyUnit.giveUnitFullCommand();
-        newArmyUnit.setNumberOfUnits(numUnits);
         assignReqularEquipment(newArmyUnit);
         assignUtilityUnit(newArmyUnit);
+        newArmyUnit.setNumberOfUnits(numUnits);
         return newArmyUnit;
     }
 
@@ -452,7 +484,7 @@ public class CommonAdaptionFunctions {
      * @return <ul><li>true - if a new full command group can be created</li>
      * <li>false - if a nee full command group cannot be created</li></ul>
      */
-    public boolean applyFullCommand(Army army){
+    public boolean applyFullCommand(Army army, ArmyUnit armyUnit){
         int eligibleFullCommandUnits = 0;
         int unitsWithFullCommand = 0;
         for (ArmyUnit au : army.getArmyUnits()) {
@@ -461,9 +493,32 @@ public class CommonAdaptionFunctions {
             if(au.haveFullCommand())
                 unitsWithFullCommand++;
         }
+        if(armyUnit!=null){
+            int diff = remainingPointsAfterNewUnitCreation(army, armyUnit);
+            if(diff<0)
+                return false;
+        }
         double fraction = (double) unitsWithFullCommand/eligibleFullCommandUnits;
         if(fraction<fullCommandPercentage)
             return true;
         return false;
-    } 
+    }
+
+    /**
+     * Method to check how many points are left or if the number of alowed points
+     * are exceeded when the new unit is added to the list. A copy of the army
+     * is created where the new unit is added and the cost is then calculated.
+     * @param army The army to add the new unit to
+     * @param armyUnit The new army unit to be added to the existing army
+     * @return <ul><li></li>Positive integer if less than the alloted points are
+     * spent<li></li>Negative integer if more than the alloted points are spent
+     * </ul>
+     */
+    public int remainingPointsAfterNewUnitCreation(Army army, ArmyUnit armyUnit){
+        Army copy = Army.copy(army);
+        copy.getArmyUnits().add(armyUnit);
+        int cost = copy.calculateCost();
+        return (copy.getArmyPoints()-cost);
+    }
+
 }

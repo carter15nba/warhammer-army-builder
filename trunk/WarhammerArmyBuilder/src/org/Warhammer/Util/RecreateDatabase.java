@@ -44,8 +44,6 @@ public class RecreateDatabase {
      */
     private void loadFiles(){
         File f = new File("src/org/Warhammer/Database/Resources");
-        System.out.println(f.isDirectory());
-        System.out.println(f.getName());
         files = f.listFiles();
     }
 

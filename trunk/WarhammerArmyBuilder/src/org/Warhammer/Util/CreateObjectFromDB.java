@@ -21,14 +21,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.Warhammer.Database.Connector;
 import org.Warhammer.Database.DatabaseManager;
 import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Equipment.itemType;
+import org.Warhammer.Warhammer.SpecialRules;
 import org.Warhammer.Warhammer.Unit;
 import org.Warhammer.Warhammer.Unit.*;
 import org.Warhammer.Warhammer.UtilityUnit;
+import org.hibernate.Session;
+import org.hibernate.cfg.NotYetImplementedException;
 
 /**
  * Class to create a unit with all the unit data from the database
@@ -48,35 +53,13 @@ public class CreateObjectFromDB {
      */
     public static Unit createUnitFromDB(String unitName){
         DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        ResultSet result = dbm.executeSQL("SELECT * FROM UNIT WHERE NAME='"+
-                unitName+"'", DatabaseManager.SELECT_QUERY);
-        Unit unit = new Unit();
-        unit.setName(unitName);
-        try {
-            result.next();
-            unit.setName(result.getString("NAME"));
-            unit.setArmyType(armyType.valueOf(result.getString("ARMYTYPE")));
-            unit.setUnitType(unitType.valueOf(result.getString("UNITTYPE")));
-            unit.setAttack(result.getString("ATTACK"));
-            unit.setBallisticSkill(result.getString("BALLISTICSKILL"));
-            unit.setCost(result.getInt("COST"));
-            unit.setInitiative(result.getString("INITIATIVE"));
-            unit.setLeadership(result.getString("LEADERSHIP"));
-            unit.setMagicPoints(result.getInt("MAGICPOINTS"));
-            unit.setMovement(result.getString("MOVEMENT"));
-            unit.setStrength(result.getString("STRENGTH"));
-            unit.setToughness(result.getString("TOUGHNESS"));
-            unit.setWeaponSkill(result.getString("WEAPONSKILL"));
-            unit.setWounds(result.getString("WOUNDS"));
-            unit.setMaxNumber(result.getInt("MAXUNITS"));
-            unit.setMinNumber(result.getInt("MINUNITS"));
-            unit.setRace(Races.valueOf(result.getString("RACE")));
-            unit.setWeaponType(weaponType.valueOf(result.getString("WEAPONTYPE")));
-        }
-        catch (SQLException ex) {}
-        unit.setEquipment(getUnitEquipment(unitName));
-        unit.setUtilityUnit(getUtilityUnits(unitName));
+        Connector conn = dbm.connect();
+        Session session = conn.getSession();
+        List ret = session.getNamedQuery("Unit.getUnit")
+                .setString("name", unitName)
+                .list();
+        Unit unit = (Unit) ret.get(0);
+        session.disconnect();
         return unit;
     }
     
@@ -88,20 +71,15 @@ public class CreateObjectFromDB {
      * <li>ArrayList with the units matching the requirements</li></ul>
      */
     public static ArrayList<Unit> findRaceAndArmyTypeUnits(Races race ,armyType aT){
-        ArrayList<Unit> units = new ArrayList<Unit>();
-        try {
-            String query = "SELECT UNIT.NAME FROM UNIT WHERE UNIT.RACE='"
-                    +race+"' AND UNIT.ARMYTYPE='"+aT+"'";
-            DatabaseManager dbm = DatabaseManager.getInstance();
-            dbm.connectWithoutHibernate();
-            ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);            
-            while (res.next()) {
-                String name = res.getString("NAME");
-                Unit unit = CreateObjectFromDB.createUnitFromDB(name);
-                units.add(unit);
-            }
-        }
-        catch (SQLException ex) {}
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        Connector conn = dbm.connect();
+        Session session = conn.getSession();
+        ArrayList<Unit> units;
+        units = (ArrayList<Unit>) session.getNamedQuery("Unit.getRaceAndArmyUnits")
+                .setString("race", race.toString())
+                .setString("aT", aT.toString())
+                .list();
+        session.close();
         return units;
     }
 
@@ -112,33 +90,7 @@ public class CreateObjectFromDB {
      * <li>Set with the equipment matching the requirements</li></ul>
      */
     public static Set<Equipment> getUnitEquipment(String unitName){
-        Set<Equipment> eqSet = new HashSet<Equipment>();
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        String query = "SELECT EQUIPMENT.ID, EQUIPMENT.COST, EQUIPMENT.NAME, "
-                + "EQUIPMENT.RANGE, EQUIPMENT.MODIFIER, EQUIPMENT.USABLEBY, "
-                + "EQUIPMENT.ITEMTYPE,EQUIPMENT.DEFAULTEQ "
-                + "FROM EQUIPMENT, UNIT_EQUIPMENT, UNIT "
-                + "WHERE EQUIPMENT.ID=UNIT_EQUIPMENT.EQUIPMENT_ID AND "
-                + "UNIT_EQUIPMENT.NAME = UNIT.NAME AND "
-                + "UNIT.NAME='"+unitName+"'";
-        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
-
-        try {
-            while (res.next()) {
-                Equipment eq = new Equipment();
-                eq.setCost(res.getInt("COST"));
-                eq.setDefaultItem(res.getBoolean("DEFAULTEQ"));
-                eq.setID(res.getInt("ID"));
-                eq.setItemType(itemType.valueOf(res.getString("ITEMTYPE")));
-                eq.setModifier(res.getString("MODIFIER"));
-                eq.setName(res.getString("NAME"));
-                eq.setUsableBy(res.getString("USABLEBY"));
-                eqSet.add(eq);
-            }
-        }
-        catch (SQLException ex) {}
-        return eqSet;
+        throw new NotYetImplementedException("Not yet implemented");
     }
 
     /**
@@ -148,45 +100,7 @@ public class CreateObjectFromDB {
      * <li>Set with the utility units matching the requirements</li></ul>
      */
     public static Set<UtilityUnit> getUtilityUnits(String unitName){
-        Set<UtilityUnit> utSet = new HashSet<UtilityUnit>();
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        String query = "SELECT UTILITYUNIT.ID, UTILITYUNIT.COST, UTILITYUNIT.NAME, "
-                + "UTILITYUNIT.MINUNITS, UTILITYUNIT.ATTACK, "
-                + "UTILITYUNIT.BALLISTICSKILL, UTILITYUNIT.INITIATIVE, "
-                + "UTILITYUNIT.LEADERSHIP, UTILITYUNIT.MOVEMENT, "
-                + "UTILITYUNIT.STRENGTH, UTILITYUNIT.TOUGHNESS, UTILITYUNIT.UNITTYPE,"
-                + "UTILITYUNIT.WEAPONSKILL, UTILITYUNIT.WOUNDS, UTILITYUNIT.REQUIRED,"
-                + "UTILITYUNIT.PROMOTIONUNIT "
-                + "FROM UTILITYUNIT, UNIT_UTILITY, UNIT "
-                + "WHERE UTILITYUNIT.ID=UNIT_UTILITY.UTILID AND "
-                + "UNIT_UTILITY.NAME = UNIT.NAME AND "
-                + "UNIT.NAME='"+unitName+"'";
-        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
-        try {
-            while (res.next()) {
-                UtilityUnit ut = new UtilityUnit();
-                ut.setAttack(res.getString("ATTACK"));
-                ut.setBallisticSkill(res.getString("BALLISTICSKILL"));
-                ut.setCost(res.getInt("COST"));
-                ut.setID(res.getInt("ID"));
-                ut.setInitiative(res.getString("INITIATIVE"));
-                ut.setMinNumber(res.getInt("MINUNITS"));
-                ut.setMovement(res.getString("MOVEMENT"));
-                ut.setName(res.getString("NAME"));
-                ut.setPromotionUnit(res.getBoolean("PROMOTIONUNIT"));
-                ut.setRequired(res.getBoolean("REQUIRED"));
-                ut.setStrength(res.getString("STRENGTH"));
-                ut.setToughness(res.getString("TOUGHNESS"));
-                ut.setUnitType(unitType.valueOf(res.getString("UNITTYPE")));
-                ut.setWeaponSkill(res.getString("WEAPONSKILL"));
-                ut.setWounds(res.getString("WOUNDS"));
-                utSet.add(ut);
-            }
-            return  utSet;
-        }
-        catch (SQLException ex) {}
-        return null;
+        throw new NotYetImplementedException("Not yet implemented");
     }
 
     /**
@@ -197,33 +111,16 @@ public class CreateObjectFromDB {
      * @return A hash set with the equipment the unit can purchase
      */
     public static Set<Equipment> getAllEquipment(Races unitRace, int magicPoints){
-        Set<Equipment> eqSet = new HashSet<Equipment>();
-        String query = "SELECT * FROM EQUIPMENT "
-                + "WHERE EQUIPMENT.COST <= "+magicPoints
-                + " AND EQUIPMENT.COST <> 0"
-                + " AND (EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
-                + " OR EQUIPMENT.USABLEBY='All')"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Unit_Upgrade'";
         DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
-        try {
-            while (res.next()) {
-                Equipment eq = new Equipment();
-                eq.setCost(res.getInt("COST"));
-                eq.setDefaultItem(res.getBoolean("DEFAULTEQ"));
-                eq.setID(res.getInt("ID"));
-                eq.setItemType(itemType.valueOf(res.getString("ITEMTYPE")));
-                eq.setModifier(res.getString("MODIFIER"));
-                eq.setName(res.getString("NAME"));
-                eq.setUsableBy(res.getString("USABLEBY"));
-                eqSet.add(eq);
-            }
-        }
-        catch (SQLException ex) {}
-        return eqSet;
+        Connector conn = dbm.connect();
+        Session session = conn.getSession();
+        List<Equipment> equipment;
+        equipment = (List<Equipment>) session.getNamedQuery("Equipment.all")
+                .setString("race", unitRace.toString())
+                .setInteger("cost", magicPoints)
+                .list();
+        session.close();
+        return new HashSet<Equipment>(equipment);
     }
 
         /**
@@ -234,31 +131,15 @@ public class CreateObjectFromDB {
      * @return A hash set with the equipment the unit can purchase
      */
     public static Set<Equipment> getRaceEquipment(Races unitRace, int magicPoints){
-        Set<Equipment> eqSet = new HashSet<Equipment>();
-        String query = "SELECT * FROM EQUIPMENT "
-                + "WHERE EQUIPMENT.COST <= "+magicPoints
-                + " AND EQUIPMENT.COST <> 0"
-                + " AND EQUIPMENT.USABLEBY='Race:"+unitRace+"'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Weapon'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Armour'"
-                + " AND EQUIPMENT.ITEMTYPE <> 'Unit_Upgrade'";
         DatabaseManager dbm = DatabaseManager.getInstance();
-        dbm.connectWithoutHibernate();
-        ResultSet res = dbm.executeSQL(query, DatabaseManager.SELECT_QUERY);
-        try {
-            while (res.next()) {
-                Equipment eq = new Equipment();
-                eq.setCost(res.getInt("COST"));
-                eq.setDefaultItem(res.getBoolean("DEFAULTEQ"));
-                eq.setID(res.getInt("ID"));
-                eq.setItemType(itemType.valueOf(res.getString("ITEMTYPE")));
-                eq.setModifier(res.getString("MODIFIER"));
-                eq.setName(res.getString("NAME"));
-                eq.setUsableBy(res.getString("USABLEBY"));
-                eqSet.add(eq);
-            }
-        }
-        catch (SQLException ex) {}
-        return eqSet;
+        Connector conn = dbm.connect();
+        Session session = conn.getSession();
+        List<Equipment> equipment;
+        equipment = (List<Equipment>) session.getNamedQuery("Equipment.Race")
+                .setString("race", unitRace.toString())
+                .setInteger("cost", magicPoints)
+                .list();
+        session.close();
+        return new HashSet<Equipment>(equipment);
     }
 }
