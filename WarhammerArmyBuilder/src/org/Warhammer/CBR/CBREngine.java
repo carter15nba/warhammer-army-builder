@@ -23,23 +23,26 @@ import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
-import jcolibri.cbrcore.Connector;
+//import jcolibri.cbrcore.Connector;
 import org.Warhammer.CBR.Resources.*;
 import org.Warhammer.Warhammer.Case;
 import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import jcolibri.cbrcore.CBRCase;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
+import org.Warhammer.Database.Connector;
 import org.Warhammer.Util.*;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Unit;
+import org.hibernate.Session;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
@@ -92,7 +95,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void postCycle() throws ExecutionException {
         DatabaseManager dbm = DatabaseManager.getInstance();
         dbm.disconnect();
-        dbm.disconnectNoHibernate(false);
+        dbm.disconnectNoHibernate(true);
     }
 
     /**
@@ -106,12 +109,11 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         conf.setDescriptionSimFunction(new org.Warhammer.CBR.Resources.Average(caseBase.getCases(),cbrq));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
 //        Print all cases
-        for (RetrievalResult retrievalResult : eval) {
-            Case _case = (Case) retrievalResult.get_case().getSolution();
-            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
-        }
+//        for (RetrievalResult retrievalResult : eval) {
+//            Case _case = (Case) retrievalResult.get_case().getSolution();
+//            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
+//        }
         //TODO: user specified k neares cases.
-        System.err.println("Retrieve phase done!");
         return SelectCases.selectTopKRR(eval, 5);
     }
 
@@ -124,32 +126,19 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
-      //  for(int i = 0 ; i<1000; i++){
+
+        Collection<CBRCase> ncbr = new HashSet<CBRCase>();
         for (RetrievalResult retrievalResult : retrievalResults) {
-            Case _case = (Case) retrievalResult.get_case().getDescription();
+            Case _case = (Case) retrievalResult.get_case().getSolution();
             Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
-            PrintFactory.printCase(adaptedCase, true);
+//            CBRCase cc = new CBRCase();
+//            cc.setDescription(retrievalResult.get_case().getDescription());
+//            cc.setSolution(adaptedCase);
+//            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
+//            ncbr.add(cc);
         }
-        //System.err.append("Testing run#"+i);
-        //System.err.flush();
-        //}
-        
-//        RuleSet rs = new RuleSet();
-//        for (RetrievalResult retrievalResult : retrievalResults) {
-//            Case _case = (Case)retrievalResult.get_case().getSolution();
-//            Messages[] msg = rs.isFollowingArmyDispositionRules(_case.getArmy());
-//            System.out.println("Case ID: "+_case.getID()+", messages:");
-//            for (Messages object : msg) {
-//                System.out.println("Message: "+object);
-//            }
-//            Causes[] cau = rs.getCauses();
-//            for (Causes causes : cau) {
-//                System.out.println("-----------------");
-//                System.out.println("Cause: "+causes.getCause());
-//                System.out.println("Offender: "+causes.getUnit().getName());
-//
-//            }
-//        }
+        //connector.storeCases(ncbr);
+      
     }
     /**
      * Method used int the CBR cycle to revise the changes and evaluate the

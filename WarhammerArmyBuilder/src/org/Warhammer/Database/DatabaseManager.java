@@ -31,10 +31,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Properties;
 import jcolibri.cbrcore.CBRCase;
-import jcolibri.connector.DataBaseConnector;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
-import jcolibri.cbrcore.Connector;
 
 /**
  * Singleton class responsible for the connections and executions of
@@ -51,7 +49,6 @@ public class DatabaseManager {
     public static final int UPDATE_QUERY = 100;
     public static final int SELECT_QUERY = 200;
     public static final int TABLE_QUERY = 300;
-
 
     /**
      * Singleton class with private constructor. Use
@@ -83,11 +80,14 @@ public class DatabaseManager {
      */
     public Connector connect(){
         try {
-            casebaseConnector = new DataBaseConnector();
+            if(casebaseConnector!=null){
+                return casebaseConnector;
+            }
+            casebaseConnector = new org.Warhammer.Database.Connector();
             URL fileURL = FileIO.findFile(HIBERNATE_CONFIG_FILE);
             casebaseConnector.initFromXMLfile(fileURL);
-
             return casebaseConnector;
+            
         } catch (InitializingException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -212,11 +212,15 @@ public class DatabaseManager {
         }
         return null;
     }
-    public PreparedStatement prepareStatement(String sql) throws SQLException, NullPointerException{
-        if(connection==null)
-            throw new NullPointerException();
-        return connection.prepareStatement(sql);
+
+    public Statement getStatement(){
+        try {
+            return connection.createStatement();
+        }
+        catch (SQLException ex) {}
+        return null;
     }
+
     public void commit() throws SQLException, NullPointerException{
         if(connection==null)
             throw new NullPointerException();

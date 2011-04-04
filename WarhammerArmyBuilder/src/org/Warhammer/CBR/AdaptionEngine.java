@@ -55,7 +55,7 @@ public class AdaptionEngine {
      * @return Case - The adapted case
      */
     public Case adaptCase(Case _case, CBRQuery query){
-        cAF.resetUsedMagicalEquipment();
+        cAF.resetAll();
         Case adaptedCase = naiveAdaption(_case, query);
         return refineAdaption(adaptedCase);
     }
@@ -157,52 +157,66 @@ public class AdaptionEngine {
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                         army.getPlayerRace(), armyType.Core);
+                    System.err.println(message);
                     addUnitGroup(army, units);
                     break;
                 case TOO_FEW_POINTS_TOTAL:
+                    System.err.println(message);
                     increasePointUsage(army, messages, rule);
                     break;
                 case TOO_FEW_UNITS_IN_GROUP:
                     causes = rule.getCauses(message);
+                    System.err.println(message);
                     increaseGroupUnits(army,causes);
                     break;
                 case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
                     causes = rule.getCauses(message);
+                    System.err.println(message);
                     decreaseDuplicates(army,causes);
                     break;
                 case TOO_MANY_DUPLICATE_RARE_UNITS:
                     causes = rule.getCauses(message);
+                    System.err.println(message);
                     decreaseDuplicates(army,causes);
                     break;
                 case TOO_MANY_HERO_POINTS:
+                    System.err.println(message);
                     reduceCharacterPoints(army, armyType.Hero, rule);
                     break;
                 case TOO_MANY_LORD_POINTS:
+                    System.err.println(message);
                     reduceCharacterPoints(army, armyType.Lord, rule);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
+                    System.err.println(message);
                     reducePointsTotal(army, messages, rule);
                     break;
                 case TOO_MANY_RARE_POINTS:
+                    System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, armyType.Rare, 
                             messages, message, rule);
                     break;
                 case TOO_MANY_SPECIAL_POINTS:
+                    System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, armyType.Special,
                             messages, message, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
                     causes = rule.getCauses();
+                    System.err.println(message);
                     reduceNumberOfUnitsInGroup(army, causes);
                     break;
                 case NO_ARMY_GENERAL:
+                    System.err.println(message);
                     addGeneral(army);
                     break;
                 case TOO_FEW_GROUPS:
+                    System.err.println(message);
                     increasePointUsage(army, messages, rule);
                     break;
                 case WRONG_RACE:
                     ExchangeRace exRace = new ExchangeRace();
+                    System.err.println(message);
                     army = exRace.adaptRace(army);
                     break;
                 //If an unknown or untreatable error message is encountered.
@@ -212,6 +226,7 @@ public class AdaptionEngine {
             //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
         }
+        System.err.println(messages[0]);
         return army;
     }
 
@@ -228,8 +243,9 @@ public class AdaptionEngine {
         //Find the unit which is least similar to the core units already in the
         //army, this is probably a unit you could have need of.
         Unit leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, true);
-        if(leastSimilarUnit==null)
+        if(leastSimilarUnit==null){
             leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, false);
+        }
         ArmyUnit newArmyUnit = cAF.createNewUnit(army, leastSimilarUnit);
         armyUnits.add(newArmyUnit);
         System.out.println("Adding new: "+leastSimilarUnit.getArmyType()+
@@ -293,10 +309,13 @@ public class AdaptionEngine {
         for(ArmyUnit armyUnit : army.getArmyUnits()){
             Unit unit = armyUnit.getUnit();
             if(unit.getArmyType()==aT){
-               if(totalCost==0)
-                   removeUnit = armyUnit;
-               if(army.calculateTotalUnitCost(armyUnit)<totalCost)
-                   removeUnit = armyUnit;
+                int calculatedCost = army.calculateTotalUnitCost(armyUnit);
+                if(totalCost==0)
+                    removeUnit = armyUnit;
+                if(calculatedCost<totalCost){
+                    removeUnit = armyUnit;
+                    totalCost += calculatedCost;
+                }
             }
         }
         if(removeUnit!=null){
@@ -305,115 +324,79 @@ public class AdaptionEngine {
         }
     }
 
-    //TODO: START HERE AND CONTINUE DOWN THE CLASS FILE TO UPDATE IT WITH NEW IMPORVED FUNCTIONS AND THE COMMONADAPTATIONFUNCTIONS CLASS
     private void reduceCharacterPoints(Army army, armyType aT, RuleSet rs) {
         int diff=0;
         if(aT==armyType.Lord)
-            diff = rs.getLordPointDifference();
+            diff = Math.abs(rs.getLordPointDifference());
         if(aT==armyType.Hero)
-            diff = rs.getHeroPointDifference();
+            diff = Math.abs(rs.getHeroPointDifference());
         //If the difference in used points are more than 100, remove the cheapest
         //character
-        if(Math.abs(diff)>100){
+        System.err.println("Hero/Lord difference: "+diff);
+        if(diff>80){
+            System.err.println("Diff more than 80");
             removeOneCharacter(army, aT);
             return;
         }
-        //Remove the cheapest equipment or unit from the lord/hero wich have
-        //spent the most points. 
-        int cost = 0;
-        ArmyUnit mostExpensiveUnit = null;
-        //Find the most expensive unit
-        for(ArmyUnit armyUnit : army.getArmyUnits()){
-            if(armyUnit.getUnit().getArmyType()==aT){
-                int tmpCost = army.calculateTotalUnitCost(armyUnit);
-                if(tmpCost>cost)
-                    mostExpensiveUnit = armyUnit;
+        //Find the most expensive lord/hero unit.
+        ArmyUnit mostExpensiveUnit = cAF.findMostExpensiveUnit(army, aT, true);
+        if(mostExpensiveUnit==null)
+            mostExpensiveUnit = cAF.findMostExpensiveUnit(army, aT, false);
+        //Find the equipment/utility cost which by itself bring the difference
+        //the closest to zero
+        Set<Equipment> equipment = mostExpensiveUnit.getEquipment();
+        Set<UtilityUnit> utility = mostExpensiveUnit.getUtility();
+        int eqDiff = 10000 ;
+        int utDiff = 10000;
+        Equipment closestEq = null;
+        UtilityUnit closestUt = null;
+        for (Equipment eq : equipment) {
+            int cost = eq.getCost();
+            int zeroDiff = diff-cost;
+            if(zeroDiff<eqDiff){
+                eqDiff = zeroDiff;
+                closestEq = eq;
             }
         }
-        if(mostExpensiveUnit!=null){
-            Equipment eq = null;
-            UtilityUnit ut = null;
-            int eCost=0;
-            int uCost=0;
-            for(Equipment equipment : mostExpensiveUnit.getEquipment()){
-                if(equipment.getCost()<eCost||eCost==0){
-                    eCost = equipment.getCost();
-                    eq = equipment;
-                }
-
+        for (UtilityUnit ut : utility) {
+            int cost = ut.getCost();
+            int zeroDiff = diff-cost;
+            if(zeroDiff<utDiff){
+                utDiff = zeroDiff;
+                closestUt = ut;
             }
-            for(UtilityUnit utility : mostExpensiveUnit.getUtility()){
-                if(utility.getCost()<uCost||uCost==0){
-                    uCost = utility.getCost();
-                    ut = utility;
-                }
-            }
-            if(eCost<uCost){
-                mostExpensiveUnit.getUtility().remove(ut);
-                System.out.println("Removing cheapest util from: "+
-                    mostExpensiveUnit.getUnit().getName());
-            }
-            else {
-                boolean s = mostExpensiveUnit.getEquipment().remove(eq);
-                System.out.println("Removing cheapest eq ("+eq.getName()+") from: "+
-                    mostExpensiveUnit.getUnit().getName()+", success:"+s);
-            }            
         }
+        System.err.println("eqDiff: "+eqDiff+", utDiff: "+utDiff);
+        if(closestEq==null&&closestUt==null)
+            return;
+        if(eqDiff<utDiff)
+            equipment.remove(closestEq);
+        else
+            utility.remove(closestUt);
     }
 
     private void removeGroup(Army army, armyType aT) {
-        int cost=0;
-        ArmyUnit removeUnit=null;
-        for(ArmyUnit armyUnit : army.getArmyUnits()){
-            Unit unit = armyUnit.getUnit();
-            if(unit.getArmyType()==aT){
-                int unitCost = army.calculateTotalUnitCost(armyUnit);
-                if(unitCost<cost||cost==0){
-                    cost = unitCost;
-                    removeUnit = armyUnit;
-                }
-            }
-        }
-        if(removeUnit!=null){
-            System.out.println("Removing: "+removeUnit.getUnit().getName());
-            army.getArmyUnits().remove(removeUnit);
+        ArmyUnit leastExpensiveUnit = cAF.findLeastExpensiveUnit(army, aT);
+        if(leastExpensiveUnit!=null){
+            System.out.println("Removing: "+leastExpensiveUnit.getUnit().getName());
+            army.getArmyUnits().remove(leastExpensiveUnit);
         }
     }
 
     private void reduceSpecialOrRareGroupPoints(Army army, armyType aT,
             Messages[] messages, Messages message, RuleSet rs){
-        Messages special = Messages.OK;
-        Messages rare = Messages.OK;
-        Messages duplicateR = Messages.OK;
-        Messages duplicateS = Messages.OK;
-        Causes[] causes = rs.getCauses();
         //Check if there is another reason for the special/rare groups to have
         //too many poinst
         for (Messages msg : messages) {
             switch(msg){
                 case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
-                    duplicateS = Messages.TOO_MANY_DUPLIACTE_SPECIAL_UNITS;
-                    break;
+                    decreaseDuplicates(army,rs.getCauses());
+                    return;
                 case TOO_MANY_DUPLICATE_RARE_UNITS:
-                    duplicateR = Messages.TOO_MANY_DUPLICATE_RARE_UNITS;
-                    break;
+                    decreaseDuplicates(army,rs.getCauses());
+                    return;
             }
         }
-        if(duplicateR!=Messages.OK||duplicateS!=Messages.OK){
-            decreaseDuplicates(army,causes);
-        }
-        //if one or both of too many duplicate unit groups are present, the error
-        //may have been fixed by removing the duplicates.
-        if(duplicateR!=duplicateS)
-            return;
-        if(special!=Messages.OK)
-            removeGroup(army, armyType.Special);
-        if(rare!=Messages.OK)
-            removeGroup(army, armyType.Rare);
-        //If one or both of the rare and special had too many groups to adhere
-        //to the rules, the error might be fixed.
-        if(rare!=special)
-            return;
         //If neither of the above reductions helped solve the problem, remove
         //the special or rare unit which costs the least alternatively reduce
         //the number of units in the group.
@@ -449,8 +432,10 @@ public class AdaptionEngine {
                         numU--;
                         armyUnit.setNumberOfUnits(numU);
                         int totalCost = army.calculateTotalUnitCost(armyUnit);
-                        if(totalCost<Math.abs(diff))
+                        if(totalCost<Math.abs(diff)){
                             found = true;
+                            break;
+                        }
                     }
                     if(found){
                         System.out.println("Reduced number of units in "+
@@ -594,7 +579,7 @@ public class AdaptionEngine {
         //the unit sizes where applicable (give full command) instead of
         //generating a new unit group/formation
         if(totalPointDifference<150){
-            if(cAF.applyFullCommand(army)){
+            if(cAF.applyFullCommand(army,null)){
                 for(ArmyUnit armyUnit : army.getArmyUnits()){
                     Unit unit = armyUnit.getUnit();
                     if(unit.isEligibleForFullCommand()&&!armyUnit.haveFullCommand())
