@@ -17,23 +17,18 @@
 
 package org.Warhammer.Util;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.Warhammer.Database.Connector;
 import org.Warhammer.Database.DatabaseManager;
+import org.Warhammer.Warhammer.Case;
 import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment;
-import org.Warhammer.Warhammer.Equipment.itemType;
-import org.Warhammer.Warhammer.SpecialRules;
 import org.Warhammer.Warhammer.Unit;
 import org.Warhammer.Warhammer.Unit.*;
-import org.Warhammer.Warhammer.UtilityUnit;
 import org.hibernate.Session;
-import org.hibernate.cfg.NotYetImplementedException;
 
 /**
  * Class to create a unit with all the unit data from the database
@@ -41,6 +36,29 @@ import org.hibernate.cfg.NotYetImplementedException;
  * @version 0.1
  */
 public class CreateObjectFromDB {
+
+    public static void main(String[] args){
+        CreateObjectFromDB.test();
+    }
+
+
+    public static String solutionClassName = "Case";
+
+    public static void test(){
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        Connector conn = dbm.connect();
+        Session session = conn.getSession();
+List l = session.getNamedQuery("Case.LASTID")
+        .setMaxResults(1).list();
+        for (Object obj : l) {
+            
+            System.out.println(obj);
+        }
+        session.close();
+        conn.close();
+        dbm.disconnect();
+    }
+
 
     /**
      * Method to create a unit with the core information from the database.
@@ -59,7 +77,7 @@ public class CreateObjectFromDB {
                 .setString("name", unitName)
                 .list();
         Unit unit = (Unit) ret.get(0);
-        session.disconnect();
+        session.close();
         return unit;
     }
     
@@ -81,26 +99,6 @@ public class CreateObjectFromDB {
                 .list();
         session.close();
         return units;
-    }
-
-    /**
-     * Method to aquire a Set with the equipment that a unit can have.
-     * @param unitName Sting the unit name
-     * @return <ul><li>An empty set if an exception occurs</li>
-     * <li>Set with the equipment matching the requirements</li></ul>
-     */
-    public static Set<Equipment> getUnitEquipment(String unitName){
-        throw new NotYetImplementedException("Not yet implemented");
-    }
-
-    /**
-     * Method to aquire a Set with the utility units that a unit can have.
-     * @param unitName Sting the unit name
-     * @return <ul><li>An empty set if an exception occurs</li>
-     * <li>Set with the utility units matching the requirements</li></ul>
-     */
-    public static Set<UtilityUnit> getUtilityUnits(String unitName){
-        throw new NotYetImplementedException("Not yet implemented");
     }
 
     /**

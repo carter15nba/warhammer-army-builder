@@ -30,6 +30,7 @@ import org.hibernate.SessionFactory;
 import jcolibri.connector.DataBaseConnector.*;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
+import org.Warhammer.Warhammer.Case;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -59,6 +60,54 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     }    
 
 
+    public void initOverwriteFromXMLFile(URL file) throws InitializingException{
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse( file.openStream() );
+
+            String hcf = document.getElementsByTagName("HibernateConfigFile").item(0).getTextContent();
+
+            String descriptionMapFile = document.getElementsByTagName("DescriptionMappingFile").item(0).getTextContent();
+            descriptionClassName = document.getElementsByTagName("DescriptionClassName").item(0).getTextContent();
+
+            Configuration hbconfig = new Configuration();
+            hbconfig.configure(FileIO.findFile(hcf));
+            hbconfig.addURL(FileIO.findFile(descriptionMapFile));
+
+            try{
+                String solutionMapFile = document.getElementsByTagName("SolutionMappingFile").item(0).getTextContent();
+                solutionClassName = document.getElementsByTagName("SolutionClassName").item(0).getTextContent();
+                hbconfig.addResource(solutionMapFile);
+            }
+            catch(Exception e) {
+                LogFactory.getLog(this.getClass()).info("Case does not have solution");
+            }
+
+            try{
+                String justOfSolutionMapFile = document.getElementsByTagName("JustificationOfSolutionMappingFile").item(0).getTextContent();
+                justOfSolutionClassName = document.getElementsByTagName("JustificationOfSolutionClassName").item(0).getTextContent();
+                hbconfig.addResource(justOfSolutionMapFile);
+            }
+            catch(Exception e) {
+                LogFactory.getLog(this.getClass()).info("Case does not have justification of the solution");
+            }
+
+            try{
+                String resultMapFile = document.getElementsByTagName("ResultMappingFile").item(0).getTextContent();
+                resultClassName = document.getElementsByTagName("ResultClassName").item(0).getTextContent();
+                hbconfig.addResource(resultMapFile);
+            }
+            catch(Exception e){
+                LogFactory.getLog(this.getClass()).info("Case does not have result");
+            }
+            hbconfig.setProperty("hibernate.hbm2ddl.auto", "update");
+            sessionFactory = hbconfig.buildSessionFactory();
+        }
+        catch (Throwable ex) {
+            throw new InitializingException(ex);
+        }
+    }
 
 
     /* (non-Javadoc)
@@ -133,7 +182,7 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 transaction = session.beginTransaction();
 
                 solList = new HashMap<Object, CaseComponent>();
-                List l = session.createQuery("from " + solutionClassName).list();
+                List l = session.createQuery("select cc from " + solutionClassName + " cc where cc.outcome <> 'Unknown'").list();
 
                 transaction.commit();
                 session.close();
@@ -149,7 +198,7 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 transaction = session.beginTransaction();
 
                 justSolList = new HashMap<Object, CaseComponent>();
-                List l = session.createQuery("from " + justOfSolutionClassName).list();
+                List l = session.createQuery("select cc from " + justOfSolutionClassName + " cc where cc.outcome <> 'Unknown'").list();
                 transaction.commit();
                 session.close();
 
@@ -163,7 +212,7 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 transaction = session.beginTransaction();
 
                 resList = new HashMap<Object, CaseComponent>();
-                List l = session.createQuery("from " + resultClassName).list();
+                List l = session.createQuery("select cc from " + resultClassName + " cc where cc.outcome <> 'Unknown'").list();
                 transaction.commit();
                 session.close();
 
@@ -175,7 +224,7 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
 
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
-            descList = session.createQuery("from "+ descriptionClassName).list();
+            descList = session.createQuery("select cc from " + descriptionClassName + " cc where cc.outcome <> 'Unknown'").list();
             transaction.commit();
             session.close();
 
@@ -220,28 +269,28 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
         {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
-            session.save(c.getDescription());
+            saveCase(session, c.getDescription());
             transaction.commit();
             session.close();
 
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             if(c.getSolution()!= null)
-                session.saveOrUpdate(c.getSolution());
+                saveCase(session, c.getSolution());
             transaction.commit();
             session.close();
 
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             if(c.getJustificationOfSolution() != null)
-                session.saveOrUpdate(c.getJustificationOfSolution());
+                saveCase(session, c.getJustificationOfSolution());
             transaction.commit();
             session.close();
 
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             if(c.getResult() != null)
-                session.saveOrUpdate(c.getResult());
+                saveCase(session, c.getResult());
                 transaction.commit();
                 session.close();
         }
@@ -251,5 +300,11 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
 
     public boolean isConnected(){
         return sessionFactory.getCurrentSession().isConnected();
+    }
+
+    private void saveCase(Session session, CaseComponent description) {
+       Case _case = (Case) description;
+       session.save(_case.getArmy());
+       session.save(_case);
     }
 }

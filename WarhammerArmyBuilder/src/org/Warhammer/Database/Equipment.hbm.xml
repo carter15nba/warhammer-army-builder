@@ -34,7 +34,7 @@
         <![CDATA[select eq from Equipment eq where
         eq.usableBy=:race
         and eq.defaultItem<>1
-        and eq.cost<:cost
+        and eq.cost<=:cost
         and eq.itemType <> 'Weapon'
         and eq.itemType <> 'Armour'
         and eq.itemType <> 'Unit_Upgrade']]>

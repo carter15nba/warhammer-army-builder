@@ -20,19 +20,17 @@ package org.Warhammer.Database;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import java.net.URL;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
+import org.Warhammer.Database.Connector;
 
 /**
  * Singleton class responsible for the connections and executions of
@@ -42,8 +40,10 @@ import jcolibri.util.FileIO;
  */
 public class DatabaseManager {
 
-    private String HIBERNATE_CONFIG_FILE = "org/Warhammer/Database/databaseconfig.xml";
-    private String HIBERNATE_INIT_FILE = "org/Warhammer/Database/hibernate.cfg.xml";
+    private static final String HIBERNATE_CONFIG_FILE =
+            "org/Warhammer/Database/databaseconfig.xml";
+    private static final String HIBERNATE_INIT_FILE =
+            "org/Warhammer/Database/hibernate.cfg.xml";
     private Connection connection = null;
     private Connector casebaseConnector = null;
     public static final int UPDATE_QUERY = 100;
@@ -76,22 +76,39 @@ public class DatabaseManager {
      * Method to connect to the database using the configuration settings
      * found in the Database/databaseconfig.xml file.
      * @return null if the connection could not be established, the
-     * jcolibri.cbrcore.connector object if connection were established.
+     * org.warhammer.database.connector object if connection were established.
      */
     public Connector connect(){
         try {
             if(casebaseConnector!=null){
                 return casebaseConnector;
             }
-            casebaseConnector = new org.Warhammer.Database.Connector();
+            casebaseConnector = new Connector();
             URL fileURL = FileIO.findFile(HIBERNATE_CONFIG_FILE);
             casebaseConnector.initFromXMLfile(fileURL);
             return casebaseConnector;
             
-        } catch (InitializingException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InitializingException ex) {}
+        return null;
+    }
 
+    /**
+     * Special method to connect to the database by overwriting a properity
+     * in the hibernate.cfg.xml file. The DataBaseManager are not responsible
+     * for the future use of the created connection as no reference to it is
+     * kept. 
+     * 
+     * @return null if the connection could not be established, the
+     * org.warhammer.database.connector object if connection were established.
+     */
+    public Connector overwrittenHibernateConnect(){
+        try {
+            Connector connector = new Connector();
+            URL fileURL = FileIO.findFile(HIBERNATE_CONFIG_FILE);
+            connector.initOverwriteFromXMLFile(fileURL);
+            return connector;
         }
+        catch (InitializingException ex) {}
         return null;
     }
 
@@ -124,6 +141,8 @@ public class DatabaseManager {
     }
 
     /**
+     * @deprecated use the hibernate connection, create a session and take
+     * advantage of the named queries instead
      * This method connects to the database without using the hibernate
      * configuration file. This allows the program to post SQL queries to
      * the database through this connection.
@@ -145,31 +164,24 @@ public class DatabaseManager {
 	 	    props);
             connection.setAutoCommit(false);
         }
-        catch (InstantiationException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (ClassNotFoundException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch(SQLException sqle){
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, sqle);
-        }
+        catch (InstantiationException ex) {}
+        catch (IllegalAccessException ex) {}
+        catch (ClassNotFoundException ex) {}
+        catch(SQLException sqle){}
     }
 
     /**
      * This method disconnects the no hibernate connection establieshed with the
      * connectNoHibernate() method.
+     * @deprecated use the hibernate connection, create a session and take
+     * advantage of the named queries instead
      */
-    public int disconnectNoHibernate(boolean shutdownDerby){
+    public void disconnectNoHibernate(boolean shutdownDerby){
         try{
             if(connection!=null)
                 connection.close();
             if(shutdownDerby)
                 DriverManager.getConnection("jdbc:derby:;shutdown=true");
-            return 1;
         }
         catch(SQLException sqle){
             if((sqle.getErrorCode() == 50000)&&
@@ -180,12 +192,13 @@ public class DatabaseManager {
                 System.err.println("Derby did not shut down normally");
             }
          }
-        return -1;
      }
 
     /**
      * This method is used to post SQL queries to the database using the
      * underlying no hibernate connection.
+     * @deprecated use the hibernate connection, create a session and take
+     * advantage of the named queries instead
      * @param sql The string sql statement.
      * @return Null if a invalid sql were passed, or a ResultSet containing
      * the results of the query.
@@ -207,12 +220,18 @@ public class DatabaseManager {
             }
             
         }
-        catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        catch (SQLException ex) {}
         return null;
     }
 
+    /**
+     * Method to get a sql statement which can be used to execute a sql
+     * insert/update/table query
+     * @deprecated  use the hibernate connection, create a session and take
+     * advantage of the named queries instead
+     * @return <ul><li>null - if there is no connection or an exception occured</li>
+     * <li>The requested statement</li></ul>
+     */
     public Statement getStatement(){
         try {
             return connection.createStatement();
@@ -221,6 +240,13 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * Method used to commit(store) the databases changes permanently
+     * @deprecated use the hibernate connection, create a session and take
+     * advantage of the named queries instead
+     * @throws SQLException
+     * @throws NullPointerException if the connection is not established
+     */
     public void commit() throws SQLException, NullPointerException{
         if(connection==null)
             throw new NullPointerException();

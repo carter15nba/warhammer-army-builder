@@ -112,7 +112,8 @@ public class Case implements jcolibri.cbrcore.CaseComponent{
 
     @Override
     public String toString(){
-        return "Case ID:"+ID+
+        return "Case ID: "+ID+
+                ", Army ID: "+army.getID()+
                 ", Player race: "+
                 army.getPlayerRace()+
                 ", Army Points: "+army.getArmyPoints()+
