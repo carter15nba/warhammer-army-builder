@@ -30,7 +30,6 @@ import org.Warhammer.Util.CollectionControl;
 import org.Warhammer.Util.CreateObjectFromDB;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.Case.Races;
-import org.Warhammer.Warhammer.RuleSet;
 import org.Warhammer.Warhammer.Unit.armyType;
 import org.Warhammer.Warhammer.UtilityUnit;
 

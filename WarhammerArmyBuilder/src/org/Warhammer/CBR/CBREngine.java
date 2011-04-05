@@ -145,6 +145,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * performance of the revised case.
      */
     private void revise(){
+        //TODO: Add a revise step
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -152,6 +153,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * Method used in the CBR cycle to store relevant cases back into the casebase.
      */
     private void retain(Collection<CBRCase> cbrCase){
+        //TODO: Add logic to find stored unknown cases and a way to update the case with the outcome. (Delete defeat cases?)
         for (CBRCase cBRCase : cbrCase) {
             Case solution = (Case) cBRCase.getSolution();
             prepareCase.prepareCase(solution);

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import org.Warhammer.Database.Connector;
 import org.Warhammer.Database.DatabaseManager;
-import org.Warhammer.Warhammer.Case;
 import org.Warhammer.Warhammer.Case.Races;
 import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Unit;
@@ -36,29 +35,6 @@ import org.hibernate.Session;
  * @version 0.1
  */
 public class CreateObjectFromDB {
-
-    public static void main(String[] args){
-        CreateObjectFromDB.test();
-    }
-
-
-    public static String solutionClassName = "Case";
-
-    public static void test(){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        Connector conn = dbm.connect();
-        Session session = conn.getSession();
-List l = session.getNamedQuery("Case.LASTID")
-        .setMaxResults(1).list();
-        for (Object obj : l) {
-            
-            System.out.println(obj);
-        }
-        session.close();
-        conn.close();
-        dbm.disconnect();
-    }
-
 
     /**
      * Method to create a unit with the core information from the database.
