@@ -68,13 +68,10 @@ public class Average extends StandardGlobalSimilarityFunction {
         //Check if the query player race is equal to the case player race, if
         //not punish the similarity by increasing the weigths up 50%.
         if(playerRace!=cases[numCalled].getArmy().getPlayerRace()){
-            weigthAdjust = 1.5;
+            //weigthAdjust = 1.5;
+            weigthAdjust = 1.0;
             //return 0;
         }
-        //Return 0 if the outcome is unknown, unknown outcomes are cases
-        //which have not been played (reported by the user).
-        if(outcome[numCalled++]==Outcomes.Unknown)
-            return 0;
         for(int i=0; i<iValue; i++){
             acum += values[i] * weigths[i];
             weigthsAcum += weigthAdjust * weigths[i];

@@ -23,7 +23,6 @@ import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
-//import jcolibri.cbrcore.Connector;
 import org.Warhammer.CBR.Resources.*;
 import org.Warhammer.Warhammer.Case;
 import java.sql.ResultSet;
@@ -42,7 +41,6 @@ import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Equipment;
 import org.Warhammer.Warhammer.Unit;
-import org.hibernate.Session;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
@@ -55,6 +53,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private Connector connector;
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
+    private PrepareCase prepareCase;
 
     /**
      * Default private constructor
@@ -77,6 +76,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         connector = dbm.connect();
         caseBase = new LinealCaseBase();
         similarityMeasure = new SimilarityMeasure();
+        prepareCase = PrepareCase.getInstance();
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
@@ -87,9 +87,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void cycle(CBRQuery cbrq) throws ExecutionException {        
         Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
 
-        reuse(cbrq, retrievalResults);
+        Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
 //        revise();
-//        retain();
+        retain(cbr);
     }
 
     public void postCycle() throws ExecutionException {
@@ -123,7 +123,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * @param cbrq The CBRQuery object
      * @param retrievalResults The results of the retrieval process.
      */
-    private void reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
+    private Collection<CBRCase> reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
 
@@ -131,13 +131,13 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
             Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
-//            CBRCase cc = new CBRCase();
-//            cc.setDescription(retrievalResult.get_case().getDescription());
-//            cc.setSolution(adaptedCase);
-//            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
-//            ncbr.add(cc);
+            CBRCase cc = new CBRCase();
+            cc.setDescription(retrievalResult.get_case().getDescription());
+            cc.setSolution(adaptedCase);
+            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
+            ncbr.add(cc);
         }
-        //connector.storeCases(ncbr);
+        return ncbr;
       
     }
     /**
@@ -151,8 +151,13 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     /**
      * Method used in the CBR cycle to store relevant cases back into the casebase.
      */
-    private void retain(){
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void retain(Collection<CBRCase> cbrCase){
+        for (CBRCase cBRCase : cbrCase) {
+            Case solution = (Case) cBRCase.getSolution();
+            prepareCase.prepareCase(solution);
+            PrintFactory.printCase(solution, false);
+        }
+        connector.storeCases(cbrCase);
     }
 
     public static void main(String[] args) throws NoApplicableSimilarityFunctionException, SQLException {

@@ -20,6 +20,7 @@ package org.Warhammer.Util;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import jcolibri.cbrcore.Connector;
 import org.Warhammer.Database.DatabaseManager;
 import org.Warhammer.File.SQLFileParser;
 
@@ -76,10 +77,11 @@ public class RecreateDatabase {
 
         deleteDatabase(); //Delete db.
         commit();
-        dbm.connect();
+        Connector connector = dbm.overwrittenHibernateConnect();
+
         insertRecords(); //Insert the data into the db
         commit();
-        dbm.disconnect();
+        connector.close();
         dbm.disconnectNoHibernate(false);
     }
 

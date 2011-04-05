@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="org.Warhammer.Warhammer.Case" table="CASES">
+  <class name="org.Warhammer.Warhammer.Case" table="CASES" >
     <id name="ID" type="integer">
       <generator class="increment"/>
     </id>
@@ -17,4 +17,16 @@
       </type>
     </property>
   </class>
+  <query name="Case.Unknown">
+    <![CDATA[select cc from Case cc where cc.outcome='Unknown']]>
+  </query>
+  <query name="Case.Cases">
+    <![CDATA[select cc from Case cc where cc.outcome<>'Unknown']]>
+  </query>
+  <query name="Case.All">
+    <![CDATA[from Case]]>
+  </query>
+  <query name="Case.LastId">
+    <![CDATA[select cc.id from Case cc order by cc.id desc ]]>
+  </query>
 </hibernate-mapping>
