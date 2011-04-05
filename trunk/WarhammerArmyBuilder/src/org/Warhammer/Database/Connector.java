@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import jcolibri.cbrcore.CBRCase;
@@ -30,7 +31,11 @@ import org.hibernate.SessionFactory;
 import jcolibri.connector.DataBaseConnector.*;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
+import org.Warhammer.Warhammer.Army;
+import org.Warhammer.Warhammer.ArmyUnit;
 import org.Warhammer.Warhammer.Case;
+import org.Warhammer.Warhammer.Equipment;
+import org.Warhammer.Warhammer.UtilityUnit;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -51,6 +56,16 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     private String solutionClassName;
     private String justOfSolutionClassName;
     private String resultClassName;
+    private static final String ARMIES_QUERY =
+        "insert into ARMIES(ID,PLAYER_RACE,ARMY_POINTS) values (?,?,?)";
+    private static final String ARMY_UNITS_QUERY = 
+        "insert into ARMY_UNIT(ID,ARMY_ID,UNIT_NAME,NUM_UNITS) values(?,?,?,?)";
+    private static final String ARMY_UNIT_UT_QUERY =
+        "insert into ARMY_UNIT_UTILITY(ARMY_UNIT_ID,UTILITY_ID)values(?,?)";
+    private static final String ARMY_UNIT_EQ_QUERY =
+        "insert into ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)values(?,?)";
+    private static final String CASE_QUERY =
+        "insert into CASES(ID,ARMY_ID,OPPONENT_RACE,OUTCOME) values(?,?,?,?)";
     public Connector(){
         super();
     }
@@ -267,32 +282,33 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     public void storeCases(Collection<CBRCase> cases) {
         for(CBRCase c: cases)
         {
+//            Session session = sessionFactory.openSession();
+//            Transaction transaction = session.beginTransaction();
+//            saveCase(session, c.getDescription());
+//            transaction.commit();
+//            session.close();
+
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
-            saveCase(session, c.getDescription());
-            transaction.commit();
-            session.close();
-
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-            if(c.getSolution()!= null)
+            if(c.getSolution()!= null){
                 saveCase(session, c.getSolution());
             transaction.commit();
+            }
             session.close();
 
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-            if(c.getJustificationOfSolution() != null)
-                saveCase(session, c.getJustificationOfSolution());
-            transaction.commit();
-            session.close();
-
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-            if(c.getResult() != null)
-                saveCase(session, c.getResult());
-                transaction.commit();
-                session.close();
+//            session = sessionFactory.openSession();
+//            transaction = session.beginTransaction();
+//            if(c.getJustificationOfSolution() != null)
+//                saveCase(session, c.getJustificationOfSolution());
+//            transaction.commit();
+//            session.close();
+//
+//            session = sessionFactory.openSession();
+//            transaction = session.beginTransaction();
+//            if(c.getResult() != null)
+//                saveCase(session, c.getResult());
+//                transaction.commit();
+//                session.close();
         }
         LogFactory.getLog(this.getClass()).info(cases.size()+
                 " cases stored into the database.");
@@ -303,8 +319,50 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     }
 
     private void saveCase(Session session, CaseComponent description) {
-       Case _case = (Case) description;
-       session.save(_case.getArmy());
-       session.save(_case);
+        System.out.println("SAVE CASE");
+        Case _case = (Case) description;
+        Army army = _case.getArmy();
+        //Create the army entry
+        session.createSQLQuery(ARMIES_QUERY)
+                .setInteger(0, army.getID())
+                .setString(1, army.getPlayerRace().toString())
+                .setInteger(2, army.getArmyPoints())
+                .executeUpdate();
+
+        //Create the army unit entries (with equipment and utility units)
+        Set<ArmyUnit> armyUnits = army.getArmyUnits();
+        for (ArmyUnit armyUnit : armyUnits) {
+            int id = armyUnit.getID();
+            session.createSQLQuery(ARMY_UNITS_QUERY)
+                    .setInteger(0, id)
+                    .setInteger(1, armyUnit.getArmyID())
+                    .setString(2, armyUnit.getUnit().getName())
+                    .setInteger(3, armyUnit.getNumberOfUnits())
+                    .executeUpdate();
+            //Create the utility unit entries
+            Set<UtilityUnit> utSet = armyUnit.getUtility();
+            for (UtilityUnit uu : utSet) {
+                session.createSQLQuery(ARMY_UNIT_UT_QUERY)
+                        .setInteger(0, id)
+                        .setInteger(1, uu.getID())
+                        .executeUpdate();
+            }
+            //Create the equipment entries
+            Set<Equipment> eqSet = armyUnit.getEquipment();
+            for (Equipment eq : eqSet) {
+                session.createSQLQuery(ARMY_UNIT_EQ_QUERY)
+                        .setInteger(0, id)
+                        .setInteger(1, eq.getID())
+                        .executeUpdate();
+            }
+
+        }
+        //Create the case associated with this army
+        session.createSQLQuery(CASE_QUERY)
+                .setInteger(0, _case.getID())
+                .setInteger(1, army.getID())
+                .setString(2, _case.getOpponent().toString())
+                .setString(3, _case.getOutcome().toString())
+                .executeUpdate();
     }
 }
