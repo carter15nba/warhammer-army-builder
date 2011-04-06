@@ -17,6 +17,8 @@
 
 package org.Warhammer.CBR.Resources;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import org.Warhammer.Warhammer.Army;
 
@@ -30,10 +32,21 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
     private double armyWeigth;
     private double pointWeigth;
     private double accumulatedWeigth;
-    public ArmySimilarity(double armyWeigth, double pointWeigth){
+    private int interval;
+
+    public ArmySimilarity(){
+        armyWeigth = 1;
+        pointWeigth = 1;
+        accumulatedWeigth = 2;
+        interval = 500;
+
+    }
+
+    public ArmySimilarity(double armyWeigth, double pointWeigth,int interval){
         this.armyWeigth = armyWeigth;
         this.pointWeigth = pointWeigth;
         this.accumulatedWeigth = this.armyWeigth + this.pointWeigth;
+        this.interval = interval;
     }
 
 
@@ -60,8 +73,8 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
              return 0;
         }
-        Interval armyPointsSimilarity = new Interval(500);
-        double armyPointSimilarityValue = armyPointsSimilarity.compute(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
+        
+        double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
         if(queryArmy.getArmyUnits()!=null){
             ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
             double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
@@ -70,6 +83,18 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
             return armySimilarity;
         }
         return (armyPointSimilarityValue);
+    }
+
+    public double computeArmyPointSimilarity(int casePoints, int queryPoints){
+        try {
+            Interval armyPointsSimilarity = new Interval(interval);
+            return armyPointsSimilarity.compute(casePoints, queryPoints);
+        }
+        catch (NoApplicableSimilarityFunctionException ex) {return 0;}
+    }
+
+    public int getInterval(){
+        return interval;
     }
 
     /**

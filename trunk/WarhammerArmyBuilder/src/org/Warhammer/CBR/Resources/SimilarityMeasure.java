@@ -20,6 +20,8 @@ package org.Warhammer.CBR.Resources;
 import jcolibri.cbrcore.Attribute;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
+import jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance;
+import jcolibri.method.retrieve.NNretrieval.similarity.local.Equal;
 
 /**
  * Class used to assign similarity calculation objects to the different parts
@@ -77,6 +79,16 @@ public class SimilarityMeasure {
         nnConfig.setWeight(attr, 1.0);
     }
 
+    public ArmySimilarity getArmySimilarityFunction(){
+        return (ArmySimilarity) nnConfig.getLocalSimilFunction(
+                new Attribute("army",org.Warhammer.Warhammer.Case.class));
+    }
+
+    public Equal getOpponentSimilarityFunction(){
+        return (Equal)nnConfig.getLocalSimilFunction(
+                new Attribute("opponent",org.Warhammer.Warhammer.Case.class));
+    }
+
     /**
      * Local similarity factory used to create the similarity function objects
      * used by different components of the case.
@@ -85,13 +97,13 @@ public class SimilarityMeasure {
      * the name specified local similarity function could not be found.
      */
     private LocalSimilarityFunction localSimilarityFactory(String name){
-        //TODO: User spesified weigth
+        //TODO: User spesified weigth/interval
         if(name.equals("Army"))
-            return new ArmySimilarity(1.0,1.0);
+            return new ArmySimilarity(1.0,1.0,500);
         else if(name.equals("Enum"))
-            return new jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance();
+            return new EnumDistance();
         else if(name.equals("Equal"))
-            return new jcolibri.method.retrieve.NNretrieval.similarity.local.Equal();
+            return new Equal();
         return null;
     }
 }
