@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class mutable="false" name="myrmidia.Warhammer.SpecialRules" table="SpecialRules">
+    <id name="id" type="integer" unsaved-value="0">
+      <generator class="increment"/>
+    </id>
+    <property column="specialRule" length="35" name="rule"/>
+  </class>
+</hibernate-mapping>
