@@ -36,6 +36,7 @@ import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
 import org.Warhammer.Database.Connector;
+import org.Warhammer.Explanation.CaseSelection;
 import org.Warhammer.Util.*;
 import org.Warhammer.Warhammer.Army;
 import org.Warhammer.Warhammer.ArmyUnit;
@@ -87,9 +88,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void cycle(CBRQuery cbrq) throws ExecutionException {        
         Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
 
-        Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
-//        revise();
-        retain(cbr);
+//        Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
+////        revise();
+//        retain(cbr);
     }
 
     public void postCycle() throws ExecutionException {
@@ -114,7 +115,10 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
 //        }
         //TODO: user specified k neares cases.
-        return SelectCases.selectTopKRR(eval, 5);
+        Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, 1);
+        CaseSelection cs = new CaseSelection(topKRR, similarityMeasure, 1, cbrq);
+        System.out.println(cs.generateExplanation());
+        return topKRR;
     }
 
     /**
