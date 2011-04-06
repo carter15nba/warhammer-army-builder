@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="myrmidia.Warhammer.Case" table="CASES">
+    <id name="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <many-to-one cascade="all" class="myrmidia.Warhammer.Army" column="army_ID" lazy="false" name="army" unique="true"/>
+    <property column="OPPONENT_RACE" length="20" name="opponent">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">myrmidia.Warhammer.Case$Races</param>
+      </type>
+    </property>
+    <property column="OUTCOME" length="10" name="outcome">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">myrmidia.Warhammer.Case$Outcomes</param>
+      </type>
+    </property>
+  </class>
+  <query name="Case.Unknown">
+    select cc from Case cc where cc.outcome='Unknown'
+  </query>
+  <query name="Case.Cases">
+    select cc from Case cc where cc.outcome&lt;&gt;'Unknown'
+  </query>
+  <query name="Case.All">
+    from Case
+  </query>
+  <query name="Case.LastId">
+    select cc.id from Case cc order by cc.id desc 
+  </query>
+</hibernate-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="myrmidia.Warhammer.Army" table="Armies">
+    <id name="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <property column="PLAYER_RACE" length="20" name="playerRace">
+      <type name="jcolibri.connector.databaseutils.EnumUserType">
+        <param name="enumClassName">myrmidia.Warhammer.Case$Races</param>
+      </type>
+    </property>
+    <property column="ARMY_POINTS" name="armyPoints"/>
+    <set cascade="all" inverse="true" lazy="false" name="armyUnits">
+      <key column="ARMY_ID"/>
+      <one-to-many class="myrmidia.Warhammer.ArmyUnit"/>
+    </set>
+  </class>
+  <query name="Army.LastId">
+    select a.id from Army a order by a.id desc 
+  </query>
+</hibernate-mapping>

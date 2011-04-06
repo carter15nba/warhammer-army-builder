@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="myrmidia.Warhammer.ArmyUnit" table="ARMY_UNIT">
+    <id name="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <property column="ARMY_ID" name="armyID" type="integer"/>
+    <many-to-one cascade="all" class="myrmidia.Warhammer.Unit" column="UNIT_NAME" lazy="false" name="unit" unique="true"/>
+    <property column="NUM_UNITS" name="numberOfUnits"/>
+    <set lazy="false" name="equipment" table="ARMY_UNIT_EQUIPMENT">
+      <key column="ARMY_UNIT_ID"/>
+      <many-to-many class="myrmidia.Warhammer.Equipment" column="EQUIPMENT_ID"/>
+    </set>
+    <set lazy="false" name="utility" table="ARMY_UNIT_UTILITY">
+      <key column="ARMY_UNIT_ID"/>
+      <many-to-many class="myrmidia.Warhammer.UtilityUnit" column="UTILITY_ID"/>
+    </set>
+  </class>
+  <query name="ArmyUnit.LastId">
+    select au.id from ArmyUnit au order by au.id desc 
+  </query>
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : databaseconfig.xml
+    Created on : 24. januar 2011, 10:49
+    Author     : Glenn Rune Strandbråten
+    Description:
+        This file configures the CBREngine with data regarding where the
+        hibernate.cfg.xml file is located, the mapping and class file locations
+        of the problem descripton and problem solution.
+-->
+
+<DataBaseConfiguration>
+    <HibernateConfigFile>myrmidia/Database/hibernate.cfg.xml</HibernateConfigFile>
+    <DescriptionMappingFile>myrmidia/Database/Case.hbm.xml</DescriptionMappingFile>
+    <DescriptionClassName>myrmidia.Warhammer.Case</DescriptionClassName>
+    <SolutionMappingFile>myrmidia/Database/Case.hbm.xml</SolutionMappingFile>
+    <SolutionClassName>myrmidia.Warhammer.Case</SolutionClassName>
+</DataBaseConfiguration>
