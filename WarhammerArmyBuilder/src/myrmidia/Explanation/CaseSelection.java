@@ -18,10 +18,7 @@
 package myrmidia.Explanation;
 
 import java.util.Collection;
-import jcolibri.cbrcore.Attribute;
 import jcolibri.cbrcore.CBRQuery;
-import jcolibri.method.retrieve.NNretrieval.NNConfig;
-import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 import jcolibri.method.retrieve.RetrievalResult;
 import myrmidia.CBR.Resources.ArmySimilarity;
 import myrmidia.CBR.Resources.SimilarityMeasure;
@@ -31,6 +28,7 @@ import myrmidia.Warhammer.Case.Races;
 /**
  *
  * @author Glenn Rune Strandbråten
+ * @version 0.1
  */
 public class CaseSelection implements Explanation{
     private Collection<RetrievalResult> retrievalResults;
@@ -83,9 +81,9 @@ public class CaseSelection implements Explanation{
             double pointSim = armySim.computeArmyPointSimilarity(cArmyPoints, qArmyPoints);
             simil +="\n"+TAB+"The query army points "+qArmyPoints+HAVE_SIM+
                     pointSim+" with the case army points "+cArmyPoints +
-                    "; based on a interval("+armySim.getInterval()+") "
-                    + "calculation or perfect similarity if either points use "
-                    + "the wildcard value: 0";
+                    "; based on a interval of "+armySim.getInterval() +
+                    "calculation or perfect similarity if either points use " +
+                    "the wildcard value: 0";
         }
         return simil;
     }

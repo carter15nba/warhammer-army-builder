@@ -25,7 +25,6 @@ import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
 import myrmidia.CBR.Resources.*;
 import myrmidia.Warhammer.Case;
-import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +35,7 @@ import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
 import myrmidia.Database.Connector;
-import myrmidia.Explanation.CaseSelection;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Util.*;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
@@ -96,7 +95,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void postCycle() throws ExecutionException {
         DatabaseManager dbm = DatabaseManager.getInstance();
         dbm.disconnect();
-        dbm.disconnectNoHibernate(true);
     }
 
     /**
@@ -116,8 +114,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //        }
         //TODO: user specified k neares cases.
         Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, 1);
-        CaseSelection cs = new CaseSelection(topKRR, similarityMeasure, 1, cbrq);
-        System.out.println(cs.generateExplanation());
         return topKRR;
     }
 
@@ -195,7 +191,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
-//                queryArmy.setArmyUnits(armyUnitSet);
+  //              queryArmy.setArmyUnits(armyUnitSet);
                 Set<Equipment> sEq = new HashSet<Equipment>();
                 Equipment eq = new Equipment();
                 eq.setName("Musician");
@@ -216,24 +212,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cbrEngine.cycle(cbrQuery);
 
                 cbrEngine.postCycle();
-            }
-            else if(args[0].contentEquals("sqlPrint")){
-                DatabaseManager dbm = DatabaseManager.getInstance();
-                dbm.connectWithoutHibernate();
-                ResultSet res = dbm.executeSQL("SELECT * FROM UNIT order by NAME ASC", DatabaseManager.SELECT_QUERY);             
-                while(res.next()){
-                    System.out.println(res.getString("name"));
-                }
-                dbm.disconnectNoHibernate(true);
-            }
-            else if(args[0].equalsIgnoreCase("unitSimTest")){
-                UnitSimilarity us = new UnitSimilarity(1,1,1,1,1,1);
-                Unit unit1 = CreateObjectFromDB.createUnitFromDB("Empire:Halberdiers");
-                Unit unit2 = CreateObjectFromDB.createUnitFromDB("High_Elves:Spearmen");
-                double sim = us.compute(unit1,unit2);
-                PrintFactory.printUnit(unit1);
-                PrintFactory.printUnit(unit2);
-                System.out.println("Simil: "+sim);
+                ExplanationEngine eng = ExplanationEngine.getInstance();
+                System.out.println(eng.generateExplanation());
             }
             System.exit(0);
         }

@@ -17,35 +17,41 @@
 
 package myrmidia.CBR.Resources;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import myrmidia.Explanation.CaseExplanation;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.Army;
+import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
+import myrmidia.Warhammer.Case.Races;
 
 /**
  * Class to calculate the similarity mesaure between two armies.
  * @author Glenn Rune Strandbråten
  * @version 0.2
  */
-public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
+public class ArmySimilarity implements LocalSimilarityFunction{
 
     private double armyWeigth;
     private double pointWeigth;
     private double accumulatedWeigth;
+    private double playerRaceWeigth;
     private int interval;
+    private ExplanationEngine explEngine = ExplanationEngine.getInstance();
 
     public ArmySimilarity(){
         armyWeigth = 1;
         pointWeigth = 1;
-        accumulatedWeigth = 2;
+        playerRaceWeigth = 1;
+        accumulatedWeigth = 3;
         interval = 500;
 
     }
 
-    public ArmySimilarity(double armyWeigth, double pointWeigth,int interval){
+    public ArmySimilarity(double playerRaceWeigth, double armyWeigth, double pointWeigth,int interval){
         this.armyWeigth = armyWeigth;
         this.pointWeigth = pointWeigth;
-        this.accumulatedWeigth = this.armyWeigth + this.pointWeigth;
+        this.playerRaceWeigth = playerRaceWeigth;
+        this.accumulatedWeigth = this.armyWeigth + this.pointWeigth + this.playerRaceWeigth;
         this.interval = interval;
     }
 
@@ -54,8 +60,7 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * Method to compute the similarity of two Army objects.
      * @param caseObject The Army objecct found in the case.
      * @param queryObject The Army object found in the query.
-     * @return double with the similarity of the two army objects or 0 if no
-     * similarity were found
+     * @return double similarity value between [0..1]
      * @throws NoApplicableSimilarityFunctionException if the case object and/or
      * the query object is not an instance of the org.Warhammer.Warhammer.Army
      * class.
@@ -67,22 +72,30 @@ public class ArmySimilarity implements jcolibri.method.retrieve.NNretrieval.simi
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
         if(!(queryObject instanceof Army))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
-         Army caseArmy = (Army) caseObject;
-         Army queryArmy = (Army) queryObject;
-
+        CaseExplanation caseExplanation = new CaseExplanation();
+        explEngine.addCaseExplanation(caseExplanation);
+        Army caseArmy = (Army) caseObject;
+        Army queryArmy = (Army) queryObject;
+        caseExplanation.setRace("CasePlayerRace", caseArmy.getPlayerRace());
+        caseExplanation.setRace("QueryPlayerRace", queryArmy.getPlayerRace());
+        caseExplanation.setCasePoints(caseArmy.getArmyPoints());
+        caseExplanation.setQueryPoints(queryArmy.getArmyPoints());
+        double armyRaceSimil = 1;
         if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
-             return 0;
+            armyRaceSimil = 0;
         }
-        
+        caseExplanation.setSimilarity("PlayerRaceSimilarity", armyRaceSimil);
         double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
+        caseExplanation.setSimilarity("ArmyPointSimilarity", armyPointSimilarityValue);
         if(queryArmy.getArmyUnits()!=null){
             ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
             double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
-            double armySimilarity = ((armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyWeigth))/
+            double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyWeigth))/
                     accumulatedWeigth;
+            caseExplanation.setSimilarity("ArmySimilarity", armySimilarity);
             return armySimilarity;
         }
-        return (armyPointSimilarityValue);
+        return (armyPointSimilarityValue*pointWeigth+armyRaceSimil*playerRaceWeigth)/(pointWeigth+playerRaceWeigth);
     }
 
     public double computeArmyPointSimilarity(int casePoints, int queryPoints){

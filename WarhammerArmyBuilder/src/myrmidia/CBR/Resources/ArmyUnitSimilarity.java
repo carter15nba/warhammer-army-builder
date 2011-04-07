@@ -19,6 +19,7 @@ package myrmidia.CBR.Resources;
 
 import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
+import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.Equipment;
@@ -29,7 +30,7 @@ import myrmidia.Warhammer.UtilityUnit;
  * @author Glenn Rune Strandbråten
  * @version 0.2
  */
-public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
+public class ArmyUnitSimilarity implements LocalSimilarityFunction{
 
     private int foundUnits;
 
@@ -46,6 +47,7 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
      * parameters are not an instance of Set.
      */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
+        System.out.println("I am inside army unit sim");
         if ((caseObject == null) || (queryObject == null))
             return 0;
         if (!(caseObject instanceof Set))
@@ -61,8 +63,10 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
         double utilitySim = 0;
         int notQueriedEquipmet=0;
         int notQueriedUtility = 0;
-        if(querySet.isEmpty())
+        if(querySet.isEmpty()){
+            System.out.println("returning one");
             return 1;
+        }
         for (Object object : querySet) {
             ArmyUnit queryArmyUnit = (ArmyUnit) object;
             Unit queryUnit = queryArmyUnit.getUnit();
@@ -93,6 +97,7 @@ public class ArmyUnitSimilarity implements jcolibri.method.retrieve.NNretrieval.
         if(notQueriedUtility==0)
             denominator--;
         similarity = (double)((unitFractionSimilarity + numberSim + equipmentSim + utilitySim)/denominator);
+        System.out.println("sim in au sim: "+similarity);
         return similarity;
     }
 

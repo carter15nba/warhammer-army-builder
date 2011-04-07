@@ -21,6 +21,8 @@ import java.util.Collection;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.NNretrieval.similarity.StandardGlobalSimilarityFunction;
+import myrmidia.Explanation.CaseExplanation;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.Case;
 import myrmidia.Warhammer.Case.Outcomes;
 
@@ -35,6 +37,7 @@ public class Average extends StandardGlobalSimilarityFunction {
     private Case.Races playerRace;
     private Case[] cases;
     private Outcomes[] outcome;
+    private ExplanationEngine explEngine;
 
     /**
      * Default constructor
@@ -42,6 +45,7 @@ public class Average extends StandardGlobalSimilarityFunction {
      * @param cbrq The CBR query
      */
     public Average(Collection<CBRCase> cases, CBRQuery cbrq) {
+        this.explEngine = ExplanationEngine.getInstance();
         this.cases = new Case[cases.size()];
         this.outcome = new Outcomes[cases.size()];
         Case query = (Case) cbrq.getDescription();
@@ -72,10 +76,18 @@ public class Average extends StandardGlobalSimilarityFunction {
             weigthAdjust = 1.0;
             //return 0;
         }
+        System.out.println("-----------");
         for(int i=0; i<iValue; i++){
+            System.out.println("value: "+values[i]+" weigths: "+weigths[i]);
             acum += values[i] * weigths[i];
             weigthsAcum += weigthAdjust * weigths[i];
         }
-        return acum/weigthsAcum;
+        System.out.println("--------------");
+        double weigthedAverage = acum/weigthsAcum;
+        CaseExplanation caseExpl = explEngine.getCurrentCaseExplanation();
+        caseExpl.setCaseID(cases[numCalled].getID());
+        caseExpl.setSimilarity("TotalSimilarity", weigthedAverage);
+        numCalled++;
+        return weigthedAverage;
     }
 }
