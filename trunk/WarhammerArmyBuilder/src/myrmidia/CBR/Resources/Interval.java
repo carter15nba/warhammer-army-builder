@@ -17,12 +17,14 @@
 
 package myrmidia.CBR.Resources;
 
+import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
+
 /**
  * Class used to compute the local similarity Interval
  * @author Glenn Rune Strandbråten
  * @version 0.4
  */
-public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
+public class Interval implements LocalSimilarityFunction{
 
     private double interval;
 
@@ -66,7 +68,10 @@ public class Interval implements jcolibri.method.retrieve.NNretrieval.similarity
         //If wildcard value e.g.: I have no clue how many points I am comprised of.
         if(caseDouble==0)
             return 1;
-        return 1 - ((double) Math.abs(caseDouble - queryDouble) / interval);
+        double simil = 1 - ((double) Math.abs(caseDouble - queryDouble) / interval);
+        if(simil<0)
+            return 0;
+        return simil;
     }
 
     /**

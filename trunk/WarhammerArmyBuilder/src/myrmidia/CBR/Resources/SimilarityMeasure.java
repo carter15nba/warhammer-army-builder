@@ -20,8 +20,6 @@ package myrmidia.CBR.Resources;
 import jcolibri.cbrcore.Attribute;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
-import jcolibri.method.retrieve.NNretrieval.similarity.local.EnumDistance;
-import jcolibri.method.retrieve.NNretrieval.similarity.local.Equal;
 
 /**
  * Class used to assign similarity calculation objects to the different parts
@@ -61,7 +59,7 @@ public class SimilarityMeasure {
         nnConfig = new NNConfig();
         Attribute attr;
         LocalSimilarityFunction func;
-        //Player race
+        //Player army/race
         attr = new Attribute("army",myrmidia.Warhammer.Case.class);
         func = localSimilarityFactory("Army");
         nnConfig.addMapping(attr, func);
@@ -99,9 +97,9 @@ public class SimilarityMeasure {
     private LocalSimilarityFunction localSimilarityFactory(String name){
         //TODO: User spesified weigth/interval
         if(name.equals("Army"))
-            return new ArmySimilarity(1.0,1.0,500);
+            return new ArmySimilarity(1.0,1.0,1.0,500);
         else if(name.equals("Enum"))
-            return new EnumDistance();
+            return new OutcomeSimilarity();
         else if(name.equals("Equal"))
             return new Equal();
         return null;
