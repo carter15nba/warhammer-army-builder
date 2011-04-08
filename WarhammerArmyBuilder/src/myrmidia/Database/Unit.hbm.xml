@@ -5,7 +5,7 @@
     <id length="60" name="name" type="string"/>
     <property column="RACE" length="20" name="race">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Case$Races</param>
+        <param name="enumClassName">myrmidia.Util.Enums.Races</param>
       </type>
     </property>
     <property column="COST" name="cost"/>
@@ -13,7 +13,7 @@
     <property column="MAXUNITS" name="maxNumber"/>
     <property column="ARMYTYPE" length="7" name="armyType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Unit$armyType</param>
+        <param name="enumClassName">myrmidia.Util.Enums.ArmyType</param>
       </type>
     </property>
     <property column="ATTACK" length="7" name="attack"/>
@@ -27,12 +27,12 @@
     <property column="MAGICIAN" name="magician" type="boolean"/>
     <property column="UNITTYPE" length="3" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Unit$unitType</param>
+        <param name="enumClassName">myrmidia.Util.Enums.UnitType</param>
       </type>
     </property>
     <property column="WEAPONTYPE" length="12" name="weaponType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Unit$weaponType</param>
+        <param name="enumClassName">myrmidia.Util.Enums.WeaponType</param>
       </type>
     </property>
     <property column="WEAPONSKILL" length="7" name="weaponSkill"/>

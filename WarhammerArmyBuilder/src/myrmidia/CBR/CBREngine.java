@@ -17,15 +17,11 @@
 
 package myrmidia.CBR;
 
-import myrmidia.CBR.Resources.SimilarityConfiguration;
-import myrmidia.Database.DatabaseManager;
 import java.sql.SQLException;
 import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
-import myrmidia.CBR.Resources.*;
-import myrmidia.Warhammer.Case;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,10 +34,15 @@ import jcolibri.method.retrieve.selection.SelectCases;
 import myrmidia.Database.Connector;
 import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Util.*;
+import myrmidia.CBR.Resources.*;
+import myrmidia.Warhammer.Case;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
+import myrmidia.Database.DatabaseManager;
+import myrmidia.Util.Enums.Outcomes;
+import myrmidia.Util.Enums.Races;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
@@ -110,7 +111,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      */
     private Collection<RetrievalResult> retrieve(CBRQuery cbrq){
         NNConfig conf = similarityMeasure.getSimilarityConfig();
-        conf.setDescriptionSimFunction(new myrmidia.CBR.Resources.Average(caseBase.getCases(),cbrq));
+        conf.setDescriptionSimFunction(new Average(caseBase.getCases()));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
 //        Print all cases
 //        for (RetrievalResult retrievalResult : eval) {
@@ -175,12 +176,12 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 CBRQuery cbrQuery = new CBRQuery();
                 Case queryCase = new Case();
-                queryCase.setOutcome(Case.Outcomes.Victory);
-                queryCase.setOpponent(Case.Races.Wood_Elves);
+                queryCase.setOutcome(Outcomes.Victory);
+                queryCase.setOpponent(Races.Wood_Elves);
 
                 Army queryArmy = new Army();
                 queryArmy.setArmyPoints(2500);
-                queryArmy.setPlayerRace(Case.Races.Empire);
+                queryArmy.setPlayerRace(Races.Empire);
 
                 Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
                 ArmyUnit armyUnit = new ArmyUnit();
@@ -195,7 +196,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 armyUnit.setUnit(unit);
                 armyUnit.setNumberOfUnits(19);
                 armyUnitSet.add(armyUnit);
-  //              queryArmy.setArmyUnits(armyUnitSet);
+                queryArmy.setArmyUnits(armyUnitSet);
                 Set<Equipment> sEq = new HashSet<Equipment>();
                 Equipment eq = new Equipment();
                 eq.setName("Musician");

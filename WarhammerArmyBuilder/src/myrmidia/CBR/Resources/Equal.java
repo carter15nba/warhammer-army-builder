@@ -20,7 +20,8 @@ package myrmidia.CBR.Resources;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.Mode;
+import myrmidia.Util.Enums.Races;
 
 /**
  *
@@ -33,6 +34,10 @@ import myrmidia.Warhammer.Case.Races;
  */
 public class Equal implements LocalSimilarityFunction {
 
+    private Mode mode;
+    public Equal(Mode m){
+        mode = m;
+    }
     /**
      * Applies the similarity function.
      * @param o1 Object.
@@ -41,15 +46,23 @@ public class Equal implements LocalSimilarityFunction {
      */
     public double compute(Object o1, Object o2) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
         if ((o1 == null) || (o2 == null)){
-            System.out.println("is null");
             return 0;
         }
         double value = o1.equals(o2) ? 1 : 0;
         ExplanationEngine explEngine = ExplanationEngine.getInstance();
         CaseExplanation caseExpl= explEngine.getCurrentCaseExplanation();
-        caseExpl.setRace("QueryOpponentRace", (Races)o2);
-        caseExpl.setRace("CaseOpponentRace", (Races)o1);
-        caseExpl.setSimilarity("OpponentRaceSimilarity", value);
+        switch(mode){
+            case Opponent:
+                caseExpl.setRace("QueryOpponentRace", (Races)o2);
+                caseExpl.setRace("CaseOpponentRace", (Races)o1);
+                caseExpl.setSimilarity("OpponentRaceSimilarity", value);
+                break;
+            case Player:
+                caseExpl.setRace("CasePlayerRace", (Races)o2);
+                caseExpl.setRace("QueryPlayerRace", (Races)o1);
+                caseExpl.setSimilarity("PlayerRaceSimilarity", value);
+                break;
+        }
         return value;
     }
 

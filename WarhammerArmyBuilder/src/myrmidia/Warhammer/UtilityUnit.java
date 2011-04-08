@@ -17,7 +17,7 @@
 
 package myrmidia.Warhammer;
 
-import myrmidia.Warhammer.Unit.unitType;
+import myrmidia.Util.Enums.UnitType;
 
 /**
  * Class representing a utility unit. A utility unit is classified as either
@@ -37,7 +37,7 @@ public class UtilityUnit extends CoreUnit{
     private String initiative = "";
     private String attack = "";
     private String leadership = "";
-    private unitType unitType;
+    private UnitType unitType;
     private boolean required;
     private boolean promotionUnit;
 
@@ -171,14 +171,14 @@ public class UtilityUnit extends CoreUnit{
     /**
      * @return the unitType
      */
-    public unitType getUnitType() {
+    public UnitType getUnitType() {
         return unitType;
     }
 
     /**
      * @param unitType the unitType to set
      */
-    public void setUnitType(unitType unitType) {
+    public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
     }
 

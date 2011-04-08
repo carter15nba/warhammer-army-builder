@@ -20,7 +20,8 @@ package myrmidia.Explanation;
 import java.util.HashMap;
 import java.util.Map;
 import myrmidia.CBR.Resources.SimilarityConfiguration;
-import myrmidia.Warhammer.Case.*;
+import myrmidia.Util.Enums.Outcomes;
+import myrmidia.Util.Enums.Races;
 
 /**
  *
@@ -35,6 +36,17 @@ public class CaseExplanation implements Explanation{
     private Outcomes queryOutcome;
     private int casePoints;
     private int queryPoints;
+    private ArmyUnitExplanation armyUnitExplanation;
+
+    public CaseExplanation(){
+        similarities = new HashMap<String, Double>();
+        races = new HashMap<String, Races>();
+        armyUnitExplanation = new ArmyUnitExplanation();
+    }
+
+    public ArmyUnitExplanation getArmyUnitExplanation(){
+        return armyUnitExplanation;
+    }
 
     public Outcomes getCaseOutcome() {
         return caseOutcome;
@@ -66,11 +78,6 @@ public class CaseExplanation implements Explanation{
 
     public void setQueryPoints(int queryPoints) {
         this.queryPoints = queryPoints;
-    }
-
-    public CaseExplanation(){
-        similarities = new HashMap<String, Double>();
-        races = new HashMap<String, Races>();
     }
 
     /**
@@ -145,17 +152,18 @@ public class CaseExplanation implements Explanation{
         double outcomeWeigth = simConf.getOutcomeWeigth();
         double armySim = getSimilarity("ArmySimilarity");
         double outcomeSim = getSimilarity("OutcomeSimilarity");
-        double opponentSim = getSimilarity("OpponentSimilarity");
+        double opponentSim = getSimilarity("OpponentRaceSimilarity");
         String ret = "Case #"+caseID+" have a similarity of "+getSimilarity("TotalSimilarity")+" with the query.\n"
                 + "  Based on the weighted average of three components (ArmySimilarity, OpponentSimilarity and OutcomeSimilarity):\n"
                 + "    Army Similarity = "+armySim+ " and have a weigth of "+armyWeight+"\n"
-                + "      Army points("+queryPoints+") in query have a similarity of "+getSimilarity("ArmyPointSimilarity")+" with the army points("+casePoints+") in the case\n"
-                + "      Query player race("+getRace("QueryPlayerRace")+") have a similarity of "+getSimilarity("PlayerRaceSimilarity")+ " with the player race("+getRace("CasePlayerRace")+") in the case\n"
+                + "      Army points("+queryPoints+") in query have a similarity of "+getSimilarity("ArmyPointSimilarity")+" with the army points("+casePoints+") in the case, and have a weight of "+simConf.getArmyPointWeight()+"\n"
+                + "      Query player race("+getRace("QueryPlayerRace")+") have a similarity of "+getSimilarity("PlayerRaceSimilarity")+ " with the player race("+getRace("CasePlayerRace")+") in the case, and have a weight of "+simConf.getPlayerRaceWeigth()+"\n"
+                + "      ArmyUnitSimilarity\n"
                 + "    Opponent Similarity = "+opponentSim+ " and have a weigth of "+opponentWeigth+"\n"
                 + "      Query opponent race("+getRace("QueryOpponentRace")+") have a similarity of "+getSimilarity("OpponentRaceSimilarity")+ " with the opponent race("+getRace("CaseOpponentRace")+") in the case\n"
                 + "    Outcome Similarity = "+outcomeSim+" and have a weigth of "+outcomeWeigth+"\n"
                 + "      Query outcome("+queryOutcome+") have a similarity of "+getSimilarity("OutcomeSimilarity")+" with the outcome("+caseOutcome+") of the case\n"
-                + "  This gives the similarity calculation: \n"
+                + "  This gives the similarity calculation:\n"
                 + "    simlarity = (armySimilarity*armyWeigth+opponentSimilarity*opponentWeigth+outcomeSimilarity*outcomeWeigth)/(armyWeigth+opponentWeigth*outcomeWeigth)\n"
                 + "    similarity = ("+armySim+"*"+armyWeight+"+"+opponentSim+"*"+opponentWeigth+"+"+outcomeSim+"*"+outcomeWeigth+")/("+armyWeight+"+"+opponentWeigth+"+"+outcomeWeigth+")\n"
                 + "    similarity = ("+(armySim*armyWeight+opponentSim*opponentWeigth+outcomeSim*outcomeWeigth)+")/"+(armyWeight+opponentWeigth+outcomeWeigth)+"\n"

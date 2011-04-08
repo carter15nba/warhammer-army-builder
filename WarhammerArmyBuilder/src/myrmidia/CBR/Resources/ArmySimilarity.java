@@ -22,7 +22,7 @@ import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.Army;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.Mode;
 
 /**
  * Class to calculate the similarity mesaure between two armies.
@@ -69,33 +69,34 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         if(caseObject==null||queryObject==null)
             return 0;
         if(!(caseObject instanceof Army))
-            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
+            throw new NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
         if(!(queryObject instanceof Army))
-            throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
-        CaseExplanation caseExplanation = new CaseExplanation();
-        explEngine.addCaseExplanation(caseExplanation);
+            throw new NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
+
         Army caseArmy = (Army) caseObject;
         Army queryArmy = (Army) queryObject;
-        caseExplanation.setRace("CasePlayerRace", caseArmy.getPlayerRace());
-        caseExplanation.setRace("QueryPlayerRace", queryArmy.getPlayerRace());
+
+        //Calculate the similarity and record similarities
+        double armyRaceSimil = new Equal(Mode.Player).compute(caseArmy.getPlayerRace(), queryArmy.getPlayerRace());
+        double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
+
+        
+        //Calculate the similarities of the army units available in the query/case
+        ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
+        double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
+
+        //Calculate the army similarity
+        double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyUnitWeigth))/
+                accumulatedWeigth;
+
+        //Setup the explantion component for this army(case)
+        CaseExplanation caseExplanation = new CaseExplanation();
+        explEngine.addCaseExplanation(caseExplanation);
         caseExplanation.setCasePoints(caseArmy.getArmyPoints());
         caseExplanation.setQueryPoints(queryArmy.getArmyPoints());
-        double armyRaceSimil = 1;
-        if(caseArmy.getPlayerRace()!=queryArmy.getPlayerRace()){
-            armyRaceSimil = 0;
-        }
-        caseExplanation.setSimilarity("PlayerRaceSimilarity", armyRaceSimil);
-        double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
+        caseExplanation.setSimilarity("ArmySimilarity", armySimilarity);
         caseExplanation.setSimilarity("ArmyPointSimilarity", armyPointSimilarityValue);
-        if(queryArmy.getArmyUnits()!=null){
-            ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
-            double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
-            double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyUnitWeigth))/
-                    accumulatedWeigth;
-            caseExplanation.setSimilarity("ArmySimilarity", armySimilarity);
-            return armySimilarity;
-        }
-        return (armyPointSimilarityValue*pointWeigth+armyRaceSimil*playerRaceWeigth)/(pointWeigth+playerRaceWeigth);
+        return armySimilarity;
     }
 
     public double computeArmyPointSimilarity(int casePoints, int queryPoints){

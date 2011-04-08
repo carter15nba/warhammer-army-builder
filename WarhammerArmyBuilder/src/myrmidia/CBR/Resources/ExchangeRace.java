@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Util.Enums.ArmyType;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Unit;
-import myrmidia.Warhammer.Unit.armyType;
 
 /**
  * Class used to change all the units in an army to another race, by replacing
@@ -103,10 +103,10 @@ public class ExchangeRace {
         HashSet<ArmyUnit> lords = new HashSet<ArmyUnit>();
         Unit mostSimilarUnit = null;
         ArrayList<Unit> applicableUnits = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                oldArmy.getPlayerRace(), armyType.Lord);
+                oldArmy.getPlayerRace(), ArmyType.Lord);
         for(ArmyUnit oldArmyUnit : oldArmy.getArmyUnits()){
             Unit oldUnit = oldArmyUnit.getUnit();
-            if(oldUnit.getArmyType()==armyType.Lord){
+            if(oldUnit.getArmyType()==ArmyType.Lord){
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = cAF.createNewCharacter(oldArmy, mostSimilarUnit);
                 lords.add(newArmyUnit);
@@ -128,10 +128,10 @@ public class ExchangeRace {
         HashSet<ArmyUnit> heroes = new HashSet<ArmyUnit>();
         Unit mostSimilarUnit = null;
         ArrayList<Unit> applicableUnits = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                oldArmy.getPlayerRace(), armyType.Hero);
+                oldArmy.getPlayerRace(), ArmyType.Hero);
         for(ArmyUnit oldArmyUnit : oldArmy.getArmyUnits()){
             Unit oldUnit = oldArmyUnit.getUnit();
-            if(oldUnit.getArmyType()==armyType.Hero){
+            if(oldUnit.getArmyType()==ArmyType.Hero){
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = cAF.createNewCharacter(oldArmy, mostSimilarUnit);
                 heroes.add(newArmyUnit);
@@ -154,10 +154,10 @@ public class ExchangeRace {
         HashSet<ArmyUnit> core = new HashSet<ArmyUnit>();
         Unit mostSimilarUnit = null;
         ArrayList<Unit> applicableUnits = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                oldArmy.getPlayerRace(), armyType.Core);
+                oldArmy.getPlayerRace(), ArmyType.Core);
         for(ArmyUnit oldArmyUnit : oldArmy.getArmyUnits()){
             Unit oldUnit = oldArmyUnit.getUnit();
-            if(oldUnit.getArmyType()==armyType.Core){
+            if(oldUnit.getArmyType()==ArmyType.Core){
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = new ArmyUnit();
                 newArmyUnit.setUnit(mostSimilarUnit);
@@ -185,10 +185,10 @@ public class ExchangeRace {
         HashSet<ArmyUnit> special = new HashSet<ArmyUnit>();
         Unit mostSimilarUnit = null;
         ArrayList<Unit> applicableUnits = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                oldArmy.getPlayerRace(), armyType.Special);
+                oldArmy.getPlayerRace(), ArmyType.Special);
         for(ArmyUnit oldArmyUnit : oldArmy.getArmyUnits()){
             Unit oldUnit = oldArmyUnit.getUnit();
-            if(oldUnit.getArmyType()==armyType.Special){
+            if(oldUnit.getArmyType()==ArmyType.Special){
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = new ArmyUnit();
                 newArmyUnit.setUnit(mostSimilarUnit);
@@ -214,10 +214,10 @@ public class ExchangeRace {
         HashSet<ArmyUnit> rare = new HashSet<ArmyUnit>();
         Unit mostSimilarUnit = null;
         ArrayList<Unit> applicableUnits = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                oldArmy.getPlayerRace(), armyType.Rare);
+                oldArmy.getPlayerRace(), ArmyType.Rare);
         for(ArmyUnit oldArmyUnit : oldArmy.getArmyUnits()){
             Unit oldUnit = oldArmyUnit.getUnit();
-            if(oldUnit.getArmyType()==armyType.Rare){
+            if(oldUnit.getArmyType()==ArmyType.Rare){
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = new ArmyUnit();
                 newArmyUnit.setUnit(mostSimilarUnit);

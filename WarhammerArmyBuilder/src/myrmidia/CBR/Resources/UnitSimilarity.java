@@ -17,12 +17,12 @@
 
 package myrmidia.CBR.Resources;
 
-import myrmidia.Warhammer.Unit.armyType;
-import myrmidia.Warhammer.Unit.unitType;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.similarity.local.Threshold;
+import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Util.Enums.UnitType;
+import myrmidia.Util.Enums.WeaponType;
 import myrmidia.Warhammer.Unit;
-import myrmidia.Warhammer.Unit.weaponType;
 
 /**
  * Class to calculate the unit similarity (all characteristics)
@@ -174,79 +174,79 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @param queryType unitType The unit type of the query unit.
      * @return double in the range: [0:1]
      */
-    private double computeUnitTypeSimilarity(unitType caseType, unitType queryType){
+    private double computeUnitTypeSimilarity(UnitType caseType, UnitType queryType){
         if(caseType==queryType)
             return 1;
-        if(caseType==unitType.Ca){
-            if(queryType==unitType.Ch)
+        if(caseType==UnitType.Ca){
+            if(queryType==UnitType.Ch)
                 return 0.75;
-            if(queryType==unitType.MC)
+            if(queryType==UnitType.MC)
                 return 0.65;
         }
-        if(caseType==unitType.Ch){
-            if(queryType==unitType.Ca)
+        if(caseType==UnitType.Ch){
+            if(queryType==UnitType.Ca)
                 return 0.75;
-            if(queryType==unitType.MC)
+            if(queryType==UnitType.MC)
                 return 0.50;
         }
-        if(caseType==unitType.In){
-            if(queryType==unitType.MI)
+        if(caseType==UnitType.In){
+            if(queryType==UnitType.MI)
                 return 0.65;
         }
-        if(caseType==unitType.MB){
-            if(queryType==unitType.MC)
+        if(caseType==UnitType.MB){
+            if(queryType==UnitType.MC)
                 return 0.5;
-            if(queryType==unitType.MI)
+            if(queryType==UnitType.MI)
                 return 0.65;
-            if(queryType==unitType.Mo)
+            if(queryType==UnitType.Mo)
                 return 0.8;
         }
-        if(caseType==unitType.MC){
-            if(queryType==unitType.Ca)
+        if(caseType==UnitType.MC){
+            if(queryType==UnitType.Ca)
                 return 0.65;
-            if(queryType==unitType.Ch)
+            if(queryType==UnitType.Ch)
                 return 0.5;
-            if(queryType==unitType.MB)
+            if(queryType==UnitType.MB)
                 return 0.5;
-            if(queryType==unitType.MI)
+            if(queryType==UnitType.MI)
                 return 0.5;
-            if(queryType==unitType.Mo)
+            if(queryType==UnitType.Mo)
                 return 0.8;
         }
-        if(caseType==unitType.MI){
-            if(queryType==unitType.In)
+        if(caseType==UnitType.MI){
+            if(queryType==UnitType.In)
                 return 0.65;
-            if(queryType==unitType.MB)
+            if(queryType==UnitType.MB)
                 return 0.5;
-            if(queryType==unitType.MC)
+            if(queryType==UnitType.MC)
                 return 0.5;
-            if(queryType==unitType.Mo)
+            if(queryType==UnitType.Mo)
                 return 0.8;
         }
-        if(caseType==unitType.Mo){
-            if(queryType==unitType.MB)
+        if(caseType==UnitType.Mo){
+            if(queryType==UnitType.MB)
                 return 0.8;
-            if(queryType==unitType.MC)
+            if(queryType==UnitType.MC)
                 return 0.8;
-            if(queryType==unitType.MI)
+            if(queryType==UnitType.MI)
                 return 0.8;
         }
-        if(caseType==unitType.Un){
-            if(queryType==unitType.WB)
+        if(caseType==UnitType.Un){
+            if(queryType==UnitType.WB)
                 return 0.45;
-            if(queryType==unitType.WM)
+            if(queryType==UnitType.WM)
                 return 0.45;
         }
-        if(caseType==unitType.WB){
-            if(queryType==unitType.Un)
+        if(caseType==UnitType.WB){
+            if(queryType==UnitType.Un)
                 return 0.45;
-            if(queryType==unitType.WM)
+            if(queryType==UnitType.WM)
                 return 0.35;
         }
-        if(caseType==unitType.WM){
-            if(queryType==unitType.Un)
+        if(caseType==UnitType.WM){
+            if(queryType==UnitType.Un)
                 return 0.45;
-            if(queryType==unitType.WB)
+            if(queryType==UnitType.WB)
                 return 0.35;
         }
         return 0;
@@ -258,31 +258,31 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @param queryArmy armyType The amry type of the query unit.
      * @return double in the range: [0:1]
      */
-    private double computeArmyTypeSimilarity(armyType caseArmy, armyType queryArmy){
+    private double computeArmyTypeSimilarity(ArmyType caseArmy, ArmyType queryArmy){
         if(caseArmy==queryArmy)
             return 1;
-        if(caseArmy==armyType.Lord||queryArmy==armyType.Lord){
-            if(caseArmy==armyType.Hero)
+        if(caseArmy==ArmyType.Lord||queryArmy==ArmyType.Lord){
+            if(caseArmy==ArmyType.Hero)
                 return 0.75;
-            if(queryArmy==armyType.Hero)
-                return 0.75;
-        }
-        if(caseArmy==armyType.Hero||queryArmy==armyType.Hero){
-            if(caseArmy==armyType.Lord)
-                return 0.75;
-            if(queryArmy==armyType.Lord)
+            if(queryArmy==ArmyType.Hero)
                 return 0.75;
         }
-        if(caseArmy==armyType.Rare||queryArmy==armyType.Rare){
-            if(caseArmy==armyType.Special)
+        if(caseArmy==ArmyType.Hero||queryArmy==ArmyType.Hero){
+            if(caseArmy==ArmyType.Lord)
+                return 0.75;
+            if(queryArmy==ArmyType.Lord)
+                return 0.75;
+        }
+        if(caseArmy==ArmyType.Rare||queryArmy==ArmyType.Rare){
+            if(caseArmy==ArmyType.Special)
                 return 0.50;
-            if(queryArmy==armyType.Special)
+            if(queryArmy==ArmyType.Special)
                 return 0.50;
         }
-        if(caseArmy==armyType.Special||queryArmy==armyType.Special){
-            if(caseArmy==armyType.Rare)
+        if(caseArmy==ArmyType.Special||queryArmy==ArmyType.Special){
+            if(caseArmy==ArmyType.Rare)
                 return 0.50;
-            if(queryArmy==armyType.Rare)
+            if(queryArmy==ArmyType.Rare)
                 return 0.50;
         }
         return 0;
@@ -294,25 +294,25 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @param queryWeapon weaponType The weapon type of the query unit.
      * @return double in the range: [0:1]
      */
-    private double computeWeaponSimilarity(weaponType caseWeapon, weaponType queryWeapon){
+    private double computeWeaponSimilarity(WeaponType caseWeapon, WeaponType queryWeapon){
         if(caseWeapon==queryWeapon)
             return 1;
-        if(caseWeapon==weaponType.Mele){
-            if(queryWeapon==weaponType.Great_weapon)
+        if(caseWeapon==WeaponType.Melee){
+            if(queryWeapon==WeaponType.Great_weapon)
                 return 0.5;
-            if(queryWeapon==weaponType.Long_weapon)
+            if(queryWeapon==WeaponType.Long_weapon)
                 return 0.3;
         }
-        if(caseWeapon==weaponType.Great_weapon){
-            if(queryWeapon==weaponType.Mele)
+        if(caseWeapon==WeaponType.Great_weapon){
+            if(queryWeapon==WeaponType.Melee)
                 return 0.5;
-            if(queryWeapon==weaponType.Long_weapon)
+            if(queryWeapon==WeaponType.Long_weapon)
                 return 0.55;
         }
-        if(caseWeapon==weaponType.Long_weapon){
-            if(queryWeapon==weaponType.Mele)
+        if(caseWeapon==WeaponType.Long_weapon){
+            if(queryWeapon==WeaponType.Melee)
                 return 0.3;
-            if(queryWeapon==weaponType.Great_weapon)
+            if(queryWeapon==WeaponType.Great_weapon)
                 return 0.55;
         }
         return 0;

@@ -18,6 +18,8 @@
 package myrmidia.Warhammer;
 
 import jcolibri.cbrcore.Attribute;
+import myrmidia.Util.Enums.Outcomes;
+import myrmidia.Util.Enums.Races;
 
 /**
  * Class representing a CBR case.
@@ -25,9 +27,6 @@ import jcolibri.cbrcore.Attribute;
  * @version 0.5
  */
 public class Case implements jcolibri.cbrcore.CaseComponent{
-
-    public enum Races{Arcane_Creatures,Beastmen,Bretonnia,Dark_Elves,Daemons_of_Chaos,Dwarfs,Empire,High_Elves,Lizardmen,Ogre_Kingdoms,Orcs_and_Goblins,Skaven,Tomb_Kings,Vampire_Counts,Warriors_of_Chaos,Wood_Elves};
-    public enum Outcomes{Unknown,Defeat,Draw,Victory};
     private int ID;
     private Army army = new Army();
     private Races opponent;

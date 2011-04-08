@@ -23,14 +23,14 @@ import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Equipment;
-import myrmidia.Warhammer.Equipment.itemType;
 import myrmidia.Warhammer.Unit;
 import java.util.Random;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Util.Enums.ItemType;
+import myrmidia.Util.Enums.Races;
 import myrmidia.Warhammer.Army;
-import myrmidia.Warhammer.Case.Races;
-import myrmidia.Warhammer.Unit.armyType;
 import myrmidia.Warhammer.UtilityUnit;
 
 /**
@@ -187,7 +187,7 @@ public class CommonAdaptionFunctions {
      * @param aT The army type to find the most expensive unit in
      * @return The most expensive army unit
      */
-    public ArmyUnit findMostExpensiveUnit(Army army, armyType aT,
+    public ArmyUnit findMostExpensiveUnit(Army army, ArmyType aT,
             boolean restrictUsedUnits){
         ArmyUnit _return = null;
         int mostExpensive = 0;
@@ -216,7 +216,7 @@ public class CommonAdaptionFunctions {
      * @param aT The army type to find the least expensive unit in
      * @return The least expensive army unit
      */
-    public ArmyUnit findLeastExpensiveUnit(Army army, armyType aT){
+    public ArmyUnit findLeastExpensiveUnit(Army army, ArmyType aT){
         ArmyUnit _return = null;
         int leastExpensive = -1;
         for(ArmyUnit armyUnit : army.getArmyUnits()){
@@ -333,7 +333,7 @@ public class CommonAdaptionFunctions {
             }
             //If the selected item is a battle standard and this unit cannot
             //be a battle standard bearer, try again.
-            if(nextEq.getItemType()==itemType.Standard&&
+            if(nextEq.getItemType()==ItemType.Standard&&
                     !unit.getUnit().canBeBattleStandardBearer()){
                 i--;
                 continue;
@@ -366,11 +366,11 @@ public class CommonAdaptionFunctions {
         for (Equipment equipment : unitEquipment) {
             if(equipment.getItemType()==newEquipment.getItemType())
                 return true;
-            if(equipment.getItemType()==itemType.Armour&&
-                    newEquipment.getItemType()==itemType.Magic_Armour)
+            if(equipment.getItemType()==ItemType.Armour&&
+                    newEquipment.getItemType()==ItemType.Magic_Armour)
                 return true;
-            if(equipment.getItemType()==itemType.Magic_Armour&&
-                    newEquipment.getItemType()==itemType.Armour)
+            if(equipment.getItemType()==ItemType.Magic_Armour&&
+                    newEquipment.getItemType()==ItemType.Armour)
                 return true;
         }
         return false;

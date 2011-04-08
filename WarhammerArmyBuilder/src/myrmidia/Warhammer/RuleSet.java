@@ -18,9 +18,9 @@
 package myrmidia.Warhammer;
 
 import java.util.ArrayList;
-import myrmidia.Warhammer.Unit.armyType;
 import java.util.Set;
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Util.Enums.Races;
 import myrmidia.Warhammer.Resources.Causes;
 import myrmidia.Warhammer.Resources.ErrorManager;
 import myrmidia.Warhammer.Resources.ErrorManager.Messages;
@@ -324,7 +324,7 @@ public class RuleSet {
         for (ArmyUnit u : armyUnits) {
             int cost = army.calculateTotalUnitCost(u);
             Unit unit = u.getUnit();
-            armyType armyType = unit.getArmyType();
+            ArmyType armyType = unit.getArmyType();
             switch(armyType){
                 case Core:
                     coreCost += cost;
@@ -401,7 +401,7 @@ public class RuleSet {
      * @param numberOfUnits The number of units in the group.
      */
     public void checkUnit(Unit unit, int numberOfUnits){
-        armyType aT =  unit.getArmyType();
+        ArmyType aT =  unit.getArmyType();
         int min = unit.getMinNumber();
         int max = unit.getMaxNumber();
         if((numberOfUnits>max)&&(max!=0)){
@@ -435,7 +435,7 @@ public class RuleSet {
      * resides.
      */
     private void verifyDuplicateUnits(Unit unit,int index){
-        armyType aT =  unit.getArmyType();
+        ArmyType aT =  unit.getArmyType();
         int number = unitNumber.get(index);
         switch(aT){
             case Special:

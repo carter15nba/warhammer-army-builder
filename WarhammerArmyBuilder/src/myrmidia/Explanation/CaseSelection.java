@@ -23,7 +23,7 @@ import jcolibri.method.retrieve.RetrievalResult;
 import myrmidia.CBR.Resources.ArmySimilarity;
 import myrmidia.CBR.Resources.SimilarityMeasure;
 import myrmidia.Warhammer.Case;
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.Races;
 
 /**
  *

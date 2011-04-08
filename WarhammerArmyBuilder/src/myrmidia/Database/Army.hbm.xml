@@ -7,7 +7,7 @@
     </id>
     <property column="PLAYER_RACE" length="20" name="playerRace">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Case$Races</param>
+        <param name="enumClassName">myrmidia.Util.Enums.Races</param>
       </type>
     </property>
     <property column="ARMY_POINTS" name="armyPoints"/>

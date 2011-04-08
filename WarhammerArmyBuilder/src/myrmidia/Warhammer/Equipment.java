@@ -20,6 +20,7 @@ package myrmidia.Warhammer;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
+import myrmidia.Util.Enums.ItemType;
 
 /**
  *
@@ -27,13 +28,11 @@ import jcolibri.cbrcore.Attribute;
  * @version 0.3
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
-
-    public enum itemType{Armour, Weapon, Magic_Weapon, Magic_Armour, Talisman, Standard, Arcane_Items, Enchanted_Items, Unit_Upgrade};
     private int ID;
     private int cost;
     private int range;
     private String name;
-    private itemType itemType;
+    private ItemType itemType;
     private String usableBy;
     private String modifier;
     private Set<SpecialRules> rules = new HashSet<SpecialRules>();
@@ -88,14 +87,14 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the itemType
      */
-    public itemType getItemType() {
+    public ItemType getItemType() {
         return itemType;
     }
 
     /**
      * @param itemType the itemType to set
      */
-    public void setItemType(itemType itemType) {
+    public void setItemType(ItemType itemType) {
         this.itemType = itemType;
     }
 

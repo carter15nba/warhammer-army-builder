@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Set;
 import myrmidia.Database.Connector;
 import myrmidia.Database.DatabaseManager;
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Util.Enums.Races;
 import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.Unit.*;
@@ -64,7 +65,8 @@ public class CreateObjectFromDB {
      * @return <ul><li>An empty ArrayList if an exception occurs</li>
      * <li>ArrayList with the units matching the requirements</li></ul>
      */
-    public static ArrayList<Unit> findRaceAndArmyTypeUnits(Races race ,armyType aT){
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Unit> findRaceAndArmyTypeUnits(Races race ,ArmyType aT){
         DatabaseManager dbm = DatabaseManager.getInstance();
         Connector conn = dbm.connect();
         Session session = conn.getSession();
@@ -84,6 +86,7 @@ public class CreateObjectFromDB {
      * @param magicPoints - The number of points the unit can spend on magical items
      * @return A hash set with the equipment the unit can purchase
      */
+    @SuppressWarnings("unchecked")
     public static Set<Equipment> getAllEquipment(Races unitRace, int magicPoints){
         DatabaseManager dbm = DatabaseManager.getInstance();
         Connector conn = dbm.connect();
@@ -97,13 +100,14 @@ public class CreateObjectFromDB {
         return new HashSet<Equipment>(equipment);
     }
 
-        /**
+    /**
      * Method which gets all the equipment a unit can equip based on which
      * race and the available magic points. (race spesific items only)
      * @param unitRace - The race of the unit
      * @param magicPoints - The number of points the unit can spend on magical items
      * @return A hash set with the equipment the unit can purchase
      */
+    @SuppressWarnings("unchecked")
     public static Set<Equipment> getRaceEquipment(Races unitRace, int magicPoints){
         DatabaseManager dbm = DatabaseManager.getInstance();
         Connector conn = dbm.connect();
