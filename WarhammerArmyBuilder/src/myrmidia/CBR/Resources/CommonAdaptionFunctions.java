@@ -270,7 +270,6 @@ public class CommonAdaptionFunctions {
      * @param armyUnit The army unit to assign equipment/items to
      */
     public void assignReqularEquipment(ArmyUnit armyUnit){
-        //TODO: Debug assign regular equipment, found "contious-loop"
         Set<Equipment> selectedEquipment = armyUnit.getEquipment();
         Set<Equipment> availableEquipment = armyUnit.getUnit().getEquipment();
         int errorCount = 0;

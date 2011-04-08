@@ -64,7 +64,7 @@ public class ExplanationEngine implements Explanation{
     public String generateExplanation() {
         String ret="";
         for (CaseExplanation expl : caseExplanation) {
-            ret+=expl.generateExplanation()+"\n";
+            ret+=expl.generateExplanation()+"\n\n";
         }
         return ret;
     }

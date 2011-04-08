@@ -223,7 +223,6 @@ public class AdaptionEngine {
                 default:
                     return army;
             }
-            //TODO: Make sure that the while-loop can be broken.
             messages = rule.isFollowingArmyDispositionRules(army);
         }
         System.err.println(messages[0]);

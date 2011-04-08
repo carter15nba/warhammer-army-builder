@@ -31,7 +31,7 @@ import myrmidia.Warhammer.Case.Races;
  */
 public class ArmySimilarity implements LocalSimilarityFunction{
 
-    private double armyWeigth;
+    private double armyUnitWeigth;
     private double pointWeigth;
     private double accumulatedWeigth;
     private double playerRaceWeigth;
@@ -39,7 +39,7 @@ public class ArmySimilarity implements LocalSimilarityFunction{
     private ExplanationEngine explEngine = ExplanationEngine.getInstance();
 
     public ArmySimilarity(){
-        armyWeigth = 1;
+        armyUnitWeigth = 1;
         pointWeigth = 1;
         playerRaceWeigth = 1;
         accumulatedWeigth = 3;
@@ -47,11 +47,11 @@ public class ArmySimilarity implements LocalSimilarityFunction{
 
     }
 
-    public ArmySimilarity(double playerRaceWeigth, double armyWeigth, double pointWeigth,int interval){
-        this.armyWeigth = armyWeigth;
+    public ArmySimilarity(double playerRaceWeigth, double armyUnitWeigth, double pointWeigth,int interval){
+        this.armyUnitWeigth = armyUnitWeigth;
         this.pointWeigth = pointWeigth;
         this.playerRaceWeigth = playerRaceWeigth;
-        this.accumulatedWeigth = this.armyWeigth + this.pointWeigth + this.playerRaceWeigth;
+        this.accumulatedWeigth = this.armyUnitWeigth + this.pointWeigth + this.playerRaceWeigth;
         this.interval = interval;
     }
 
@@ -90,7 +90,7 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         if(queryArmy.getArmyUnits()!=null){
             ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
             double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
-            double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyWeigth))/
+            double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyUnitWeigth))/
                     accumulatedWeigth;
             caseExplanation.setSimilarity("ArmySimilarity", armySimilarity);
             return armySimilarity;

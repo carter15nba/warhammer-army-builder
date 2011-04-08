@@ -30,6 +30,7 @@ import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
  */
 public class SimilarityMeasure {
     private NNConfig nnConfig = null;
+    private SimilarityConfiguration simConf;
 
     /**
      * Method to set the NNConfig
@@ -44,8 +45,7 @@ public class SimilarityMeasure {
      * @return the NN config.
      */
     public NNConfig getSimilarityConfig(){
-        if(nnConfig==null)
-            setupSimilarityConfig();
+        setupSimilarityConfig();
         return nnConfig;
     }
 
@@ -55,7 +55,7 @@ public class SimilarityMeasure {
      * weigths to the similarity functions.
      */
     private void setupSimilarityConfig(){
-        //TODO: Fix dynamic (user selected) weigths.
+        simConf = SimilarityConfiguration.getInstance();
         nnConfig = new NNConfig();
         Attribute attr;
         LocalSimilarityFunction func;
@@ -63,18 +63,18 @@ public class SimilarityMeasure {
         attr = new Attribute("army",myrmidia.Warhammer.Case.class);
         func = localSimilarityFactory("Army");
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, simConf.getArmyWeigth());
 
         //Opponent race
         attr = new Attribute("opponent",myrmidia.Warhammer.Case.class);
         func = localSimilarityFactory("Equal");
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, simConf.getOpponentWeigth());
         //Outcome
         attr = new Attribute("outcome",myrmidia.Warhammer.Case.class);
         func = localSimilarityFactory("Enum");
         nnConfig.addMapping(attr, func);
-        nnConfig.setWeight(attr, 1.0);
+        nnConfig.setWeight(attr, simConf.getOutcomeWeigth());
     }
 
     public ArmySimilarity getArmySimilarityFunction(){
@@ -95,9 +95,11 @@ public class SimilarityMeasure {
      * the name specified local similarity function could not be found.
      */
     private LocalSimilarityFunction localSimilarityFactory(String name){
-        //TODO: User spesified weigth/interval
         if(name.equals("Army"))
-            return new ArmySimilarity(1.0,1.0,1.0,500);
+            return new ArmySimilarity(simConf.getPlayerRaceWeigth(),
+                    simConf.getArmyUnitWeigth(),
+                    simConf.getArmyPointWeight(),
+                    simConf.getArmyPointInterval());
         else if(name.equals("Enum"))
             return new OutcomeSimilarity();
         else if(name.equals("Equal"))
