@@ -36,6 +36,7 @@ public class CollectionControl {
      * @throws IndexOutOfBoundsException if the index is higer than the size of
      * the collection, or lower than 0.
      */
+    @SuppressWarnings("unchecked")
     public static Object getItemAt(Collection collection, int index)throws IndexOutOfBoundsException{
         if(index >= collection.size())
             throw new IndexOutOfBoundsException();

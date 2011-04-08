@@ -27,8 +27,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import myrmidia.Warhammer.Unit.armyType;
-import myrmidia.Warhammer.Unit.unitType;
+import myrmidia.Util.Enums.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -41,9 +40,6 @@ import javax.swing.table.DefaultTableModel;
 import myrmidia.Database.DatabaseManager;
 import myrmidia.UI.Resources.CaseStorage;
 import myrmidia.UI.Resources.CheckListItem;
-import myrmidia.Warhammer.Case.Outcomes;
-import myrmidia.Warhammer.Case.Races;
-import myrmidia.Warhammer.Equipment.itemType;
 
 /**
  *
@@ -69,7 +65,7 @@ public class createSQLUI extends javax.swing.JFrame {
             model[0] = "All";
             raceBox.addItem("Select race");
             int i=1;
-            for (myrmidia.Warhammer.Case.Races race : myrmidia.Warhammer.Case.Races.values()) {
+            for (Races race : Races.values()) {
                 raceBox.addItem(race);
                 model[i] = "Race:"+race;
                 i++;
@@ -81,15 +77,15 @@ public class createSQLUI extends javax.swing.JFrame {
             model = new String[5];
             model[0] = "N/A";
             i=1;
-            for(myrmidia.Warhammer.Unit.weaponType wpn : myrmidia.Warhammer.Unit.weaponType.values()){
+            for(WeaponType wpn : WeaponType.values()){
                 model[i++] = wpn.toString();
             }
             table.getColumnModel().getColumn(16).setCellRenderer(new myrmidia.UI.Resources.ComboBoxTableCellRenderer(model, 16));
             model = new String[12];
             model[0] = "N/A";
             int pos = 1;
-            for (myrmidia.Warhammer.Unit.unitType ut : unitType.values()) {
-                if (ut == unitType._na) {
+            for (UnitType ut : UnitType.values()) {
+                if (ut == UnitType._na) {
                     continue;
                 }
                 model[pos] = ut.toString();
@@ -100,15 +96,15 @@ public class createSQLUI extends javax.swing.JFrame {
             model = new String[7];
             model[0] = "N/A";
             pos = 1;
-            for (myrmidia.Warhammer.Unit.armyType ut : armyType.values()) {
-                model[pos] = ut.toString();
+            for (ArmyType at : ArmyType.values()) {
+                model[pos] = at.toString();
                 pos++;
             }
             table.getColumnModel().getColumn(14).setCellRenderer(new myrmidia.UI.Resources.ComboBoxTableCellRenderer(model, 14));
             model = new String[10];
             model[0] = "N/A";
             pos=1;
-            for(myrmidia.Warhammer.Equipment.itemType it : itemType.values()){
+            for(ItemType it : ItemType.values()){
                 model[pos] = it.toString();
                 pos++;
             }

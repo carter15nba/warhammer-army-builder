@@ -20,6 +20,7 @@ package myrmidia.CBR.Resources;
 import jcolibri.cbrcore.Attribute;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
+import myrmidia.Util.Enums.Mode;
 
 /**
  * Class used to assign similarity calculation objects to the different parts
@@ -103,7 +104,7 @@ public class SimilarityMeasure {
         else if(name.equals("Enum"))
             return new OutcomeSimilarity();
         else if(name.equals("Equal"))
-            return new Equal();
+            return new Equal(Mode.Opponent);
         return null;
     }
 }

@@ -19,12 +19,10 @@ package myrmidia.CBR.Resources;
 
 import java.util.Collection;
 import jcolibri.cbrcore.CBRCase;
-import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.NNretrieval.similarity.StandardGlobalSimilarityFunction;
 import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.Case;
-import myrmidia.Warhammer.Case.Outcomes;
 
 /**
  * Class to compute the global average of all the local similarity functions.
@@ -34,27 +32,21 @@ import myrmidia.Warhammer.Case.Outcomes;
 public class Average extends StandardGlobalSimilarityFunction {
 
     private int numCalled;
-    private Case.Races playerRace;
     private Case[] cases;
-    private Outcomes[] outcome;
     private ExplanationEngine explEngine;
 
     /**
      * Default constructor
      * @param cases The collection of cases found in the case base
-     * @param cbrq The CBR query
      */
-    public Average(Collection<CBRCase> cases, CBRQuery cbrq) {
+    public Average(Collection<CBRCase> cases) {
         this.explEngine = ExplanationEngine.getInstance();
         this.cases = new Case[cases.size()];
-        this.outcome = new Outcomes[cases.size()];
-        Case query = (Case) cbrq.getDescription();
-        playerRace = query.getArmy().getPlayerRace();
         int count = 0;
+        numCalled = 0;
         for (CBRCase _case : cases) {
             Case desc = (Case) _case.getDescription();
-            this.cases[count] = desc;
-            this.outcome[count++] = desc.getOutcome();
+            this.cases[count++] = desc;
         }
     }
 
@@ -68,21 +60,10 @@ public class Average extends StandardGlobalSimilarityFunction {
     public double computeSimilarity(double[] values, double[] weigths, int iValue){
         double acum = 0;
         double weigthsAcum = 0;
-        double weigthAdjust = 1;
-        //Check if the query player race is equal to the case player race, if
-        //not punish the similarity by increasing the weigths up 50%.
-        if(playerRace!=cases[numCalled].getArmy().getPlayerRace()){
-            //weigthAdjust = 1.5;
-            weigthAdjust = 1.0;
-            //return 0;
-        }
-        System.out.println("-----------");
         for(int i=0; i<iValue; i++){
-            System.out.println("value: "+values[i]+" weigths: "+weigths[i]);
             acum += values[i] * weigths[i];
-            weigthsAcum += weigthAdjust * weigths[i];
+            weigthsAcum += weigths[i];
         }
-        System.out.println("--------------");
         double weigthedAverage = acum/weigthsAcum;
         CaseExplanation caseExpl = explEngine.getCurrentCaseExplanation();
         caseExpl.setCaseID(cases[numCalled].getID());

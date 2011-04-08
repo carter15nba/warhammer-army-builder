@@ -12,7 +12,7 @@
     <property column="USABLEBY" length="50" name="usableBy"/>
     <property column="ITEMTYPE" length="20" name="itemType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Warhammer.Equipment$itemType</param>
+        <param name="enumClassName">myrmidia.Util.Enums.ItemType</param>
       </type>
     </property>
     <set lazy="false" name="rules" table="Equipment_rules">

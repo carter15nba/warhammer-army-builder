@@ -20,7 +20,8 @@ package myrmidia.Warhammer;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
-import myrmidia.Warhammer.Equipment.itemType;
+import myrmidia.Util.Enums.ItemType;
+import myrmidia.Util.Enums.Races;
 
 /**
  * Class representing an army
@@ -30,7 +31,7 @@ import myrmidia.Warhammer.Equipment.itemType;
 public class Army implements jcolibri.cbrcore.CaseComponent{
 
     private int ID;
-    private Case.Races playerRace;
+    private Races playerRace;
     private int armyPoints;
     private Set<ArmyUnit> armyUnits = new HashSet<ArmyUnit>();
 
@@ -72,14 +73,14 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
     /**
      * @return the playerRace
      */
-    public Case.Races getPlayerRace() {
+    public Races getPlayerRace() {
         return playerRace;
     }
 
     /**
      * @param playerRace the playerRace to set
      */
-    public void setPlayerRace(Case.Races playerRace) {
+    public void setPlayerRace(Races playerRace) {
         this.playerRace = playerRace;
     }
 
@@ -147,8 +148,8 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
             }
         }
         for(Equipment equipment : armyUnit.getEquipment()){
-            if((equipment.getItemType()!=itemType.Armour)&&
-                    equipment.getItemType()!=itemType.Weapon)
+            if((equipment.getItemType()!=ItemType.Armour)&&
+                    equipment.getItemType()!=ItemType.Weapon)
                 unitCost += equipment.getCost();
             else{
                 if(singleEquipmentCost)

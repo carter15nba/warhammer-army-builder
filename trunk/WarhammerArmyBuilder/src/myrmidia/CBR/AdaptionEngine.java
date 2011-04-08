@@ -28,7 +28,7 @@ import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.*;
 import myrmidia.Warhammer.Resources.Causes;
 import myrmidia.Warhammer.Resources.ErrorManager.Messages;
-import myrmidia.Warhammer.Unit.armyType;
+import myrmidia.Util.Enums.*;
 
 /**
  * Class to perform the case adaption
@@ -71,7 +71,7 @@ public class AdaptionEngine {
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
         adaptedCase.setOpponent(queryCase.getOpponent());
-        adaptedCase.setOutcome(Case.Outcomes.Unknown);
+        adaptedCase.setOutcome(Outcomes.Unknown);
         adaptedCase.getArmy().setPlayerRace(queryCase.getArmy().getPlayerRace());
         adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
         return adaptedCase;
@@ -156,7 +156,7 @@ public class AdaptionEngine {
             switch(message){
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                        army.getPlayerRace(), armyType.Core);
+                        army.getPlayerRace(), ArmyType.Core);
                     System.err.println(message);
                     addUnitGroup(army, units);
                     break;
@@ -181,11 +181,11 @@ public class AdaptionEngine {
                     break;
                 case TOO_MANY_HERO_POINTS:
                     System.err.println(message);
-                    reduceCharacterPoints(army, armyType.Hero, rule);
+                    reduceCharacterPoints(army, ArmyType.Hero, rule);
                     break;
                 case TOO_MANY_LORD_POINTS:
                     System.err.println(message);
-                    reduceCharacterPoints(army, armyType.Lord, rule);
+                    reduceCharacterPoints(army, ArmyType.Lord, rule);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
                     System.err.println(message);
@@ -193,12 +193,12 @@ public class AdaptionEngine {
                     break;
                 case TOO_MANY_RARE_POINTS:
                     System.err.println(message);
-                    reduceSpecialOrRareGroupPoints(army, armyType.Rare, 
+                    reduceSpecialOrRareGroupPoints(army, ArmyType.Rare,
                             messages, message, rule);
                     break;
                 case TOO_MANY_SPECIAL_POINTS:
                     System.err.println(message);
-                    reduceSpecialOrRareGroupPoints(army, armyType.Special,
+                    reduceSpecialOrRareGroupPoints(army, ArmyType.Special,
                             messages, message, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
@@ -302,7 +302,7 @@ public class AdaptionEngine {
         }
     }
 
-    private void removeOneCharacter(Army army, armyType aT) {
+    private void removeOneCharacter(Army army, ArmyType aT) {
         ArmyUnit removeUnit=null;
         int totalCost=0;
         for(ArmyUnit armyUnit : army.getArmyUnits()){
@@ -323,11 +323,11 @@ public class AdaptionEngine {
         }
     }
 
-    private void reduceCharacterPoints(Army army, armyType aT, RuleSet rs) {
+    private void reduceCharacterPoints(Army army, ArmyType aT, RuleSet rs) {
         int diff=0;
-        if(aT==armyType.Lord)
+        if(aT==ArmyType.Lord)
             diff = Math.abs(rs.getLordPointDifference());
-        if(aT==armyType.Hero)
+        if(aT==ArmyType.Hero)
             diff = Math.abs(rs.getHeroPointDifference());
         //If the difference in used points are more than 100, remove the cheapest
         //character
@@ -374,7 +374,7 @@ public class AdaptionEngine {
             utility.remove(closestUt);
     }
 
-    private void removeGroup(Army army, armyType aT) {
+    private void removeGroup(Army army, ArmyType aT) {
         ArmyUnit leastExpensiveUnit = cAF.findLeastExpensiveUnit(army, aT);
         if(leastExpensiveUnit!=null){
             System.out.println("Removing: "+leastExpensiveUnit.getUnit().getName());
@@ -382,7 +382,7 @@ public class AdaptionEngine {
         }
     }
 
-    private void reduceSpecialOrRareGroupPoints(Army army, armyType aT,
+    private void reduceSpecialOrRareGroupPoints(Army army, ArmyType aT,
             Messages[] messages, Messages message, RuleSet rs){
         //Check if there is another reason for the special/rare groups to have
         //too many poinst
@@ -484,20 +484,20 @@ public class AdaptionEngine {
         for (Messages message : messages) {
             switch(message){
                 case TOO_MANY_HERO_POINTS:
-                    reduceCharacterPoints(army, armyType.Hero, rs);
+                    reduceCharacterPoints(army, ArmyType.Hero, rs);
                     System.out.println("too many hero");
                     return;
                 case TOO_MANY_LORD_POINTS:
-                    reduceCharacterPoints(army, armyType.Lord, rs);
+                    reduceCharacterPoints(army, ArmyType.Lord, rs);
                     System.out.println("too many lord");
                     return;
                 case TOO_MANY_RARE_POINTS:
-                    reduceSpecialOrRareGroupPoints(army, armyType.Rare,
+                    reduceSpecialOrRareGroupPoints(army, ArmyType.Rare,
                             messages, message, rs);
                     System.out.println("reduce rare");
                     return;
                 case TOO_MANY_SPECIAL_POINTS:
-                    reduceSpecialOrRareGroupPoints(army, armyType.Special,
+                    reduceSpecialOrRareGroupPoints(army, ArmyType.Special,
                             messages, message, rs);
                     System.out.println("reduce special");
                     return;
@@ -506,7 +506,7 @@ public class AdaptionEngine {
         int totalDiff = Math.abs(rs.getTotalPointDifference());
 
         if(totalDiff<=20){
-            armyType aT = armyType.Core;
+            ArmyType aT = ArmyType.Core;
             for(ArmyUnit armyUnit : army.getArmyUnits()){
                 Unit unit = armyUnit.getUnit();
                 if(unit.getArmyType()==aT){
@@ -524,25 +524,25 @@ public class AdaptionEngine {
             java.util.Random random = new java.util.Random();
             int r = random.nextInt(3);
             if(r==0)
-                removeGroup(army, armyType.Core);
+                removeGroup(army, ArmyType.Core);
             if(r==1)
-                removeGroup(army, armyType.Special);
+                removeGroup(army, ArmyType.Special);
             if(r==2)
-                removeGroup(army, armyType.Rare);
+                removeGroup(army, ArmyType.Rare);
         }
         if(totalDiff>=300){
             java.util.Random random = new java.util.Random();
             int r = random.nextInt(2);
             if(r==0)
-                removeOneCharacter(army, armyType.Hero);
+                removeOneCharacter(army, ArmyType.Hero);
             if(r==1)
-                removeOneCharacter(army, armyType.Lord);
+                removeOneCharacter(army, ArmyType.Lord);
         }
     }
 
     private void addGeneral(Army army) {
         ArrayList<Unit> units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                army.getPlayerRace(), armyType.Lord);
+                army.getPlayerRace(), ArmyType.Lord);
         java.util.Random random = new java.util.Random();
         int generalIndex = random.nextInt(units.size());
         Unit general = (Unit) CollectionControl.getItemAt(units, generalIndex);
@@ -558,7 +558,7 @@ public class AdaptionEngine {
             switch(message){
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                        army.getPlayerRace(), armyType.Core);
+                        army.getPlayerRace(), ArmyType.Core);
                     addUnitGroup(army, units);
                     return;
                 case TOO_FEW_GROUPS:
@@ -592,8 +592,8 @@ public class AdaptionEngine {
                 ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(
                         army.getArmyUnits(), next);
                 Unit unit = armyUnit.getUnit();
-                armyType uAT = unit.getArmyType();
-                if(uAT!=armyType.Hero||uAT!=armyType.Lord){
+                ArmyType uAT = unit.getArmyType();
+                if(uAT!=ArmyType.Hero||uAT!=ArmyType.Lord){
                     int numUnits = armyUnit.getNumberOfUnits();
                     if(numUnits<unit.getMaxNumber()||unit.getMaxNumber()==0){
                         armyUnit.setNumberOfUnits(numUnits+5);
@@ -614,7 +614,7 @@ public class AdaptionEngine {
         int specialDifference = rule.getSpecialPointDifference();
         int heroDifference = rule.getHeroPointDifference();
         int lordDifference = rule.getLordPointDifference();
-        armyType aT=armyType.Core;
+        ArmyType aT=ArmyType.Core;
         if(newFormation==0&&lordDifference>199){
             addGeneral(army);
             return;
@@ -624,11 +624,11 @@ public class AdaptionEngine {
             return;
         }
         else if(newFormation==2)
-            aT=armyType.Core;
+            aT=ArmyType.Core;
         else if(newFormation==3&&specialDifference>99)
-            aT=armyType.Special;
+            aT=ArmyType.Special;
         else if(newFormation==4&&rareDifference>99)
-            aT=armyType.Rare;
+            aT=ArmyType.Rare;
         units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                     army.getPlayerRace(), aT);
         addUnitGroup(army, units);

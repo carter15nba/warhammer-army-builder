@@ -17,7 +17,7 @@
 
 package myrmidia.Warhammer;
 
-import myrmidia.Warhammer.Case.Races;
+import myrmidia.Util.Enums.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,9 +28,6 @@ import java.util.Set;
  * @version 0.5.1
  */
 public class Unit extends CoreUnit{
-    public enum unitType {Ca, Ch, In, Mo, MB, MC, MI, Sw, Un, WB, WM , _na};
-    public enum armyType {Hero, Lord, Special, Rare, Core, _na};
-    public enum weaponType{Mele, Ranged, Great_weapon, Long_weapon};
     private String movement = "";
     private String weaponSkill = "";
     private String ballisticSkill = "";
@@ -40,9 +37,9 @@ public class Unit extends CoreUnit{
     private String initiative = "";
     private String attack = "";
     private String leadership = "";
-    private unitType unitType;
-    private armyType armyType;
-    private weaponType weaponType;
+    private UnitType unitType;
+    private ArmyType armyType;
+    private WeaponType weaponType;
     private Set<Equipment> equipment = new HashSet<Equipment>();
     private Set<UtilityUnit> utilityUnit = new HashSet<UtilityUnit>();
     private Races race;
@@ -180,28 +177,28 @@ public class Unit extends CoreUnit{
      * @return the unitType
 
      */
-    public unitType getUnitType() {
+    public UnitType getUnitType() {
         return unitType;
     }
 
     /**
      * @param unitType the unitType to set
      */
-    public void setUnitType(unitType unitType) {
+    public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
     }
 
     /**
      * @return the armyType
      */
-    public armyType getArmyType() {
+    public ArmyType getArmyType() {
         return armyType;
     }
 
     /**
      * @param armyType the armyType to set
      */
-    public void setArmyType(armyType armyType) {
+    public void setArmyType(ArmyType armyType) {
         this.armyType = armyType;
     }
 
@@ -278,7 +275,7 @@ public class Unit extends CoreUnit{
     /**
      * @return the weaponType
      */
-    public weaponType getWeaponType(){
+    public WeaponType getWeaponType(){
         return weaponType;
     }
 
@@ -286,7 +283,7 @@ public class Unit extends CoreUnit{
      *
      * @param weaponType the weaponType to set
      */
-    public void setWeaponType(weaponType weaponType){
+    public void setWeaponType(WeaponType weaponType){
         this.weaponType = weaponType;
     }
 

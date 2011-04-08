@@ -45,7 +45,9 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
      * between the inputs.
      * @throws NoApplicableSimilarityFunctionException if one or both input
      * parameters are not an instance of Set.
+     *
      */
+    @SuppressWarnings("unchecked")
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
         if ((caseObject == null) || (queryObject == null))
             return 0;
@@ -95,7 +97,6 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
         if(notQueriedUtility==0)
             denominator--;
         similarity = (double)((unitFractionSimilarity + numberSim + equipmentSim + utilitySim)/denominator);
-        System.out.println("sim in au sim: "+similarity);
         return similarity;
     }
 
