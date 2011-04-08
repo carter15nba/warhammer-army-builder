@@ -17,6 +17,7 @@
 
 package myrmidia.CBR;
 
+import myrmidia.CBR.Resources.SimilarityConfiguration;
 import myrmidia.Database.DatabaseManager;
 import java.sql.SQLException;
 import jcolibri.casebase.LinealCaseBase;
@@ -54,6 +55,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
     private PrepareCase prepareCase;
+    private SimilarityConfiguration simConfig;
 
     /**
      * Default private constructor
@@ -77,6 +79,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         caseBase = new LinealCaseBase();
         similarityMeasure = new SimilarityMeasure();
         prepareCase = PrepareCase.getInstance();
+        simConfig = SimilarityConfiguration.getInstance();
+        //TODO user specify similarity configuration
+        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,3);
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
@@ -112,8 +117,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //            Case _case = (Case) retrievalResult.get_case().getSolution();
 //            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
 //        }
-        //TODO: user specified k neares cases.
-        Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, 1);
+        Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, simConfig.getK());
         return topKRR;
     }
 

@@ -47,7 +47,6 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
      * parameters are not an instance of Set.
      */
     public double compute(Object caseObject, Object queryObject) throws NoApplicableSimilarityFunctionException {
-        System.out.println("I am inside army unit sim");
         if ((caseObject == null) || (queryObject == null))
             return 0;
         if (!(caseObject instanceof Set))
@@ -64,7 +63,6 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
         int notQueriedEquipmet=0;
         int notQueriedUtility = 0;
         if(querySet.isEmpty()){
-            System.out.println("returning one");
             return 1;
         }
         for (Object object : querySet) {
