@@ -88,7 +88,8 @@ public class DatabaseManager {
             casebaseConnector.initFromXMLfile(fileURL);
             return casebaseConnector;
             
-        } catch (InitializingException ex) {ex.printStackTrace();}
+        }
+        catch (InitializingException ex) {}
         return null;
     }
 

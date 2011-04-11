@@ -26,5 +26,4 @@ public class ArmyUnitExplanation implements Explanation{
     public String generateExplanation() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

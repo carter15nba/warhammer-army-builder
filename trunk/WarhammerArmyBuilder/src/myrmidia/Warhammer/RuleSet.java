@@ -20,10 +20,10 @@ package myrmidia.Warhammer;
 import java.util.ArrayList;
 import java.util.Set;
 import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Util.Enums.Messages;
 import myrmidia.Util.Enums.Races;
 import myrmidia.Warhammer.Resources.Causes;
 import myrmidia.Warhammer.Resources.ErrorManager;
-import myrmidia.Warhammer.Resources.ErrorManager.Messages;
 
 /**
  * Class to verify if the rules governing the creation of an army are adhered

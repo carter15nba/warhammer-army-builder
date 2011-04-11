@@ -17,7 +17,7 @@
 
 package myrmidia.Explanation;
 
-import myrmidia.Warhammer.Resources.ErrorManager.Messages;
+import myrmidia.Util.Enums.Messages;
 
 /**
  * Class to keep record of one change that occured during the adaptation of

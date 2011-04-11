@@ -39,13 +39,15 @@ import java.util.logging.Logger;
  */
 public class SQLFileWriter {
 
+    private static final String PATH="src/myrmidia/Database/Resources/";
+
     /**
      * Method to write a SQL file with the units of a Warhammer race.
      * @param race String representing the Warhammer race, used to name the file.
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void writeRaceUnitSQLFile(String race, ArrayList<String> sql){
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/race_units_" + race + ".sql");
+        java.io.File file = new java.io.File(PATH+"race_units_" + race + ".sql");
         print(file, sql);
     }
     /**
@@ -54,7 +56,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void writeUtilityUnitSQLFile(String race,ArrayList<String> sql){
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/utilityunits_"+race+".sql");
+        java.io.File file = new java.io.File(PATH+"utilityunits_"+race+".sql");
         print(file, sql);
     }
     /**
@@ -64,7 +66,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void write_Unit_UtilitySQLFile(String race,ArrayList<String> sql){
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/unit_utility_"+race+".sql");
+        java.io.File file = new java.io.File(PATH+"unit_utility_"+race+".sql");
         print(file, sql);
 
     }
@@ -73,7 +75,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void writeRule(ArrayList<String> sql) {
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/specialRules.sql");
+        java.io.File file = new java.io.File(PATH+"specialRules.sql");
         print(file, sql);
         
     }
@@ -85,7 +87,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void write_unit_ruleSQLFile(String race,ArrayList<String> sql){
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/unit_rules_"+race+".sql");
+        java.io.File file = new java.io.File(PATH+"unit_rules_"+race+".sql");
         print(file, sql);
     }
 
@@ -121,7 +123,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void writeEquipmentSQLFile(ArrayList<String> sql) {
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/equipment.sql");
+        java.io.File file = new java.io.File(PATH+"equipment.sql");
         print(file, sql);
     }
     /**
@@ -131,7 +133,7 @@ public class SQLFileWriter {
      * @param sql The ArrayList with the SQL statements to be written.
      */
     public static void writeUnit_EquipmentSQLFile(String race,ArrayList<String> sql) {
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/unit_equipment_"+race+".sql");
+        java.io.File file = new java.io.File(PATH+"unit_equipment_"+race+".sql");
         print(file, sql);
     }
 
@@ -141,7 +143,7 @@ public class SQLFileWriter {
      * @param sql ArrayList with the SQL statements to be written.
      */
     public static void write_eq_ruleSQLFile(ArrayList<String> sql) {
-        java.io.File file = new java.io.File("src/myrmidia/Database/Resources/eq_rules.sql");
+        java.io.File file = new java.io.File(PATH+"eq_rules.sql");
         print(file, sql);
     }
     /**
@@ -156,7 +158,7 @@ public class SQLFileWriter {
         java.io.File file;
         do{
             num++;
-            file = new java.io.File("src/myrmidia/Database/Resources/army_"+race+"_"+num+".sql");
+            file = new java.io.File(PATH+"army_"+race+"_"+num+".sql");
         }
         while(file.exists());
         print(file, sql);
@@ -172,7 +174,7 @@ public class SQLFileWriter {
         java.io.File file;
         do{
             num++;
-            file = new java.io.File("src/myrmidia/Database/Resources/case_"+num+".sql");
+            file = new java.io.File(PATH+"case_"+num+".sql");
         }
         while(file.exists());
         print(file, sql);
