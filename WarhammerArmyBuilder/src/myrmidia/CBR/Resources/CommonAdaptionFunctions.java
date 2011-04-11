@@ -239,8 +239,10 @@ public class CommonAdaptionFunctions {
      * this function it is not a requirement.
      * If no utility unit can be assigned to this unit the method will exit
      * @param armyUnit The army unit to assign a utility unit to
+     * @param armyPoints The amount of points that can be used to create the army
+     * @param usedArmyPoints The army points already used to create the army
      */
-    public void assignUtilityUnit(ArmyUnit armyUnit){
+    public void assignUtilityUnit(ArmyUnit armyUnit, int armyPoints, int usedArmyPoints){
         Set<UtilityUnit> selectedUnit = armyUnit.getUtility();
         Set<UtilityUnit> availableUnits = armyUnit.getUnit().getUtilityUnit();
         if(availableUnits.isEmpty())
@@ -251,6 +253,8 @@ public class CommonAdaptionFunctions {
         int nextUtilityUnit = random.nextInt(availableUnits.size());
         UtilityUnit nextUtility = (UtilityUnit) CollectionControl.getItemAt(
                 availableUnits, nextUtilityUnit);
+        if(usedArmyPoints+nextUtility.getCost()>armyPoints)
+            return;
         selectedUnit.add(nextUtility);
         System.out.println("Added utility: "+nextUtility.getName()+
                 ", to: "+armyUnit.getUnit().getName());
@@ -305,9 +309,11 @@ public class CommonAdaptionFunctions {
      * previsouly by this or other characters in this army)
      * @param unit The army unit to add magic items to
      * @param magicEquipment The set with the applicable magical items
+     * @param armyPoints The armout of points available to create the army
+     * @param usedArmyPoints The amont of points used to create the army
      */
     public void assignMagicEquipment(ArmyUnit unit,
-            Set<Equipment> magicEquipment){
+            Set<Equipment> magicEquipment, int armyPoints, int usedArmyPoints){
         if(magicEquipment.isEmpty())
             return;
         Set<Equipment> selectedEquipment = unit.getEquipment();
@@ -344,7 +350,12 @@ public class CommonAdaptionFunctions {
                 i--;
                 continue;
             }
+            //If the new equipment cost will take the total cost above the
+            //available points, stop the equipment assignment
+            if((usedArmyPoints+nextEq.getCost())>armyPoints)
+                break;
             usedPoints += nextEq.getCost();
+            usedArmyPoints+=nextEq.getCost();
             selectedEquipment.add(nextEq);
             System.out.println("Added equipment: "+nextEq.getName()+
                     ", to: "+unit.getUnit().getName());
@@ -435,7 +446,7 @@ public class CommonAdaptionFunctions {
         newArmyUnit.setUnit(newCharacter);
         newArmyUnit.setNumberOfUnits(1);
         Set<Equipment> magicalEquipment;
-        //Dwarfs cannon use magical items, only the magic runes they
+        //Dwarfs cannot use magical items, only the magic runes they
         //can inscribe on their equipment. And should then only get
         //access to those runes.
         if(army.getPlayerRace()==Races.Dwarfs)
@@ -447,8 +458,9 @@ public class CommonAdaptionFunctions {
                     newCharacter.getRace(),
                     newCharacter.getMagicPoints());
         assignReqularEquipment(newArmyUnit);
-        assignMagicEquipment(newArmyUnit, magicalEquipment);
-        assignUtilityUnit(newArmyUnit);
+        assignMagicEquipment(newArmyUnit, magicalEquipment,army.getArmyPoints(),
+                army.calculateCost());
+        assignUtilityUnit(newArmyUnit, army.getArmyPoints(), army.calculateCost());
         return newArmyUnit;
     }
 
@@ -471,7 +483,7 @@ public class CommonAdaptionFunctions {
                 (applyFullCommand(army,newArmyUnit)))
             newArmyUnit.giveUnitFullCommand();
         assignReqularEquipment(newArmyUnit);
-        assignUtilityUnit(newArmyUnit);
+        assignUtilityUnit(newArmyUnit, army.getArmyPoints(), army.calculateCost());
         newArmyUnit.setNumberOfUnits(numUnits);
         return newArmyUnit;
     }

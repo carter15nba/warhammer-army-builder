@@ -18,6 +18,7 @@
 package myrmidia.Warhammer.Resources;
 
 import java.util.ArrayList;
+import myrmidia.Util.Enums.Messages;
 
 /**
  * Class to manage the errors and their causes when verifying the army
@@ -26,12 +27,6 @@ import java.util.ArrayList;
  * @version 0.4
  */
 public class ErrorManager{
-    public enum Messages{OK, TOO_FEW_CORE_POINTS, TOO_MANY_SPECIAL_POINTS,
-    TOO_MANY_RARE_POINTS, TOO_MANY_HERO_POINTS, TOO_MANY_LORD_POINTS,
-    TOO_MANY_DUPLIACTE_SPECIAL_UNITS, TOO_MANY_DUPLICATE_RARE_UNITS,
-    TOO_FEW_UNITS_IN_GROUP, TOO_MANY_UNITS_IN_GROUP,TOO_FEW_POINTS_TOTAL,
-    TOO_MANY_POINTS_TOTAL, NO_ARMY_GENERAL, WRONG_RACE,
-    TOO_FEW_GROUPS};
     private ArrayList<Messages> errors;
     private ArrayList<Causes> causes;
 

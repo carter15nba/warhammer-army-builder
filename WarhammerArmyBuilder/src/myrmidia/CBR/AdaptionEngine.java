@@ -27,7 +27,6 @@ import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.*;
 import myrmidia.Warhammer.Resources.Causes;
-import myrmidia.Warhammer.Resources.ErrorManager.Messages;
 import myrmidia.Util.Enums.*;
 
 /**
@@ -245,6 +244,7 @@ public class AdaptionEngine {
         if(leastSimilarUnit==null){
             leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, false);
         }
+
         ArmyUnit newArmyUnit = cAF.createNewUnit(army, leastSimilarUnit);
         armyUnits.add(newArmyUnit);
         System.out.println("Adding new: "+leastSimilarUnit.getArmyType()+
@@ -332,7 +332,7 @@ public class AdaptionEngine {
         //If the difference in used points are more than 100, remove the cheapest
         //character
         System.err.println("Hero/Lord difference: "+diff);
-        if(diff>80){
+        if(diff>50){
             System.err.println("Diff more than 80");
             removeOneCharacter(army, aT);
             return;
@@ -345,7 +345,7 @@ public class AdaptionEngine {
         //the closest to zero
         Set<Equipment> equipment = mostExpensiveUnit.getEquipment();
         Set<UtilityUnit> utility = mostExpensiveUnit.getUtility();
-        int eqDiff = 10000 ;
+        int eqDiff = 10000;
         int utDiff = 10000;
         Equipment closestEq = null;
         UtilityUnit closestUt = null;
@@ -365,7 +365,6 @@ public class AdaptionEngine {
                 closestUt = ut;
             }
         }
-        System.err.println("eqDiff: "+eqDiff+", utDiff: "+utDiff);
         if(closestEq==null&&closestUt==null)
             return;
         if(eqDiff<utDiff)

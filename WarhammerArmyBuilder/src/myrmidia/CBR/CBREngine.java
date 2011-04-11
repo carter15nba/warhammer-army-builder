@@ -17,12 +17,16 @@
 
 package myrmidia.CBR;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.CBRCase;
@@ -82,7 +86,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         prepareCase = PrepareCase.getInstance();
         simConfig = SimilarityConfiguration.getInstance();
         //TODO user specify similarity configuration
-        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,3);
+        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,5);
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
@@ -93,7 +97,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void cycle(CBRQuery cbrq) throws ExecutionException {        
         Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
 
-//        Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
+        Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
 ////        revise();
 //        retain(cbr);
     }
@@ -133,14 +137,18 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
 
         Collection<CBRCase> ncbr = new HashSet<CBRCase>();
+        for(int i = 0 ; i < 10000 ; i++)
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
-            Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
-            CBRCase cc = new CBRCase();
-            cc.setDescription(retrievalResult.get_case().getDescription());
-            cc.setSolution(adaptedCase);
-            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
-            ncbr.add(cc);
+            try{
+                Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
+                CBRCase cc = new CBRCase();
+//                cc.setDescription(retrievalResult.get_case().getDescription());
+                //            cc.setSolution(adaptedCase);
+                //            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
+                //            ncbr.add(cc);
+            }
+            catch(ConcurrentModificationException cme){}            
         }
         return ncbr;
       
@@ -217,8 +225,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cbrEngine.cycle(cbrQuery);
 
                 cbrEngine.postCycle();
-                ExplanationEngine eng = ExplanationEngine.getInstance();
-                System.out.println(eng.generateExplanation());
+//                ExplanationEngine eng = ExplanationEngine.getInstance();
+//                System.out.println(eng.generateExplanation());
             }
             System.exit(0);
         }
