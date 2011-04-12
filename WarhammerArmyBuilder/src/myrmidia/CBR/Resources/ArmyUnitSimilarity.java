@@ -20,6 +20,8 @@ package myrmidia.CBR.Resources;
 import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
+import myrmidia.Explanation.ArmyUnitExplanation;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.Equipment;
@@ -33,6 +35,7 @@ import myrmidia.Warhammer.UtilityUnit;
 public class ArmyUnitSimilarity implements LocalSimilarityFunction{
 
     private int foundUnits;
+    private ArmyUnitExplanation expl;
 
     /**
      * Compute the similarity between the two supplied Set objects. Each
@@ -55,6 +58,8 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), caseObject.getClass());
         if (!(queryObject instanceof Set))
             throw new jcolibri.exception.NoApplicableSimilarityFunctionException(this.getClass(), queryObject.getClass());
+        expl = ExplanationEngine.getInstance().getCurrentCaseExplanation()
+                .getArmyUnitExplanation();
         Set caseSet = (Set<ArmyUnit>) caseObject;
         Set querySet = (Set<ArmyUnit>) queryObject;
         int querriedUnits = querySet.size();
@@ -65,6 +70,7 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
         int notQueriedEquipmet=0;
         int notQueriedUtility = 0;
         if(querySet.isEmpty()){
+            expl.setEmptyQuery(true);
             return 1;
         }
         for (Object object : querySet) {
@@ -87,16 +93,27 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
         double similarity = 0;
         double unitFractionSimilarity=0;
         if(foundUnits==0){
+            expl.setNoFoundUnits(true);
             return 0;
         }
         unitFractionSimilarity = (foundUnits/querriedUnits);
         numberSim = numberSim/foundUnits;
         int denominator=4;
-        if(notQueriedEquipmet==0)
+        if(notQueriedEquipmet==0){
+            expl.setNoEquipment(true);
             denominator--;
-        if(notQueriedUtility==0)
+        }
+        if(notQueriedUtility==0){
+            expl.setNoUtility(true);
             denominator--;
+        }
         similarity = (double)((unitFractionSimilarity + numberSim + equipmentSim + utilitySim)/denominator);
+        expl.setSimilarity("ArmyUnitSimilarity", similarity);
+        expl.setSimilarity("UnitFraction", unitFractionSimilarity);
+        expl.setSimilarity("NumberFraction", numberSim);
+        expl.setSimilarity("EquipmentFraction", equipmentSim);
+        expl.setSimilarity("UtilityFraction", utilitySim);
+        expl.setDenominator(denominator);
         return similarity;
     }
 

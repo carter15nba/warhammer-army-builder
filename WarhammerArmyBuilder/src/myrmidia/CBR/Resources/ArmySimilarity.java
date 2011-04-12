@@ -88,24 +88,27 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         Army caseArmy = (Army) caseObject;
         Army queryArmy = (Army) queryObject;
 
+         //Setup the explantion component for this army(case)
+        CaseExplanation caseExplanation = new CaseExplanation();
+        explEngine.addCaseExplanation(caseExplanation);
+        caseExplanation.setCasePoints(caseArmy.getArmyPoints());
+        caseExplanation.setQueryPoints(queryArmy.getArmyPoints());
+
         //Calculate the similarity and record similarities
         double armyRaceSimil = new RaceSimilarity(Mode.Player).compute(caseArmy.getPlayerRace(), queryArmy.getPlayerRace());
         double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
-
-        
+       
         //Calculate the similarities of the army units available in the query/case
         ArmyUnitSimilarity armyUnitSimilarity = new ArmyUnitSimilarity();
         double armyUnitSimilarityValue = armyUnitSimilarity.compute(caseArmy.getArmyUnits(), queryArmy.getArmyUnits());
 
         //Calculate the army similarity
-        double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+(armyPointSimilarityValue*pointWeigth)+(armyUnitSimilarityValue*armyUnitWeigth))/
+        double armySimilarity = ((armyRaceSimil*playerRaceWeigth)+
+                (armyPointSimilarityValue*pointWeigth)+
+                (armyUnitSimilarityValue*armyUnitWeigth))/
                 accumulatedWeigth;
 
-        //Setup the explantion component for this army(case)
-        CaseExplanation caseExplanation = new CaseExplanation();
-        explEngine.addCaseExplanation(caseExplanation);
-        caseExplanation.setCasePoints(caseArmy.getArmyPoints());
-        caseExplanation.setQueryPoints(queryArmy.getArmyPoints());
+        //Fill inn the data that were calculated here
         caseExplanation.setSimilarity("ArmySimilarity", armySimilarity);
         caseExplanation.setSimilarity("ArmyPointSimilarity", armyPointSimilarityValue);
         return armySimilarity;

@@ -41,6 +41,7 @@ import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Database.DatabaseManager;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Util.Enums.Outcomes;
 import myrmidia.Util.Enums.Races;
 /**
@@ -82,7 +83,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         prepareCase = PrepareCase.getInstance();
         simConfig = SimilarityConfiguration.getInstance();
         //TODO user specify similarity configuration
-        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,5);
+        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,2);
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
@@ -119,6 +120,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 //            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
 //        }
         Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, simConfig.getK());
+        ExplanationEngine.getInstance().orderTransparencyExplanations(topKRR);
         return topKRR;
     }
 
@@ -220,8 +222,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cbrEngine.cycle(cbrQuery);
 
                 cbrEngine.postCycle();
-//                ExplanationEngine eng = ExplanationEngine.getInstance();
-//                System.out.println(eng.generateExplanation());
+                ExplanationEngine eng = ExplanationEngine.getInstance();
+                System.out.println(eng.generateTransparencyExplanations());
             }
             System.exit(0);
         }
