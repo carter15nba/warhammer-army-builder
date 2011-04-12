@@ -37,6 +37,7 @@ import myrmidia.Util.Enums.*;
 public class AdaptionEngine {
     private CommonAdaptionFunctions cAF;
     private int lastDifference = 0;
+    private int armyPoints;
 
     /**
      * Default constructor
@@ -75,6 +76,7 @@ public class AdaptionEngine {
     private Case naiveAdaption(Case _case, CBRQuery query){
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
+        armyPoints = queryCase.getArmy().getArmyPoints();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Outcomes.Unknown);
         adaptedCase.getArmy().setPlayerRace(queryCase.getArmy().getPlayerRace());
@@ -151,7 +153,7 @@ public class AdaptionEngine {
      */
     private Army refineArmy(Army army){
         RuleSet rule = new RuleSet();
-        Messages[] messages = rule.isFollowingArmyDispositionRules(army);
+        Messages[] messages = rule.isFollowingArmyDispositionRules(army,armyPoints);
         ArrayList<Unit> units;
         while(messages[0]!=Messages.OK){
             //Only check the first error each loop iteration as one change may
@@ -228,7 +230,7 @@ public class AdaptionEngine {
                 default:
                     return army;
             }
-            messages = rule.isFollowingArmyDispositionRules(army);
+            messages = rule.isFollowingArmyDispositionRules(army,armyPoints);
         }
         System.err.println(messages[0]);
         return army;
@@ -556,7 +558,7 @@ public class AdaptionEngine {
                     int numUnits = armyUnit.getNumberOfUnits();
                     if(numUnits>unit.getMinNumber()){
                         armyUnit.setNumberOfUnits(numUnits-1);
-                        rs.isFollowingArmyDispositionRules(army);
+                        rs.isFollowingArmyDispositionRules(army,armyPoints);
                         if(rs.getTotalPointDifference()>0)
                             return;
                     }

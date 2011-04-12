@@ -73,14 +73,10 @@ public class RuleSet {
     /**
      * Method that initializes (resets) the resources which is required to check
      * if an army is following its disposition rules.
-     * @param army
+     * @param armyPoints int The army points the army is supposed to be built from
      */
-    private void initResources(Army army){
-        if(armyPoints==0){
-            this.armyPoints = army.calculateCost();
-        }
-        else
-            this.armyPoints = army.getArmyPoints();
+    private void initResources(int armyPoints){
+        this.armyPoints = armyPoints;
         errorManager.resetErrors();
         resetCosts();
         calculateNumberOfDuplicates();
@@ -96,11 +92,12 @@ public class RuleSet {
      * during the verification. If no errors is found an array with a single OK
      * message is returned.
      * @param army The Army object to be verified
+     * @param aP int The army points the army is supposed to be built from
      * @return Messages[] array with all the errors found in the army disposition,
      * single entry array with an OK message if no errors where found.
      */
-    public Messages[] isFollowingArmyDispositionRules(Army army){
-        initResources(army);
+    public Messages[] isFollowingArmyDispositionRules(Army army, int aP){
+        initResources(aP);
         checkRace(army);
         calculatePointsUsage(army);
         calculateTotalCost();
