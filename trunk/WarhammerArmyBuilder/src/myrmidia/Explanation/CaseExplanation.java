@@ -216,18 +216,21 @@ public class CaseExplanation implements Explanation{
         double armySim = getSimilarity("ArmySimilarity");
         double outcomeSim = getSimilarity("OutcomeSimilarity");
         double opponentSim = getSimilarity("OpponentRaceSimilarity");
+        String pointsExpl = "";
+        if((queryPoints==0)||(casePoints==0))
+            pointsExpl = ", since the wildcard value 0 were used in one or both of the army point values";
         String ret = "Case #"+caseID+" have a similarity of "+getSimilarity("TotalSimilarity")+" with the query.\n"
                 + "  Based on the weighted average of three components (ArmySimilarity, OpponentSimilarity and OutcomeSimilarity):\n"
-                + "    Army Similarity = "+armySim+ " and have a weigth of "+armyWeight+"\n"
-                + "      Army points("+queryPoints+") in query have a similarity of "+getSimilarity("ArmyPointSimilarity")+" with the army points("+casePoints+") in the case, and have a weight of "+simConf.getArmyPointWeight()+"\n"
+                + "    Army Similarity = "+armySim+ " and have a weigth of "+armyWeight+". Army similarity is based on the weighted average of: PlayerRaceSimilarity, ArmyPointSimilarity and ArmyUnitSimilarity\n"
+                + "      Army points("+queryPoints+") in query have a similarity of "+getSimilarity("ArmyPointSimilarity")+" with the army points("+casePoints+") in the case, and have a weight of "+simConf.getArmyPointWeight()+pointsExpl+"\n"
                 + "      Query player race("+getRace("QueryPlayerRace")+") have a similarity of "+getSimilarity("PlayerRaceSimilarity")+ " with the player race("+getRace("CasePlayerRace")+") in the case, and have a weight of "+simConf.getPlayerRaceWeigth()+"\n"
-                + "      ArmyUnitSimilarity\n"
+                + armyUnitExplanation.generateExplanation()
                 + "    Opponent Similarity = "+opponentSim+ " and have a weigth of "+opponentWeigth+"\n"
                 + "      Query opponent race("+getRace("QueryOpponentRace")+") have a similarity of "+getSimilarity("OpponentRaceSimilarity")+ " with the opponent race("+getRace("CaseOpponentRace")+") in the case\n"
                 + "    Outcome Similarity = "+outcomeSim+" and have a weigth of "+outcomeWeigth+"\n"
                 + "      Query outcome("+queryOutcome+") have a similarity of "+getSimilarity("OutcomeSimilarity")+" with the outcome("+caseOutcome+") of the case\n"
                 + "  This gives the similarity calculation:\n"
-                + "    simlarity = (armySimilarity*armyWeigth+opponentSimilarity*opponentWeigth+outcomeSimilarity*outcomeWeigth)/(armyWeigth+opponentWeigth*outcomeWeigth)\n"
+                + "    similarity = (armySimilarity*armyWeigth+opponentSimilarity*opponentWeigth+outcomeSimilarity*outcomeWeigth)/(armyWeigth+opponentWeigth*outcomeWeigth)\n"
                 + "    similarity = ("+armySim+"*"+armyWeight+"+"+opponentSim+"*"+opponentWeigth+"+"+outcomeSim+"*"+outcomeWeigth+")/("+armyWeight+"+"+opponentWeigth+"+"+outcomeWeigth+")\n"
                 + "    similarity = ("+(armySim*armyWeight+opponentSim*opponentWeigth+outcomeSim*outcomeWeigth)+")/"+(armyWeight+opponentWeigth+outcomeWeigth)+"\n"
                 + "    similarity = "+getSimilarity("TotalSimilarity");

@@ -18,7 +18,10 @@
 package myrmidia.Explanation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import jcolibri.method.retrieve.RetrievalResult;
+import myrmidia.Warhammer.Case;
 
 
 /**
@@ -26,12 +29,13 @@ import java.util.List;
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class ExplanationEngine implements Explanation{
+public class ExplanationEngine{
+
+    private List<CaseExplanation> caseExplanation;
 
     private ExplanationEngine(){
         caseExplanation = new ArrayList<CaseExplanation>();
     }
-    private List<CaseExplanation> caseExplanation;
     public static ExplanationEngine getInstance(){
         return ExplanationEngineHolder.INSTANCE;
     }
@@ -61,11 +65,29 @@ public class ExplanationEngine implements Explanation{
             return new CaseExplanation();
         return caseExplanation.get(index);
     }
-    public String generateExplanation() {
-        String ret="";
+    public String generateTransparencyExplanations() {
+        String ret="\nGenerating transparency explanations!\n\n";
         for (CaseExplanation expl : caseExplanation) {
             ret+=expl.generateExplanation()+"\n\n";
         }
         return ret;
+    }
+    public String generateTransparencyExplanation(int index) {
+        String ret = "\nGenerating the transparency for the desired case!\n\n";
+        if(index>0&&index<caseExplanation.size()){
+            ret = caseExplanation.get(index).generateExplanation();
+        }
+        return ret;
+    }
+    public void orderTransparencyExplanations(Collection<RetrievalResult> topKRR){
+        List<CaseExplanation> tmp = new ArrayList<CaseExplanation>();
+        for (RetrievalResult retrievalResult : topKRR) {
+            Case _case = (Case) retrievalResult.get_case().getSolution();
+            for (CaseExplanation expl : caseExplanation) {
+                if(_case.getID()==expl.getCaseID())
+                    tmp.add(expl);
+            }
+        }
+        caseExplanation = tmp;
     }
 }
