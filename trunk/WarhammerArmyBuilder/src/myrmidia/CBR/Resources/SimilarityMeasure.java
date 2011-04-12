@@ -78,16 +78,6 @@ public class SimilarityMeasure {
         nnConfig.setWeight(attr, simConf.getOutcomeWeigth());
     }
 
-    public ArmySimilarity getArmySimilarityFunction(){
-        return (ArmySimilarity) nnConfig.getLocalSimilFunction(
-                new Attribute("army",myrmidia.Warhammer.Case.class));
-    }
-
-    public Equal getOpponentSimilarityFunction(){
-        return (Equal)nnConfig.getLocalSimilFunction(
-                new Attribute("opponent",myrmidia.Warhammer.Case.class));
-    }
-
     /**
      * Local similarity factory used to create the similarity function objects
      * used by different components of the case.
@@ -104,7 +94,7 @@ public class SimilarityMeasure {
         else if(name.equals("Enum"))
             return new OutcomeSimilarity();
         else if(name.equals("Equal"))
-            return new Equal(Mode.Opponent);
+            return new RaceSimilarity(Mode.Opponent);
         return null;
     }
 }

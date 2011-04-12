@@ -130,6 +130,16 @@ public class CommonAdaptionFunctions {
         return returnUnit;
     }
 
+    /**
+     * Method which finds the least similar unit to the existing units from
+     * the list of available units.
+     * @param existingUnits The Set of ArmyUnits in the army
+     * @param availableUnits The List of available units
+     * @param restrictUsedUnits boolean indicating if units which have been
+     * used before should be allowed to be used again.
+     * @return <ul><li>Unit - The least similar unit found
+     * </li>null - if restricted units are true and no available units were found<li></li></ul>
+     */
     public Unit findLeastSimilarUnit(Set<ArmyUnit> existingUnits,
             ArrayList<Unit> availableUnits, boolean restrictUsedUnits){
         Unit returnUnit = null;
@@ -465,21 +475,22 @@ public class CommonAdaptionFunctions {
     }
 
     /**
-     *
-     * @param army
-     * @param newCharacter
-     * @return
+     * Method used to create a new ArmyUnit to be added to a army. Please note
+     * that the army unit created is <i>not</i> added to the army.
+     * @param army The army the new ArmyUnit should be added to
+     * @param newUnit Unit The new unit that will be added to the army unit
+     * @return ArmyUnit The newly created army unit
      */
-    public ArmyUnit createNewUnit(Army army, Unit newCharacter){
+    public ArmyUnit createNewUnit(Army army, Unit newUnit){
         ArmyUnit newArmyUnit = new ArmyUnit();
-        newArmyUnit.setUnit(newCharacter);
-        int numUnits = newCharacter.getMinNumber()*minNumberMultiplier;
-        int maxNumber = newCharacter.getMaxNumber();
+        newArmyUnit.setUnit(newUnit);
+        int numUnits = newUnit.getMinNumber()*minNumberMultiplier;
+        int maxNumber = newUnit.getMaxNumber();
         //if the number of untis are more than the max number of units
         //set number of units to max number of units.
         if((numUnits>maxNumber)&&(maxNumber!=0))
             numUnits = maxNumber;
-        if((newCharacter.isEligibleForFullCommand())&&
+        if((newUnit.isEligibleForFullCommand())&&
                 (applyFullCommand(army,newArmyUnit)))
             newArmyUnit.giveUnitFullCommand();
         assignReqularEquipment(newArmyUnit);
@@ -531,4 +542,20 @@ public class CommonAdaptionFunctions {
         return (copy.getArmyPoints()-cost);
     }
 
+    /**
+     * This method gets the number of characters in the army. It is usefull
+     * in the adaptaion since the removal of the last character also removes
+     * the army general.
+     * @param army The army to count the number of charactes in
+     * @return int The number of characters in the army
+     */
+    public int getNumberOfCharacters(Army army) {
+        int number=0;
+        for(ArmyUnit armyUnit : army.getArmyUnits()){
+            Unit unit = armyUnit.getUnit();
+            if(unit.getArmyType()==ArmyType.Hero||unit.getArmyType()==ArmyType.Lord)
+                number++;
+        }
+        return number;
+    }
 }

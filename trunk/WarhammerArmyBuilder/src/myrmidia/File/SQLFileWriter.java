@@ -50,6 +50,7 @@ public class SQLFileWriter {
         java.io.File file = new java.io.File(PATH+"race_units_" + race + ".sql");
         print(file, sql);
     }
+    
     /**
      * Method to write a SQL file with the utility units of a Warhammer race.
      * @param race String representing the Warhammer race, used to name the file.
@@ -59,6 +60,7 @@ public class SQLFileWriter {
         java.io.File file = new java.io.File(PATH+"utilityunits_"+race+".sql");
         print(file, sql);
     }
+
     /**
      * Method to write a SQL file with the unit and utility relations of a
      * Warhammer race.
@@ -68,8 +70,8 @@ public class SQLFileWriter {
     public static void write_Unit_UtilitySQLFile(String race,ArrayList<String> sql){
         java.io.File file = new java.io.File(PATH+"unit_utility_"+race+".sql");
         print(file, sql);
-
     }
+
     /**
      * Method to write a SQL file with special rules.
      * @param sql The ArrayList with the SQL statements to be written.
@@ -126,6 +128,7 @@ public class SQLFileWriter {
         java.io.File file = new java.io.File(PATH+"equipment.sql");
         print(file, sql);
     }
+
     /**
      * Method to write a SQL file with the unit and equipment relations of a
      * Warhammer race.
@@ -146,6 +149,7 @@ public class SQLFileWriter {
         java.io.File file = new java.io.File(PATH+"eq_rules.sql");
         print(file, sql);
     }
+
     /**
      * Method to write a SQL file with an army of units, equipment, crews and mounts.
      * This method <b>does not</b> overwrite any existing files but create a new
@@ -163,6 +167,7 @@ public class SQLFileWriter {
         while(file.exists());
         print(file, sql);
     }
+
     /**
      * Method to write a SQL file with an case
      * This method <b>does not</b> overwrite any existing files but create a new

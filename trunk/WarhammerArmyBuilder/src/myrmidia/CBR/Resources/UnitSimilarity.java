@@ -65,7 +65,7 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      * @param armyTypeWeigth The weigth of the army type similarity
      * @param costWeigth The weigth of the cost similarity
      * @param weaponWeigth The weigth of the weapon similarity
-     * @param magicWeight The weight of the magic similarity
+     * @param magicWeigth The weight of the magic similarity
      */
     public UnitSimilarity(double charWeigth, double unitTypeWeigth, 
             double armyTypeWeigth, double costWeigth,double weaponWeigth,
@@ -132,13 +132,10 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         return similarity;
     }
     
-    /**
-     * Allways return true
-     * @param caseObject Any object
-     * @param queryObject Any object
-     * @return true
-     */
+    /** Applicalbe to myrmidia.Warhammer.Unit */
     public boolean isApplicable(Object caseObject, Object queryObject) {
+        if(!(caseObject instanceof Unit)||!(queryObject instanceof Unit))
+            return false;
         return true;
     }
 

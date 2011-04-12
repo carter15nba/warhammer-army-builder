@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
     Document   : databaseconfig.xml
     Created on : 24. januar 2011, 10:49
@@ -9,7 +8,6 @@
         hibernate.cfg.xml file is located, the mapping and class file locations
         of the problem descripton and problem solution.
 -->
-
 <DataBaseConfiguration>
     <HibernateConfigFile>myrmidia/Database/hibernate.cfg.xml</HibernateConfigFile>
     <DescriptionMappingFile>myrmidia/Database/Case.hbm.xml</DescriptionMappingFile>

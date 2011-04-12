@@ -66,15 +66,29 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
         "insert into ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)values(?,?)";
     private static final String CASE_QUERY =
         "insert into CASES(ID,ARMY_ID,OPPONENT_RACE,OUTCOME) values(?,?,?,?)";
+
+    /**
+     * Default constructor - initializes the super class
+     */
     public Connector(){
         super();
     }
 
+    /**
+     * Method to aquire a session from the connection
+     * @return A Session object
+     */
     public Session getSession(){
         return sessionFactory.openSession();
     }    
 
-
+    /**
+     * This mehtod is used to override a hard-coded parameter in the
+     * hibernate.cfg.xml file to give a the application a limited altered
+     * configuration. Used to permit hibernate to create non-existing tables.
+     * @param file URL the url path to the hibernate.cfg.xml file
+     * @throws InitializingException
+     */
     public void initOverwriteFromXMLFile(URL file) throws InitializingException{
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -318,6 +332,14 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
         return sessionFactory.getCurrentSession().isConnected();
     }
 
+    /**
+     * Method which overrides the dedault hibernate saving scheme. This method
+     * forces the connection to save only those parts of the case which is
+     * neccessary in the neccessay order, by taking the saving power away from
+     * hibernate and executing regular SQL's.
+     * @param session The session with an open connection to the database
+     * @param description The CaseComponent to be saved to the database.
+     */
     private void saveCase(Session session, CaseComponent description) {
         System.out.println("SAVE CASE");
         Case _case = (Case) description;

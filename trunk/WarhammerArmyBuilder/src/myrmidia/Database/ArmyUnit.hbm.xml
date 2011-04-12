@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!--
+    Document   : ArmyUnit.hbm.xml
+    Created on : 24. januar 2011, 10:50
+    Author     : Glenn Rune Strandbråten
+    Description:
+        This file contains the hibernate mapping information between the ARMY_UNIT
+        table in the warhammerDB database and the myrmidia.Warhammer.ArmyUnit class
+        It also contains HQL queries relevant to this table.
+-->
 <hibernate-mapping>
   <class name="myrmidia.Warhammer.ArmyUnit" table="ARMY_UNIT">
     <id name="ID" type="integer">

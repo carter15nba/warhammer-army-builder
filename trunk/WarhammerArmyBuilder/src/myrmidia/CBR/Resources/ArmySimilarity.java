@@ -38,6 +38,10 @@ public class ArmySimilarity implements LocalSimilarityFunction{
     private int interval;
     private ExplanationEngine explEngine = ExplanationEngine.getInstance();
 
+    /**
+     * Default constructor - Initializes the default weigth values (1) and
+     * default interval (500)
+     */
     public ArmySimilarity(){
         armyUnitWeigth = 1;
         pointWeigth = 1;
@@ -47,6 +51,14 @@ public class ArmySimilarity implements LocalSimilarityFunction{
 
     }
 
+    /**
+     * Constructor - initializes the weights and interval with the supplied values.
+     * All weights must be between [0..1].
+     * @param playerRaceWeigth double the weight of the player race similarity
+     * @param armyUnitWeigth double The weight of the army unit similarity
+     * @param pointWeigth double The weight of the army point similarity
+     * @param interval int The interval in which the army point similarity is valid
+     */
     public ArmySimilarity(double playerRaceWeigth, double armyUnitWeigth, double pointWeigth,int interval){
         this.armyUnitWeigth = armyUnitWeigth;
         this.pointWeigth = pointWeigth;
@@ -77,7 +89,7 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         Army queryArmy = (Army) queryObject;
 
         //Calculate the similarity and record similarities
-        double armyRaceSimil = new Equal(Mode.Player).compute(caseArmy.getPlayerRace(), queryArmy.getPlayerRace());
+        double armyRaceSimil = new RaceSimilarity(Mode.Player).compute(caseArmy.getPlayerRace(), queryArmy.getPlayerRace());
         double armyPointSimilarityValue = computeArmyPointSimilarity(caseArmy.getArmyPoints(), queryArmy.getArmyPoints());
 
         
@@ -111,14 +123,10 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         return interval;
     }
 
-    /**
-     * Method to check if the two objects are applicable, allways return true
-     * as the check if performed in the compute method.
-     * @param caseObject The case object
-     * @param queryObject The query object
-     * @return true
-     */
-    public boolean isApplicable(Object caseObject, Object queryObject) {
+    /** Applicable to myrmidia.Warhammer.Army */
+    public boolean isApplicable(Object o1, Object o2) {
+        if(!(o1 instanceof Army)||!(o2 instanceof Army))
+            return false;
         return true;
     }
 }

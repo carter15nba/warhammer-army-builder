@@ -48,6 +48,7 @@ public class RedusedHibernateParser extends DefaultHandler{
         hibernateProperties = new Properties();
         type = property.none;
     }
+
     /**
      * Method used to get the Properties aquired by parsing the xml file.
      * This method will also initiate the parsing.
@@ -98,10 +99,12 @@ public class RedusedHibernateParser extends DefaultHandler{
         else
             type=property.none;
     }
+
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         tempVal = new String(ch,start,length);
     }
+    
     @Override
     public void endElement(String uri,
             String localName,

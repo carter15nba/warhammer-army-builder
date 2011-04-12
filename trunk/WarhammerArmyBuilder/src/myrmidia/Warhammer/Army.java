@@ -35,7 +35,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
     private int armyPoints;
     private Set<ArmyUnit> armyUnits = new HashSet<ArmyUnit>();
 
-   /**
+    /**
      * Static method to create an exact copy of the supplied Army object.
      * The resulting object will behave as if it was created with a constructor
      * and filled with the data of the old case. A call to change the content
@@ -160,6 +160,7 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
         }
         return unitCost;
     }
+    
     /**
      * Method to calculate only the unit cost
      * cost_per_unit*number_of_units
