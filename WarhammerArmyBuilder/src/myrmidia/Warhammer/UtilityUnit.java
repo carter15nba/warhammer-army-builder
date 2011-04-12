@@ -182,7 +182,7 @@ public class UtilityUnit extends CoreUnit{
         this.unitType = unitType;
     }
 
-        /**
+    /**
      * @return the required
      */
     public boolean isRequired() {

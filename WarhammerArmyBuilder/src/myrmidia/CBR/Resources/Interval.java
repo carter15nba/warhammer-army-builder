@@ -37,7 +37,7 @@ public class Interval implements LocalSimilarityFunction{
     }
 
     /**
-     *
+     * Applies the similaruty function
      * @param caseObject The CaseObject
      * @param queryObject The QueryObject
      * @return double The computed local similarity, or 0 if caseObject and/or
@@ -74,13 +74,10 @@ public class Interval implements LocalSimilarityFunction{
         return simil;
     }
 
-    /**
-     * Allways return true
-     * @param caseObject any object
-     * @param queryObject any object
-     * @return true
-     */
+    /** Applicable to Number */
     public boolean isApplicable(Object caseObject, Object queryObject){
+        if(!(caseObject instanceof Number)||!(queryObject instanceof Number))
+            return false;
         return true;
     }
 }

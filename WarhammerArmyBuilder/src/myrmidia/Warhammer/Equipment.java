@@ -126,7 +126,7 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
         this.modifier = modifier;
     }
 
-        /**
+    /**
      * @return the range
      */
     public int getRange() {

@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Class to represent a unit
  * @author Glenn Rune Strandbåten
- * @version 0.5.1
+ * @version 0.5.2
  */
 public class Unit extends CoreUnit{
     private String movement = "";
@@ -500,6 +500,15 @@ public class Unit extends CoreUnit{
         return false;
     }
 
+    /**
+     * Method which compares this unit to the supplied unit. The comparison
+     * is done by ensuring that the supplied object is of type Unit and
+     * then to check if they have the same name.
+     * @param obj The unit to compare with this unit
+     * @return <ul><li>true - if the supplied unit is equal to this unit</li>
+     * <li>false - if the supplied unit not is equal to this unit, or if the
+     * supplied object not is of type unit</li></ul>
+     */
     public boolean compareTo(Unit obj){
         if(!(obj instanceof Unit))
             return false;

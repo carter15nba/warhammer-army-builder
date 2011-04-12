@@ -17,10 +17,7 @@
 
 package myrmidia.CBR;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jcolibri.casebase.LinealCaseBase;
 import jcolibri.cbrcore.CBRCaseBase;
 import jcolibri.cbrcore.CBRQuery;
@@ -36,7 +33,6 @@ import jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import jcolibri.method.retrieve.RetrievalResult;
 import jcolibri.method.retrieve.selection.SelectCases;
 import myrmidia.Database.Connector;
-import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Util.*;
 import myrmidia.CBR.Resources.*;
 import myrmidia.Warhammer.Case;
@@ -50,7 +46,7 @@ import myrmidia.Util.Enums.Races;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
- * @version 0.2.1
+ * @version 0.4
  */
 public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication{
     //TODO: REMOVE ALL System.out.println() used for testing from all classes.
@@ -137,16 +133,15 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
 
         Collection<CBRCase> ncbr = new HashSet<CBRCase>();
-        for(int i = 0 ; i < 10000 ; i++)
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
             try{
                 Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
                 CBRCase cc = new CBRCase();
-//                cc.setDescription(retrievalResult.get_case().getDescription());
-                //            cc.setSolution(adaptedCase);
-                //            cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
-                //            ncbr.add(cc);
+                cc.setDescription(retrievalResult.get_case().getDescription());
+                cc.setSolution(adaptedCase);
+                cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
+                ncbr.add(cc);
             }
             catch(ConcurrentModificationException cme){}            
         }

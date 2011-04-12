@@ -100,14 +100,10 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
         return similarity;
     }
 
-    /**
-     * Allways returns true, as the applicability check is performed in the
-     * compute method.
-     * @param caseObject any object
-     * @param queryObject any object
-     * @return true
-     */
-    public boolean isApplicable(Object caseObject, Object queryObject) {
+    /** Applicable to java.util.Set */
+    public boolean isApplicable(Object o1, Object o2) {
+        if(!(o1 instanceof Set)||!(o2 instanceof Set))
+            return false;
         return true;
     }
 

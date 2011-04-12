@@ -24,18 +24,17 @@ import myrmidia.Util.Enums.Outcomes;
 
 
 /**
- * This function returns the similarity of two enum values as the their distance
- * sim(x,y)=|ord(x) - ord(y)|
- *
- * @author Juan A. Recio-García
+ * This class evaluates the similarity between the outcomes in query/case
+ * @author Glenn Rune Strandbåten
+ * @version 0.2
  */
 public class OutcomeSimilarity implements LocalSimilarityFunction {
 
     /**
      * Applies the similarity function.
      *
-     * @param caseOutcome StringEnum or String
-     * @param queryOutcome StringEnum or String
+     * @param caseOutcome Outcome enum
+     * @param queryOutcome Outcome enum
      * @return the result of apply the similarity function.
      */
     public double compute(Object caseOutcome, Object queryOutcome) throws jcolibri.exception.NoApplicableSimilarityFunctionException{
@@ -63,8 +62,10 @@ public class OutcomeSimilarity implements LocalSimilarityFunction {
         return value;
     }
 
-    /** Applicable to Enum */
+    /** Applicable to enum Outcome */
     public boolean isApplicable(Object o1, Object o2) {
+        if(!(o1 instanceof Outcomes)||!(o2 instanceof Outcomes))
+            return false;
         return true;
     }
 

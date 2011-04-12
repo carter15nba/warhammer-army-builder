@@ -40,7 +40,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
         return new Attribute("ID", this.getClass());
     }
 
-     /**
+    /**
      * @return the ID
      */
     public int getID() {
@@ -67,6 +67,7 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     public void setArmyID(int armyID) {
         this.armyID = armyID;
     }
+    
     /**
      * @return the unit
      */

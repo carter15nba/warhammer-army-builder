@@ -24,7 +24,7 @@ import myrmidia.Warhammer.Unit;
  * Class to hold the error causes and the units responsible for causing the
  * errors.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.2
  */
 public class Causes {
 

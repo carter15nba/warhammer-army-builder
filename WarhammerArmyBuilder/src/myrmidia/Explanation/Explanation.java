@@ -18,10 +18,18 @@
 package myrmidia.Explanation;
 
 /**
- *
+ * Interface to be implemented by all explanation classes, the interface
+ * ensures that all explanation classes have the same unifrom mwthod to
+ * generate explanations.
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
 public interface Explanation {
+    
+    /**
+     * Interface method to create a natural language explanation based on the
+     * data contained within the object.
+     * @return A String representation of the explanation
+     */
     public String generateExplanation();
 }
