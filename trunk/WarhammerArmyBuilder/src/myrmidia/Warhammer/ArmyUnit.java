@@ -208,4 +208,14 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
             }
         }
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ArmyUnit){
+            ArmyUnit au = (ArmyUnit) o;
+            if((ID==au.ID)&&(unit.getName().equals(au.getUnit().getName())))
+                return true;
+        }
+        return false;
+    }
 }
