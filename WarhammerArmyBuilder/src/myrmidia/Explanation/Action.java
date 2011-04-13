@@ -17,7 +17,11 @@
 
 package myrmidia.Explanation;
 
+import java.util.ArrayList;
+import java.util.List;
 import myrmidia.Util.Enums.Messages;
+import myrmidia.Util.Enums.Actions;
+import myrmidia.Warhammer.ArmyUnit;
 
 /**
  * Class to keep record of one change that occured during the adaptation of
@@ -25,57 +29,69 @@ import myrmidia.Util.Enums.Messages;
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
-public class Action {
+public class Action implements Explanation{
     
-    private String action;
-    private Messages reason;
+    private Messages message;
+    private List<Actions> adaptionRules;
+    private ArmyUnit affectedArmyUnit;
 
-    /**
-     * Default constructor
-     */
-    public Action(){}
+    /** Default constructor */
+    public Action(){adaptionRules = new ArrayList<Actions>();}
 
     /**
      * Constructor used to set the action and message on instantiation
-     * @param action String describing what action where performed
+     * @param message String describing what action where performed
      * @param message Message describing why the action performed where neccessary
      */
-    public Action(String action, Messages message){
-        this.action = action;
-        this.reason = message;
+    public Action(Messages message){
+        this.message = message;
+        adaptionRules = new ArrayList<Actions>();
     }
 
     /**
-     * @return the action
+     * @return the message
      */
-    public String getAction() {
-        return action;
+    public Messages getMessage() {
+        return message;
     }
 
     /**
-     * @param action the action to set
+     * @param message the message to set
      */
-    public void setAction(String action) {
-        this.action = action;
+    public void setMessage(Messages message) {
+        this.message = message;
+    }
+
+    public void addRule(Actions rule){
+        adaptionRules.add(rule);
     }
 
     /**
-     * @return the reason
+     * @return the affectedArmyUnit
      */
-    public Messages getReason() {
-        return reason;
+    public ArmyUnit getAffectedArmyUnit() {
+        return affectedArmyUnit;
     }
 
     /**
-     * @param reason the reason to set
+     * @param affectedArmyUnit the affectedArmyUnit to set
      */
-    public void setReason(Messages reason) {
-        this.reason = reason;
+    public void setAffectedArmyUnit(ArmyUnit affectedArmyUnit) {
+        this.affectedArmyUnit = affectedArmyUnit;
     }
 
     @Override
-    public String toString() {
-        return "Based on this message: "+reason+"\n"
-                + "where this action taken: "+action;
+    public boolean equals(Object o){
+        if((o instanceof Action)){
+            Action action = (Action) o;
+            if((affectedArmyUnit.equals(action.affectedArmyUnit))&&message==action.message)
+                return true;
+        }
+        return false;
     }
+
+    public String generateExplanation() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

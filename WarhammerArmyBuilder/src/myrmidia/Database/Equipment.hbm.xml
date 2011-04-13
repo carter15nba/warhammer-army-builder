@@ -31,21 +31,33 @@
     <property column="DEFAULTEQ" length="1" name="defaultItem" type="boolean"/>
   </class>
   <query name="Equipment.all">
-        select eq from Equipment eq where 
+        <![CDATA[select eq from Equipment eq where
         (eq.usableBy='All' or eq.usableBy=:race)
-        and eq.defaultItem&lt;&gt;1
-        and eq.cost&lt;:cost
-        and eq.itemType &lt;&gt; 'Weapon'
-        and eq.itemType &lt;&gt; 'Armour'
-        and eq.itemType &lt;&gt; 'Unit_Upgrade'
+        and eq.defaultItem <> 1
+        and eq.cost <= :cost
+        and eq.itemType <> 'Weapon'
+        and eq.itemType <> 'Armour' 
+        and eq.itemType <> 'Unit_Upgrade']]>
     </query>
   <query name="Equipment.Race">
-        select eq from Equipment eq where
+        <![CDATA[select eq from Equipment eq where
         eq.usableBy=:race
-        and eq.defaultItem&lt;&gt;1
-        and eq.cost&lt;=:cost
-        and eq.itemType &lt;&gt; 'Weapon'
-        and eq.itemType &lt;&gt; 'Armour'
-        and eq.itemType &lt;&gt; 'Unit_Upgrade'
+        and eq.defaultItem <> 1 
+        and eq.cost <= :cost
+        and eq.itemType <> 'Weapon'
+        and eq.itemType <> 'Armour'
+        and eq.itemType <> 'Unit_Upgrade']]>
+    </query>
+    <query name="Equipment.BSBAll">
+        <![CDATA[select eq from Equipment eq where
+        (eq.usableBy=:race or eq.usableBy='All')
+        and eq.defaultItem <> 1
+        and eq.itemType = 'Standard']]>
+    </query>
+     <query name="Equipment.BSBRace">
+        <![CDATA[select eq from Equipment eq where
+        eq.usableBy=:race
+        and eq.defaultItem <> 1
+        and eq.itemType = 'Standard']]>
     </query>
 </hibernate-mapping>

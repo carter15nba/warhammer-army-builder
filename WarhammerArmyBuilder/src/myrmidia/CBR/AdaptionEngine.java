@@ -23,6 +23,9 @@ import jcolibri.cbrcore.CBRQuery;
 import myrmidia.CBR.Resources.CommonAdaptionFunctions;
 import myrmidia.CBR.Resources.ExchangeRace;
 import myrmidia.CBR.Resources.UnitSimilarity;
+import myrmidia.Explanation.Action;
+import myrmidia.Explanation.AdaptionExplanation;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.*;
@@ -38,12 +41,16 @@ public class AdaptionEngine {
     private CommonAdaptionFunctions cAF;
     private int lastDifference = 0;
     private int armyPoints;
+    private ExplanationEngine explEng;
+    private AdaptionExplanation currentExpl;
 
     /**
      * Default constructor
      */
     public AdaptionEngine(){
         cAF = new CommonAdaptionFunctions(new UnitSimilarity());
+        explEng = ExplanationEngine.getInstance();
+
     }
 
     /**
@@ -52,6 +59,7 @@ public class AdaptionEngine {
      */
     public AdaptionEngine(UnitSimilarity unitSimilarity){
         cAF = new CommonAdaptionFunctions(unitSimilarity);
+        explEng = ExplanationEngine.getInstance();
     }
 
     /**
@@ -62,6 +70,7 @@ public class AdaptionEngine {
      */
     public Case adaptCase(Case _case, CBRQuery query){
         cAF.resetAll();
+        explEng.addAdaptionExplanation(new AdaptionExplanation(_case.getID()));
         Case adaptedCase = naiveAdaption(_case, query);
         return refineAdaption(adaptedCase);
     }
@@ -155,6 +164,7 @@ public class AdaptionEngine {
         RuleSet rule = new RuleSet();
         Messages[] messages = rule.isFollowingArmyDispositionRules(army,armyPoints);
         ArrayList<Unit> units;
+        currentExpl = explEng.getCurrentAdaptionExplanation();
         while(messages[0]!=Messages.OK){
             //Only check the first error each loop iteration as one change may
             //affect other error messages.
@@ -162,12 +172,14 @@ public class AdaptionEngine {
             Causes[] causes;
             switch(message){
                 case TOO_FEW_CORE_POINTS:
+                    currentExpl.addAction(new Action(message));
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                         army.getPlayerRace(), ArmyType.Core);
                     System.err.println(message);
                     addUnitGroup(army, units);
                     break;
                 case TOO_FEW_POINTS_TOTAL:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     increasePointUsage(army, messages, rule);
                     break;
@@ -177,51 +189,62 @@ public class AdaptionEngine {
                     increaseGroupUnits(army,causes);
                     break;
                 case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
+                    currentExpl.addAction(new Action(message));
                     causes = rule.getCauses(message);
                     System.err.println(message);
                     decreaseDuplicates(army,causes);
                     break;
                 case TOO_MANY_DUPLICATE_RARE_UNITS:
+                    currentExpl.addAction(new Action(message));
                     causes = rule.getCauses(message);
                     System.err.println(message);
                     decreaseDuplicates(army,causes);
                     break;
                 case TOO_MANY_HERO_POINTS:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     reduceCharacterPoints(army, ArmyType.Hero, rule);
                     break;
                 case TOO_MANY_LORD_POINTS:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     reduceCharacterPoints(army, ArmyType.Lord, rule);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     reducePointsTotal(army, messages, rule);
                     break;
                 case TOO_MANY_RARE_POINTS:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, ArmyType.Rare,
                             messages, message, rule);
                     break;
                 case TOO_MANY_SPECIAL_POINTS:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, ArmyType.Special,
                             messages, message, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
+                    currentExpl.addAction(new Action(message));
                     causes = rule.getCauses();
                     System.err.println(message);
                     reduceNumberOfUnitsInGroup(army, causes);
                     break;
                 case NO_ARMY_GENERAL:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     addGeneral(army);
                     break;
                 case TOO_FEW_GROUPS:
+                    currentExpl.addAction(new Action(message));
                     System.err.println(message);
                     increasePointUsage(army, messages, rule);
                     break;
                 case WRONG_RACE:
+                    currentExpl.addAction(new Action(message));
                     ExchangeRace exRace = new ExchangeRace();
                     System.err.println(message);
                     army = exRace.adaptRace(army);
@@ -232,7 +255,6 @@ public class AdaptionEngine {
             }
             messages = rule.isFollowingArmyDispositionRules(army,armyPoints);
         }
-        System.err.println(messages[0]);
         return army;
     }
 
@@ -252,9 +274,10 @@ public class AdaptionEngine {
         if(leastSimilarUnit==null){
             leastSimilarUnit = cAF.findLeastSimilarUnit(armyUnits, availableUnits, false);
         }
-
         ArmyUnit newArmyUnit = cAF.createNewUnit(army, leastSimilarUnit);
         armyUnits.add(newArmyUnit);
+        currentExpl.getCurrentAction().addRule(Actions.Least_Similar_Unit);
+        currentExpl.getCurrentAction().setAffectedArmyUnit(newArmyUnit);
         System.out.println("Adding new: "+leastSimilarUnit.getArmyType()+
                 " group: "+leastSimilarUnit.getName()+", gave full command: "+
                 newArmyUnit.haveFullCommand());
@@ -276,7 +299,8 @@ public class AdaptionEngine {
             for(ArmyUnit armyUnit : armyUnits){
                 if(armyUnit.getUnit().getName().contentEquals(causeUnit.getName())){
                     if(armyUnit.getNumberOfUnits()<causeUnit.getMinNumber()){
-                        armyUnit.setNumberOfUnits(causeUnit.getMinNumber());
+                        armyUnit.setNumberOfUnits(causeUnit.getMinNumber()*2);
+                        currentExpl.getCurrentAction().addRule(Actions.Increased_Unit_Size);
                         System.out.println("Increasing group units: "+
                                 armyUnit.getUnit().getName());
                         break;
