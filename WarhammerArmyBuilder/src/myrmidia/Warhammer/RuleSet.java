@@ -19,9 +19,9 @@ package myrmidia.Warhammer;
 
 import java.util.ArrayList;
 import java.util.Set;
-import myrmidia.Util.Enums.ArmyType;
-import myrmidia.Util.Enums.Messages;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.ArmyType;
+import myrmidia.Enums.Messages;
+import myrmidia.Enums.Races;
 import myrmidia.Warhammer.Resources.Causes;
 import myrmidia.Warhammer.Resources.ErrorManager;
 

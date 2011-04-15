@@ -19,6 +19,7 @@ package myrmidia.CBR.Resources;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import myrmidia.Warhammer.ArmyUnit;
@@ -27,9 +28,9 @@ import myrmidia.Warhammer.Unit;
 import java.util.Random;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
-import myrmidia.Util.Enums.ArmyType;
-import myrmidia.Util.Enums.ItemType;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.ArmyType;
+import myrmidia.Enums.ItemType;
+import myrmidia.Enums.Races;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.UtilityUnit;
 
@@ -40,6 +41,7 @@ import myrmidia.Warhammer.UtilityUnit;
  * @version 0.2
  */
 public class CommonAdaptionFunctions {
+    private List<Integer> tempUsedID;
     private Set<Equipment> usedMagicalEquipment;
     private Set<Unit> usedUnits;
     private Set<Unit> reducedUnits;
@@ -56,11 +58,8 @@ public class CommonAdaptionFunctions {
      * weigths are set to 1.
      */
     public CommonAdaptionFunctions(){
-        usedMagicalEquipment = new HashSet<Equipment>();
-        usedUnits = new HashSet<Unit>();
-        reducedUnits = new HashSet<Unit>();
-        unitSimilarity = new UnitSimilarity();
-        random = new Random();
+        init(new UnitSimilarity());
+
     }
 
     /**
@@ -69,11 +68,20 @@ public class CommonAdaptionFunctions {
      * @param unitSimilarity  The preconfigured UnitSimilarity object
      */
     public CommonAdaptionFunctions(UnitSimilarity unitSimilarity){
+        init(unitSimilarity);
+    }
+
+    /**
+     * Method which initializes all the components of the object
+     * @param unitSimilarity The unit similarity object to set
+     */
+    private void init(UnitSimilarity unitSimilarity){
         usedMagicalEquipment = new HashSet<Equipment>();
         usedUnits = new HashSet<Unit>();
         reducedUnits = new HashSet<Unit>();
         this.unitSimilarity = unitSimilarity;
         random = new Random();
+        tempUsedID = new ArrayList<Integer>();
     }
 
     /**
@@ -102,6 +110,7 @@ public class CommonAdaptionFunctions {
         resetReducedUnits();
         resetUsedMagicalEquipment();
         resetUsedUnits();
+        tempUsedID.clear();
     }
 
     /**
@@ -455,6 +464,8 @@ public class CommonAdaptionFunctions {
         ArmyUnit newArmyUnit = new ArmyUnit();
         newArmyUnit.setUnit(newCharacter);
         newArmyUnit.setNumberOfUnits(1);
+        newArmyUnit.setArmyID(army.getID());
+        newArmyUnit.setID(getRandomID());
         Set<Equipment> magicalEquipment;
         //Dwarfs cannot use magical items, only the magic runes they
         //can inscribe on their equipment. And should then only get
@@ -483,7 +494,9 @@ public class CommonAdaptionFunctions {
      */
     public ArmyUnit createNewUnit(Army army, Unit newUnit){
         ArmyUnit newArmyUnit = new ArmyUnit();
+        newArmyUnit.setArmyID(army.getID());
         newArmyUnit.setUnit(newUnit);
+        newArmyUnit.setID(getRandomID());
         int numUnits = newUnit.getMinNumber()*minNumberMultiplier;
         int maxNumber = newUnit.getMaxNumber();
         //if the number of untis are more than the max number of units
@@ -557,5 +570,22 @@ public class CommonAdaptionFunctions {
                 number++;
         }
         return number;
+    }
+
+    /**
+     * Method used to aquire a unique random negative ID to be remporarily
+     * used while adapting the army
+     * @return A unique negative int guaranteed to never have been used previsouly
+     * in this army
+     */
+    public int getRandomID(){
+        int r;
+        do{
+            r = -Math.abs(random.nextInt());
+        }
+        while(tempUsedID.contains(new Integer(r)));
+        tempUsedID.add(new Integer(r));
+        System.out.println("new random temp id: "+r);
+        return r;
     }
 }

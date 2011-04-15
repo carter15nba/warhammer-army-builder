@@ -25,7 +25,7 @@
     <property column="TOUGHNESS" length="7" name="toughness"/>
     <property column="UNITTYPE" length="3" name="unitType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Util.Enums.UnitType</param>
+        <param name="enumClassName">myrmidia.Enums.UnitType</param>
       </type>
     </property>
     <property column="WEAPONSKILL" length="7" name="weaponSkill"/>

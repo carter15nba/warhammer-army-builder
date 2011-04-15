@@ -20,7 +20,7 @@ package myrmidia.CBR.Resources;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
-import myrmidia.Util.Enums.Outcomes;
+import myrmidia.Enums.Outcomes;
 
 
 /**

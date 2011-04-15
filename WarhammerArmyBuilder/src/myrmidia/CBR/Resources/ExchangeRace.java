@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import myrmidia.Util.CreateObjectFromDB;
-import myrmidia.Util.Enums.ArmyType;
+import myrmidia.Enums.ArmyType;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Unit;

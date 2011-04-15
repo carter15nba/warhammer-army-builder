@@ -18,8 +18,8 @@
 package myrmidia.Warhammer;
 
 import jcolibri.cbrcore.Attribute;
-import myrmidia.Util.Enums.Outcomes;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.Outcomes;
+import myrmidia.Enums.Races;
 
 /**
  * Class representing a CBR case.

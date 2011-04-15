@@ -42,8 +42,8 @@ import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Database.DatabaseManager;
 import myrmidia.Explanation.ExplanationEngine;
-import myrmidia.Util.Enums.Outcomes;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.Outcomes;
+import myrmidia.Enums.Races;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
@@ -223,7 +223,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 cbrEngine.postCycle();
                 ExplanationEngine eng = ExplanationEngine.getInstance();
-                System.out.println(eng.generateTransparencyExplanations());
+                System.out.println(eng.generateJustificationExplanations());
             }
             System.exit(0);
         }

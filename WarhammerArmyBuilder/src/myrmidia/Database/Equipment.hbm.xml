@@ -21,7 +21,7 @@
     <property column="USABLEBY" length="50" name="usableBy"/>
     <property column="ITEMTYPE" length="20" name="itemType">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Util.Enums.ItemType</param>
+        <param name="enumClassName">myrmidia.Enums.ItemType</param>
       </type>
     </property>
     <set lazy="false" name="rules" table="Equipment_rules">
@@ -36,25 +36,25 @@
         and eq.defaultItem <> 1
         and eq.cost <= :cost
         and eq.itemType <> 'Weapon'
-        and eq.itemType <> 'Armour' 
+        and eq.itemType <> 'Armour'
         and eq.itemType <> 'Unit_Upgrade']]>
     </query>
   <query name="Equipment.Race">
         <![CDATA[select eq from Equipment eq where
         eq.usableBy=:race
-        and eq.defaultItem <> 1 
+        and eq.defaultItem <> 1
         and eq.cost <= :cost
         and eq.itemType <> 'Weapon'
         and eq.itemType <> 'Armour'
         and eq.itemType <> 'Unit_Upgrade']]>
     </query>
-    <query name="Equipment.BSBAll">
+  <query name="Equipment.BSBAll">
         <![CDATA[select eq from Equipment eq where
         (eq.usableBy=:race or eq.usableBy='All')
         and eq.defaultItem <> 1
         and eq.itemType = 'Standard']]>
     </query>
-     <query name="Equipment.BSBRace">
+  <query name="Equipment.BSBRace">
         <![CDATA[select eq from Equipment eq where
         eq.usableBy=:race
         and eq.defaultItem <> 1

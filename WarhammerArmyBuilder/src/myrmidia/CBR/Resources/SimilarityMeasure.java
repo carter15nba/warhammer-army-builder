@@ -20,7 +20,7 @@ package myrmidia.CBR.Resources;
 import jcolibri.cbrcore.Attribute;
 import jcolibri.method.retrieve.NNretrieval.NNConfig;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
-import myrmidia.Util.Enums.Mode;
+import myrmidia.Enums.Mode;
 
 /**
  * Class used to assign similarity calculation objects to the different parts

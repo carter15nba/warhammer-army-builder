@@ -19,9 +19,9 @@ package myrmidia.CBR.Resources;
 
 import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.similarity.local.Threshold;
-import myrmidia.Util.Enums.ArmyType;
-import myrmidia.Util.Enums.UnitType;
-import myrmidia.Util.Enums.WeaponType;
+import myrmidia.Enums.ArmyType;
+import myrmidia.Enums.UnitType;
+import myrmidia.Enums.WeaponType;
 import myrmidia.Warhammer.Unit;
 
 /**

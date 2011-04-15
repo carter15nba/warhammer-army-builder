@@ -20,8 +20,8 @@ package myrmidia.Explanation;
 import java.util.HashMap;
 import java.util.Map;
 import myrmidia.CBR.Resources.SimilarityConfiguration;
-import myrmidia.Util.Enums.Outcomes;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.Outcomes;
+import myrmidia.Enums.Races;
 
 /**
  * Class responsible for keeping track of the reasoning behind the selection

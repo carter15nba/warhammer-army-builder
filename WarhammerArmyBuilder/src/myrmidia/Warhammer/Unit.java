@@ -17,7 +17,7 @@
 
 package myrmidia.Warhammer;
 
-import myrmidia.Util.Enums.*;
+import myrmidia.Enums.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -453,7 +453,7 @@ public class Unit extends CoreUnit{
      * <li>false - if the unit not is eligible for full command</li></ul>
      */
     public boolean isEligibleForFullCommand(){
-        if(armyType==armyType.Hero||armyType==armyType.Lord)
+        if(armyType==ArmyType.Hero||armyType==ArmyType.Lord)
             return false;
         boolean standard = false;
         boolean musician = false;
@@ -495,7 +495,7 @@ public class Unit extends CoreUnit{
      * <li>false - if the unit not is a BSB</li></ul>
      */
     public boolean canBeBattleStandardBearer(){
-        if(armyType==armyType.Hero&&!magician)
+        if(armyType==ArmyType.Hero&&!magician)
             return true;
         return false;
     }
