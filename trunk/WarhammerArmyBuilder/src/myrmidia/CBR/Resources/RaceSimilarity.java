@@ -21,8 +21,8 @@ import jcolibri.exception.NoApplicableSimilarityFunctionException;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
-import myrmidia.Util.Enums.Mode;
-import myrmidia.Util.Enums.Races;
+import myrmidia.Enums.Mode;
+import myrmidia.Enums.Races;
 
 /**
  * Class used to calculate the similarity between the case and query races

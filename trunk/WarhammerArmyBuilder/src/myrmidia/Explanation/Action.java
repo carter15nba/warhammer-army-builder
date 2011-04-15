@@ -19,8 +19,9 @@ package myrmidia.Explanation;
 
 import java.util.ArrayList;
 import java.util.List;
-import myrmidia.Util.Enums.Messages;
-import myrmidia.Util.Enums.Actions;
+import myrmidia.Explanation.Resources.AdaptionRule;
+import myrmidia.Enums.Messages;
+import myrmidia.Enums.Actions;
 import myrmidia.Warhammer.ArmyUnit;
 
 /**
@@ -35,17 +36,15 @@ public class Action implements Explanation{
     private List<Actions> adaptionRules;
     private ArmyUnit affectedArmyUnit;
 
-    /** Default constructor */
-    public Action(){adaptionRules = new ArrayList<Actions>();}
-
     /**
      * Constructor used to set the action and message on instantiation
      * @param message String describing what action where performed
      * @param message Message describing why the action performed where neccessary
      */
-    public Action(Messages message){
+    public Action(Messages message, ArmyUnit armyUnit){
         this.message = message;
         adaptionRules = new ArrayList<Actions>();
+        this.affectedArmyUnit = armyUnit;
     }
 
     /**
@@ -63,7 +62,8 @@ public class Action implements Explanation{
     }
 
     public void addRule(Actions rule){
-        adaptionRules.add(rule);
+        if(!adaptionRules.contains(rule))
+            adaptionRules.add(rule);
     }
 
     /**
@@ -91,7 +91,15 @@ public class Action implements Explanation{
     }
 
     public String generateExplanation() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        AdaptionRule ar = AdaptionRule.getInstance();
+        String ret ="Unit/formation: "+affectedArmyUnit.getUnit().getName()+
+                ", were adapted based on the following error messages\n";
+        for (Actions action : adaptionRules) {
+            System.out.println(ar.getRuleDescription(action));
+        }
+
+
+        return "";
     }
 
 }

@@ -20,7 +20,7 @@ package myrmidia.Warhammer;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
-import myrmidia.Util.Enums.ItemType;
+import myrmidia.Enums.ItemType;
 
 /**
  *

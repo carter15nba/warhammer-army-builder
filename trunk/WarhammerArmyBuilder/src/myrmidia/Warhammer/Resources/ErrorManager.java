@@ -18,7 +18,7 @@
 package myrmidia.Warhammer.Resources;
 
 import java.util.ArrayList;
-import myrmidia.Util.Enums.Messages;
+import myrmidia.Enums.Messages;
 
 /**
  * Class to manage the errors and their causes when verifying the army

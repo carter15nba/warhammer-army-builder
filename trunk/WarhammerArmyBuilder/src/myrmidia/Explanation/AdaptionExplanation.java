@@ -23,13 +23,14 @@ import java.util.List;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.2
  */
 public class AdaptionExplanation implements Explanation{
 
     private int caseID;
     private List<Action> actions;
     private Action currentAction=null;
+    private int actionPos;
 
     public AdaptionExplanation(){this.actions = new ArrayList<Action>();}
     public AdaptionExplanation(int caseID){
@@ -52,10 +53,15 @@ public class AdaptionExplanation implements Explanation{
         this.caseID = caseID;
     }
 
-    public void addAction(Action action){
-        currentAction = action;
-        if(!actionNotExists(action))
-        actions.add(action);
+    public Action addAction(Action action){
+        if(actionExists(action)){
+            currentAction = actions.get(actionPos);
+        }
+        else{
+            actions.add(action);
+            currentAction = action;
+        }
+        return currentAction;
     }
 
     public Action getCurrentAction(){
@@ -63,13 +69,22 @@ public class AdaptionExplanation implements Explanation{
     }
   
     public String generateExplanation() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("------------------------------------------\n");
+        System.out.println("Justification expl case: "+caseID+"\n");
+        for (Action action : actions) {
+            action.generateExplanation();
+        }
+        return "";
     }
 
-    private boolean actionNotExists(Action action) {
+    private boolean actionExists(Action action) {
+        int pos = 0;
         for (Action act : actions) {
-            if(act.equals(action))
+            if(act.equals(action)){
+                actionPos = pos;
                 return true;
+            }
+            pos++;
         }
         return false;
     }

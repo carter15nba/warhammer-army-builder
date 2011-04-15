@@ -22,7 +22,7 @@ import myrmidia.Explanation.CaseExplanation;
 import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.Warhammer.Army;
 import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
-import myrmidia.Util.Enums.Mode;
+import myrmidia.Enums.Mode;
 
 /**
  * Class to calculate the similarity mesaure between two armies.

@@ -17,12 +17,12 @@
     <many-to-one cascade="all" class="myrmidia.Warhammer.Army" column="army_ID" lazy="false" name="army" unique="true"/>
     <property column="OPPONENT_RACE" length="20" name="opponent">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Util.Enums.Races</param>
+        <param name="enumClassName">myrmidia.Enums.Races</param>
       </type>
     </property>
     <property column="OUTCOME" length="10" name="outcome">
       <type name="jcolibri.connector.databaseutils.EnumUserType">
-        <param name="enumClassName">myrmidia.Util.Enums.Outcomes</param>
+        <param name="enumClassName">myrmidia.Enums.Outcomes</param>
       </type>
     </property>
   </class>

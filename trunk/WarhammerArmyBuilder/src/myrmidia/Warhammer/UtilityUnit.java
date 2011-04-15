@@ -17,7 +17,7 @@
 
 package myrmidia.Warhammer;
 
-import myrmidia.Util.Enums.UnitType;
+import myrmidia.Enums.UnitType;
 
 /**
  * Class representing a utility unit. A utility unit is classified as either

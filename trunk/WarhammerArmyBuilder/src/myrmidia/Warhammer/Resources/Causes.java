@@ -17,7 +17,7 @@
 
 package myrmidia.Warhammer.Resources;
 
-import myrmidia.Util.Enums.Messages;
+import myrmidia.Enums.Messages;
 import myrmidia.Warhammer.Unit;
 
 /**
