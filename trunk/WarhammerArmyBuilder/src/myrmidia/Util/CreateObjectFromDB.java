@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.naming.ldap.HasControls;
 import myrmidia.Database.Connector;
 import myrmidia.Database.DatabaseManager;
 import myrmidia.Enums.ArmyType;
@@ -33,7 +34,7 @@ import org.hibernate.Session;
 /**
  * Class to create a unit with all the unit data from the database
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.5
  */
 public class CreateObjectFromDB {
 
@@ -47,9 +48,7 @@ public class CreateObjectFromDB {
      * </ul>
      */
     public static Unit createUnitFromDB(String unitName){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        Connector conn = dbm.connect();
-        Session session = conn.getSession();
+        Session session = getSession();
         List ret = session.getNamedQuery("Unit.getUnit")
                 .setString("name", unitName)
                 .list();
@@ -67,9 +66,7 @@ public class CreateObjectFromDB {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Unit> findRaceAndArmyTypeUnits(Races race ,ArmyType aT){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        Connector conn = dbm.connect();
-        Session session = conn.getSession();
+        Session session = getSession();
         ArrayList<Unit> units;
         units = (ArrayList<Unit>) session.getNamedQuery("Unit.getRaceAndArmyUnits")
                 .setString("race", race.toString())
@@ -88,9 +85,7 @@ public class CreateObjectFromDB {
      */
     @SuppressWarnings("unchecked")
     public static Set<Equipment> getAllEquipment(Races unitRace, int magicPoints){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        Connector conn = dbm.connect();
-        Session session = conn.getSession();
+        Session session  = getSession();
         List<Equipment> equipment;
         equipment = (List<Equipment>) session.getNamedQuery("Equipment.all")
                 .setString("race", unitRace.toString())
@@ -109,9 +104,7 @@ public class CreateObjectFromDB {
      */
     @SuppressWarnings("unchecked")
     public static Set<Equipment> getRaceEquipment(Races unitRace, int magicPoints){
-        DatabaseManager dbm = DatabaseManager.getInstance();
-        Connector conn = dbm.connect();
-        Session session = conn.getSession();
+        Session session = getSession();
         List<Equipment> equipment;
         equipment = (List<Equipment>) session.getNamedQuery("Equipment.Race")
                 .setString("race", unitRace.toString())
@@ -119,5 +112,39 @@ public class CreateObjectFromDB {
                 .list();
         session.close();
         return new HashSet<Equipment>(equipment);
+    }
+
+    /**
+     * Method which aquires all eligible battle standards (used by
+     * BSB's) for the supplied race. No point limitation is present when
+     * creating a BSB.
+     * @param unitRace Races The race of the army to get the BSB
+     * @return The collection of eligible standards
+     */
+    public static Set<Equipment> getBattleStandards(Races unitRace){
+        Session session = getSession();
+        String namedQuery;
+        List<Equipment> standards;
+        if(unitRace==Races.Dwarfs)
+            namedQuery  = "Equipment.BSBRace";
+        else
+            namedQuery = "Equipment.BSBAll";
+        standards = (List<Equipment>)session.getNamedQuery(namedQuery)
+                    .setString("race", unitRace.toString())
+                    .list();
+        session.close();
+        return new HashSet<Equipment>(standards);
+
+    }
+
+    /**
+     * Method which connects to the database and return a session
+     * in which to access the database
+     * @return A database session
+     */
+    private static Session getSession(){
+        DatabaseManager dbm = DatabaseManager.getInstance();
+        Connector conn = dbm.connect();
+        return conn.getSession();
     }
 }

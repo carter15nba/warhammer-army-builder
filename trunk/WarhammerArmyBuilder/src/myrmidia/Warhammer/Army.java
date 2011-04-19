@@ -20,6 +20,7 @@ package myrmidia.Warhammer;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
+import myrmidia.Enums.ArmyType;
 import myrmidia.Enums.ItemType;
 import myrmidia.Enums.Races;
 
@@ -186,6 +187,43 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
             for (ArmyUnit au : armyUnits) {
                 Unit auu = au.getUnit();
                 if(unit.getName().equals(auu.getName()))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Method which checks if the army contain at least one BSB
+     * @param armyUnits The collection of army units belonging to the army
+     * to check if have a BSB
+     * @return <ul><li>true - if at least one unit in the army is a BSB</li>
+     * <li>false - if no units in the army is a BSB, or if no units in the
+     * army can be a BSB</li></ul>
+     */
+    public static boolean doesArmyHaveBattleStandardBearer(Set<ArmyUnit> armyUnits){
+        for (ArmyUnit au : armyUnits) {
+            if(au.isBattleStandardBearer())
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method to check if the army does contain a general. An army must have a
+     * general in order to be a army. All lords and heros may be a general, unless
+     * it is a BSB
+     * @param armyUnits The collection of units in the army
+     * @return <ul><li>true - if there is at least one unit in the army which
+     * qualifies to be a general</li>
+     * <li>false - if no units in the army qualifies to be a general</li></ul>
+     */
+    public static boolean haveGeneral(Set<ArmyUnit> armyUnits){
+        for (ArmyUnit armyUnit : armyUnits) {
+            Unit unit = armyUnit.getUnit();
+            ArmyType at = unit.getArmyType();
+            if(at==ArmyType.Lord||at==ArmyType.Hero){
+                if(!armyUnit.isBattleStandardBearer())
                     return true;
             }
         }

@@ -27,16 +27,18 @@ import myrmidia.Warhammer.Case;
 /**
  *
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.5
  */
 public class ExplanationEngine{
 
     private List<CaseExplanation> caseExplanations;
     private List<AdaptionExplanation> adaptionExplanations;
+    private List<ExchangeRaceExplanation> exchangeRaceExplanations;
 
     private ExplanationEngine(){
         caseExplanations = new ArrayList<CaseExplanation>();
         adaptionExplanations = new ArrayList<AdaptionExplanation>();
+        exchangeRaceExplanations = new ArrayList<ExchangeRaceExplanation>();
     }
 
     public static ExplanationEngine getInstance(){
@@ -137,7 +139,9 @@ public class ExplanationEngine{
     public String generateJustificationExplanations() {
         String ret="\nGenerating justification explanations!\n\n";
         for (AdaptionExplanation ae : adaptionExplanations) {
-            ret+=ae.generateExplanation()+"\n\n";
+            ret += "Case #"+ae.getCaseID()+"\n";
+            ret += generateRaceExchangeExplanation(ae.getCaseID())+"\n";
+            ret += ae.generateExplanation()+"\n\n";
         }
         return ret;
     }
@@ -145,8 +149,29 @@ public class ExplanationEngine{
     public String generateJustificationExplanation(int index) {
         String ret = "\nGenerating the justification for the desired case!\n\n";
         if(index>0&&index<adaptionExplanations.size()){
-            ret = adaptionExplanations.get(index).generateExplanation();
+            AdaptionExplanation expl = adaptionExplanations.get(index);
+            ret += generateRaceExchangeExplanation(expl.getCaseID())+"\n";
+            ret = expl.generateExplanation();
         }
         return ret;
+    }
+
+    public void addExchangeRaceExplanation(ExchangeRaceExplanation expl){
+        exchangeRaceExplanations.add(expl);
+    }
+
+    public ExchangeRaceExplanation getCurrentExchangeRaceExplanation(){
+        int index = exchangeRaceExplanations.size()-1;
+        if(index<0)
+            return new ExchangeRaceExplanation();
+        return exchangeRaceExplanations.get(index);
+    }
+
+    public String generateRaceExchangeExplanation(int caseID){
+        for (ExchangeRaceExplanation expl : exchangeRaceExplanations) {
+            if(expl.getCaseID()==caseID)
+                return expl.generateExplanation();
+        }
+        return "";
     }
 }

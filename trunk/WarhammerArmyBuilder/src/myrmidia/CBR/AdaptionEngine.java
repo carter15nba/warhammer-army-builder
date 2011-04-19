@@ -43,6 +43,7 @@ public class AdaptionEngine {
     private int armyPoints;
     private ExplanationEngine explEng;
     private AdaptionExplanation currentExpl;
+    private int caseID;
 
     /**
      * Default constructor
@@ -86,6 +87,7 @@ public class AdaptionEngine {
         Case adaptedCase = Case.copy(_case);
         Case queryCase = (Case) query.getDescription();
         armyPoints = queryCase.getArmy().getArmyPoints();
+        caseID = adaptedCase.getID();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Outcomes.Unknown);
         adaptedCase.getArmy().setPlayerRace(queryCase.getArmy().getPlayerRace());
@@ -219,7 +221,7 @@ public class AdaptionEngine {
                     increasePointUsage(army, messages, rule, message);
                     break;
                 case WRONG_RACE:
-                    ExchangeRace exRace = new ExchangeRace();
+                    ExchangeRace exRace = new ExchangeRace(caseID);
                     army = exRace.adaptRace(army);
                     break;
                 //If an unknown or untreatable error message is encountered.
@@ -270,7 +272,12 @@ public class AdaptionEngine {
             Unit causeUnit = cause.getUnit();
             Set<ArmyUnit> armyUnits = army.getArmyUnits();
             for(ArmyUnit armyUnit : armyUnits){
-                if(armyUnit.getUnit().getName().contentEquals(causeUnit.getName())){
+                Unit unit = armyUnit.getUnit();
+                ArmyType at = unit.getArmyType();
+                UnitType ut = unit.getUnitType();
+                if(at==ArmyType.Hero||at==ArmyType.Lord||ut==UnitType.WM)
+                    continue;
+                if(unit.getName().contentEquals(causeUnit.getName())){
                     if(armyUnit.getNumberOfUnits()<causeUnit.getMinNumber()){
                         armyUnit.setNumberOfUnits(causeUnit.getMinNumber()*2);
                         Action currentAct = currentExpl.addAction(new Action(message, armyUnit));
@@ -351,7 +358,6 @@ public class AdaptionEngine {
             diff = Math.abs(rs.getHeroPointDifference());
         //If the difference in used points are more than 100, remove the cheapest
         //character
-        System.err.println("Hero/Lord difference: "+diff);
         if(diff>50){
             removeOneCharacter(army, aT, message);
             return;
@@ -489,6 +495,10 @@ public class AdaptionEngine {
                     //Check if the reduction in group unit is sufficient to
                     //remove the error
                     boolean found = false;
+                    ArmyType at = armyUnit.getUnit().getArmyType();
+                    UnitType ut = armyUnit.getUnit().getUnitType();
+                    if(at==ArmyType.Lord||at==ArmyType.Hero||ut==UnitType.WM)
+                        continue;
                     while(numU>minU){
                         numU--;
                         armyUnit.setNumberOfUnits(numU);
@@ -529,6 +539,10 @@ public class AdaptionEngine {
             if(msg==Messages.TOO_MANY_UNITS_IN_GROUP){
                 for (ArmyUnit armyUnit : army.getArmyUnits()) {
                     Unit unit = armyUnit.getUnit();
+                    ArmyType at = unit.getArmyType();
+                    UnitType ut = unit.getUnitType();
+                    if(at==ArmyType.Lord||at==ArmyType.Hero||ut==UnitType.WM)
+                        continue;
                     if(unit.getName().contentEquals(cause.getUnit().getName())){
                         int maxN = unit.getMaxNumber();
                         int numU = armyUnit.getNumberOfUnits();
@@ -685,15 +699,16 @@ public class AdaptionEngine {
                 ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(
                         army.getArmyUnits(), next);
                 Unit unit = armyUnit.getUnit();
-                ArmyType uAT = unit.getArmyType();
-                if(uAT!=ArmyType.Hero||uAT!=ArmyType.Lord){
-                    int numUnits = armyUnit.getNumberOfUnits();
-                    if(numUnits<unit.getMaxNumber()||unit.getMaxNumber()==0){
-                        armyUnit.setNumberOfUnits(numUnits+5);
-                        Action currentAct = currentExpl.addAction(new Action(message, armyUnit));
-                        currentAct.addRule(Actions.Increased_Unit_Size);
-                        break;
-                    }
+                ArmyType at = unit.getArmyType();
+                UnitType ut = unit.getUnitType();
+                if(at==ArmyType.Lord||at==ArmyType.Hero||ut==UnitType.WM)
+                    continue;
+                int numUnits = armyUnit.getNumberOfUnits();
+                if(numUnits<unit.getMaxNumber()||unit.getMaxNumber()==0){
+                    armyUnit.setNumberOfUnits(numUnits+5);
+                    Action currentAct = currentExpl.addAction(new Action(message, armyUnit));
+                    currentAct.addRule(Actions.Increased_Unit_Size);
+                    break;
                 }
             }
         }

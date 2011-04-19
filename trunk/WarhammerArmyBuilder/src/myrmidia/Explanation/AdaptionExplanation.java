@@ -54,15 +54,15 @@ public class AdaptionExplanation implements Explanation{
     }
 
     public Action addAction(Action action){
-//        if(actionExists(action)){
-//            currentAction = actions.get(actionPos);
-//        }
-//        else{
-//            actions.add(action);
-//            currentAction = action;
-//        }
-        actions.add(action);
-        currentAction = action;
+        if(actionExists(action)){
+            currentAction = actions.get(actionPos);
+        }
+        else{
+            actions.add(action);
+            currentAction = action;
+        }
+//        actions.add(action);
+//        currentAction = action;
         return currentAction;
     }
 

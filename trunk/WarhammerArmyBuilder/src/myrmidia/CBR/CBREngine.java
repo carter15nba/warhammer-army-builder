@@ -142,6 +142,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 CBRCase cc = new CBRCase();
                 cc.setDescription(retrievalResult.get_case().getDescription());
                 cc.setSolution(adaptedCase);
+                PrintFactory.printCase(adaptedCase, true);
                 cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
                 ncbr.add(cc);
             }
@@ -223,7 +224,9 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
                 cbrEngine.postCycle();
                 ExplanationEngine eng = ExplanationEngine.getInstance();
+                System.out.println(eng.generateTransparencyExplanations());
                 System.out.println(eng.generateJustificationExplanations());
+                
             }
             System.exit(0);
         }
