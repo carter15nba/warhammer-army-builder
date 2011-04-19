@@ -52,6 +52,7 @@ public class CommonAdaptionFunctions {
     private int magicPointThreshold = 10;
     private double fullCommandPercentage = 0.8;
     private int minNumberMultiplier = 3;
+    private double mostSimilarUnitSimilarity;
 
     /**
      * Default constructor, initializes a new unit similarity object where all
@@ -132,6 +133,7 @@ public class CommonAdaptionFunctions {
                 if(simil>mostSimilar||mostSimilar==0){
                     mostSimilar = simil;
                     returnUnit = newUnit;
+                    mostSimilarUnitSimilarity = simil;
                 }
             }
             catch (NoApplicableSimilarityFunctionException ex) {}
@@ -302,7 +304,10 @@ public class CommonAdaptionFunctions {
         int giveEquipment = random.nextInt(2);
         if(giveEquipment==0)
             return;
-        int threshold = (availableEquipment.size()/this.equipmentThreshold)+1;
+        int eqSize = availableEquipment.size();
+        int threshold = equipmentThreshold;
+        if(eqSize<equipmentThreshold)
+            threshold = eqSize;
         int numEquipment = random.nextInt(threshold)+1;
         for(int i = 0; i<numEquipment; i++){
             int next = random.nextInt(availableEquipment.size());
@@ -479,10 +484,17 @@ public class CommonAdaptionFunctions {
             magicalEquipment = CreateObjectFromDB.getAllEquipment(
                     newCharacter.getRace(),
                     newCharacter.getMagicPoints());
-        assignReqularEquipment(newArmyUnit);
-        assignMagicEquipment(newArmyUnit, magicalEquipment,army.getArmyPoints(),
+
+        if(!Army.doesArmyHaveBattleStandardBearer(army.getArmyUnits())
+                &&newCharacter.canBeBattleStandardBearer()){
+            createBattleStandardBearer(newArmyUnit);
+            assignReqularEquipment(newArmyUnit);
+        }
+        else{
+            assignMagicEquipment(newArmyUnit, magicalEquipment,army.getArmyPoints(),
                 army.calculateCost());
-        assignUtilityUnit(newArmyUnit, army.getArmyPoints(), army.calculateCost());
+            assignUtilityUnit(newArmyUnit, army.getArmyPoints(), army.calculateCost());
+        }
         return newArmyUnit;
     }
 
@@ -588,4 +600,36 @@ public class CommonAdaptionFunctions {
         tempUsedID.add(new Integer(r));
         return r;
     }
+
+    /**
+     * Method which assigns the battle standard bearer upgrade to the
+     * unit and assigns the unit with a random standard from the list
+     * of eligible standards
+     * @param armyUnit The ArmyUnit to be promoted to BSB
+     */
+    public void createBattleStandardBearer(ArmyUnit armyUnit){
+        //Promote unit to BSB
+        Unit unit = armyUnit.getUnit();
+        Set<Equipment> eq = unit.getEquipment();
+        for (Equipment equipment : eq) {
+            if(equipment.getName().equals("Battle standard bearer"))
+                armyUnit.getEquipment().add(equipment);
+        }
+        Set<Equipment> std = CreateObjectFromDB.getBattleStandards(unit.getRace());
+        int pos = random.nextInt(std.size());
+        Equipment standard = (Equipment) CollectionControl.getItemAt(std, pos);
+        armyUnit.getEquipment().add(standard);
+        System.err.println("Promoted: "+unit.getName()+", to BSB: "+standard.getName());
+    }
+
+    /**
+     * This metod returns the last most similar unit similarity calcualted. Note
+     * that this method is <u>not</u> Thread safe, and no guarantee is made that
+     * the similarity returned is the requeted similarity
+     * @return double The last most similar unit similarity calculated
+     */
+    public double getLastMostSimilarUnitSimilarity(){
+        return mostSimilarUnitSimilarity;
+    }
+
 }

@@ -102,7 +102,7 @@ public class RuleSet {
         calculatePointsUsage(army);
         calculateTotalCost();
         verifyLegalPointDistribution(); 
-        if(heroCost==0&&lordCost==0)
+        if(!Army.haveGeneral(army.getArmyUnits()))
             errorManager.addError(Messages.NO_ARMY_GENERAL);
         if(totalCost>armyPoints)
             errorManager.addError(Messages.TOO_MANY_POINTS_TOTAL);

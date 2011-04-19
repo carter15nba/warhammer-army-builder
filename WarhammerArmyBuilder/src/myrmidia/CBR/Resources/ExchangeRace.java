@@ -22,6 +22,10 @@ import java.util.HashSet;
 import java.util.Set;
 import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Enums.ArmyType;
+import myrmidia.Explanation.ExchangeRaceExplanation;
+import myrmidia.Explanation.ExplanationEngine;
+import myrmidia.Explanation.Resources.Exchange;
+import myrmidia.Util.CollectionControl;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Unit;
@@ -35,31 +39,39 @@ import myrmidia.Warhammer.Unit;
 public class ExchangeRace {
 
     private CommonAdaptionFunctions cAF;
+    private ExchangeRaceExplanation currentExplanation;
+    private int caseID;
 
     /**
      * Default constructor
+     * @param caseID int The ID of the case to be adapted
      */
-    public ExchangeRace(){
+    public ExchangeRace(int caseID){
         cAF = new CommonAdaptionFunctions(new UnitSimilarity());
+        this.caseID = caseID;
     }
 
     /**
      * Constructor which references the allready preconfigured UnitSimilarity
      * object.
+     * @param caseID int The ID of the case to be adapted
      * @param unitSimilarity The preconfigured UnitSimilarity object
      */
-    public ExchangeRace(UnitSimilarity unitSimilarity){
+    public ExchangeRace(int caseID, UnitSimilarity unitSimilarity){
        cAF = new CommonAdaptionFunctions(unitSimilarity);
+       this.caseID = caseID;
     }
 
     /**
      * Constructor which references the allready preconfigured
      * CommonAdaptionFunction object. The UnitSimilarity object is collected
      * from the CommonAdaptionFunction object
+     * @param caseID int The ID of the case to be adapted
      * @param caf The preconfigured CommmonAdaptionFnctions object
      */
-    public ExchangeRace(CommonAdaptionFunctions caf){
+    public ExchangeRace(int caseID, CommonAdaptionFunctions caf){
         cAF = caf;
+        this.caseID = caseID;
     }
 
     /**
@@ -70,6 +82,12 @@ public class ExchangeRace {
      * @return The adapted/exchanged army
      */
     public Army adaptRace(Army army){
+        ArmyUnit au = (ArmyUnit)CollectionControl.getItemAt(army.getArmyUnits(), 0);
+
+        currentExplanation = new ExchangeRaceExplanation(caseID,
+                au.getUnit().getRace(),
+                army.getPlayerRace());
+        ExplanationEngine.getInstance().addExchangeRaceExplanation(currentExplanation);
         cAF.resetUsedMagicalEquipment();
         Army adaptedRaceArmy = Army.copy(army);
         adaptedRaceArmy.setArmyUnits(exchangeAllUnits(army));
@@ -110,8 +128,9 @@ public class ExchangeRace {
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = cAF.createNewCharacter(oldArmy, mostSimilarUnit);
                 lords.add(newArmyUnit);
-                System.out.println("exchanged: "+oldUnit.getName()+
-                        " with: "+mostSimilarUnit.getName());
+                currentExplanation.addExchange(new Exchange(oldUnit.getName(),
+                        mostSimilarUnit.getName(),
+                        cAF.getLastMostSimilarUnitSimilarity()));
             }
         }
         return lords;
@@ -135,8 +154,9 @@ public class ExchangeRace {
                 mostSimilarUnit = cAF.findMostSimilarUnit(oldUnit, applicableUnits);
                 ArmyUnit newArmyUnit = cAF.createNewCharacter(oldArmy, mostSimilarUnit);
                 heroes.add(newArmyUnit);
-                System.out.println("exchanged: "+oldUnit.getName()+
-                        " with: "+mostSimilarUnit.getName());
+                currentExplanation.addExchange(new Exchange(oldUnit.getName(),
+                        mostSimilarUnit.getName(),
+                        cAF.getLastMostSimilarUnitSimilarity()));
             }
         }
         return heroes;
@@ -165,9 +185,9 @@ public class ExchangeRace {
                 if(oldArmyUnit.haveFullCommand()&&mostSimilarUnit.isEligibleForFullCommand())
                     newArmyUnit.giveUnitFullCommand();
                 core.add(newArmyUnit);
-                System.out.println("exchanged: "+oldUnit.getName()
-                        +" with: "+mostSimilarUnit.getName()+
-                        ", gave full command: "+newArmyUnit.haveFullCommand());
+                currentExplanation.addExchange(new Exchange(oldUnit.getName(),
+                        mostSimilarUnit.getName(),
+                        cAF.getLastMostSimilarUnitSimilarity()));
             }
         }
         return core;
@@ -196,9 +216,9 @@ public class ExchangeRace {
                 if(oldArmyUnit.haveFullCommand()&&mostSimilarUnit.isEligibleForFullCommand())
                     newArmyUnit.giveUnitFullCommand();
                 special.add(newArmyUnit);
-                System.out.println("exchanged: "+oldUnit.getName()+" with: "+
-                        mostSimilarUnit.getName()+
-                        ", gave full command: "+newArmyUnit.haveFullCommand());
+                currentExplanation.addExchange(new Exchange(oldUnit.getName(),
+                        mostSimilarUnit.getName(),
+                        cAF.getLastMostSimilarUnitSimilarity()));
             }
         }
         return special;
@@ -223,8 +243,9 @@ public class ExchangeRace {
                 newArmyUnit.setUnit(mostSimilarUnit);
                 newArmyUnit.setNumberOfUnits(oldArmyUnit.getNumberOfUnits());
                 rare.add(newArmyUnit);
-                System.out.println("exchanged: "+oldUnit.getName()+
-                        " with: "+mostSimilarUnit.getName());
+                currentExplanation.addExchange(new Exchange(oldUnit.getName(),
+                        mostSimilarUnit.getName(),
+                        cAF.getLastMostSimilarUnitSimilarity()));
             }
         }
         return rare;
