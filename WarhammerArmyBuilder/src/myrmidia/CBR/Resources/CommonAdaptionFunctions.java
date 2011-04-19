@@ -158,7 +158,8 @@ public class CommonAdaptionFunctions {
             for(Unit availableUnit : availableUnits){
                 try {
                     if((restrictUsedUnits)&&
-                            (unitIsInSet(usedUnits,availableUnit)))
+                            (unitIsInSet(usedUnits,availableUnit))&&
+                            (Army.doesArmyContainUniqueUnit(existingUnits, armyUnit)))
                             continue;
                     double simil = unitSimilarity.compute(existingUnit,
                             availableUnit);
@@ -585,7 +586,6 @@ public class CommonAdaptionFunctions {
         }
         while(tempUsedID.contains(new Integer(r)));
         tempUsedID.add(new Integer(r));
-        System.out.println("new random temp id: "+r);
         return r;
     }
 }
