@@ -95,7 +95,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
 
         Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
-////        revise();
+//        revise();
 //        retain(cbr);
     }
 

@@ -171,4 +171,24 @@ public class Army implements jcolibri.cbrcore.CaseComponent{
         Unit unit = army.getUnit();
         return army.getNumberOfUnits()*unit.getCost();
     }
+
+    /**
+     * Method which checks if a unique unit is present in the army
+     * @param armyUnits The list of army units in the army
+     * @param armyUnit The army unit to check.
+     * @return <ul><li>true - if the unique unit is present in the army</li>
+     * <li>false - if the unique unit not is present in the army, or if the unit
+     * not is a unique unit</li></ul>
+     */
+    public static boolean doesArmyContainUniqueUnit(Set<ArmyUnit> armyUnits, ArmyUnit armyUnit){
+        Unit unit = armyUnit.getUnit();
+        if(unit.isUniqueUnit()) {
+            for (ArmyUnit au : armyUnits) {
+                Unit auu = au.getUnit();
+                if(unit.getName().equals(auu.getName()))
+                    return true;
+            }
+        }
+        return false;
+    }
 }

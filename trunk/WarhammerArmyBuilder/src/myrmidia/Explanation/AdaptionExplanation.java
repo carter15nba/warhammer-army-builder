@@ -54,13 +54,15 @@ public class AdaptionExplanation implements Explanation{
     }
 
     public Action addAction(Action action){
-        if(actionExists(action)){
-            currentAction = actions.get(actionPos);
-        }
-        else{
-            actions.add(action);
-            currentAction = action;
-        }
+//        if(actionExists(action)){
+//            currentAction = actions.get(actionPos);
+//        }
+//        else{
+//            actions.add(action);
+//            currentAction = action;
+//        }
+        actions.add(action);
+        currentAction = action;
         return currentAction;
     }
 
@@ -69,12 +71,13 @@ public class AdaptionExplanation implements Explanation{
     }
   
     public String generateExplanation() {
-        System.out.println("------------------------------------------\n");
-        System.out.println("Justification expl case: "+caseID+"\n");
+        String ret = "";
         for (Action action : actions) {
+            ret += "The unit/formation: "+action.getAffectedArmyUnit().getUnit().getName()+", where changed based on:\n" +
             action.generateExplanation();
+            
         }
-        return "";
+        return ret;
     }
 
     private boolean actionExists(Action action) {

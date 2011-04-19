@@ -173,67 +173,53 @@ public class AdaptionEngine {
             switch(message){
                 case TOO_FEW_CORE_POINTS:
                     units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
-                        army.getPlayerRace(), ArmyType.Core);
-                    System.err.println(message);
+                    army.getPlayerRace(), ArmyType.Core);
                     addUnitGroup(army, units, message);
                     break;
                 case TOO_FEW_POINTS_TOTAL:
-                    System.err.println(message);
                     increasePointUsage(army, messages, rule, message);
                     break;
                 case TOO_FEW_UNITS_IN_GROUP:
                     causes = rule.getCauses(message);
-                    System.err.println(message);
                     increaseGroupUnits(army,causes, message);
                     break;
                 case TOO_MANY_DUPLIACTE_SPECIAL_UNITS:
                     causes = rule.getCauses(message);
-                    System.err.println(message);
                     decreaseDuplicates(army,causes, message);
                     break;
                 case TOO_MANY_DUPLICATE_RARE_UNITS:
                     causes = rule.getCauses(message);
-                    System.err.println(message);
                     decreaseDuplicates(army,causes, message);
                     break;
                 case TOO_MANY_HERO_POINTS:
-                    System.err.println(message);
                     reduceCharacterPoints(army, ArmyType.Hero, rule, message);
                     break;
                 case TOO_MANY_LORD_POINTS:
-                    System.err.println(message);
                     reduceCharacterPoints(army, ArmyType.Lord, rule, message);
                     break;
                 case TOO_MANY_POINTS_TOTAL:
-                    System.err.println(message);
                     reducePointsTotal(army, messages, rule, message);
                     break;
                 case TOO_MANY_RARE_POINTS:
-                    System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, ArmyType.Rare,
                             messages, message, rule);
                     break;
                 case TOO_MANY_SPECIAL_POINTS:
-                    System.err.println(message);
                     reduceSpecialOrRareGroupPoints(army, ArmyType.Special,
                             messages, message, rule);
                     break;
                 case TOO_MANY_UNITS_IN_GROUP:
                     causes = rule.getCauses();
-                    System.err.println(message);
                     reduceNumberOfUnitsInGroup(army, causes, message);
                     break;
                 case NO_ARMY_GENERAL:
-                    System.err.println(message);
                     addGeneral(army, message);
                     break;
                 case TOO_FEW_GROUPS:
-                    System.err.println(message);
                     increasePointUsage(army, messages, rule, message);
                     break;
                 case WRONG_RACE:
                     ExchangeRace exRace = new ExchangeRace();
-                    System.err.println(message);
                     army = exRace.adaptRace(army);
                     break;
                 //If an unknown or untreatable error message is encountered.
@@ -289,8 +275,6 @@ public class AdaptionEngine {
                         armyUnit.setNumberOfUnits(causeUnit.getMinNumber()*2);
                         Action currentAct = currentExpl.addAction(new Action(message, armyUnit));
                         currentAct.addRule(Actions.Increased_Unit_Size);
-                        System.out.println("Increasing group units: "+
-                                armyUnit.getUnit().getName());
                         break;
                     }
                 }
@@ -687,10 +671,11 @@ public class AdaptionEngine {
             if(cAF.applyFullCommand(army,null)){
                 for(ArmyUnit armyUnit : army.getArmyUnits()){
                     Unit unit = armyUnit.getUnit();
-                    if(unit.isEligibleForFullCommand()&&!armyUnit.haveFullCommand())
+                    if(unit.isEligibleForFullCommand()&&!armyUnit.haveFullCommand()){
                         armyUnit.giveUnitFullCommand();
                         Action currentAct = currentExpl.addAction(new Action(message, armyUnit));
                         currentAct.addRule(Actions.Added_Full_Command);
+                    }
                 }
                 return;
             }

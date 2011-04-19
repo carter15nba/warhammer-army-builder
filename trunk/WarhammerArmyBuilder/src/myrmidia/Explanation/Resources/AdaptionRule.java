@@ -37,13 +37,13 @@ public class AdaptionRule {
         private static final AdaptionRule INSTANCE = new AdaptionRule();
     }
     public String getRuleDescription(Actions key){
-        return rd.get(key);
+        return key.toString()+": "+rd.get(key);
     }
     private void initDescriptions(){
         rd = new HashMap<Actions, String>();
         rd.put(Actions.Added_Character, "Added a character to increase the point usage");
         rd.put(Actions.Added_Core_Group, "Added a new core group to increase the point usage");
-        rd.put(Actions.Added_Core_Group_Few, "Added a new core group since there were too few core groups according to the game rules");
+        rd.put(Actions.Added_Core_Group_Few, "Added a new core group since there were too few core groups");
         rd.put(Actions.Added_Equipment, "Added equipment to increase point usage and unit efficiency");
         rd.put(Actions.Added_Full_Command, "Added full command to the unit to increase point usage and unit efficiency");
         rd.put(Actions.Added_General, "Added a general since there were no general in the army");
@@ -52,11 +52,11 @@ public class AdaptionRule {
         rd.put(Actions.Added_Special_Group, "Added a special group/unit to the army to increase point usage");
         rd.put(Actions.Added_Utility, "Added a utility unit to increase point usage and unit efficiency");
         rd.put(Actions.Decreased_Unit_Cost, "Decreased unit cost by:");
-        rd.put(Actions.Decreased_Unit_Size, "Deceased fomration size to bring it below the maximum formation size limot, ot to decrease point usage");
+        rd.put(Actions.Decreased_Unit_Size, "Deceased formation size to bring it below the maximum formation size limit, or to decrease point usage");
         rd.put(Actions.Increased_Unit_Size, "Increased the unit size, since there were too few units in the formation to meet the minimum size requirement");
-        rd.put(Actions.Least_Expensive_Unit, "Found the least expensive unit/formation with the desired army type in order to remove it. The removal of the least expensive unit is likly to have the least impact on the army");
+        rd.put(Actions.Least_Expensive_Unit, "Found the least expensive unit/formation with the desired army type in order to remove it. The removal of the least expensive unit will have the least impact on the army point usage");
         rd.put(Actions.Least_Similar_Unit, "Found the least similar unit to the units/formations already in the army with the given army type. To add the least similar unit is probably a good idea, in order to improve the army");
-        rd.put(Actions.Most_Expensive_Unit, "Found the most expensive unit/formation with the desired army type. In order to reduce the cost by reducing the formation size or remove equipment/utility unit ");
+        rd.put(Actions.Most_Expensive_Unit, "Found the most expensive unit/formation with the desired army type. In order to reduce the cost, by reducing the formation size or remove equipment/utility unit ");
         rd.put(Actions.Most_Similar_Unit, "Found the most similar unit to a unit in the army with the given army type. This is done to find the \"best\" candidated to exchange a unit with");
         rd.put(Actions.Removed_Character, "Removed a character to reduce the total points used");
         rd.put(Actions.Removed_Core_Group, "Removed a core group to reduce the total points used");

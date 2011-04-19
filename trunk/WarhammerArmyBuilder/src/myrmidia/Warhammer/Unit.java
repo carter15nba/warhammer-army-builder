@@ -516,4 +516,18 @@ public class Unit extends CoreUnit{
             return true;
         return false;
     }
+
+    /**
+     * Method to check if the unit is unique, a unique unit may only be present
+     * in once in the same army
+     * @return <ul>true - if the unit is unique<li>
+     * </li>false - if the unit not is unique<li></li>/ul>
+     */
+    public boolean isUniqueUnit(){
+        if(armyType==ArmyType.Hero||armyType==ArmyType.Lord){
+            if(super.getMaxNumber()==0)
+                return true;
+        }
+        return false;
+    }
 }

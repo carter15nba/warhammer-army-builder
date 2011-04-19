@@ -35,6 +35,7 @@ public class Action implements Explanation{
     private Messages message;
     private List<Actions> adaptionRules;
     private ArmyUnit affectedArmyUnit;
+    private boolean usedInExplanation;
 
     /**
      * Constructor used to set the action and message on instantiation
@@ -45,6 +46,7 @@ public class Action implements Explanation{
         this.message = message;
         adaptionRules = new ArrayList<Actions>();
         this.affectedArmyUnit = armyUnit;
+        usedInExplanation = false;
     }
 
     /**
@@ -92,14 +94,25 @@ public class Action implements Explanation{
 
     public String generateExplanation() {
         AdaptionRule ar = AdaptionRule.getInstance();
-        String ret ="Unit/formation: "+affectedArmyUnit.getUnit().getName()+
-                ", were adapted based on the following error messages\n";
+        String ret = "  Error: "+message+", where the following action(s) taken:\n";
         for (Actions action : adaptionRules) {
-            System.out.println(ar.getRuleDescription(action));
+            ret += "    "+ar.getRuleDescription(action)+"\n";
         }
+        return ret;
+    }
 
+    /**
+     * @return the usedInExplanation
+     */
+    public boolean isUsedInExplanation() {
+        return usedInExplanation;
+    }
 
-        return "";
+    /**
+     * @param usedInExplanation the usedInExplanation to set
+     */
+    public void setUsedInExplanation(boolean usedInExplanation) {
+        this.usedInExplanation = usedInExplanation;
     }
 
 }
