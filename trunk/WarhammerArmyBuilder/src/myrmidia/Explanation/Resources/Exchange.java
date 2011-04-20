@@ -20,7 +20,7 @@ package myrmidia.Explanation.Resources;
 import myrmidia.Explanation.Explanation;
 
 /**
- * Class which stores the infomration neccessary explain what changes were
+ * Class which stores the information neccessary explain what changes were
  * made during the race exchange process
  * @author Glenn Rune Strandbråten
  * @version 0.2
@@ -33,7 +33,7 @@ public class Exchange implements Explanation{
 
     /**
      * Constructor
-     * @param origialUnit String the name of the origivnal unit
+     * @param originalUnit String the name of the origivnal unit
      * @param replacementUnit String the name of the unit that replaced the 
      * original unit
      * @param similarity Double The similarity between the original and the 

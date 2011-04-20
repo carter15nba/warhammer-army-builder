@@ -21,24 +21,40 @@ import java.util.HashMap;
 import myrmidia.Enums.Actions;
 
 /**
- *
+ * Singleton class mapping adaption Actions to the explanation text
  * @author Glenn Rune Strandbråten
  * @version 0.1
  */
 public class AdaptionRule {
 
     private HashMap<Actions,String> rd;
-    
+
+    /** Default constructor */
     private AdaptionRule(){initDescriptions();}
+    /**
+     * Method to aquire the singleton instance of this class
+     * @return AdaptionRule singleton instance
+     */
     public static AdaptionRule getInstance(){
         return AdaptionRuleHolder.INSTANCE;
     }
     private static class AdaptionRuleHolder{
         private static final AdaptionRule INSTANCE = new AdaptionRule();
     }
+
+    /**
+     * Method to aquire the explanation text mapped to the supplied Action
+     * @param key Actions The action to get the explanation text from
+     * @return String The explanation text mapped to the action
+     */
     public String getRuleDescription(Actions key){
         return key.toString()+": "+rd.get(key);
     }
+
+    /**
+     * Method initializes the object by mapping all the Actions to the
+     * explanation text
+     */
     private void initDescriptions(){
         rd = new HashMap<Actions, String>();
         rd.put(Actions.Added_Character, "Added a character to increase the point usage");

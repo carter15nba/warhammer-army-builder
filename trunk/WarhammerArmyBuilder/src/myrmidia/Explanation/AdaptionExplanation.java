@@ -53,6 +53,13 @@ public class AdaptionExplanation implements Explanation{
         this.caseID = caseID;
     }
 
+    /**
+     * Method to add a new Action to the action list. If the Action allready
+     * exists in the list the existing object is returned and the new one
+     * discared.
+     * @param action The Action to set
+     * @return The added or existing Action object
+     */
     public Action addAction(Action action){
         if(actionExists(action)){
             currentAction = actions.get(actionPos);
@@ -61,25 +68,24 @@ public class AdaptionExplanation implements Explanation{
             actions.add(action);
             currentAction = action;
         }
-//        actions.add(action);
-//        currentAction = action;
         return currentAction;
     }
 
+    /**
+     * Method which aquires the current active Action. The active action is
+     * determined by the latest Action added to the list
+     * @return The current Action
+     */
     public Action getCurrentAction(){
         return currentAction;
     }
-  
-    public String generateExplanation() {
-        String ret = "";
-        for (Action action : actions) {
-            ret += "The unit/formation: "+action.getAffectedArmyUnit().getUnit().getName()+", where changed based on:\n" +
-            action.generateExplanation();
-            
-        }
-        return ret;
-    }
 
+    /**
+     * Method to check if the action exists in the list
+     * @param action The Action to check for its existence
+     * @return <ul><li>true - if the Action exists</li>
+     * <li>false - if the action does not exist</li></ul>
+     */
     private boolean actionExists(Action action) {
         int pos = 0;
         for (Action act : actions) {
@@ -90,5 +96,15 @@ public class AdaptionExplanation implements Explanation{
             pos++;
         }
         return false;
+    }
+
+    public String generateExplanation() {
+        String ret = "";
+        for (Action action : actions) {
+            ret += "The unit/formation: "+action.getAffectedArmyUnit().getUnit().getName()+", where changed based on:\n" +
+            action.generateExplanation();
+
+        }
+        return ret;
     }
 }

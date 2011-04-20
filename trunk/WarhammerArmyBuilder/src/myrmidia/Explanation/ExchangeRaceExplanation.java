@@ -26,7 +26,7 @@ import myrmidia.Explanation.Resources.Exchange;
  * Class holding all the information regarding to the exchange of units
  * from one race to another. 
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 0.2
  */
 public class ExchangeRaceExplanation implements Explanation{
 
@@ -35,10 +35,17 @@ public class ExchangeRaceExplanation implements Explanation{
     private Races replacementRace;
     private Set<Exchange> exchanged;
 
+    /** Default constructor */
     public ExchangeRaceExplanation(){
         exchanged = new HashSet<Exchange>();
     }
 
+    /**
+     * Constructor - initializes the object with the supplied parameters
+     * @param caseID int The ID of the case to be explained
+     * @param originalRace Races enum with the race of the original player race
+     * @param replacementRace Race enum with the race of the new player race
+     */
     public ExchangeRaceExplanation(int caseID, Races originalRace,
             Races replacementRace){
         this.caseID = caseID;
@@ -109,6 +116,6 @@ public class ExchangeRaceExplanation implements Explanation{
         for (Exchange exchange : exchanged) {
             ret += "  "+exchange.generateExplanation();
         }
-        return ret;
+        return ret+"\n";
     }
 }
