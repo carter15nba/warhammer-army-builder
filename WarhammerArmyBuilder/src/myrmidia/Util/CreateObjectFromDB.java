@@ -121,6 +121,7 @@ public class CreateObjectFromDB {
      * @param unitRace Races The race of the army to get the BSB
      * @return The collection of eligible standards
      */
+    @SuppressWarnings("unchecked")
     public static Set<Equipment> getBattleStandards(Races unitRace){
         Session session = getSession();
         String namedQuery;

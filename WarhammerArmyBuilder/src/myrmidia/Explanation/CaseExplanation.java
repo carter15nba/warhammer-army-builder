@@ -42,9 +42,7 @@ public class CaseExplanation implements Explanation{
     private int queryPoints;
     private ArmyUnitExplanation armyUnitExplanation;
 
-    /**
-     * Default constructor
-     */
+    /** Default constructor */
     public CaseExplanation(){
         similarities = new HashMap<String, Double>();
         races = new HashMap<String, Races>();

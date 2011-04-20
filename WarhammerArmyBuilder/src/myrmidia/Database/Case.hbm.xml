@@ -27,15 +27,15 @@
     </property>
   </class>
   <query name="Case.Unknown">
-    <![CDATA[select cc from Case cc where cc.outcome='Unknown']]>
+    select cc from Case cc where cc.outcome='Unknown'
   </query>
   <query name="Case.Cases">
-    <![CDATA[select cc from Case cc where cc.outcome <> 'Unknown']]>
+    select cc from Case cc where cc.outcome &lt;&gt; 'Unknown'
   </query>
   <query name="Case.All">
-    <![CDATA[from Case]]>
+    from Case
   </query>
   <query name="Case.LastId">
-    <![CDATA[select cc.id from Case cc order by cc.id desc]]>
+    select cc.id from Case cc order by cc.id desc
   </query>
 </hibernate-mapping>

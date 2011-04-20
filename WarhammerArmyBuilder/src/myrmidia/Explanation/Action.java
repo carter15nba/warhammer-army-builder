@@ -40,7 +40,7 @@ public class Action implements Explanation{
     /**
      * Constructor used to set the action and message on instantiation
      * @param message String describing what action where performed
-     * @param message Message describing why the action performed where neccessary
+     * @param armyUnit The ArmyUnit affected by the changes
      */
     public Action(Messages message, ArmyUnit armyUnit){
         this.message = message;
@@ -82,6 +82,20 @@ public class Action implements Explanation{
         this.affectedArmyUnit = affectedArmyUnit;
     }
 
+    /**
+     * @return the usedInExplanation
+     */
+    public boolean isUsedInExplanation() {
+        return usedInExplanation;
+    }
+
+    /**
+     * @param usedInExplanation the usedInExplanation to set
+     */
+    public void setUsedInExplanation(boolean usedInExplanation) {
+        this.usedInExplanation = usedInExplanation;
+    }
+
     @Override
     public boolean equals(Object o){
         if((o instanceof Action)){
@@ -100,19 +114,4 @@ public class Action implements Explanation{
         }
         return ret;
     }
-
-    /**
-     * @return the usedInExplanation
-     */
-    public boolean isUsedInExplanation() {
-        return usedInExplanation;
-    }
-
-    /**
-     * @param usedInExplanation the usedInExplanation to set
-     */
-    public void setUsedInExplanation(boolean usedInExplanation) {
-        this.usedInExplanation = usedInExplanation;
-    }
-
 }

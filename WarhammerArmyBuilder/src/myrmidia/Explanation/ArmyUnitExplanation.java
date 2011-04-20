@@ -35,6 +35,7 @@ public class ArmyUnitExplanation implements Explanation{
     private HashMap<String, Double> similarities;
     private int denominator;
 
+    /** Default constuctor */
     public ArmyUnitExplanation(){
         similarities = new HashMap<String, Double>();
         emptyQuery = false;
@@ -44,28 +45,29 @@ public class ArmyUnitExplanation implements Explanation{
     }
 
     /**
-     * Used values:
+     * Method used to set the similarity value with the supplied key and value
+     * Used keys:
      * <ul><li>ArmyUnitSimilarity</li>
      * <li>UnitFraction</li>
      * <li>NumberFraction</li>
      * <li>EquipmentFraction</li>
      * <li>UtilityFraction</li></ul>
-     * @param key
-     * @param value
+     * @param key String The key set the value of
+     * @param value double The value to set for the key
      */
     public void setSimilarity(String key, double value){
         similarities.put(key, value);
     }
 
     /**
-     * Used values:
+     * Method used to aquire the value of the supplied key
+     * Used keys:
      * <ul><li>ArmyUnitSimilarity</li>
      * <li>UnitFraction</li>
      * <li>NumberFraction</li>
      * <li>EquipmentFraction</li>
      * <li>UtilityFraction</li></ul>
-     * @param key
-     * @return
+     * @param key String the key to aquire the value from
      */
     public double getSimilarity(String key){
         Double value = similarities.get(key);
