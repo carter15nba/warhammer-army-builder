@@ -464,10 +464,4 @@ public class RuleSet {
                 errorManager.addError(Messages.WRONG_RACE);
         }
     }
-
-    @Override
-    public String toString(){
-        //TODO: complete toString()
-        return "";
-    }
 }
