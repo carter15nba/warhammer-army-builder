@@ -24,20 +24,38 @@
 package myrmidia.UI;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.util.Set;
+import javax.swing.JList;
+import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.UnitModel;
+import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Warhammer.Equipment;
+import myrmidia.Warhammer.Unit;
 
 /**
  *
  * @author Glenn Rune Strandbråten
  */
-public class EquipmentUtilUI extends javax.swing.JFrame {
+public class EquipmentUtilUI extends javax.swing.JDialog {
 
+    private UnitModel unitModel;
     /** Creates new form EquipmentUtilUI */
     public EquipmentUtilUI(UnitModel unitModel) {
         initComponents();
         setListSizes();
         setTitle(unitModel.getName());
         initializeLists(unitModel);
+    }
+    /** Creates new form EquipmentUtilUI */
+    public EquipmentUtilUI(QueryUI parent, UnitModel unitModel) {
+        super(parent);
+        initComponents();
+        this.unitModel = unitModel;
+        setListSizes();
+        setTitle(unitModel.getName());
+        initializeLists(unitModel);
+        setLocationRelativeTo(parent);
     }
 
     /** This method is called from within the constructor to
@@ -60,26 +78,50 @@ public class EquipmentUtilUI extends javax.swing.JFrame {
         magicLabel = new javax.swing.JLabel();
         equipmentLabel = new javax.swing.JLabel();
         utilityLabel = new javax.swing.JLabel();
-        applyButon = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         promotionLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+
+        equipmentScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         equipmentList.setCellRenderer(new myrmidia.UI.Resources.CheckBoxListRenderer());
+        equipmentList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                equipmentListMouseClicked(evt);
+            }
+        });
         equipmentScroll.setViewportView(equipmentList);
 
+        utilityScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         utilityList.setCellRenderer(new myrmidia.UI.Resources.CheckBoxListRenderer());
+        utilityList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                utilityListMouseClicked(evt);
+            }
+        });
         utilityScroll.setViewportView(utilityList);
 
+        magicScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         magicList.setCellRenderer(new myrmidia.UI.Resources.CheckBoxListRenderer());
-        magicList.setPreferredSize(new java.awt.Dimension(80, 30));
+        magicList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                magicListMouseClicked(evt);
+            }
+        });
         magicScroll.setViewportView(magicList);
 
+        promotionScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         promotionList.setCellRenderer(new myrmidia.UI.Resources.CheckBoxListRenderer());
-        promotionList.setMaximumSize(new java.awt.Dimension(80, 30));
-        promotionList.setMinimumSize(new java.awt.Dimension(80, 30));
-        promotionList.setPreferredSize(new java.awt.Dimension(80, 30));
+        promotionList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                promotionListMouseClicked(evt);
+            }
+        });
         promotionScroll.setViewportView(promotionList);
 
         magicLabel.setText("Magic pile");
@@ -88,12 +130,10 @@ public class EquipmentUtilUI extends javax.swing.JFrame {
 
         utilityLabel.setText("Utility units");
 
-        applyButon.setText("Apply");
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setLabel("Ok");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
@@ -104,100 +144,104 @@ public class EquipmentUtilUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(equipmentScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                    .addComponent(equipmentLabel)
-                    .addComponent(promotionLabel)
-                    .addComponent(promotionScroll, 0, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(cancelButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(applyButon))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(magicLabel)
-                            .addGap(93, 93, 93))
-                        .addComponent(magicScroll, 0, 0, Short.MAX_VALUE)
-                        .addComponent(utilityScroll, 0, 0, Short.MAX_VALUE))
-                    .addComponent(utilityLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(406, 406, 406)
+                        .addComponent(okButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(promotionLabel)
+                                        .addComponent(promotionScroll, 0, 215, Short.MAX_VALUE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(equipmentScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(equipmentLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(magicLabel)
+                                .addGap(169, 169, 169))
+                            .addComponent(utilityLabel)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(utilityScroll, 0, 220, Short.MAX_VALUE))
+                                .addComponent(magicScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(equipmentLabel)
-                            .addComponent(utilityLabel))
+                        .addComponent(equipmentLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(equipmentScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(utilityScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(utilityLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(utilityScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(promotionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(promotionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(magicLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(magicScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(applyButon)
-                            .addComponent(cancelButton))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(promotionLabel)
+                    .addComponent(magicLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(magicScroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(promotionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addComponent(okButton)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void equipmentListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentListMouseClicked
+        performListClick(equipmentList,evt.getPoint());
+    }//GEN-LAST:event_equipmentListMouseClicked
+
+    private void utilityListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_utilityListMouseClicked
+        performListClick(utilityList,evt.getPoint());
+    }//GEN-LAST:event_utilityListMouseClicked
+
+    private void promotionListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_promotionListMouseClicked
+        performListClick(promotionList,evt.getPoint());
+    }//GEN-LAST:event_promotionListMouseClicked
+
+    private void magicListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_magicListMouseClicked
+        performListClick(magicList,evt.getPoint());
+    }//GEN-LAST:event_magicListMouseClicked
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new EquipmentUtilUI(new UnitModel("<placeholder>",-1)).setVisible(true);
-            }
-        });
-    }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyButon;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel equipmentLabel;
-    private javax.swing.JList equipmentList;
-    private javax.swing.JScrollPane equipmentScroll;
-    private javax.swing.JLabel magicLabel;
-    private javax.swing.JList magicList;
-    private javax.swing.JScrollPane magicScroll;
-    private javax.swing.JLabel promotionLabel;
-    private javax.swing.JList promotionList;
-    private javax.swing.JScrollPane promotionScroll;
-    private javax.swing.JLabel utilityLabel;
-    private javax.swing.JList utilityList;
-    private javax.swing.JScrollPane utilityScroll;
-    // End of variables declaration//GEN-END:variables
+    }//GEN-LAST:event_okButtonActionPerformed
 
     private void initializeLists(UnitModel unitModel) {
+        if(unitModel==null)
+            return;
+        if(unitModel.isEmpty())
+            return;
+        if(unitModel.isBattleStandardBearer())
+            magicLabel.setText("Battle standards");
         equipmentList.setListData(unitModel.getEquipment());
         utilityList.setListData(unitModel.getUtility());
         promotionList.setListData(unitModel.getPromotion());
         magicList.setListData(unitModel.getMagic());
+        magicList.revalidate();
+        promotionList.revalidate();
+        equipmentList.revalidate();
+        utilityList.revalidate();
     }
 
     private void setListSizes() {
-        Dimension dim = new Dimension(120, 100);
+        Dimension dim = new Dimension(200, 140);
         equipmentScroll.setPreferredSize(dim);
         equipmentScroll.setMaximumSize(dim);
         equipmentScroll.setMinimumSize(dim);
@@ -212,4 +256,60 @@ public class EquipmentUtilUI extends javax.swing.JFrame {
         promotionScroll.setMinimumSize(dim);
         pack();
     }
+
+    private void performListClick(JList list, Point point) {
+        int index = list.locationToIndex(point);
+        if(index==-1)
+            return;
+        CheckListItem item =(CheckListItem) list.getModel().getElementAt(index);
+        item.setSelected(! item.isSelected());
+        list.repaint(list.getCellBounds(index, index));
+        if(item.toString().contains("Battle standard bearer")){
+            if(item.isSelected()){
+                QueryUI qui = (QueryUI) getParent();
+                Set<Equipment> eq = CreateObjectFromDB.getBattleStandards(
+                        qui.getPlayerRace());
+                unitModel.setMagic(UnitModel.parseEquipment(eq));
+                unitModel.setBattleStandardBearer(true);
+                magicLabel.setText("Battle standards");
+            }
+            else{
+                QueryUI qui = (QueryUI) getParent();
+                Unit unit = CreateObjectFromDB.createUnitFromDB(
+                        qui.getPlayerRace()+":"+getTitle());
+                unitModel.setMagic(UnitModel.parseMagic(unit));
+                unitModel.setBattleStandardBearer(false);
+                magicLabel.setText("Magic pile");
+            }
+            initializeLists(unitModel);
+        }
+        
+    }
+    /**
+    * @param args the command line arguments
+    */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new EquipmentUtilUI(new UnitModel("<placeholder>",-1)).setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel equipmentLabel;
+    private javax.swing.JList equipmentList;
+    private javax.swing.JScrollPane equipmentScroll;
+    private javax.swing.JLabel magicLabel;
+    private javax.swing.JList magicList;
+    private javax.swing.JScrollPane magicScroll;
+    private javax.swing.JButton okButton;
+    private javax.swing.JLabel promotionLabel;
+    private javax.swing.JList promotionList;
+    private javax.swing.JScrollPane promotionScroll;
+    private javax.swing.JLabel utilityLabel;
+    private javax.swing.JList utilityList;
+    private javax.swing.JScrollPane utilityScroll;
+    // End of variables declaration//GEN-END:variables
+
 }

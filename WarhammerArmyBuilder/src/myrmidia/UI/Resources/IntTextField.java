@@ -43,7 +43,6 @@ public class IntTextField extends JTextField{
             return true;
         }
         catch(NumberFormatException nfe){
-            System.out.println("nfe");
             return false;
         }
         catch(NullPointerException e){
