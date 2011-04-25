@@ -17,48 +17,35 @@
 
 package myrmidia.UI.Resources;
 
-import javax.swing.JTextField;
-import javax.swing.text.Document;
-
 /**
  *
  * @author Glenn Rune Strandbråten
  */
-public class IntTextField extends JTextField{
-    private static final int NUMBER_LIMIT = 5;
+public class InputParameters {
 
-    public IntTextField() {
-        super("", NUMBER_LIMIT);
+    private boolean noRestrictions;
+
+    private InputParameters(){init();}
+    public static InputParameters getInstance(){
+        return InputParameterHolder.INSTANCE;
+    }
+    private static class InputParameterHolder{
+        private static final InputParameters INSTANCE = new InputParameters();
+    }
+    
+    private void init(){
+        noRestrictions = false;
     }
 
-    @Override
-    protected Document createDefaultModel(){
-        return new IntTextDocument();
-    }
-
-    @Override
-    public boolean isValid(){
-        try{
-            Integer.parseInt(getText());
-            return true;
-        }
-        catch(NumberFormatException nfe){
-            System.out.println("nfe");
-            return false;
-        }
-        catch(NullPointerException e){
-            return false;
+    public void parseInput(String[] args){
+        for (String string : args) {
+            if(string.equalsIgnoreCase("-norestrictions"))
+                noRestrictions = true;
         }
     }
 
-    public int getValue(){
-        try{
-            return Integer.parseInt(getText());
-        }
-        catch(NumberFormatException nfe){
-            return 0;
-        }
+    public boolean getNoRestrictions(){
+        return noRestrictions;
     }
-
 
 }

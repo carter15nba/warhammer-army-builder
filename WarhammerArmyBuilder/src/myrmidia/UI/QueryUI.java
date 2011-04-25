@@ -24,11 +24,19 @@
 package myrmidia.UI;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
+import javax.swing.table.DefaultTableModel;
 import myrmidia.Enums.Races;
+import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
+import myrmidia.UI.Resources.InputParameters;
+import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Warhammer.Unit;
 
 /**
  *
@@ -37,9 +45,10 @@ import myrmidia.Enums.Races;
 public class QueryUI extends javax.swing.JFrame {
 
     private int minimizedHeight = 170;
-    private static int defaultHeight = 424;
+    private static int defaultHeight = 500;
     private static int defaultWidth = 597;
     private SelectTaskUI parent;
+    private InputParameters inputParameters;
 
     /** Creates new form QueryUI */
     public QueryUI() {
@@ -55,10 +64,36 @@ public class QueryUI extends javax.swing.JFrame {
 
     private void init(){
         initComponents();
+        popupMenu = new javax.swing.JPopupMenu("Edit");
+        popupAddRow = new javax.swing.JMenuItem("Add row");
+        popupAddRow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addRowButtonActionPerformed(e);
+            }
+        });
+        popupRemoveRow = new javax.swing.JMenuItem("Remove row");
+        popupRemoveRow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeRowButtonActionPerformed(e);
+            }
+        });
+        popupView = new javax.swing.JMenuItem("View equipment/utility");
+        popupView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewEqUtButtonActionPerformed(e);
+            }
+        });
+        popupMenu.add(popupAddRow);
+        popupMenu.add(popupRemoveRow);
+        popupMenu.add(popupView);
+
+        inputParameters = InputParameters.getInstance();
         updateUIBounds();
         initRaceDropDown(opponenRaceInput);
         initRaceDropDown(playerRaceInput);
         addUnitsPanel.setVisible(false);
+        if(inputParameters.getNoRestrictions())
+            addUnitToggleButton.setEnabled(true);
         pack();
     }
 
@@ -83,7 +118,9 @@ public class QueryUI extends javax.swing.JFrame {
         addUnitsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         unitsTable = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        addRowButton = new javax.swing.JButton();
+        removeRowButton = new javax.swing.JButton();
+        viewEqUtButton = new javax.swing.JButton();
         armyPointsField = new myrmidia.UI.Resources.IntTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -107,6 +144,7 @@ public class QueryUI extends javax.swing.JFrame {
 
         requiredFieldsLabel.setText("Fields marked with * are required");
 
+        nextButton.setMnemonic('n');
         nextButton.setText("Next");
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,6 +152,7 @@ public class QueryUI extends javax.swing.JFrame {
             }
         });
 
+        cancelButton.setMnemonic('c');
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,6 +160,7 @@ public class QueryUI extends javax.swing.JFrame {
             }
         });
 
+        addUnitToggleButton.setMnemonic('a');
         addUnitToggleButton.setText("Add units to query");
         addUnitToggleButton.setEnabled(false);
         addUnitToggleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -131,18 +171,51 @@ public class QueryUI extends javax.swing.JFrame {
 
         unitsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Unit name", "Number of units"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        unitsTable.setRowHeight(20);
+        unitsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                unitsTableMouseReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(unitsTable);
 
-        jButton1.setText("jButton1");
+        addRowButton.setMnemonic('d');
+        addRowButton.setText("Add row");
+        addRowButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addRowButtonActionPerformed(evt);
+            }
+        });
+
+        removeRowButton.setMnemonic('r');
+        removeRowButton.setText("Remove row");
+        removeRowButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeRowButtonActionPerformed(evt);
+            }
+        });
+
+        viewEqUtButton.setMnemonic('v');
+        viewEqUtButton.setText("View equipment/utility");
+        viewEqUtButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewEqUtButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout addUnitsPanelLayout = new javax.swing.GroupLayout(addUnitsPanel);
         addUnitsPanel.setLayout(addUnitsPanelLayout);
@@ -150,9 +223,13 @@ public class QueryUI extends javax.swing.JFrame {
             addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addUnitsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1))
+                .addGroup(addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(viewEqUtButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addRowButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeRowButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         addUnitsPanelLayout.setVerticalGroup(
             addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,8 +238,12 @@ public class QueryUI extends javax.swing.JFrame {
                 .addGroup(addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                     .addGroup(addUnitsPanelLayout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addContainerGap())))
+                        .addComponent(addRowButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeRowButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(viewEqUtButton)
+                        .addGap(195, 195, 195))))
         );
 
         armyPointsField.setText("intTextField1");
@@ -229,8 +310,16 @@ public class QueryUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addUnitToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUnitToggleButtonActionPerformed
-        if(addUnitToggleButton.isSelected())
-            addUnitsPanel.setVisible(true);
+        if(addUnitToggleButton.isSelected()){
+            try{
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                populateUnitComboBox();
+                addUnitsPanel.setVisible(true);
+            }
+            finally{
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        }
         else 
             addUnitsPanel.setVisible(false);
         updateUIBounds();
@@ -254,6 +343,8 @@ public class QueryUI extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void playerRaceInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerRaceInputActionPerformed
+        if(inputParameters.getNoRestrictions())
+            return;
         if(playerRaceInput.getSelectedIndex()==0){
             if(addUnitToggleButton.isSelected())
                 addUnitToggleButton.doClick();
@@ -263,6 +354,29 @@ public class QueryUI extends javax.swing.JFrame {
             addUnitToggleButton.setEnabled(true);
     }//GEN-LAST:event_playerRaceInputActionPerformed
 
+    private void addRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRowButtonActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
+        dtm.addRow(new Object[]{"N/A",null});
+    }//GEN-LAST:event_addRowButtonActionPerformed
+
+    private void removeRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeRowButtonActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
+        int selRow = unitsTable.getSelectedRow();
+        dtm.removeRow(selRow);
+    }//GEN-LAST:event_removeRowButtonActionPerformed
+
+    private void viewEqUtButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewEqUtButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_viewEqUtButtonActionPerformed
+
+    private void unitsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitsTableMouseReleased
+        if(evt.isPopupTrigger()){
+            int row = unitsTable.rowAtPoint(evt.getPoint());
+            unitsTable.setRowSelectionInterval(row, row);           
+            popupMenu.show(unitsTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_unitsTableMouseReleased
+
     private void initRaceDropDown(JComboBox box){
         box.addItem("N/A");
         for(Races race : Races.values())
@@ -270,6 +384,8 @@ public class QueryUI extends javax.swing.JFrame {
     }
 
     private boolean verifyRequiredFields(){
+        if(inputParameters.getNoRestrictions())
+            return true;
         boolean verified = true;
         if(playerRaceInput.getSelectedIndex()==0){
             verified = false;
@@ -315,11 +431,28 @@ public class QueryUI extends javax.swing.JFrame {
     }
 
 
+    public void populateUnitComboBox(){
+        List<Unit> unit = CreateObjectFromDB.getRaceUnits(Races.valueOf(
+        playerRaceInput.getSelectedItem().toString()));
+        String[] names = new String[unit.size()+1];
+        names[0] = "N/A";
+        int pos = 1;
+        for (Unit u : unit) {
+            String name = u.getName();
+            String[] array = name.split(":");
+            names[pos++] = array[1];
+        }
+        unitsTable.getColumnModel().getColumn(0).setCellRenderer(new ComboBoxTableCellRenderer(names, 0));
+    }
+
+
+
 
     /**
     * @param args the command line arguments
     */
     public static void main(String args[]) {
+        InputParameters.getInstance().parseInput(args);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new QueryUI().setVisible(true);
@@ -328,22 +461,25 @@ public class QueryUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addRowButton;
     private javax.swing.JToggleButton addUnitToggleButton;
     private javax.swing.JPanel addUnitsPanel;
     private myrmidia.UI.Resources.IntTextField armyPointsField;
     private javax.swing.JLabel armyPointsLabel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JComboBox opponenRaceInput;
     private javax.swing.JLabel opponentRaceLabel;
     private javax.swing.JComboBox playerRaceInput;
     private javax.swing.JLabel playerRaceLabel;
+    private javax.swing.JButton removeRowButton;
     private javax.swing.JLabel requiredFieldsLabel;
     private javax.swing.JTable unitsTable;
+    private javax.swing.JButton viewEqUtButton;
     // End of variables declaration//GEN-END:variables
-
-
-
+    private javax.swing.JMenuItem popupRemoveRow;
+    private javax.swing.JMenuItem popupAddRow;
+    private javax.swing.JMenuItem popupView;
+    private javax.swing.JPopupMenu popupMenu;
 }

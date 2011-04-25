@@ -27,6 +27,6 @@
     </set>
   </class>
   <query name="ArmyUnit.LastId">
-    select au.id from ArmyUnit au order by au.id desc
+    <![CDATA[select au.id from ArmyUnit au order by au.id desc]]>
   </query>
 </hibernate-mapping>

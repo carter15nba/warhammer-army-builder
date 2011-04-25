@@ -26,6 +26,7 @@ package myrmidia.UI;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import myrmidia.UI.Resources.InputParameters;
 
 /**
  *
@@ -132,6 +133,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
     * @param args the command line arguments
     */
     public static void main(String args[]) {
+        InputParameters.getInstance().parseInput(args);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SelectTaskUI().setVisible(true);

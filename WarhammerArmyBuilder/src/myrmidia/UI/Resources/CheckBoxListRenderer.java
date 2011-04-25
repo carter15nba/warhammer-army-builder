@@ -17,7 +17,6 @@
 
 package myrmidia.UI.Resources;
 
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
@@ -32,7 +31,8 @@ public class CheckBoxListRenderer extends JCheckBox
         implements ListCellRenderer{
 
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) {
         setEnabled(list.isEnabled());
         setSelected(((CheckListItem)value).isSelected());
         setFont(list.getFont());
