@@ -137,6 +137,14 @@ public class CreateObjectFromDB {
         return new HashSet<Equipment>(standards);
 
     }
+    @SuppressWarnings("unchecked")
+    public static List<Unit> getRaceUnits(Races race){
+        Session session = getSession();
+        List<Unit> unit = (List<Unit>) session.getNamedQuery("Unit.getRaceUnits")
+                .setString("race", race.toString())
+                .list();
+        return unit;
+    }
 
     /**
      * Method which connects to the database and return a session
