@@ -60,12 +60,12 @@
     </set>
   </class>
   <query name="Unit.getUnit">
-         <![CDATA[from Unit where name=:name]]>
+         from Unit where name=:name
   </query>
   <query name="Unit.getRaceUnits">
-         <![CDATA[from Unit where race=:race order by name asc]]>
+         from Unit where race=:race order by name asc
   </query>
   <query name="Unit.getRaceAndArmyUnits">
-        <![CDATA[select u from Unit u where u.race=:race and u.armyType=:aT]]>
+        select u from Unit u where u.race=:race and u.armyType=:aT
   </query>
 </hibernate-mapping>

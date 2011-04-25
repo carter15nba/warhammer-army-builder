@@ -131,7 +131,7 @@ public class CreateObjectFromDB {
         else
             namedQuery = "Equipment.BSBAll";
         standards = (List<Equipment>)session.getNamedQuery(namedQuery)
-                    .setString("race", unitRace.toString())
+                    .setString("race", "Race:"+unitRace.toString())
                     .list();
         session.close();
         return new HashSet<Equipment>(standards);

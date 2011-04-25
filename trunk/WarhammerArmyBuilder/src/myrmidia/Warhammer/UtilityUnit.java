@@ -41,7 +41,12 @@ public class UtilityUnit extends CoreUnit{
     private boolean required;
     private boolean promotionUnit;
 
+    public UtilityUnit(){}
 
+    public UtilityUnit(String name, int cost){
+        super.setName(name);
+        super.setCost(cost);
+    }
     /**
      * @return the movement
      */

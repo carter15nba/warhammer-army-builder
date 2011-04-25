@@ -28,15 +28,28 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import jcolibri.cbrcore.CBRQuery;
+import myrmidia.Enums.Outcomes;
 import myrmidia.Enums.Races;
+import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
 import myrmidia.UI.Resources.InputParameters;
+import myrmidia.UI.Resources.UnitModel;
+import myrmidia.UI.Resources.UnitModelControler;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Util.PrintFactory;
+import myrmidia.Warhammer.Army;
+import myrmidia.Warhammer.ArmyUnit;
+import myrmidia.Warhammer.Case;
+import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
+import myrmidia.Warhammer.UtilityUnit;
 
 /**
  *
@@ -49,6 +62,8 @@ public class QueryUI extends javax.swing.JFrame {
     private static int defaultWidth = 597;
     private SelectTaskUI parent;
     private InputParameters inputParameters;
+    private UnitModelControler unitModelControler;
+    private String selectedPlayerRace;
 
     /** Creates new form QueryUI */
     public QueryUI() {
@@ -89,11 +104,14 @@ public class QueryUI extends javax.swing.JFrame {
 
         inputParameters = InputParameters.getInstance();
         updateUIBounds();
-        initRaceDropDown(opponenRaceInput);
+        initRaceDropDown(opponentRaceInput);
         initRaceDropDown(playerRaceInput);
         addUnitsPanel.setVisible(false);
+        unitsTable.getTableHeader().setReorderingAllowed(false);
+        unitModelControler = new UnitModelControler();
         if(inputParameters.getNoRestrictions())
             addUnitToggleButton.setEnabled(true);
+        selectedPlayerRace = "";
         pack();
     }
 
@@ -107,7 +125,7 @@ public class QueryUI extends javax.swing.JFrame {
     private void initComponents() {
 
         playerRaceInput = new javax.swing.JComboBox();
-        opponenRaceInput = new javax.swing.JComboBox();
+        opponentRaceInput = new javax.swing.JComboBox();
         playerRaceLabel = new javax.swing.JLabel();
         opponentRaceLabel = new javax.swing.JLabel();
         armyPointsLabel = new javax.swing.JLabel();
@@ -127,16 +145,19 @@ public class QueryUI extends javax.swing.JFrame {
         setTitle("Myrmidia - Create Query");
         setName("queryUI"); // NOI18N
 
+        playerRaceInput.setNextFocusableComponent(opponentRaceInput);
         playerRaceInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playerRaceInputActionPerformed(evt);
             }
         });
 
+        opponentRaceInput.setNextFocusableComponent(armyPointsField);
+
         playerRaceLabel.setLabelFor(playerRaceInput);
         playerRaceLabel.setText("Select player race*");
 
-        opponentRaceLabel.setLabelFor(opponenRaceInput);
+        opponentRaceLabel.setLabelFor(opponentRaceInput);
         opponentRaceLabel.setText("Select opponent race*");
 
         armyPointsLabel.setLabelFor(armyPointsField);
@@ -146,6 +167,7 @@ public class QueryUI extends javax.swing.JFrame {
 
         nextButton.setMnemonic('n');
         nextButton.setText("Next");
+        nextButton.setNextFocusableComponent(playerRaceInput);
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButtonActionPerformed(evt);
@@ -154,6 +176,7 @@ public class QueryUI extends javax.swing.JFrame {
 
         cancelButton.setMnemonic('c');
         cancelButton.setText("Cancel");
+        cancelButton.setNextFocusableComponent(nextButton);
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -163,6 +186,7 @@ public class QueryUI extends javax.swing.JFrame {
         addUnitToggleButton.setMnemonic('a');
         addUnitToggleButton.setText("Add units to query");
         addUnitToggleButton.setEnabled(false);
+        addUnitToggleButton.setNextFocusableComponent(cancelButton);
         addUnitToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addUnitToggleButtonActionPerformed(evt);
@@ -249,6 +273,7 @@ public class QueryUI extends javax.swing.JFrame {
         armyPointsField.setText("intTextField1");
         armyPointsField.setMaximumSize(new java.awt.Dimension(30, 20));
         armyPointsField.setMinimumSize(new java.awt.Dimension(30, 20));
+        armyPointsField.setNextFocusableComponent(addUnitToggleButton);
         armyPointsField.setPreferredSize(new java.awt.Dimension(30, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -266,7 +291,7 @@ public class QueryUI extends javax.swing.JFrame {
                             .addComponent(armyPointsLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(opponenRaceInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(opponentRaceInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(playerRaceInput, 0, 123, Short.MAX_VALUE)
                             .addComponent(armyPointsField, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
@@ -290,7 +315,7 @@ public class QueryUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(opponentRaceLabel)
-                    .addComponent(opponenRaceInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(opponentRaceInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(armyPointsLabel)
@@ -328,6 +353,7 @@ public class QueryUI extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequiredFields()){
             //TODO: Next step
+            CBRQuery query = createQuery();
         }
         else{
             JOptionPane.showMessageDialog(this , "Not all required fields are set.", "Error 01 - Required fields", JOptionPane.ERROR_MESSAGE);
@@ -350,23 +376,44 @@ public class QueryUI extends javax.swing.JFrame {
                 addUnitToggleButton.doClick();
             addUnitToggleButton.setEnabled(false);
         }
-        else
+        else{
             addUnitToggleButton.setEnabled(true);
+            if(!selectedPlayerRace.isEmpty()||
+                    !selectedPlayerRace.equals(playerRaceInput.getSelectedItem()
+                    .toString())){
+                if(addUnitToggleButton.isSelected())
+                    addUnitToggleButtonActionPerformed(evt);
+            }
+        }
     }//GEN-LAST:event_playerRaceInputActionPerformed
 
     private void addRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRowButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
         dtm.addRow(new Object[]{"N/A",null});
+        unitModelControler.placeDummyObjects(unitsTable.getRowCount());
     }//GEN-LAST:event_addRowButtonActionPerformed
 
     private void removeRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeRowButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
         int selRow = unitsTable.getSelectedRow();
+        if(selRow==-1)
+            return;
         dtm.removeRow(selRow);
+        unitModelControler.removeUnitModel(selRow);
     }//GEN-LAST:event_removeRowButtonActionPerformed
 
     private void viewEqUtButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewEqUtButtonActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = unitsTable.getSelectedRow();
+        if(selectedRow==-1)
+            return;
+        try{
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            new EquipmentUtilUI(this, getUnitModel(selectedRow)).setVisible(true);
+        }
+        catch(NullPointerException npe){}
+        finally{
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }//GEN-LAST:event_viewEqUtButtonActionPerformed
 
     private void unitsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitsTableMouseReleased
@@ -393,7 +440,7 @@ public class QueryUI extends javax.swing.JFrame {
         }
         else
             playerRaceLabel.setForeground(Color.BLACK);
-        if(opponenRaceInput.getSelectedIndex()==0){
+        if(opponentRaceInput.getSelectedIndex()==0){
             verified = false;
             opponentRaceLabel.setForeground(Color.RED);
         }
@@ -443,6 +490,122 @@ public class QueryUI extends javax.swing.JFrame {
             names[pos++] = array[1];
         }
         unitsTable.getColumnModel().getColumn(0).setCellRenderer(new ComboBoxTableCellRenderer(names, 0));
+        unitsTable.setValueAt("N/A", 0, 0);
+    }
+
+    private UnitModel getUnitModel(int selectedRow) {
+        String unitName = unitsTable.getValueAt(selectedRow, 0).toString();
+        if(unitName.contentEquals("N/A"))
+            return null;
+        UnitModel model = unitModelControler.getUnitModel(selectedRow);
+        if(model==null){
+            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
+                    playerRaceInput.getSelectedItem().toString()+":"+unitName);
+            model = UnitModel.parseUnitModelFromUnit(unit);
+            model.setRow(selectedRow);
+            unitModelControler.addUnitModel(selectedRow, model);
+        }
+        else if((model.getName().contentEquals(unitName)) &&
+                (model.getRow() == selectedRow)){
+            return model;
+        }
+        else{
+            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
+                    playerRaceInput.getSelectedItem().toString()+":"+unitName);
+            model = UnitModel.parseUnitModelFromUnit(unit);
+            model.setRow(selectedRow);
+            unitModelControler.replaceUnitModel(selectedRow, model);
+        }
+        return model;
+    }
+
+    public Races getPlayerRace(){
+        return Races.valueOf(playerRaceInput.getSelectedItem().toString());
+    }
+
+    private CBRQuery createQuery(){
+        Case queryCase = new Case();
+        queryCase.setOpponent(Races.valueOf(opponentRaceInput.getSelectedItem()
+                .toString()));
+        queryCase.setOutcome(Outcomes.Victory);
+
+        Army queryArmy = new Army();
+        queryArmy.setArmyPoints(Integer.parseInt(armyPointsField.getText()));
+        queryArmy.setPlayerRace(Races.valueOf(playerRaceInput.getSelectedItem()
+                .toString()));
+        queryArmy.setArmyUnits(createArmyUnits(queryArmy.getPlayerRace()));
+        queryCase.setArmy(queryArmy);
+
+        PrintFactory.printCase(queryCase, true);
+        CBRQuery cbrQuery = new CBRQuery();
+        cbrQuery.setDescription(queryCase);
+        return cbrQuery;
+    }
+
+    private Set<ArmyUnit> createArmyUnits(Races race){
+        Set<ArmyUnit> units = new HashSet<ArmyUnit>();
+        int rows = unitsTable.getRowCount();
+        for(int i=0; i<rows; i++){
+            if(unitsTable.getValueAt(i, 0)==null)
+                continue;
+            String name = unitsTable.getValueAt(i, 0).toString();
+            if(name.equalsIgnoreCase("N/A"))
+                continue;
+            Object obj = unitsTable.getValueAt(i, 1);
+            int number=-1;
+            if(obj!=null)
+                number = Integer.parseInt(obj.toString());
+            Unit unit = CreateObjectFromDB.createUnitFromDB(race.toString()+
+                    ":"+name);
+            ArmyUnit armyUnit = new ArmyUnit();
+            armyUnit.setUnit(unit);
+            if(number==-1)
+                number = unit.getMinNumber();
+            armyUnit.setNumberOfUnits(number);
+            UnitModel model = unitModelControler.getUnitModel(i);
+            assignModelSelectionToUnit(armyUnit, model);
+            units.add(armyUnit);
+        }
+        return units;
+    }
+
+    private void assignModelSelectionToUnit(ArmyUnit unit, UnitModel model){
+        CheckListItem[] items = model.getEquipment();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1, index));
+                unit.getEquipment().add(new Equipment(name,cost));
+            }
+        }
+        items = model.getMagic();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getEquipment().add(new Equipment(name,cost));
+            }
+        }
+        items = model.getPromotion();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getUtility().add(new UtilityUnit(name,cost));
+            }
+        }
+        items = model.getUtility();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getUtility().add(new UtilityUnit(name,cost));
+            }
+        }
     }
 
 
@@ -469,7 +632,7 @@ public class QueryUI extends javax.swing.JFrame {
     private javax.swing.JButton cancelButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
-    private javax.swing.JComboBox opponenRaceInput;
+    private javax.swing.JComboBox opponentRaceInput;
     private javax.swing.JLabel opponentRaceLabel;
     private javax.swing.JComboBox playerRaceInput;
     private javax.swing.JLabel playerRaceLabel;

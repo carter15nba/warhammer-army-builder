@@ -36,7 +36,15 @@ public class Equipment implements jcolibri.cbrcore.CaseComponent{
     private String usableBy;
     private String modifier;
     private Set<SpecialRules> rules = new HashSet<SpecialRules>();
-    private boolean defaultItem;    
+    private boolean defaultItem;
+
+    /** Default constructor */
+    public Equipment(){}
+
+    public Equipment(String name, int cost){
+        this.name = name;
+        this.cost = cost;
+    }
 
     public Attribute getIdAttribute() {
         return new Attribute("ID", this.getClass());

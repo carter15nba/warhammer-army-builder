@@ -17,6 +17,15 @@
 
 package myrmidia.UI.Resources;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import myrmidia.Enums.Races;
+import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Warhammer.Equipment;
+import myrmidia.Warhammer.Unit;
+import myrmidia.Warhammer.UtilityUnit;
+
 /**
  * @author Glenn Rune Strandbråten
  * @version 0.1
@@ -29,6 +38,7 @@ public class UnitModel {
     private CheckListItem[] equipment;
     private CheckListItem[] magic;
     private CheckListItem[] promotion;
+    private boolean battleStandardBearer;
 
     /** Default constructor */
     public UnitModel(){
@@ -37,8 +47,8 @@ public class UnitModel {
         utility = new CheckListItem[0];
         equipment = new CheckListItem[0];
         magic = new CheckListItem[0];
-        promotion = new CheckListItem[1];
-        promotion[0] = new CheckListItem("test", true);
+        promotion = new CheckListItem[0];
+        battleStandardBearer = false;
 
     }
 
@@ -53,8 +63,8 @@ public class UnitModel {
         utility = new CheckListItem[0];
         equipment = new CheckListItem[0];
         magic = new CheckListItem[0];
-        promotion = new CheckListItem[1];
-        promotion[0] = new CheckListItem("test", true);
+        promotion = new CheckListItem[0];
+        battleStandardBearer = false;
     }
 
     /**
@@ -140,5 +150,104 @@ public class UnitModel {
     public void setPromotion(CheckListItem[] promotion) {
         this.promotion = promotion;
     }
+
+    public static UnitModel parseUnitModelFromUnit(Unit unit){
+        UnitModel model = new UnitModel();
+        String name = unit.getName().split(":")[1];
+        model.setName(name);
+        model.setEquipment(parseEquipment(unit.getEquipment()));
+        model.setPromotion(parsePromotion(unit.getUtilityUnit()));
+        model.setUtility(parseUtility(unit.getUtilityUnit()));
+        model.setMagic(parseMagic(unit));
+        return model;
+    }
+
+    public static CheckListItem[] parseEquipment(Set<Equipment> eq){
+        List<CheckListItem> items = new ArrayList<CheckListItem>();
+        for (Equipment e : eq) {
+            if(e.isDefaultItem())
+                continue;
+            String name = e.getName();
+            int cost = e.getCost();
+            String title = "("+cost+")"+name;
+            CheckListItem cli = new CheckListItem(title);
+            items.add(cli);
+        }
+        return items.toArray(new CheckListItem[items.size()]);
+    }
+
+    public static CheckListItem[] parseUtility(Set<UtilityUnit> ut){
+        List<CheckListItem> items = new ArrayList<CheckListItem>();
+        for (UtilityUnit u : ut) {
+            if(u.isPromotionUnit()||u.isRequired())
+                continue;
+            String name = u.getName().split(":")[1];
+            int cost = u.getCost();
+            String title = "("+cost+")"+name;
+            CheckListItem cli = new CheckListItem(title);
+            items.add(cli);
+        }
+        return items.toArray(new CheckListItem[items.size()]);
+    }
+
+    public static CheckListItem[] parsePromotion(Set<UtilityUnit> ut){
+        List<CheckListItem> items = new ArrayList<CheckListItem>();
+        for (UtilityUnit u : ut) {
+            if(!u.isPromotionUnit()||u.isRequired())
+                continue;
+            String name = u.getName().split(":")[1];
+            int cost = u.getCost();
+            String title = "("+cost+")"+name;
+            CheckListItem cli = new CheckListItem(title);
+            items.add(cli);
+        }
+        return items.toArray(new CheckListItem[items.size()]);
+    }
+
+    public static CheckListItem[] parseMagic(Unit unit) {
+        Set<Equipment> eq;
+        if(unit.getRace()==Races.Dwarfs){
+            eq = CreateObjectFromDB.getRaceEquipment(
+                    unit.getRace(), unit.getMagicPoints());
+        }
+        else{
+            eq = CreateObjectFromDB.getAllEquipment(
+                    unit.getRace(), unit.getMagicPoints());
+        }
+        CheckListItem[] items = new CheckListItem[eq.size()];
+        int count=0;
+        for (Equipment e : eq) {
+            String name = e.getName();
+            int cost = e.getCost();
+            String title = "("+cost+")"+name;
+            items[count++] = new CheckListItem(title);
+        }
+        return items;
+    }
+
+    public boolean isEmpty() {
+        if((utility.length==0)&&
+                (equipment.length==0)&&
+                (promotion.length==0)&&
+                (magic.length==0))
+            return true;
+        return false;
+
+    }
+
+    /**
+     * @return the battleStandardBearer
+     */
+    public boolean isBattleStandardBearer() {
+        return battleStandardBearer;
+    }
+
+    /**
+     * @param battleStandardBearer the battleStandardBearer to set
+     */
+    public void setBattleStandardBearer(boolean battleStandardBearer) {
+        this.battleStandardBearer = battleStandardBearer;
+    }
+
 
 }
