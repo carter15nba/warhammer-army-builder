@@ -25,7 +25,6 @@ package myrmidia.CBR.Resources;
  */
 public class SimilarityConfiguration {
 
-    //TODO: Add more weights if someone missed
     private double armyWeigth;
     private double opponentWeigth;
     private double outcomeWeigth;
@@ -40,7 +39,7 @@ public class SimilarityConfiguration {
      * Default constructor. Use SimilarityConfiguration.getInstace to
      * aquire the instance of this class.
      */
-    private SimilarityConfiguration(){}
+    private SimilarityConfiguration(){setDefaultValues();}
 
     /**
      * Method to aquire the singleton instance of this class.
@@ -197,9 +196,22 @@ public class SimilarityConfiguration {
         this.outcomeWeigth = (outcomeWeight>1) ? 1 : outcomeWeight;
         this.playerRaceWeigth = (playerRaceWeigth<0) ? 0 : playerRaceWeigth;
         this.playerRaceWeigth = (playerRaceWeigth>1) ? 1 : playerRaceWeigth;
-
         this.armyPointInterval = armyPointInterval;
         this.k = k;
+    }
+
+    /**
+     * Method to reset the configuration back to the default values
+     */
+    public final void setDefaultValues(){
+        armyPointWeight = 1;
+        armyUnitWeigth = 1;
+        armyWeigth = 1;
+        opponentWeigth = 1;
+        outcomeWeigth = 1;
+        playerRaceWeigth = 1;
+        armyPointInterval = 500;
+        k = 3;
     }
 
 }

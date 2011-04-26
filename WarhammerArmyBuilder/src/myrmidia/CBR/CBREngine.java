@@ -82,8 +82,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         similarityMeasure = new SimilarityMeasure();
         prepareCase = PrepareCase.getInstance();
         simConfig = SimilarityConfiguration.getInstance();
-        //TODO user specify similarity configuration
-        simConfig.setConfiguration(1.0,1.0,1.0,1.0,1.0,1.0,500,2);
     }
 
     public CBRCaseBase preCycle() throws ExecutionException {
@@ -93,7 +91,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
 
     public void cycle(CBRQuery cbrq) throws ExecutionException {        
         Collection<RetrievalResult> retrievalResults = retrieve(cbrq);
-
         Collection<CBRCase> cbr = reuse(cbrq, retrievalResults);
 //        revise();
 //        retain(cbr);

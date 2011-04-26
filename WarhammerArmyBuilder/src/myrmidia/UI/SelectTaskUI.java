@@ -23,9 +23,9 @@
 
 package myrmidia.UI;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.JFrame;
 import myrmidia.UI.Resources.InputParameters;
 
 /**
@@ -41,6 +41,10 @@ public class SelectTaskUI extends javax.swing.JFrame {
         Dimension dim = tool.getScreenSize();
         setLocation(dim.width / 2 - getWidth() / 2, dim.height / 2 - getHeight() / 2);
         setVisible(true);
+    }
+    public SelectTaskUI(JFrame child){
+        initComponents();
+        setLocationRelativeTo(child);
     }
     
     /** This method is called from within the constructor to

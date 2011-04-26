@@ -354,6 +354,8 @@ public class QueryUI extends javax.swing.JFrame {
         if(verifyRequiredFields()){
             //TODO: Next step
             CBRQuery query = createQuery();
+            new ConfigureCBRUI(query, this).setVisible(true);
+            dispose();
         }
         else{
             JOptionPane.showMessageDialog(this , "Not all required fields are set.", "Error 01 - Required fields", JOptionPane.ERROR_MESSAGE);
@@ -530,13 +532,12 @@ public class QueryUI extends javax.swing.JFrame {
         queryCase.setOutcome(Outcomes.Victory);
 
         Army queryArmy = new Army();
-        queryArmy.setArmyPoints(Integer.parseInt(armyPointsField.getText()));
+        queryArmy.setArmyPoints(armyPointsField.getValue());
         queryArmy.setPlayerRace(Races.valueOf(playerRaceInput.getSelectedItem()
                 .toString()));
         queryArmy.setArmyUnits(createArmyUnits(queryArmy.getPlayerRace()));
         queryCase.setArmy(queryArmy);
 
-        PrintFactory.printCase(queryCase, true);
         CBRQuery cbrQuery = new CBRQuery();
         cbrQuery.setDescription(queryCase);
         return cbrQuery;
