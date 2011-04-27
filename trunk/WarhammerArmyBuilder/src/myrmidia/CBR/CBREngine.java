@@ -107,7 +107,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * @param cbrq The CBRQuery object
      * @return A collection with the retrieval results from the query.
      */
-    private Collection<RetrievalResult> retrieve(CBRQuery cbrq){
+    public Collection<RetrievalResult> retrieve(CBRQuery cbrq){
         NNConfig conf = similarityMeasure.getSimilarityConfig();
         conf.setDescriptionSimFunction(new Average(caseBase.getCases()));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
@@ -127,7 +127,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * @param cbrq The CBRQuery object
      * @param retrievalResults The results of the retrieval process.
      */
-    private Collection<CBRCase> reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
+    public Collection<CBRCase> reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
 
 
@@ -152,7 +152,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * Method used int the CBR cycle to revise the changes and evaluate the
      * performance of the revised case.
      */
-    private void revise(){
+    public void revise(){
         //TODO: Add a revise step
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -160,7 +160,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     /**
      * Method used in the CBR cycle to store relevant cases back into the casebase.
      */
-    private void retain(Collection<CBRCase> cbrCase){
+    public void retain(Collection<CBRCase> cbrCase){
         //TODO: Add logic to find stored unknown cases and a way to update the case with the outcome. (Delete defeat cases?)
         for (CBRCase cBRCase : cbrCase) {
             Case solution = (Case) cBRCase.getSolution();

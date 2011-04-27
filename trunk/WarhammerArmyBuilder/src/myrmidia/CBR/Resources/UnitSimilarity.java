@@ -148,7 +148,7 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
      */
     private double computeCharacteristicsSimilarity(double[] caseValues, double[] queryValues)
             throws NoApplicableSimilarityFunctionException{
-        Threshold characteristicsInterval = new Threshold(2); //TODO: User selected threshold value?
+        Threshold characteristicsInterval = new Threshold(2);
         double characterisitcs = 0 ;
         for(int i = 0 ; i < 9 ; i++){
             double caseValue = caseValues[i];

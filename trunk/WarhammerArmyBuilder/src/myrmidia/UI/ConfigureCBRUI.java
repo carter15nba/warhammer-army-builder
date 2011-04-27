@@ -25,16 +25,15 @@ package myrmidia.UI;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Collection;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.exception.ExecutionException;
+import jcolibri.method.retrieve.RetrievalResult;
 import myrmidia.CBR.CBREngine;
 import myrmidia.CBR.Resources.SimilarityConfiguration;
-import myrmidia.Explanation.ExplanationEngine;
 
 /**
  *
@@ -101,7 +100,6 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Myrmidia - Configure similarity functions");
-        setResizable(false);
 
         armyPointIntervalField.setText("500");
         armyPointIntervalField.setToolTipText("<html>Affects how large a gap there can be between the desired army points and the army points in the case.<br>E.g.: With an interval of 500 and a query of 2500 will any case with points between 2000 and 3000 have some point similarity<br>while any case with army points outside that range have no point similarity with the query.");
@@ -448,15 +446,13 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
                     CBREngine cbrEngine = CBREngine.getInstance();
                     cbrEngine.configure();
                     cbrEngine.preCycle();
-                    cbrEngine.cycle(query);
-                    cbrEngine.postCycle();
-                    ExplanationEngine eng = ExplanationEngine.getInstance();
-                    System.out.println(eng.generateTransparencyExplanations());
-                    System.out.println(eng.generateJustificationExplanations());
+                    Collection<RetrievalResult> result = cbrEngine.retrieve(query);
+                    new RetrievalUI(this,result).setVisible(true);
                 }
                 catch (ExecutionException ex) {}
                 finally{
                      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                     dispose();
                 }
             }
             else

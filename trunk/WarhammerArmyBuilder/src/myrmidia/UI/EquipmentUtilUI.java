@@ -26,6 +26,9 @@ package myrmidia.UI;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Set;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.UnitModel;
@@ -40,12 +43,15 @@ import myrmidia.Warhammer.Unit;
 public class EquipmentUtilUI extends javax.swing.JDialog {
 
     private UnitModel unitModel;
+    private boolean noList;
     /** Creates new form EquipmentUtilUI */
     public EquipmentUtilUI(UnitModel unitModel) {
         initComponents();
         setListSizes();
         setTitle(unitModel.getName());
         initializeLists(unitModel);
+        getRootPane().setDefaultButton(okButton);
+        setLocationRelativeTo(null);
     }
     /** Creates new form EquipmentUtilUI */
     public EquipmentUtilUI(QueryUI parent, UnitModel unitModel) {
@@ -56,6 +62,24 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         setTitle(unitModel.getName());
         initializeLists(unitModel);
         setLocationRelativeTo(parent);
+        getRootPane().setDefaultButton(okButton);
+    }
+    /** Creates new form EquipmentUtilUI */
+    public EquipmentUtilUI(JFrame parent, UnitModel unitModel) {
+        super(parent);
+        initComponents();
+        this.unitModel = unitModel;
+        equipmentList.setCellRenderer(new DefaultListCellRenderer());
+        utilityList.setCellRenderer(new DefaultListCellRenderer());
+        promotionList.setCellRenderer(new DefaultListCellRenderer());
+        noList=true;
+        setListSizes();
+        setTitle(unitModel.getName());
+        initializeLists(unitModel);
+        setLocationRelativeTo(parent);
+        magicScroll.setVisible(false);
+        magicLabel.setVisible(false);
+        getRootPane().setDefaultButton(okButton);
     }
 
     /** This method is called from within the constructor to
@@ -258,6 +282,8 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
     }
 
     private void performListClick(JList list, Point point) {
+        if(noList)
+            return;
         int index = list.locationToIndex(point);
         if(index==-1)
             return;

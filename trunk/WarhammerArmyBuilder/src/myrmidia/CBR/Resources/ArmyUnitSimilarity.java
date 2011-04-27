@@ -80,7 +80,6 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
             if(caseArmyUnit==null){
                 continue;
             }
-            //TODO: User specified interval.
             Interval interval = new Interval(5);
             numberSim += interval.compute(caseArmyUnit.getNumberOfUnits(), queryArmyUnit.getNumberOfUnits());
             equipmentSim += computeEquipmentSimilarity(caseArmyUnit.getEquipment(), queryArmyUnit.getEquipment());
