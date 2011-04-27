@@ -145,7 +145,7 @@ public class UnitModel {
     }
 
     /**
-     * @param magic the promotion to set
+     * @param promotion the promotion to set
      */
     public void setPromotion(CheckListItem[] promotion) {
         this.promotion = promotion;

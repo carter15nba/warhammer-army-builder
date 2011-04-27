@@ -79,10 +79,10 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         kNNLabel = new javax.swing.JLabel();
         similarityPanel = new javax.swing.JPanel();
         playerSlider = new javax.swing.JSlider();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        outcomeLabel = new javax.swing.JLabel();
+        pointLabel = new javax.swing.JLabel();
+        armyLabel = new javax.swing.JLabel();
+        unitLabel = new javax.swing.JLabel();
         outcomeSlider = new javax.swing.JSlider();
         opponentSlider = new javax.swing.JSlider();
         armyCount = new javax.swing.JLabel();
@@ -91,8 +91,8 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         armyPointSlider = new javax.swing.JSlider();
         armySlider = new javax.swing.JSlider();
         unitSlider = new javax.swing.JSlider();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        playerLabel = new javax.swing.JLabel();
+        opponentLabel = new javax.swing.JLabel();
         armyPointsCount = new javax.swing.JLabel();
         unitCount = new javax.swing.JLabel();
         outcomeCount = new javax.swing.JLabel();
@@ -141,13 +141,13 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Outcome:");
+        outcomeLabel.setText("Outcome:");
 
-        jLabel4.setText("Army points:");
+        pointLabel.setText("Army points:");
 
-        jLabel5.setText("Army:");
+        armyLabel.setText("Army:");
 
-        jLabel6.setText("Unit:");
+        unitLabel.setText("Unit:");
 
         outcomeSlider.setToolTipText("Affects how much the outcome conditions counts when searhing through the stored cases");
         outcomeSlider.setValue(100);
@@ -220,9 +220,9 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Player race:");
+        playerLabel.setText("Player race:");
 
-        jLabel2.setText("Opponent race:");
+        opponentLabel.setText("Opponent race:");
 
         armyPointsCount.setText("100%");
 
@@ -237,27 +237,27 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             .addGroup(similarityPanelLayout.createSequentialGroup()
                 .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel6)
+                        .addComponent(unitLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(unitSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(opponentLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(opponentSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addComponent(outcomeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(outcomeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(playerLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(playerSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
+                        .addComponent(pointLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(armyPointSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
+                        .addComponent(armyLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(armySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -278,14 +278,14 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
                     .addGroup(similarityPanelLayout.createSequentialGroup()
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(playerSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
+                            .addComponent(playerLabel))
                         .addGap(3, 3, 3)
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(opponentSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(opponentLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
+                            .addComponent(outcomeLabel)
                             .addComponent(outcomeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
                         .addComponent(playerRaceCount)
@@ -298,14 +298,14 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
                     .addGroup(similarityPanelLayout.createSequentialGroup()
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(armyPointSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
+                            .addComponent(pointLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
+                            .addComponent(armyLabel)
                             .addComponent(armySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(similarityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
+                            .addComponent(unitLabel)
                             .addComponent(unitSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(similarityPanelLayout.createSequentialGroup()
                         .addComponent(armyPointsCount)
@@ -447,7 +447,7 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
                     cbrEngine.configure();
                     cbrEngine.preCycle();
                     Collection<RetrievalResult> result = cbrEngine.retrieve(query);
-                    new RetrievalUI(this,result).setVisible(true);
+                    new RetrievalUI(this,result,query).setVisible(true);
                 }
                 catch (ExecutionException ex) {}
                 finally{
@@ -540,30 +540,30 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel armyCount;
+    private javax.swing.JLabel armyLabel;
     private myrmidia.UI.Resources.IntTextField armyPointIntervalField;
     private javax.swing.JLabel armyPointIntervalLabel;
     private javax.swing.JSlider armyPointSlider;
     private javax.swing.JLabel armyPointsCount;
     private javax.swing.JSlider armySlider;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private myrmidia.UI.Resources.IntTextField kNNField;
     private javax.swing.JLabel kNNLabel;
     private javax.swing.JButton nextButton;
+    private javax.swing.JLabel opponentLabel;
     private javax.swing.JLabel opponentRaceCount;
     private javax.swing.JSlider opponentSlider;
     private javax.swing.JLabel outcomeCount;
+    private javax.swing.JLabel outcomeLabel;
     private javax.swing.JSlider outcomeSlider;
+    private javax.swing.JLabel playerLabel;
     private javax.swing.JLabel playerRaceCount;
     private javax.swing.JSlider playerSlider;
+    private javax.swing.JLabel pointLabel;
     private javax.swing.JLabel requiredLabel;
     private javax.swing.JPanel similarityPanel;
     private javax.swing.JLabel unitCount;
+    private javax.swing.JLabel unitLabel;
     private javax.swing.JSlider unitSlider;
     // End of variables declaration//GEN-END:variables
 }
