@@ -23,11 +23,17 @@
 
 package myrmidia.UI;
 
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import jcolibri.cbrcore.CBRCase;
+import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.RetrievalResult;
+import myrmidia.CBR.CBREngine;
 import myrmidia.UI.Resources.UnitModel;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Warhammer.Army;
@@ -45,19 +51,25 @@ public class RetrievalUI extends javax.swing.JFrame {
     private int displaying = -1;
     private boolean[] approvedCases;
     private Collection<RetrievalResult> results = null;
+    private CBRQuery query;
     public RetrievalUI() {
         initComponents();
         initApprovedCases();
         unitsTable.getTableHeader().setReorderingAllowed(false);
+        unitsPanel.setVisible(false);
+        setSize(getMinimumSize());
         setLocationRelativeTo(null);
     }
 
-    public RetrievalUI(JFrame parent, Collection<RetrievalResult> results) {
+    public RetrievalUI(JFrame parent, Collection<RetrievalResult> results, CBRQuery query) {
         initComponents();
         setLocationRelativeTo(parent);
+        this.query = query;
         this.results = results;
         initApprovedCases();
         unitsTable.getTableHeader().setReorderingAllowed(false);
+        unitsPanel.setVisible(false);
+        setSize(getMinimumSize());
         displayNextResult();
     }
 
@@ -224,11 +236,11 @@ public class RetrievalUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Unit name", "Number of units"
+                "Unit name", "Number of units", "Base unit cost", "Calculated unit cost"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -354,6 +366,8 @@ public class RetrievalUI extends javax.swing.JFrame {
 
     private void unitsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitsButtonActionPerformed
         if(unitsButton.isSelected()){
+            if(getSize().height<500)
+                setSize(new Dimension(getSize().width,500));
             unitsPanel.setVisible(true);
             unitsButton.setText("Hide units");
             populateUnitsTable();
@@ -378,7 +392,21 @@ public class RetrievalUI extends javax.swing.JFrame {
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequirements()){
-
+            try{
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                Collection<RetrievalResult> approvedResults = new ArrayList<RetrievalResult>();
+                int count = 0;
+                for(RetrievalResult ret : results){
+                    if(approvedCases[count++])
+                        approvedResults.add(ret);
+                }
+                CBREngine cbrEngine = CBREngine.getInstance();
+                Collection<CBRCase> reuse = cbrEngine.reuse(query, approvedResults);
+            }
+            finally{
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                dispose();
+            }
         }
         else
             JOptionPane.showMessageDialog(this, "At least one case (army) must be approved", "Error 04 - No approved case", JOptionPane.ERROR_MESSAGE);
@@ -425,7 +453,10 @@ public class RetrievalUI extends javax.swing.JFrame {
         for(ArmyUnit unit : army.getArmyUnits()){
             int number = unit.getNumberOfUnits();
             String name = unit.getUnit().getName().split(":")[1];
-            dtm.addRow(new Object[]{name,number});
+            dtm.addRow(new Object[]{name,
+                number,
+                unit.getUnit().getCost(),
+                army.calculateTotalUnitCost(unit)});
         }
     }
 

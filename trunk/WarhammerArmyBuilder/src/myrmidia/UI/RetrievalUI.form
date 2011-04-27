@@ -332,9 +332,11 @@
             <Component class="myrmidia.UI.Resources.NoEditTable" name="unitsTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="2" rowCount="0">
+                  <Table columnCount="4" rowCount="0">
                     <Column editable="true" title="Unit name" type="java.lang.String"/>
                     <Column editable="true" title="Number of units" type="java.lang.Integer"/>
+                    <Column editable="true" title="Base unit cost" type="java.lang.Integer"/>
+                    <Column editable="true" title="Calculated unit cost" type="java.lang.Integer"/>
                   </Table>
                 </Property>
               </Properties>

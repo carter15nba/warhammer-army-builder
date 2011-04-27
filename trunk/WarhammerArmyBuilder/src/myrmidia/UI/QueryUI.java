@@ -133,7 +133,7 @@ public class QueryUI extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         addUnitToggleButton = new javax.swing.JToggleButton();
         addUnitsPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        addUnitsScroll = new javax.swing.JScrollPane();
         unitsTable = new javax.swing.JTable();
         addRowButton = new javax.swing.JButton();
         removeRowButton = new javax.swing.JButton();
@@ -214,7 +214,7 @@ public class QueryUI extends javax.swing.JFrame {
                 unitsTableMouseReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(unitsTable);
+        addUnitsScroll.setViewportView(unitsTable);
 
         addRowButton.setMnemonic('d');
         addRowButton.setText("Add row");
@@ -246,7 +246,7 @@ public class QueryUI extends javax.swing.JFrame {
             addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addUnitsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+                .addComponent(addUnitsScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(viewEqUtButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -259,7 +259,7 @@ public class QueryUI extends javax.swing.JFrame {
             .addGroup(addUnitsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(addUnitsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(addUnitsScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                     .addGroup(addUnitsPanelLayout.createSequentialGroup()
                         .addComponent(addRowButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -626,10 +626,10 @@ public class QueryUI extends javax.swing.JFrame {
     private javax.swing.JButton addRowButton;
     private javax.swing.JToggleButton addUnitToggleButton;
     private javax.swing.JPanel addUnitsPanel;
+    private javax.swing.JScrollPane addUnitsScroll;
     private myrmidia.UI.Resources.IntTextField armyPointsField;
     private javax.swing.JLabel armyPointsLabel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JComboBox opponentRaceInput;
     private javax.swing.JLabel opponentRaceLabel;
