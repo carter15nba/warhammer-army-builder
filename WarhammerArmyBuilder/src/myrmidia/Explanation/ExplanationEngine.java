@@ -88,7 +88,7 @@ public class ExplanationEngine{
      */
     public CaseExplanation getCaseExplanationByPosition(int pos)
             throws NoExplanationException{
-        if(caseExplanations.size()>=pos)
+        if(caseExplanations.size()>=pos||pos<0)
             throw new NoExplanationException("No case explanation were found at the supplied position");
         else
             return caseExplanations.get(pos);
@@ -112,7 +112,7 @@ public class ExplanationEngine{
      * @return String the transparency explanation
      */
     public String generateTransparencyExplanations() {
-        String ret="\nGenerating transparency explanations!\n\n";
+        String ret="\nGenerating transparency (selection) explanations!\n\n";
         for (CaseExplanation ce : caseExplanations) {
             ret+=ce.generateExplanation()+"\n\n";
         }
@@ -126,9 +126,10 @@ public class ExplanationEngine{
      * @return String the transparency explanation
      */
     public String generateTransparencyExplanation(int index) {
-        String ret = "\nGenerating the transparency for the desired case!\n\n";
-        if(index>0&&index<caseExplanations.size()){
-            ret = caseExplanations.get(index).generateExplanation();
+        String ret = "";
+        if(index>=0&&index<caseExplanations.size()){
+            ret = "Generating the transparency (selection) explanation for the desired case!\n\n";
+            ret += caseExplanations.get(index).generateExplanation();
         }
         return ret;
     }
@@ -235,7 +236,7 @@ public class ExplanationEngine{
      */
     public String generateJustificationExplanation(int index) {
         String ret = "\nGenerating the justification for the desired case!\n\n";
-        if(index>0&&index<adaptionExplanations.size()){
+        if(index>=0&&index<adaptionExplanations.size()){
             AdaptionExplanation expl = adaptionExplanations.get(index);
             ret += generateRaceExchangeExplanation(expl.getCaseID());
             ret = expl.generateExplanation();

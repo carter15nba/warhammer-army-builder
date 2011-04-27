@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten 
+ *  Copyright (C) 2011 Glenn Rune Strandbråten
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,29 +17,17 @@
 
 package myrmidia.UI.Resources;
 
+import javax.swing.JTable;
+
 /**
- *
+ * Class extends JTable, all cell editing by user is disabled
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
-public class CheckListItem {
-    private String label;
-    private boolean isSelected = false;
-    public CheckListItem(String label){
-        this.label = label;
-    }
-    public CheckListItem(String label, boolean selected){
-        this.label = label;
-        isSelected = selected;
-    }
-    public boolean isSelected(){
-        return isSelected;
-    }
-    public void setSelected(boolean selected){
-        isSelected = selected;
-    }
+public class NoEditTable extends JTable{
+
     @Override
-    public String toString(){
-        return label;
+    public boolean isCellEditable(int rowIndex, int mColIndex) {
+        return false;
     }
 }

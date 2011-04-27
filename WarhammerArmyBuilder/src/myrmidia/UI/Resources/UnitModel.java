@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import myrmidia.Enums.Races;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.UtilityUnit;
@@ -49,7 +50,6 @@ public class UnitModel {
         magic = new CheckListItem[0];
         promotion = new CheckListItem[0];
         battleStandardBearer = false;
-
     }
 
     /**
@@ -224,6 +224,14 @@ public class UnitModel {
         }
         return items;
     }
+    
+    public static UnitModel parseArmyUnit(ArmyUnit unit){
+        UnitModel model = new UnitModel();
+        model.setEquipment(UnitModel.parseEquipment(unit.getEquipment()));
+        model.setUtility(UnitModel.parseUtility(unit.getUtility()));
+        model.setPromotion(UnitModel.parsePromotion(unit.getUtility()));
+        return model;
+    }
 
     public boolean isEmpty() {
         if((utility.length==0)&&
@@ -232,7 +240,6 @@ public class UnitModel {
                 (magic.length==0))
             return true;
         return false;
-
     }
 
     /**
@@ -249,5 +256,12 @@ public class UnitModel {
         this.battleStandardBearer = battleStandardBearer;
     }
 
-
+    @Override
+    public String toString(){
+        return "Unit name: "+name+", index:"+row+", BSB: "+battleStandardBearer+"\n"
+                + "  Equipment: "+equipment.length+"\n"
+                + "  Utility: "+utility.length+"\n"
+                + "  Promotion: "+promotion.length+"\n"
+                + "  Magic: "+magic.length;
+    }
 }

@@ -37,10 +37,8 @@ public class SelectTaskUI extends javax.swing.JFrame {
     /** Creates new form SelectTaskUI */
     public SelectTaskUI() {
         initComponents();
-        Toolkit tool = getToolkit();
-        Dimension dim = tool.getScreenSize();
-        setLocation(dim.width / 2 - getWidth() / 2, dim.height / 2 - getHeight() / 2);
         setVisible(true);
+        setLocationRelativeTo(null);
     }
     public SelectTaskUI(JFrame child){
         initComponents();

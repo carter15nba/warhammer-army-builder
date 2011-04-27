@@ -43,7 +43,6 @@ import myrmidia.UI.Resources.InputParameters;
 import myrmidia.UI.Resources.UnitModel;
 import myrmidia.UI.Resources.UnitModelControler;
 import myrmidia.Util.CreateObjectFromDB;
-import myrmidia.Util.PrintFactory;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
@@ -352,7 +351,6 @@ public class QueryUI extends javax.swing.JFrame {
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequiredFields()){
-            //TODO: Next step
             CBRQuery query = createQuery();
             new ConfigureCBRUI(query, this).setVisible(true);
             dispose();
