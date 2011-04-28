@@ -18,6 +18,7 @@
 package myrmidia.UI.Resources;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import myrmidia.Enums.Races;
@@ -225,23 +226,68 @@ public class UnitModel {
         return items;
     }
     
-    public static UnitModel parseArmyUnit(ArmyUnit armyUnit){
+    public static UnitModel parseUnitModelFromArmyUnit(ArmyUnit armyUnit){
         UnitModel model = new UnitModel();
-        model.setEquipment(UnitModel.parseEquipment(armyUnit.getEquipment()));
-        model.setUtility(UnitModel.parseUtility(armyUnit.getUtility()));
-        model.setPromotion(UnitModel.parsePromotion(armyUnit.getUtility()));
+        model.setName(armyUnit.getUnit().getName().split(":")[1]);
+        model.setEquipment(parseEquipment(armyUnit.getEquipment()));
+        model.setUtility(parseUtility(armyUnit.getUtility()));
+        model.setPromotion(parsePromotion(armyUnit.getUtility()));
         return model;
     }
 
-    private void toggleSelectedOn(){
-        for (CheckListItem cli : utility) {
-            cli.setSelected(true);
+    public static UnitModel parseUnitModelFromArmyUnitForRevise(ArmyUnit armyUnit){
+        UnitModel model = new UnitModel();
+        model.setName(armyUnit.getUnit().getName().split(":")[1]);
+        model.setEquipment(parseSelectedEquipment(armyUnit));
+        model.setUtility(parseSelectedUtility(armyUnit));
+        model.setPromotion(parseSelectedPromotion(armyUnit));
+        model.setMagic(parseSelectedMagic(armyUnit));
+        for(CheckListItem cli: model.getEquipment()){
+            if(cli.toString().equalsIgnoreCase("Battle standard bearer")
+                    && cli.isSelected())
+                model.battleStandardBearer = true;
         }
-        for (CheckListItem cli : equipment) {
-            cli.setSelected(true);
-        }
-        for (CheckListItem cli : promotion) {
-            cli.setSelected(true);
+        return model;
+    }
+
+    public static CheckListItem[] parseSelectedEquipment(ArmyUnit armyUnit){
+        Unit unit = armyUnit.getUnit();
+        CheckListItem[] cli = parseEquipment(unit.getEquipment());
+        findSelected(cli,armyUnit.getEquipment());
+        return cli;
+    }
+    private static CheckListItem[] parseSelectedUtility(ArmyUnit armyUnit){
+        Unit unit = armyUnit.getUnit();
+        CheckListItem[] cli = parseUtility(unit.getUtilityUnit());
+        findSelected(cli,armyUnit.getUtility());
+        return cli;
+    }
+    private static CheckListItem[] parseSelectedPromotion(ArmyUnit armyUnit){
+        Unit unit = armyUnit.getUnit();
+        CheckListItem[] cli = parsePromotion(unit.getUtilityUnit());
+        findSelected(cli,armyUnit.getUtility());
+        return cli;
+    }
+    private static CheckListItem[] parseSelectedMagic(ArmyUnit armyUnit){
+        Unit unit = armyUnit.getUnit();
+        CheckListItem[] cli = parseMagic(unit);
+        findSelected(cli,armyUnit.getEquipment());
+        return cli;
+    }
+    private static void findSelected(CheckListItem[] checkListItem, Collection col){
+        for (CheckListItem cli : checkListItem) {
+            for (Object o : col) {
+                if(o instanceof Equipment){
+                    Equipment e = (Equipment) o;
+                    if(cli.toString().endsWith(e.getName()))
+                        cli.setSelected(true);
+                }
+                if(o instanceof UtilityUnit){
+                    UtilityUnit u = (UtilityUnit) o;
+                    if(cli.toString().endsWith(u.getName()))
+                        cli.setSelected(true);
+                }
+            }
         }
     }
 

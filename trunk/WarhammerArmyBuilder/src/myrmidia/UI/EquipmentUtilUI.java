@@ -23,13 +23,14 @@
 
 package myrmidia.UI;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Set;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import myrmidia.Enums.Races;
 import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.UnitModel;
 import myrmidia.Util.CreateObjectFromDB;
@@ -74,13 +75,13 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
             utilityList.setCellRenderer(new DefaultListCellRenderer());
             promotionList.setCellRenderer(new DefaultListCellRenderer());
             noList=true;
+            magicScroll.setVisible(false);
+            magicLabel.setVisible(false);
         }
         setListSizes();
         setTitle(unitModel.getName());
         initializeLists(unitModel);
         setLocationRelativeTo(parent);
-        magicScroll.setVisible(false);
-        magicLabel.setVisible(false);
         getRootPane().setDefaultButton(okButton);
     }
 
@@ -283,18 +284,27 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         item.setSelected(! item.isSelected());
         list.repaint(list.getCellBounds(index, index));
         if(item.toString().contains("Battle standard bearer")){
+            Container cont = getParent();
+                Races race;
+                if(cont instanceof QueryUI){
+                    QueryUI qui = (QueryUI) cont;
+                    race = qui.getPlayerRace();
+                }
+                else if(cont instanceof ReviseUI){
+                    ReviseUI rui = (ReviseUI) cont;
+                    race = rui.getPlayerRace();
+                }
+                else
+                    return;
             if(item.isSelected()){
-                QueryUI qui = (QueryUI) getParent();
-                Set<Equipment> eq = CreateObjectFromDB.getBattleStandards(
-                        qui.getPlayerRace());
+                Set<Equipment> eq = CreateObjectFromDB.getBattleStandards(race);
                 unitModel.setMagic(UnitModel.parseEquipment(eq));
                 unitModel.setBattleStandardBearer(true);
                 magicLabel.setText("Battle standards");
             }
             else{
-                QueryUI qui = (QueryUI) getParent();
                 Unit unit = CreateObjectFromDB.createUnitFromDB(
-                        qui.getPlayerRace()+":"+getTitle());
+                        race+":"+getTitle());
                 unitModel.setMagic(UnitModel.parseMagic(unit));
                 unitModel.setBattleStandardBearer(false);
                 magicLabel.setText("Magic pile");
