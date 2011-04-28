@@ -415,9 +415,7 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
     }//GEN-LAST:event_unitsButtonActionPerformed
 
     private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
-        UnitModel model = UnitModel.parseArmyUnit(getSelectedArmyUnit());
-        int row = unitsTable.getSelectedRow();
-        model.setName(unitsTable.getValueAt(row, 0).toString());
+        UnitModel model = UnitModel.parseUnitModelFromArmyUnit(getSelectedArmyUnit());
         new EquipmentUtilUI(this,model,true).setVisible(true);
     }//GEN-LAST:event_viewButtonActionPerformed
 

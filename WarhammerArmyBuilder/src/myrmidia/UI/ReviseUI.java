@@ -23,6 +23,7 @@
 
 package myrmidia.UI;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -30,11 +31,11 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRCase;
-import jcolibri.cbrcore.CBRQuery;
 import myrmidia.Enums.Races;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
 import myrmidia.UI.Resources.MultipleResults;
 import myrmidia.UI.Resources.UnitModel;
+import myrmidia.UI.Resources.UnitModelControler;
 import myrmidia.UI.Resources.WindowCloser;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
@@ -52,6 +53,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     /** Creates new form ReviseUI */
     private Collection<CBRCase> revise;
     private int displaying;
+    private UnitModelControler[] unitControler;
     public ReviseUI() {
         initComponents();
         setLocationRelativeTo(null);
@@ -65,6 +67,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         setLocationRelativeTo(parent);
         this.revise = cases;
         displaying=-1;
+        initializeUnitModels();
         displayNextResult();
         initPopup();
         addWindowListener(new WindowCloser());
@@ -93,6 +96,25 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         popupMenu.add(popupAddRow);
         popupMenu.add(popupRemoveRow);
         popupMenu.add(popupView);
+    }
+
+    private void initializeUnitModels(){
+        unitControler = new UnitModelControler[revise.size()];
+        int display = 0;
+        for (CBRCase cbrCase : revise) {
+            Case _case = (Case) cbrCase.getSolution();
+            UnitModelControler control = new UnitModelControler();
+            int count = 0;
+            for(ArmyUnit armyUnit : _case.getArmy().getArmyUnits()){
+                UnitModel model = UnitModel.parseUnitModelFromArmyUnitForRevise(armyUnit);
+                model.setRow(count);
+                control.addUnitModel(count++, model);
+            }
+            unitControler[display++] = control;
+        }
+    }
+    public Races getPlayerRace(){
+       return Races.valueOf(playerTextLabel.getText());
     }
 
     /** This method is called from within the constructor to
@@ -431,10 +453,17 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     }//GEN-LAST:event_removeUnitButtonActionPerformed
 
     private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
-        UnitModel model = UnitModel.parseArmyUnit(getSelectedArmyUnit());
-        int row = unitTable.getSelectedRow();
-        model.setName(unitTable.getValueAt(row, 0).toString());
-        new EquipmentUtilUI(this,model,false).setVisible(true);
+        int selectedRow = unitTable.getSelectedRow();
+        if(selectedRow==-1)
+            return;
+        try{
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            new EquipmentUtilUI(this, getUnitModel(selectedRow),false).setVisible(true);
+        }
+        catch(NullPointerException npe){}
+        finally{
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }//GEN-LAST:event_viewButtonActionPerformed
 
     private void unitTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitTableMouseReleased
@@ -496,12 +525,31 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         unitTable.getColumnModel().getColumn(0).setCellRenderer(new ComboBoxTableCellRenderer(names, 0));
     }
 
-    private ArmyUnit getSelectedArmyUnit(){
-        CBRCase cbrCase =
-            (CBRCase)CollectionControl.getItemAt(revise, displaying);
-        Case _case = (Case) cbrCase.getSolution();
-        return (ArmyUnit) CollectionControl.getItemAt(
-                _case.getArmy().getArmyUnits(), unitTable.getSelectedRow());
+    private UnitModel getUnitModel(int selectedRow){
+        String unitName = unitTable.getValueAt(selectedRow, 0).toString();
+        if(unitName.contentEquals("N/A"))
+            return null;
+        UnitModelControler controler = unitControler[displaying];
+        UnitModel model = controler.getUnitModel(selectedRow);
+        if(model==null){
+            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
+                    playerTextLabel.getText()+":"+unitName);
+            model = UnitModel.parseUnitModelFromUnit(unit);
+            model.setRow(selectedRow);
+            controler.addUnitModel(model);
+        }
+        else if((model.getName().contentEquals(unitName)) &&
+                (model.getRow() == selectedRow)){
+            return model;
+        }
+        else{
+            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
+                    playerTextLabel.getText()+":"+unitName);
+            model = UnitModel.parseUnitModelFromUnit(unit);
+            model.setRow(selectedRow);
+            controler.replaceUnitModel(selectedRow, model);
+        }
+        return model;
     }
 
     /**
