@@ -204,6 +204,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="okButton">
       <Properties>
+        <Property name="mnemonic" type="int" value="79"/>
         <Property name="label" type="java.lang.String" value="Ok"/>
       </Properties>
       <Events>

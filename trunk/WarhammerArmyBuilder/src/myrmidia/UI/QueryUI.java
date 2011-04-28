@@ -42,7 +42,9 @@ import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
 import myrmidia.UI.Resources.InputParameters;
 import myrmidia.UI.Resources.UnitModel;
 import myrmidia.UI.Resources.UnitModelControler;
+import myrmidia.UI.Resources.WindowCloser;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Util.PrintFactory;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
@@ -111,6 +113,7 @@ public class QueryUI extends javax.swing.JFrame {
         if(inputParameters.getNoRestrictions())
             addUnitToggleButton.setEnabled(true);
         selectedPlayerRace = "";
+        addWindowListener(new WindowCloser());
         pack();
     }
 
@@ -140,7 +143,7 @@ public class QueryUI extends javax.swing.JFrame {
         viewEqUtButton = new javax.swing.JButton();
         armyPointsField = new myrmidia.UI.Resources.IntTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Myrmidia - Create Query");
         setName("queryUI"); // NOI18N
 
@@ -217,7 +220,7 @@ public class QueryUI extends javax.swing.JFrame {
         addUnitsScroll.setViewportView(unitsTable);
 
         addRowButton.setMnemonic('d');
-        addRowButton.setText("Add row");
+        addRowButton.setText("Add unit");
         addRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addRowButtonActionPerformed(evt);
@@ -225,7 +228,7 @@ public class QueryUI extends javax.swing.JFrame {
         });
 
         removeRowButton.setMnemonic('r');
-        removeRowButton.setText("Remove row");
+        removeRowButton.setText("Remove unit");
         removeRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeRowButtonActionPerformed(evt);
@@ -361,11 +364,8 @@ public class QueryUI extends javax.swing.JFrame {
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        if(parent==null)
-            System.exit(0);
-        parent.setLocationRelativeTo(this);
+        new SelectTaskUI(this).setVisible(true);
         dispose();
-        parent.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void playerRaceInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerRaceInputActionPerformed
@@ -395,11 +395,11 @@ public class QueryUI extends javax.swing.JFrame {
 
     private void removeRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeRowButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
-        int selRow = unitsTable.getSelectedRow();
-        if(selRow==-1)
+        int selectedRow = unitsTable.getSelectedRow();
+        if(selectedRow==-1)
             return;
-        dtm.removeRow(selRow);
-        unitModelControler.removeUnitModel(selRow);
+        dtm.removeRow(selectedRow);
+        unitModelControler.removeUnitModel(selectedRow);
     }//GEN-LAST:event_removeRowButtonActionPerformed
 
     private void viewEqUtButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewEqUtButtonActionPerformed
@@ -535,7 +535,7 @@ public class QueryUI extends javax.swing.JFrame {
                 .toString()));
         queryArmy.setArmyUnits(createArmyUnits(queryArmy.getPlayerRace()));
         queryCase.setArmy(queryArmy);
-
+        PrintFactory.printCase(queryCase, true);
         CBRQuery cbrQuery = new CBRQuery();
         cbrQuery.setDescription(queryCase);
         return cbrQuery;

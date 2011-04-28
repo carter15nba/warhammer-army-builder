@@ -23,10 +23,9 @@
 
 package myrmidia.UI;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.JFrame;
 import myrmidia.UI.Resources.InputParameters;
+import myrmidia.UI.Resources.WindowCloser;
 
 /**
  *
@@ -39,10 +38,12 @@ public class SelectTaskUI extends javax.swing.JFrame {
         initComponents();
         setVisible(true);
         setLocationRelativeTo(null);
+        addWindowListener(new WindowCloser());
     }
     public SelectTaskUI(JFrame child){
         initComponents();
         setLocationRelativeTo(child);
+        addWindowListener(new WindowCloser());
     }
     
     /** This method is called from within the constructor to
@@ -58,12 +59,12 @@ public class SelectTaskUI extends javax.swing.JFrame {
         assignButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Myrmidia - Select task");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setResizable(false);
 
-        createButton.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        createButton.setFont(new java.awt.Font("Verdana", 0, 14));
         createButton.setMnemonic('C');
         createButton.setText("Create army roster");
         createButton.addActionListener(new java.awt.event.ActionListener() {
@@ -72,7 +73,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
             }
         });
 
-        assignButton.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        assignButton.setFont(new java.awt.Font("Verdana", 0, 14));
         assignButton.setMnemonic('a');
         assignButton.setText("Assign outcome to fought battles");
         assignButton.setMaximumSize(new java.awt.Dimension(125, 23));
@@ -84,7 +85,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
             }
         });
 
-        exitButton.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        exitButton.setFont(new java.awt.Font("Verdana", 0, 14));
         exitButton.setMnemonic('x');
         exitButton.setText("Exit");
         exitButton.setMaximumSize(new java.awt.Dimension(125, 23));
@@ -118,7 +119,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        System.exit(0);
+        WindowCloser.finalizeApplicationExecution();
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void assignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignButtonActionPerformed

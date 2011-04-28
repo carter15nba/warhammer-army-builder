@@ -34,6 +34,7 @@ import jcolibri.exception.ExecutionException;
 import jcolibri.method.retrieve.RetrievalResult;
 import myrmidia.CBR.CBREngine;
 import myrmidia.CBR.Resources.SimilarityConfiguration;
+import myrmidia.UI.Resources.WindowCloser;
 
 /**
  *
@@ -50,16 +51,16 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         initComponents();
         simConf = SimilarityConfiguration.getInstance();
         query = null;
+        addWindowListener(new WindowCloser());
     }
 
     public ConfigureCBRUI(CBRQuery query,JFrame parent) {
         ToolTipManager.sharedInstance().setDismissDelay(20000);
         initComponents();
-        setLocationRelativeTo(parent);
-        
+        setLocationRelativeTo(parent);    
         simConf = SimilarityConfiguration.getInstance();
         this.query = query;
-        
+        addWindowListener(new WindowCloser());
     }
 
     /** This method is called from within the constructor to
@@ -98,7 +99,7 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         outcomeCount = new javax.swing.JLabel();
         requiredLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Myrmidia - Configure similarity functions");
 
         armyPointIntervalField.setText("500");
@@ -464,12 +465,8 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        if(query==null)
-            System.exit(0);
-        else{
-            new SelectTaskUI(this).setVisible(true);
-            dispose();
-        }
+        new SelectTaskUI(this).setVisible(true);
+        dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void playerSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_playerSliderMouseWheelMoved
