@@ -25,6 +25,8 @@ package myrmidia.UI;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JFrame;
@@ -34,7 +36,9 @@ import jcolibri.cbrcore.CBRCase;
 import jcolibri.cbrcore.CBRQuery;
 import jcolibri.method.retrieve.RetrievalResult;
 import myrmidia.CBR.CBREngine;
+import myrmidia.UI.Resources.MultipleResults;
 import myrmidia.UI.Resources.UnitModel;
+import myrmidia.UI.Resources.WindowCloser;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
@@ -45,7 +49,7 @@ import myrmidia.Warhammer.Case;
  * @author Glenn Rune Strandbråten
  * @version 0.5
  */
-public class RetrievalUI extends javax.swing.JFrame {
+public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
 
     /** Creates new form RetrievalUI */
     private int displaying = -1;
@@ -54,11 +58,7 @@ public class RetrievalUI extends javax.swing.JFrame {
     private CBRQuery query;
     public RetrievalUI() {
         initComponents();
-        initApprovedCases();
-        unitsTable.getTableHeader().setReorderingAllowed(false);
-        unitsPanel.setVisible(false);
-        setSize(getMinimumSize());
-        setLocationRelativeTo(null);
+        init();
     }
 
     public RetrievalUI(JFrame parent, Collection<RetrievalResult> results, CBRQuery query) {
@@ -66,11 +66,25 @@ public class RetrievalUI extends javax.swing.JFrame {
         setLocationRelativeTo(parent);
         this.query = query;
         this.results = results;
+        init();
+    }
+
+    private void init(){
         initApprovedCases();
         unitsTable.getTableHeader().setReorderingAllowed(false);
         unitsPanel.setVisible(false);
         setSize(getMinimumSize());
-        displayNextResult();
+        if(results!=null)
+            displayNextResult();
+        addWindowListener(new WindowCloser());
+        popupMenu = new javax.swing.JPopupMenu("View");
+        popupView = new javax.swing.JMenuItem("View equipment/utility");
+        popupView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewButtonActionPerformed(e);
+            }
+        });
+        popupMenu.add(popupView);
     }
 
 
@@ -109,7 +123,7 @@ public class RetrievalUI extends javax.swing.JFrame {
         unitsScroll = new javax.swing.JScrollPane();
         unitsTable = new myrmidia.UI.Resources.NoEditTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Myrmidia - Retrieved cases (armies)");
         setMinimumSize(new java.awt.Dimension(500, 245));
 
@@ -121,6 +135,11 @@ public class RetrievalUI extends javax.swing.JFrame {
                 previousCaseButtonActionPerformed(evt);
             }
         });
+        previousCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                previousCaseButtonKeyReleased(evt);
+            }
+        });
 
         nextCaseButton.setText(">");
         nextCaseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -128,11 +147,17 @@ public class RetrievalUI extends javax.swing.JFrame {
                 nextCaseButtonActionPerformed(evt);
             }
         });
+        nextCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nextCaseButtonKeyReleased(evt);
+            }
+        });
 
         displayCountLabel.setText("1/1");
 
         displayInfoLabel.setText("Displaying case (army)");
 
+        nextButton.setMnemonic('n');
         nextButton.setText("Next");
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -140,6 +165,7 @@ public class RetrievalUI extends javax.swing.JFrame {
             }
         });
 
+        cancelButton.setMnemonic('c');
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,6 +206,7 @@ public class RetrievalUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        unitsButton.setMnemonic('u');
         unitsButton.setText("Show units");
         unitsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,6 +214,7 @@ public class RetrievalUI extends javax.swing.JFrame {
             }
         });
 
+        explanationButton.setMnemonic('e');
         explanationButton.setText("Get explanation");
         explanationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,6 +243,7 @@ public class RetrievalUI extends javax.swing.JFrame {
 
         outcomeTextLabel.setText("<placeholder>");
 
+        approveCheckBox.setMnemonic('a');
         approveCheckBox.setText("Approve case (army) for further use");
         approveCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -224,6 +253,7 @@ public class RetrievalUI extends javax.swing.JFrame {
 
         unitsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Units"));
 
+        viewButton.setMnemonic('v');
         viewButton.setText("View equipment/utility");
         viewButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -245,6 +275,11 @@ public class RetrievalUI extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        unitsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                unitsTableMouseReleased(evt);
             }
         });
         unitsScroll.setViewportView(unitsTable);
@@ -361,6 +396,7 @@ public class RetrievalUI extends javax.swing.JFrame {
     }//GEN-LAST:event_previousCaseButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        new SelectTaskUI(this).setVisible(true);
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -380,7 +416,9 @@ public class RetrievalUI extends javax.swing.JFrame {
 
     private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
         UnitModel model = UnitModel.parseArmyUnit(getSelectedArmyUnit());
-        new EquipmentUtilUI(this,model).setVisible(true);
+        int row = unitsTable.getSelectedRow();
+        model.setName(unitsTable.getValueAt(row, 0).toString());
+        new EquipmentUtilUI(this,model,true).setVisible(true);
     }//GEN-LAST:event_viewButtonActionPerformed
 
     private void approveCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveCheckBoxActionPerformed
@@ -402,6 +440,7 @@ public class RetrievalUI extends javax.swing.JFrame {
                 }
                 CBREngine cbrEngine = CBREngine.getInstance();
                 Collection<CBRCase> reuse = cbrEngine.reuse(query, approvedResults);
+                new ReviseUI(this, reuse).setVisible(true);
             }
             finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -412,16 +451,33 @@ public class RetrievalUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "At least one case (army) must be approved", "Error 04 - No approved case", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_nextButtonActionPerformed
 
-    private void displayNextResult(){
+    private void previousCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_previousCaseButtonKeyReleased
+        if(java.awt.event.KeyEvent.VK_LEFT==evt.getKeyCode())
+            displayPreviousResult();
+    }//GEN-LAST:event_previousCaseButtonKeyReleased
 
+    private void nextCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nextCaseButtonKeyReleased
+        if(java.awt.event.KeyEvent.VK_RIGHT==evt.getKeyCode())
+            displayNextResult();
+    }//GEN-LAST:event_nextCaseButtonKeyReleased
+
+    private void unitsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitsTableMouseReleased
+        if(evt.isPopupTrigger()){
+            int row = unitsTable.rowAtPoint(evt.getPoint());
+            unitsTable.setRowSelectionInterval(row, row);
+            popupMenu.show(unitsTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_unitsTableMouseReleased
+
+    public final void displayNextResult(){
         displaying = (displaying==results.size()-1) ? 0 : displaying+1;
         displayResult();
     }
-    private void displayPreviousResult(){
+    public final void displayPreviousResult(){
         displaying = (displaying==0) ? results.size()-1 : displaying-1;
         displayResult();
     }
-    private void displayResult(){
+    public void displayResult(){
         RetrievalResult retrieval =
             (RetrievalResult)CollectionControl.getItemAt(results, displaying);
         Case _case = (Case) retrieval.get_case().getSolution();
@@ -440,7 +496,7 @@ public class RetrievalUI extends javax.swing.JFrame {
             populateUnitsTable();
     }
 
-    private void populateUnitsTable(){
+    public void populateUnitsTable(){
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
         int rows = dtm.getRowCount();
         for(int i=rows-1; i>=0; i--)
@@ -449,7 +505,6 @@ public class RetrievalUI extends javax.swing.JFrame {
             (RetrievalResult)CollectionControl.getItemAt(results, displaying);
         Case _case = (Case) retrieval.get_case().getSolution();
         Army army = _case.getArmy();
-        int count = 0;
         for(ArmyUnit unit : army.getArmyUnits()){
             int number = unit.getNumberOfUnits();
             String name = unit.getUnit().getName().split(":")[1];
@@ -521,4 +576,6 @@ public class RetrievalUI extends javax.swing.JFrame {
     private myrmidia.UI.Resources.NoEditTable unitsTable;
     private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
+    private javax.swing.JPopupMenu popupMenu;
+    private javax.swing.JMenuItem popupView;
 }

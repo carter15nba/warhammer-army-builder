@@ -23,26 +23,76 @@
 
 package myrmidia.UI;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRCase;
+import jcolibri.cbrcore.CBRQuery;
+import myrmidia.Enums.Races;
+import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
+import myrmidia.UI.Resources.MultipleResults;
+import myrmidia.UI.Resources.UnitModel;
+import myrmidia.UI.Resources.WindowCloser;
+import myrmidia.Util.CollectionControl;
+import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Warhammer.Army;
+import myrmidia.Warhammer.ArmyUnit;
+import myrmidia.Warhammer.Case;
+import myrmidia.Warhammer.Unit;
 
 /**
  *
  * @author Glenn Rune Strandbråten
  */
-public class ReviseUI extends javax.swing.JFrame {
+public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
     /** Creates new form ReviseUI */
     private Collection<CBRCase> revise;
+    private int displaying;
     public ReviseUI() {
         initComponents();
+        setLocationRelativeTo(null);
+        addWindowListener(new WindowCloser());
+        initPopup();
     }
 
     /** Creates new form ReviseUI */
     public ReviseUI(JFrame parent, Collection<CBRCase> cases) {
         initComponents();
+        setLocationRelativeTo(parent);
         this.revise = cases;
+        displaying=-1;
+        displayNextResult();
+        initPopup();
+        addWindowListener(new WindowCloser());
+    }
+
+    private void initPopup(){
+        popupMenu = new javax.swing.JPopupMenu("Edit");
+        popupAddRow = new javax.swing.JMenuItem("Add row");
+        popupAddRow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addUnitButtonActionPerformed(e);
+            }
+        });
+        popupRemoveRow = new javax.swing.JMenuItem("Remove row");
+        popupRemoveRow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeUnitButtonActionPerformed(e);
+            }
+        });
+        popupView = new javax.swing.JMenuItem("View equipment/utility");
+        popupView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewButtonActionPerformed(e);
+            }
+        });
+        popupMenu.add(popupAddRow);
+        popupMenu.add(popupRemoveRow);
+        popupMenu.add(popupView);
     }
 
     /** This method is called from within the constructor to
@@ -61,8 +111,24 @@ public class ReviseUI extends javax.swing.JFrame {
         displayInfoLabel = new javax.swing.JLabel();
         nextButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        explanationButton = new javax.swing.JButton();
+        caseIDLabel = new javax.swing.JLabel();
+        playerLabel = new javax.swing.JLabel();
+        opponentLabel = new javax.swing.JLabel();
+        pointLabel = new javax.swing.JLabel();
+        caseIDTextLabel = new javax.swing.JLabel();
+        playerTextLabel = new javax.swing.JLabel();
+        opponentTextLabel = new javax.swing.JLabel();
+        pointTextLabel = new javax.swing.JLabel();
+        unitPanel = new javax.swing.JPanel();
+        unitScroll = new javax.swing.JScrollPane();
+        unitTable = new javax.swing.JTable();
+        addUnitButton = new javax.swing.JButton();
+        removeUnitButton = new javax.swing.JButton();
+        viewButton = new javax.swing.JButton();
+        useCaseCheckBox = new javax.swing.JCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Myrmidia - Revise");
 
         navigationPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -73,6 +139,11 @@ public class ReviseUI extends javax.swing.JFrame {
                 previousCaseButtonActionPerformed(evt);
             }
         });
+        previousCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                previousCaseButtonKeyReleased(evt);
+            }
+        });
 
         nextCaseButton.setText(">");
         nextCaseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -80,11 +151,17 @@ public class ReviseUI extends javax.swing.JFrame {
                 nextCaseButtonActionPerformed(evt);
             }
         });
+        nextCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nextCaseButtonKeyReleased(evt);
+            }
+        });
 
         displayCountLabel.setText("1/1");
 
         displayInfoLabel.setText("Displaying case (army)");
 
+        nextButton.setMnemonic('n');
         nextButton.setText("Next");
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,6 +169,7 @@ public class ReviseUI extends javax.swing.JFrame {
             }
         });
 
+        cancelButton.setMnemonic('c');
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -112,7 +190,7 @@ public class ReviseUI extends javax.swing.JFrame {
                 .addComponent(displayCountLabel)
                 .addGap(17, 17, 17)
                 .addComponent(nextCaseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
                 .addComponent(cancelButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton)
@@ -132,17 +210,177 @@ public class ReviseUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        explanationButton.setMnemonic('e');
+        explanationButton.setText("Get explanation");
+        explanationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                explanationButtonActionPerformed(evt);
+            }
+        });
+
+        caseIDLabel.setText("Case id:");
+
+        playerLabel.setText("Player race:");
+
+        opponentLabel.setText("Opponent race:");
+
+        pointLabel.setText("Army points:");
+        pointLabel.setToolTipText("Shows the number of used army points over the number of available army points");
+
+        caseIDTextLabel.setText("<placeholder>");
+
+        playerTextLabel.setText("<placeholder>");
+
+        opponentTextLabel.setText("<placeholder>");
+
+        pointTextLabel.setText("<placeholder>");
+
+        unitPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Units"));
+
+        unitTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Unit name", "Number of units"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        unitTable.setRowHeight(20);
+        unitTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                unitTableMouseReleased(evt);
+            }
+        });
+        unitScroll.setViewportView(unitTable);
+
+        addUnitButton.setMnemonic('a');
+        addUnitButton.setText("Add unit");
+        addUnitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addUnitButtonActionPerformed(evt);
+            }
+        });
+
+        removeUnitButton.setMnemonic('r');
+        removeUnitButton.setText("Remove unit");
+        removeUnitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeUnitButtonActionPerformed(evt);
+            }
+        });
+
+        viewButton.setMnemonic('v');
+        viewButton.setText("View equipment/utility");
+        viewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout unitPanelLayout = new javax.swing.GroupLayout(unitPanel);
+        unitPanel.setLayout(unitPanelLayout);
+        unitPanelLayout.setHorizontalGroup(
+            unitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, unitPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(unitScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(unitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(viewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeUnitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addUnitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        unitPanelLayout.setVerticalGroup(
+            unitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(unitPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(unitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(unitScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                    .addGroup(unitPanelLayout.createSequentialGroup()
+                        .addComponent(addUnitButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeUnitButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(viewButton)))
+                .addContainerGap())
+        );
+
+        useCaseCheckBox.setMnemonic('u');
+        useCaseCheckBox.setText("Use case (army)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(navigationPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(opponentLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(opponentTextLabel)
+                .addContainerGap(351, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(caseIDLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(caseIDTextLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(playerLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(playerTextLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
+                .addComponent(explanationButton)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(pointLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pointTextLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
+                        .addComponent(useCaseCheckBox))
+                    .addComponent(unitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(navigationPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(251, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(caseIDLabel)
+                            .addComponent(caseIDTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(playerLabel)
+                            .addComponent(playerTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(opponentLabel)
+                            .addComponent(opponentTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(pointLabel)
+                            .addComponent(pointTextLabel)
+                            .addComponent(useCaseCheckBox)))
+                    .addComponent(explanationButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(unitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -161,8 +399,110 @@ public class ReviseUI extends javax.swing.JFrame {
 }//GEN-LAST:event_nextButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        new SelectTaskUI(this).setVisible(true);
         dispose();
 }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void explanationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_explanationButtonActionPerformed
+        new ExplanationUI(this, displaying, ExplanationUI.MODE_JUSTIFICATION).setVisible(true);
+    }//GEN-LAST:event_explanationButtonActionPerformed
+
+    private void nextCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nextCaseButtonKeyReleased
+        if(java.awt.event.KeyEvent.VK_RIGHT==evt.getKeyCode())
+            displayNextResult();
+    }//GEN-LAST:event_nextCaseButtonKeyReleased
+
+    private void previousCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_previousCaseButtonKeyReleased
+        if(java.awt.event.KeyEvent.VK_LEFT==evt.getKeyCode())
+            displayPreviousResult();
+    }//GEN-LAST:event_previousCaseButtonKeyReleased
+
+    private void addUnitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUnitButtonActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
+        dtm.addRow(new Object[]{"N/A",null});
+    }//GEN-LAST:event_addUnitButtonActionPerformed
+
+    private void removeUnitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeUnitButtonActionPerformed
+        int selectedRow = unitTable.getSelectedRow();
+        if(selectedRow==-1)
+            return;
+        DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
+        dtm.removeRow(selectedRow);
+    }//GEN-LAST:event_removeUnitButtonActionPerformed
+
+    private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
+        UnitModel model = UnitModel.parseArmyUnit(getSelectedArmyUnit());
+        int row = unitTable.getSelectedRow();
+        model.setName(unitTable.getValueAt(row, 0).toString());
+        new EquipmentUtilUI(this,model,false).setVisible(true);
+    }//GEN-LAST:event_viewButtonActionPerformed
+
+    private void unitTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitTableMouseReleased
+        if(evt.isPopupTrigger()){
+            int row = unitTable.rowAtPoint(evt.getPoint());
+            unitTable.setRowSelectionInterval(row, row);
+            popupMenu.show(unitTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_unitTableMouseReleased
+    
+    public final void displayPreviousResult() {
+        displaying = (displaying==0) ? revise.size()-1 : displaying-1;
+        displayResult();
+    }
+
+    public final void displayNextResult() {
+        displaying = (displaying==revise.size()-1) ? 0 : displaying+1;
+        displayResult();
+    }
+
+    public void displayResult(){
+        CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise, displaying);
+        Case _case = (Case) cbrCase.getSolution();
+        caseIDTextLabel.setText(""+_case.getID());
+        playerTextLabel.setText(_case.getArmy().getPlayerRace().toString());
+        opponentTextLabel.setText(_case.getOpponent().toString());
+        pointTextLabel.setText(_case.getArmy().calculateCost()+"/"+
+            _case.getArmy().getArmyPoints());
+        displayCountLabel.setText((displaying+1)+"/"+revise.size());
+        populateUnitsTable();
+    }
+
+    public void populateUnitsTable(){
+        DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
+        int rows = unitTable.getRowCount();
+        for(int i=rows-1; i>-1; i--)
+            dtm.removeRow(i);
+        CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise,displaying);
+        Case _case = (Case) cbrCase.getSolution();
+        Army army = _case.getArmy();
+        populateUnitComboBox(army);
+        for(ArmyUnit unit : army.getArmyUnits()){
+            String name = unit.getUnit().getName().split(":")[1];
+            int num = unit.getNumberOfUnits();
+            dtm.addRow(new Object[]{name,num});
+        }
+    }
+
+    public void populateUnitComboBox(Army army){
+        List<Unit> unit = CreateObjectFromDB.getRaceUnits(army.getPlayerRace());
+        String[] names = new String[unit.size()+1];
+        names[0] = "N/A";
+        int pos = 1;
+        for (Unit u : unit) {
+            String name = u.getName();
+            String[] array = name.split(":");
+            names[pos++] = array[1];
+        }
+        unitTable.getColumnModel().getColumn(0).setCellRenderer(new ComboBoxTableCellRenderer(names, 0));
+    }
+
+    private ArmyUnit getSelectedArmyUnit(){
+        CBRCase cbrCase =
+            (CBRCase)CollectionControl.getItemAt(revise, displaying);
+        Case _case = (Case) cbrCase.getSolution();
+        return (ArmyUnit) CollectionControl.getItemAt(
+                _case.getArmy().getArmyUnits(), unitTable.getSelectedRow());
+    }
 
     /**
     * @param args the command line arguments
@@ -176,25 +516,32 @@ public class ReviseUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addUnitButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel caseIDLabel;
+    private javax.swing.JLabel caseIDTextLabel;
     private javax.swing.JLabel displayCountLabel;
     private javax.swing.JLabel displayInfoLabel;
+    private javax.swing.JButton explanationButton;
     private javax.swing.JPanel navigationPane;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton nextCaseButton;
+    private javax.swing.JLabel opponentLabel;
+    private javax.swing.JLabel opponentTextLabel;
+    private javax.swing.JLabel playerLabel;
+    private javax.swing.JLabel playerTextLabel;
+    private javax.swing.JLabel pointLabel;
+    private javax.swing.JLabel pointTextLabel;
     private javax.swing.JButton previousCaseButton;
+    private javax.swing.JButton removeUnitButton;
+    private javax.swing.JPanel unitPanel;
+    private javax.swing.JScrollPane unitScroll;
+    private javax.swing.JTable unitTable;
+    private javax.swing.JCheckBox useCaseCheckBox;
+    private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
-
-    private void displayPreviousResult() {
-        displayResult();
-    }
-
-    private void displayNextResult() {
-        displayResult();
-    }
-
-    private void displayResult(){
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
+    private javax.swing.JMenuItem popupRemoveRow;
+    private javax.swing.JMenuItem popupAddRow;
+    private javax.swing.JMenuItem popupView;
+    private javax.swing.JPopupMenu popupMenu;
 }

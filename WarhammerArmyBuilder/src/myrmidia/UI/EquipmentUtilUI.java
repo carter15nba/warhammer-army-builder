@@ -65,14 +65,16 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         getRootPane().setDefaultButton(okButton);
     }
     /** Creates new form EquipmentUtilUI */
-    public EquipmentUtilUI(JFrame parent, UnitModel unitModel) {
+    public EquipmentUtilUI(JFrame parent, UnitModel unitModel, boolean useDefaultListCellRenderer) {
         super(parent);
         initComponents();
         this.unitModel = unitModel;
-        equipmentList.setCellRenderer(new DefaultListCellRenderer());
-        utilityList.setCellRenderer(new DefaultListCellRenderer());
-        promotionList.setCellRenderer(new DefaultListCellRenderer());
-        noList=true;
+        if(useDefaultListCellRenderer){
+            equipmentList.setCellRenderer(new DefaultListCellRenderer());
+            utilityList.setCellRenderer(new DefaultListCellRenderer());
+            promotionList.setCellRenderer(new DefaultListCellRenderer());
+            noList=true;
+        }
         setListSizes();
         setTitle(unitModel.getName());
         initializeLists(unitModel);
@@ -154,6 +156,7 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
 
         utilityLabel.setText("Utility units");
 
+        okButton.setMnemonic('O');
         okButton.setLabel("Ok");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -175,27 +178,16 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(promotionLabel)
-                                        .addComponent(promotionScroll, 0, 215, Short.MAX_VALUE))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(equipmentScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(equipmentLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addComponent(promotionLabel)
+                            .addComponent(promotionScroll, 0, 215, Short.MAX_VALUE)
+                            .addComponent(equipmentScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                            .addComponent(equipmentLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(magicLabel)
-                                .addGap(169, 169, 169))
+                            .addComponent(magicLabel)
                             .addComponent(utilityLabel)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(utilityScroll, 0, 220, Short.MAX_VALUE))
+                                .addComponent(utilityScroll, javax.swing.GroupLayout.Alignment.LEADING, 0, 220, Short.MAX_VALUE)
                                 .addComponent(magicScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)))))
                 .addContainerGap())
         );

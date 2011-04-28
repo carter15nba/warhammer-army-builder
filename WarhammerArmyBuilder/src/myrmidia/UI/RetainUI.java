@@ -23,21 +23,24 @@
 
 package myrmidia.UI;
 
+import myrmidia.UI.Resources.WindowCloser;
+
 /**
  *
  * @author Glenn Rune Strandbråten
  */
 public class RetainUI extends javax.swing.JFrame {
 
-    private SelectTaskUI parent;
     /** Creates new form RetainUI */
     public RetainUI() {
         initComponents();
+        setLocationRelativeTo(null);
+        addWindowListener(new WindowCloser());
     }
     public RetainUI(SelectTaskUI parent) {
         initComponents();
-        this.parent = parent;
         setLocationRelativeTo(parent);
+        addWindowListener(new WindowCloser());
     }
 
     /** This method is called from within the constructor to
@@ -49,7 +52,7 @@ public class RetainUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

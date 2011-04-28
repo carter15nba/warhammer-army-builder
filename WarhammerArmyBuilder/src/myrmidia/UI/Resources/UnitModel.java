@@ -225,12 +225,24 @@ public class UnitModel {
         return items;
     }
     
-    public static UnitModel parseArmyUnit(ArmyUnit unit){
+    public static UnitModel parseArmyUnit(ArmyUnit armyUnit){
         UnitModel model = new UnitModel();
-        model.setEquipment(UnitModel.parseEquipment(unit.getEquipment()));
-        model.setUtility(UnitModel.parseUtility(unit.getUtility()));
-        model.setPromotion(UnitModel.parsePromotion(unit.getUtility()));
+        model.setEquipment(UnitModel.parseEquipment(armyUnit.getEquipment()));
+        model.setUtility(UnitModel.parseUtility(armyUnit.getUtility()));
+        model.setPromotion(UnitModel.parsePromotion(armyUnit.getUtility()));
         return model;
+    }
+
+    private void toggleSelectedOn(){
+        for (CheckListItem cli : utility) {
+            cli.setSelected(true);
+        }
+        for (CheckListItem cli : equipment) {
+            cli.setSelected(true);
+        }
+        for (CheckListItem cli : promotion) {
+            cli.setSelected(true);
+        }
     }
 
     public boolean isEmpty() {
