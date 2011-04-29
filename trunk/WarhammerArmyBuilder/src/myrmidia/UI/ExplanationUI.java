@@ -14,25 +14,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * ExplanationUI.java
- *
- * Created on 27.apr.2011, 09:48:55
- */
-
 package myrmidia.UI;
 
 import javax.swing.JFrame;
 import myrmidia.Explanation.ExplanationEngine;
 
 /**
- *
+ * Modal user interface used to display an explanation (or any kind of text
+ * output)
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class ExplanationUI extends javax.swing.JDialog {
 
+    /**
+     * This mode indicats that a transparency explanation should be displayed
+     */
     public static final int MODE_TRANSPARENCY = 100;
+    /**
+     * This mode indicates that a justification explanation should be displayed
+     */
     public static final int MODE_JUSTIFICATION = 200;
     /** Creates new form ExplanationUI */
     public ExplanationUI() {
@@ -40,6 +41,13 @@ public class ExplanationUI extends javax.swing.JDialog {
         getRootPane().setDefaultButton(closeButton);
     }
 
+    /**
+     * Creates new form ExplanationUI
+     * @param index The index of the explanation to display
+     * @param mode The mode of the explanation UI, use MODE_TRANSPARENCY or
+     * MODE_JUSTIFICATION
+     * @param parent The JFrame parent
+     */
     public ExplanationUI(JFrame parent, int index,int mode) {
         super(parent, true);
         initComponents();
@@ -110,6 +118,10 @@ public class ExplanationUI extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the closeButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         dispose();
     }//GEN-LAST:event_closeButtonActionPerformed
@@ -130,5 +142,4 @@ public class ExplanationUI extends javax.swing.JDialog {
     private javax.swing.JScrollPane explanationScroll;
     private javax.swing.JTextArea explanationText;
     // End of variables declaration//GEN-END:variables
-
 }

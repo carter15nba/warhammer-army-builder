@@ -14,13 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * RetrievalUI.java
- *
- * Created on 27.apr.2011, 09:42:58
- */
-
 package myrmidia.UI;
 
 import java.awt.Cursor;
@@ -45,22 +38,29 @@ import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
 
 /**
- *
+ * User interface to display the retrieved results from the Query, and to
+ * allow the user to approve which ones he would like to advance with
  * @author Glenn Rune Strandbråten
- * @version 0.5
+ * @version 1.0
  */
 public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
 
-    /** Creates new form RetrievalUI */
     private int displaying = -1;
     private boolean[] approvedCases;
     private Collection<RetrievalResult> results = null;
     private CBRQuery query;
+
+    /** Creates new form RetrievalUI */
     public RetrievalUI() {
         initComponents();
         init();
     }
-
+    /**
+     * Creates new form RetrievalUI
+     * @param parent The JFrame parent
+     * @param query  The CBRQuery used to get the results
+     * @param results The collection of RetrievalResults from the query
+     */
     public RetrievalUI(JFrame parent, Collection<RetrievalResult> results, CBRQuery query) {
         initComponents();
         setLocationRelativeTo(parent);
@@ -69,6 +69,9 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         init();
     }
 
+    /**
+     * Method which initializes variables and the unitTable popupMenu
+     */
     private void init(){
         initApprovedCases();
         unitsTable.getTableHeader().setReorderingAllowed(false);
@@ -86,8 +89,6 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         });
         popupMenu.add(popupView);
     }
-
-
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -135,21 +136,11 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
                 previousCaseButtonActionPerformed(evt);
             }
         });
-        previousCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                previousCaseButtonKeyReleased(evt);
-            }
-        });
 
         nextCaseButton.setText(">");
         nextCaseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextCaseButtonActionPerformed(evt);
-            }
-        });
-        nextCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                nextCaseButtonKeyReleased(evt);
             }
         });
 
@@ -266,11 +257,11 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
 
             },
             new String [] {
-                "Unit name", "Number of units", "Base unit cost", "Calculated unit cost"
+                "Unit name", "Number of units"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -383,23 +374,43 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the explanationButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void explanationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_explanationButtonActionPerformed
         new ExplanationUI(this, displaying, ExplanationUI.MODE_TRANSPARENCY).setVisible(true);
     }//GEN-LAST:event_explanationButtonActionPerformed
 
+    /**
+     * Action performed when the nextCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextCaseButtonActionPerformed
         displayNextResult();
     }//GEN-LAST:event_nextCaseButtonActionPerformed
 
+    /**
+     * Action performed when the previousCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void previousCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousCaseButtonActionPerformed
         displayPreviousResult();
     }//GEN-LAST:event_previousCaseButtonActionPerformed
 
+    /**
+     * Action performed wheb the cancelButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         new SelectTaskUI(this).setVisible(true);
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Action performed when the unitsButton is toggled
+     * @param evt The ActionEvent trigger
+     */
     private void unitsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitsButtonActionPerformed
         if(unitsButton.isSelected()){
             if(getSize().height<500)
@@ -414,11 +425,19 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         }
     }//GEN-LAST:event_unitsButtonActionPerformed
 
+    /**
+     * Action performed when the viewButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
         UnitModel model = UnitModel.parseUnitModelFromArmyUnit(getSelectedArmyUnit());
         new EquipmentUtilUI(this,model,true).setVisible(true);
     }//GEN-LAST:event_viewButtonActionPerformed
 
+    /**
+     * Action performed when the approveCheckBox is selected
+     * @param evt The ActionEvent trigger
+     */
     private void approveCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approveCheckBoxActionPerformed
         if(approveCheckBox.isSelected())
             approvedCases[displaying] = true;
@@ -426,6 +445,10 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
             approvedCases[displaying] = false;
     }//GEN-LAST:event_approveCheckBoxActionPerformed
 
+    /**
+     * Action performed when the nextButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequirements()){
             try{
@@ -449,16 +472,10 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
             JOptionPane.showMessageDialog(this, "At least one case (army) must be approved", "Error 04 - No approved case", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_nextButtonActionPerformed
 
-    private void previousCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_previousCaseButtonKeyReleased
-        if(java.awt.event.KeyEvent.VK_LEFT==evt.getKeyCode())
-            displayPreviousResult();
-    }//GEN-LAST:event_previousCaseButtonKeyReleased
-
-    private void nextCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nextCaseButtonKeyReleased
-        if(java.awt.event.KeyEvent.VK_RIGHT==evt.getKeyCode())
-            displayNextResult();
-    }//GEN-LAST:event_nextCaseButtonKeyReleased
-
+    /**
+     * Action performed when a mouse click were performed inside the unitsTable
+     * @param evt The MouseEvent trigger
+     */
     private void unitsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitsTableMouseReleased
         if(evt.isPopupTrigger()){
             int row = unitsTable.rowAtPoint(evt.getPoint());
@@ -471,10 +488,12 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         displaying = (displaying==results.size()-1) ? 0 : displaying+1;
         displayResult();
     }
+    
     public final void displayPreviousResult(){
         displaying = (displaying==0) ? results.size()-1 : displaying-1;
         displayResult();
     }
+
     public void displayResult(){
         RetrievalResult retrieval =
             (RetrievalResult)CollectionControl.getItemAt(results, displaying);
@@ -506,13 +525,14 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
         for(ArmyUnit unit : army.getArmyUnits()){
             int number = unit.getNumberOfUnits();
             String name = unit.getUnit().getName().split(":")[1];
-            dtm.addRow(new Object[]{name,
-                number,
-                unit.getUnit().getCost(),
-                army.calculateTotalUnitCost(unit)});
+            dtm.addRow(new Object[]{name,number});
         }
     }
 
+    /**
+     * Method to aquire the selected ArmyUnit from the unitsTable
+     * @return The ArmyUnit at the selected row in the unitsTable
+     */
     private ArmyUnit getSelectedArmyUnit(){
         RetrievalResult retrieval =
             (RetrievalResult)CollectionControl.getItemAt(results, displaying);
@@ -521,6 +541,10 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
                 _case.getArmy().getArmyUnits(), unitsTable.getSelectedRow());
     }
 
+    /**
+     * Method which initializes the array containing the booleans for
+     * approved cases, all values are set to true by default
+     */
     private void initApprovedCases() {
         if(results==null||results.isEmpty())
             approvedCases = new boolean[1];
@@ -530,6 +554,12 @@ public class RetrievalUI extends javax.swing.JFrame implements MultipleResults{
             approvedCases[i] = true;
     }
 
+    /**
+     * Method which verifies if the requirements are met, if any case is approved
+     * the requirements are met.
+     * @return true if any of the cases are approved - false if none of the cases
+     * are approved
+     */
     private boolean verifyRequirements() {
         for (boolean b : approvedCases) {
             if(b)

@@ -23,13 +23,12 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 /**
- *
+ * Class used to render JCheckBox items in a JList
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class CheckBoxListRenderer extends JCheckBox
         implements ListCellRenderer{
-
 
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {

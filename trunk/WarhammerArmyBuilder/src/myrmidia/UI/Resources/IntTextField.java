@@ -21,12 +21,14 @@ import javax.swing.JTextField;
 import javax.swing.text.Document;
 
 /**
- *
+ * Class used to make a JTextField which only accepts Integers
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class IntTextField extends JTextField{
     private static final int NUMBER_LIMIT = 5;
 
+    /** Default constructor */
     public IntTextField() {
         super("", NUMBER_LIMIT);
     }
@@ -50,6 +52,11 @@ public class IntTextField extends JTextField{
         }
     }
 
+    /**
+     * Method to get the integer value of the text in the text field
+     * @return The integer value of the text field or 0 if a NumberFormatException
+     * where thrown
+     */
     public int getValue(){
         try{
             return Integer.parseInt(getText());
@@ -58,6 +65,4 @@ public class IntTextField extends JTextField{
             return 0;
         }
     }
-
-
 }

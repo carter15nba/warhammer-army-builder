@@ -29,8 +29,12 @@ import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.UtilityUnit;
 
 /**
+ * Class to help display the army units selected and available equipment,
+ * utility units, promotion units and magic items. This class builds on the
+ * same principle as CaseStorage, but is more defined and better suited to
+ * display items based on their category.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class UnitModel {
 
@@ -152,6 +156,13 @@ public class UnitModel {
         this.promotion = promotion;
     }
 
+    /**
+     * Method to parse a UnitModel from a Unit, this method finds all the
+     * equipment a unit can have or purchase, but does not know what the unit
+     * allready may have (have purchased).
+     * @param unit The Unit to be parsed
+     * @return The UnitModel parsed from the Unit
+     */
     public static UnitModel parseUnitModelFromUnit(Unit unit){
         UnitModel model = new UnitModel();
         String name = unit.getName().split(":")[1];
@@ -163,6 +174,11 @@ public class UnitModel {
         return model;
     }
 
+    /**
+     * Method to parse equipment into a CheckListItem array
+     * @param eq The equipment set to be parsed
+     * @return The parsed CheckListItem array
+     */
     public static CheckListItem[] parseEquipment(Set<Equipment> eq){
         List<CheckListItem> items = new ArrayList<CheckListItem>();
         for (Equipment e : eq) {
@@ -177,6 +193,11 @@ public class UnitModel {
         return items.toArray(new CheckListItem[items.size()]);
     }
 
+    /**
+     * Method to parse utility units into a CheckListItem array
+     * @param ut The utility units to be parsed
+     * @return The parsed CheckListItem array
+     */
     public static CheckListItem[] parseUtility(Set<UtilityUnit> ut){
         List<CheckListItem> items = new ArrayList<CheckListItem>();
         for (UtilityUnit u : ut) {
@@ -191,6 +212,11 @@ public class UnitModel {
         return items.toArray(new CheckListItem[items.size()]);
     }
 
+    /**
+     * Method to parse promotion units into a CheckListItem array
+     * @param ut The set with utility units containing promotion units to be parsed
+     * @return The parsed CheckListItem array
+     */
     public static CheckListItem[] parsePromotion(Set<UtilityUnit> ut){
         List<CheckListItem> items = new ArrayList<CheckListItem>();
         for (UtilityUnit u : ut) {
@@ -205,6 +231,12 @@ public class UnitModel {
         return items.toArray(new CheckListItem[items.size()]);
     }
 
+    /**
+     * Method to parse the unit into a CheckListItem array with the magical items
+     * the unit can purchase
+     * @param unit The unit to be parsed
+     * @return The parsed CheckListItem array
+     */
     public static CheckListItem[] parseMagic(Unit unit) {
         Set<Equipment> eq;
         if(unit.getRace()==Races.Dwarfs){
@@ -225,7 +257,14 @@ public class UnitModel {
         }
         return items;
     }
-    
+
+    /**
+     * Method to parse a ArmyUnit into a UnitModel, this method parses
+     * what equipment the ArmyUnit does have (upgraded and purchased), but
+     * ignores what the ArmyUnit could have.
+     * @param armyUnit The ArmyUnit to be parsed
+     * @return The UnitModel parsed from the ArmyUnit
+     */
     public static UnitModel parseUnitModelFromArmyUnit(ArmyUnit armyUnit){
         UnitModel model = new UnitModel();
         model.setName(armyUnit.getUnit().getName().split(":")[1]);
@@ -235,6 +274,12 @@ public class UnitModel {
         return model;
     }
 
+    /**
+     * This method parse a ArmyUnit into a UnitModel, this method finds what
+     * the ArmyUnit have purchased and what the ArmyUnit can purchase.
+     * @param armyUnit The ArmyUnit to be parsed
+     * @return The UnitModel parsed from the ArmyUnit
+     */
     public static UnitModel parseUnitModelFromArmyUnitForRevise(ArmyUnit armyUnit){
         UnitModel model = new UnitModel();
         model.setName(armyUnit.getUnit().getName().split(":")[1]);
@@ -250,30 +295,64 @@ public class UnitModel {
         return model;
     }
 
+    /**
+     * This method parses the equipment the ArmyUnit can have and the equipment
+     * the ArmyUnit have into a CheckListItem array
+     * @param armyUnit The ArnyUnit to be parsed
+     * @return The parsed ChechListItem array
+     */
     public static CheckListItem[] parseSelectedEquipment(ArmyUnit armyUnit){
         Unit unit = armyUnit.getUnit();
         CheckListItem[] cli = parseEquipment(unit.getEquipment());
         findSelected(cli,armyUnit.getEquipment());
         return cli;
     }
-    private static CheckListItem[] parseSelectedUtility(ArmyUnit armyUnit){
+
+    /**
+     * This method parses the utility units the ArmyUnit can have and the
+     * utility units the ArmyUnit have into a CheckListItem array
+     * @param armyUnit The ArnyUnit to be parsed
+     * @return The parsed ChechListItem array
+     */
+    public static CheckListItem[] parseSelectedUtility(ArmyUnit armyUnit){
         Unit unit = armyUnit.getUnit();
         CheckListItem[] cli = parseUtility(unit.getUtilityUnit());
         findSelected(cli,armyUnit.getUtility());
         return cli;
     }
-    private static CheckListItem[] parseSelectedPromotion(ArmyUnit armyUnit){
+
+    /**
+     * This method parses the promotion units the ArmyUnit can have and the
+     * promotion units the ArmyUnit have into a CheckListItem array
+     * @param armyUnit The ArnyUnit to be parsed
+     * @return The parsed ChechListItem array
+     */
+    public static CheckListItem[] parseSelectedPromotion(ArmyUnit armyUnit){
         Unit unit = armyUnit.getUnit();
         CheckListItem[] cli = parsePromotion(unit.getUtilityUnit());
         findSelected(cli,armyUnit.getUtility());
         return cli;
     }
-    private static CheckListItem[] parseSelectedMagic(ArmyUnit armyUnit){
+
+    /**
+     * This method parses the magic items the ArmyUnit can have and the magic
+     * items the ArmyUnit have into a CheckListItem array
+     * @param armyUnit The ArnyUnit to be parsed
+     * @return The parsed ChechListItem array
+     */
+    public static CheckListItem[] parseSelectedMagic(ArmyUnit armyUnit){
         Unit unit = armyUnit.getUnit();
         CheckListItem[] cli = parseMagic(unit);
         findSelected(cli,armyUnit.getEquipment());
         return cli;
     }
+
+    /**
+     * This method finds the items the unit have and marks them as selected in
+     * the items CheckListItem object
+     * @param checkListItem The array of CheckListItems to find if are selected
+     * @param col The collection of items the unit can select
+     */
     private static void findSelected(CheckListItem[] checkListItem, Collection col){
         for (CheckListItem cli : checkListItem) {
             for (Object o : col) {
@@ -284,13 +363,18 @@ public class UnitModel {
                 }
                 if(o instanceof UtilityUnit){
                     UtilityUnit u = (UtilityUnit) o;
-                    if(cli.toString().endsWith(u.getName()))
+                    if(cli.toString().endsWith(u.getName().split(":")[1]))
                         cli.setSelected(true);
                 }
             }
         }
     }
 
+    /**
+     * Method to aquire if the UnitModel is empty, if all CheckListItem arrays
+     * are empty, this method returns true.
+     * @return true if all CheckListItem arrays are empty, false otherwise
+     */
     public boolean isEmpty() {
         if((utility.length==0)&&
                 (equipment.length==0)&&

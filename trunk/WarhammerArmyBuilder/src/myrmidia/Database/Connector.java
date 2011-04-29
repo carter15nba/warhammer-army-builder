@@ -328,10 +328,6 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 " cases stored into the database.");
     }
 
-    public boolean isConnected(){
-        return sessionFactory.getCurrentSession().isConnected();
-    }
-
     /**
      * Method which overrides the dedault hibernate saving scheme. This method
      * forces the connection to save only those parts of the case which is

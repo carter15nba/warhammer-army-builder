@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.naming.ldap.HasControls;
 import myrmidia.Database.Connector;
 import myrmidia.Database.DatabaseManager;
 import myrmidia.Enums.ArmyType;
@@ -137,6 +136,12 @@ public class CreateObjectFromDB {
         return new HashSet<Equipment>(standards);
 
     }
+
+    /**
+     * Method to aquire a list of Units based on the supplied race
+     * @param race Races The race of the Units to get
+     * @return The List of units requested
+     */
     @SuppressWarnings("unchecked")
     public static List<Unit> getRaceUnits(Races race){
         Session session = getSession();

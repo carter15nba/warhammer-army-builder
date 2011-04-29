@@ -14,22 +14,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * SelectTaskUI.java
- *
- * Created on 21.apr.2011, 12:35:48
- */
-
 package myrmidia.UI;
 
 import javax.swing.JFrame;
-import myrmidia.UI.Resources.InputParameters;
 import myrmidia.UI.Resources.WindowCloser;
 
 /**
- *
+ * User interface class for the user to select what task to be performed
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class SelectTaskUI extends javax.swing.JFrame {
 
@@ -40,6 +33,11 @@ public class SelectTaskUI extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         addWindowListener(new WindowCloser());
     }
+
+    /**
+     * Creates new form SelectTaskUI
+     * @param child The JFrame child
+     */
     public SelectTaskUI(JFrame child){
         initComponents();
         setLocationRelativeTo(child);
@@ -118,15 +116,27 @@ public class SelectTaskUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the exitButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         WindowCloser.finalizeApplicationExecution();
     }//GEN-LAST:event_exitButtonActionPerformed
 
+    /**
+     * Action performed when the assignButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void assignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignButtonActionPerformed
         new RetainUI(this).setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_assignButtonActionPerformed
 
+    /**
+     * Action performed when the createButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         new QueryUI(this).setVisible(true);
         setVisible(false);
@@ -136,7 +146,6 @@ public class SelectTaskUI extends javax.swing.JFrame {
     * @param args the command line arguments
     */
     public static void main(String args[]) {
-        InputParameters.getInstance().parseInput(args);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SelectTaskUI().setVisible(true);
@@ -149,5 +158,4 @@ public class SelectTaskUI extends javax.swing.JFrame {
     private javax.swing.JButton createButton;
     private javax.swing.JButton exitButton;
     // End of variables declaration//GEN-END:variables
-
 }

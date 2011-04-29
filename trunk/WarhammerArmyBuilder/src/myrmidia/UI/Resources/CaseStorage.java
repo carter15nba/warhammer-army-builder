@@ -18,24 +18,44 @@
 package myrmidia.UI.Resources;
 
 /**
- *
+ * Class to store the selections for equipment and utility units for each
+ * unit in an army. This class is used exclusivly in the createSQLUI to help
+ * create the SQLs that fills the database. One CaseStorage object represents
+ * the equipment/utility units of one ArmyUnit
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class CaseStorage {
     private CheckListItem[] equipment;
     private CheckListItem[] utility;
 
-
+    /**
+     * Method to aquire the units equipment represented as a CheckListItem array
+     * @return The CheckListItem array with the units equipment
+     */
     public CheckListItem[] getEquipment(){
         return equipment;
     }
+
+    /**
+     * Method to aquire the units utility units represented as a CheckListItem array
+     * @return The CheckListItem array with the units utility units
+     */
     public CheckListItem[] getUtility(){
         return utility;
     }
+
+    /**
+     * Method to set the units equipment represented as a CheckListItem array
+     * @param eq The CheckListItem array with the units equipment
+     */
     public void setEquipment(CheckListItem[] eq){
         equipment = eq;
     }
+    /**
+     * Method to set the units utility units represented as a CheckListItem array
+     * @param ut The CheckListItem array with the units utility units
+     */
     public void setUtility(CheckListItem[] ut){
         utility = ut;
     }

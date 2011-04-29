@@ -111,11 +111,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
         NNConfig conf = similarityMeasure.getSimilarityConfig();
         conf.setDescriptionSimFunction(new Average(caseBase.getCases()));
         Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), cbrq, conf);
-//        Print all cases
-//        for (RetrievalResult retrievalResult : eval) {
-//            Case _case = (Case) retrievalResult.get_case().getSolution();
-//            PrintFactory.printCase(_case,retrievalResult.getEval(),false);
-//        }
         Collection<RetrievalResult> topKRR = SelectCases.selectTopKRR(eval, simConfig.getK());
         ExplanationEngine.getInstance().orderTransparencyExplanations(topKRR);
         return topKRR;
@@ -129,8 +124,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      */
     public Collection<CBRCase> reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
-
-
         Collection<CBRCase> ncbr = new HashSet<CBRCase>();
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
@@ -139,14 +132,13 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 CBRCase cc = new CBRCase();
                 cc.setDescription(retrievalResult.get_case().getDescription());
                 cc.setSolution(adaptedCase);
-                PrintFactory.printCase(adaptedCase, true);
                 cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
                 ncbr.add(cc);
+                PrintFactory.printCase(adaptedCase, true);
             }
             catch(ConcurrentModificationException cme){}            
         }
-        return ncbr;
-      
+        return ncbr;     
     }
     /**
      * Method used int the CBR cycle to revise the changes and evaluate the
