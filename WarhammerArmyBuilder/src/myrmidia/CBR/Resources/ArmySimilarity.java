@@ -114,6 +114,12 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         return armySimilarity;
     }
 
+    /**
+     * Method to compute the army point similarity value
+     * @param casePoints int The army points in the case
+     * @param queryPoints int The army points in the query
+     * @return double The army point similarity
+     */
     public double computeArmyPointSimilarity(int casePoints, int queryPoints){
         try {
             Interval armyPointsSimilarity = new Interval(interval);
@@ -122,6 +128,11 @@ public class ArmySimilarity implements LocalSimilarityFunction{
         catch (NoApplicableSimilarityFunctionException ex) {return 0;}
     }
 
+    /**
+     * Method to aquire the interval over which the army point similarity is
+     * valid
+     * @return int The interval
+     */
     public int getInterval(){
         return interval;
     }

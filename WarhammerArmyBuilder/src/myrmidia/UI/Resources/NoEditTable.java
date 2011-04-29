@@ -25,7 +25,6 @@ import javax.swing.JTable;
  * @version 1.0
  */
 public class NoEditTable extends JTable{
-
     @Override
     public boolean isCellEditable(int rowIndex, int mColIndex) {
         return false;

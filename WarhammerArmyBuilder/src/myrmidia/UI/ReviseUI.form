@@ -156,7 +156,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="previousCaseButtonActionPerformed"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="previousCaseButtonKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="nextCaseButton">
@@ -165,7 +164,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextCaseButtonActionPerformed"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="nextCaseButtonKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="displayCountLabel">
@@ -350,6 +348,9 @@
         <Property name="mnemonic" type="int" value="117"/>
         <Property name="text" type="java.lang.String" value="Use case (army)"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useCaseCheckBoxActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

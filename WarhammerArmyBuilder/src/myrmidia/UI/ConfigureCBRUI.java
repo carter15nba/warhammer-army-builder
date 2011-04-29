@@ -14,13 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * ConfigureCBRUI.java
- *
- * Created on 26.apr.2011, 12:56:27
- */
-
 package myrmidia.UI;
 
 import java.awt.Color;
@@ -37,8 +30,9 @@ import myrmidia.CBR.Resources.SimilarityConfiguration;
 import myrmidia.UI.Resources.WindowCloser;
 
 /**
- *
+ * User interface to configure the similarity measures
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class ConfigureCBRUI extends javax.swing.JFrame {
 
@@ -54,6 +48,11 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         addWindowListener(new WindowCloser());
     }
 
+    /**
+     * Creates new form ConfigureCBRUI
+     * @param query The CBRQuery to process
+     * @param parent The JFrame parent
+     */
     public ConfigureCBRUI(CBRQuery query,JFrame parent) {
         ToolTipManager.sharedInstance().setDismissDelay(20000);
         initComponents();
@@ -368,11 +367,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the unitSlider changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void unitSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_unitSliderStateChanged
         int value = unitSlider.getValue();
         unitCount.setText(value+"%");
     }//GEN-LAST:event_unitSliderStateChanged
 
+    /**
+     * Action performed when the mouse wheel were moved over the unitSlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void unitSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_unitSliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -381,11 +388,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             unitSlider.setValue(unitSlider.getValue()+1);
     }//GEN-LAST:event_unitSliderMouseWheelMoved
 
+    /**
+     * Action performed when the armySlied changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void armySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_armySliderStateChanged
         int value = armySlider.getValue();
         armyCount.setText(value+"%");
     }//GEN-LAST:event_armySliderStateChanged
 
+    /**
+     * Action performed when the mouse wheel were moved over the armySlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void armySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_armySliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -394,11 +409,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             armySlider.setValue(armySlider.getValue()+1);
     }//GEN-LAST:event_armySliderMouseWheelMoved
 
+    /**
+     * Action performed when the armyPointSlider changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void armyPointSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_armyPointSliderStateChanged
         int value = armyPointSlider.getValue();
         armyPointsCount.setText(value+"%");
     }//GEN-LAST:event_armyPointSliderStateChanged
 
+    /**
+     * Action performed when the mouse wheel were moved over the armyPointSlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void armyPointSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_armyPointSliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -407,11 +430,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             armyPointSlider.setValue(armyPointSlider.getValue()+1);
     }//GEN-LAST:event_armyPointSliderMouseWheelMoved
 
+    /**
+     * Action performed when the outcomeSlider changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void outcomeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_outcomeSliderStateChanged
         int value = outcomeSlider.getValue();
         outcomeCount.setText(value+"%");
     }//GEN-LAST:event_outcomeSliderStateChanged
 
+    /**
+     * Action performed when the mouse wheel were moved over the outcomeSlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void outcomeSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_outcomeSliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -420,11 +451,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             outcomeSlider.setValue(outcomeSlider.getValue()+1);
     }//GEN-LAST:event_outcomeSliderMouseWheelMoved
 
+    /**
+     * Action performed when the opponentSlider changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void opponentSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_opponentSliderStateChanged
         int value = opponentSlider.getValue();
         opponentRaceCount.setText(value+"%");
     }//GEN-LAST:event_opponentSliderStateChanged
 
+    /**
+     * Action performed when the mouse wheel were moved over the opponentSlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void opponentSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_opponentSliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -433,11 +472,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             opponentSlider.setValue(opponentSlider.getValue()+1);
     }//GEN-LAST:event_opponentSliderMouseWheelMoved
 
+    /**
+     * Action performed when the playerSlider changes state
+     * @param evt The ChangeEvent trigger
+     */
     private void playerSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_playerSliderStateChanged
         int value = playerSlider.getValue();
         playerRaceCount.setText(value+"%");
     }//GEN-LAST:event_playerSliderStateChanged
 
+    /**
+     * Action performed when the nextButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequiredFields()){
             if(isRequiredFieldsGreaterThanZero()){
@@ -464,11 +511,19 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_nextButtonActionPerformed
 
+    /**
+     * Action performed when the cancelButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         new SelectTaskUI(this).setVisible(true);
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Action performed when the mouse wheel were moved over the playerSlider
+     * @param evt The MouseWheelEvent trigger
+     */
     private void playerSliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_playerSliderMouseWheelMoved
         int rotation = evt.getWheelRotation();
         if(rotation>0)
@@ -477,6 +532,11 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             playerSlider.setValue(playerSlider.getValue()+1);
     }//GEN-LAST:event_playerSliderMouseWheelMoved
 
+    /**
+     * Method to verify if the required fields are filled out
+     * @return true if all required fields are filled out, false if any of the
+     * required fields are missing
+     */
     public boolean verifyRequiredFields(){
         boolean points = armyPointIntervalField.getText().isEmpty();
         boolean knn = kNNField.getText().isEmpty();
@@ -494,6 +554,11 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             return true;
     }
 
+    /**
+     * Method to check if any of the required fields have a negative of zero value.
+     * @return true if all required fields have a value greater than zero, false
+     * if any of the required fields have a negative or zero value
+     */
     private boolean isRequiredFieldsGreaterThanZero() {
         int points = armyPointIntervalField.getValue();
         int knn = kNNField.getValue();
@@ -511,6 +576,10 @@ public class ConfigureCBRUI extends javax.swing.JFrame {
             return true;
     }
 
+    /**
+     * Method which parses the configuration and stores it in the
+     * SimilarityConfiguration singleton
+     */
     private void parseConfiguration() {
         double player = (double)playerSlider.getValue()/100;
         double opponent = (double)opponentSlider.getValue()/100;

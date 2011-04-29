@@ -22,8 +22,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 /**
- *
+ * Class used as the default document for the IntTextField class
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class IntTextDocument extends PlainDocument{
 
@@ -41,5 +42,4 @@ public class IntTextDocument extends PlainDocument{
         }
         catch(NumberFormatException nfe){}
     }
-
 }

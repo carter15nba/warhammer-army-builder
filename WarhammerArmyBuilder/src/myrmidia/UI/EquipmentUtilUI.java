@@ -14,13 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * EquipmentUtilUI.java
- *
- * Created on 25.apr.2011, 12:25:51
- */
-
 package myrmidia.UI;
 
 import java.awt.Container;
@@ -38,8 +31,11 @@ import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 
 /**
- *
+ * Modal user interface to display the Equipment/Utility/Promotion units and
+ * magic items
+ * of the selected unit
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class EquipmentUtilUI extends javax.swing.JDialog {
 
@@ -54,7 +50,11 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         getRootPane().setDefaultButton(okButton);
         setLocationRelativeTo(null);
     }
-    /** Creates new form EquipmentUtilUI */
+    /**
+     * Creates new form EquipmentUtilUI
+     * @param parent The QueryUI parent
+     * @param unitModel The UnitModel to display
+     */
     public EquipmentUtilUI(QueryUI parent, UnitModel unitModel) {
         super(parent);
         initComponents();
@@ -65,7 +65,15 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         setLocationRelativeTo(parent);
         getRootPane().setDefaultButton(okButton);
     }
-    /** Creates new form EquipmentUtilUI */
+
+    /**
+     * Creates new form EquipmentUtilUI
+     * @param parent The JFrame parent
+     * @param unitModel The UnitModel to display
+     * @param useDefaultListCellRenderer boolean which indicates if the 
+     * DefaultListCellRenderer should be used, or if the CheckBoxListRenderer 
+     * should be used.
+     */
     public EquipmentUtilUI(JFrame parent, UnitModel unitModel, boolean useDefaultListCellRenderer) {
         super(parent);
         initComponents();
@@ -220,26 +228,50 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when a mouse click were performed inside the equipmentList
+     * @param evt The MouseEvent trigger
+     */
     private void equipmentListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentListMouseClicked
         performListClick(equipmentList,evt.getPoint());
     }//GEN-LAST:event_equipmentListMouseClicked
 
+    /**
+     * Action performed when a mouse click were performed inside the utilityList
+     * @param evt The MouseEvent trigger
+     */
     private void utilityListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_utilityListMouseClicked
         performListClick(utilityList,evt.getPoint());
     }//GEN-LAST:event_utilityListMouseClicked
 
+    /**
+     * Action performed when a mouse click were performed inside the promotionList
+     * @param evt The MouseEvent trigger
+     */
     private void promotionListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_promotionListMouseClicked
         performListClick(promotionList,evt.getPoint());
     }//GEN-LAST:event_promotionListMouseClicked
 
+    /**
+     * Action performed when a mouse click were performed inside the magicList
+     * @param evt The MouseEvent trigger
+     */
     private void magicListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_magicListMouseClicked
         performListClick(magicList,evt.getPoint());
     }//GEN-LAST:event_magicListMouseClicked
 
+    /**
+     * Action performed when the OkButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Method which populates the list with the data of the UnitModel
+     * @param unitModel The UnitModel to populate the lists with
+     */
     private void initializeLists(UnitModel unitModel) {
         if(unitModel==null)
             return;
@@ -257,6 +289,9 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         utilityList.revalidate();
     }
 
+    /**
+     * Method to set the sizes of the lists
+     */
     private void setListSizes() {
         Dimension dim = new Dimension(200, 140);
         equipmentScroll.setPreferredSize(dim);
@@ -274,6 +309,12 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         pack();
     }
 
+    /**
+     * Method which performs the desired action when a item in any of the
+     * checkBoxLists are clicked.
+     * @param list The JList that were clicked
+     * @param point The Point of the MouseClick
+     */
     private void performListClick(JList list, Point point) {
         if(noList)
             return;
@@ -339,5 +380,4 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
     private javax.swing.JList utilityList;
     private javax.swing.JScrollPane utilityScroll;
     // End of variables declaration//GEN-END:variables
-
 }

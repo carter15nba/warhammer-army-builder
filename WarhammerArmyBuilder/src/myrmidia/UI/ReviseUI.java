@@ -27,11 +27,15 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRCase;
 import myrmidia.Enums.Races;
+import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
 import myrmidia.UI.Resources.MultipleResults;
 import myrmidia.UI.Resources.UnitModel;
@@ -42,7 +46,9 @@ import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
+import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
+import myrmidia.Warhammer.UtilityUnit;
 
 /**
  *
@@ -50,30 +56,40 @@ import myrmidia.Warhammer.Unit;
  */
 public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
-    /** Creates new form ReviseUI */
     private Collection<CBRCase> revise;
     private int displaying;
     private UnitModelControler[] unitControler;
+    private boolean[] approved;
+    private boolean firstTime = true;
+
+    /** Creates new form ReviseUI */
     public ReviseUI() {
         initComponents();
         setLocationRelativeTo(null);
         addWindowListener(new WindowCloser());
-        initPopup();
+        init();
     }
 
-    /** Creates new form ReviseUI */
+    /**
+     * Creates new form ReviseUI
+     * @param cases The collection of cases retrieve and adapted from the CaseBase
+     * @param parent The JFrame parent
+     */
     public ReviseUI(JFrame parent, Collection<CBRCase> cases) {
         initComponents();
         setLocationRelativeTo(parent);
+        init();
         this.revise = cases;
         displaying=-1;
         initializeUnitModels();
-        displayNextResult();
-        initPopup();
+        displayNextResult();     
         addWindowListener(new WindowCloser());
     }
 
-    private void initPopup(){
+    /**
+     * Method which initializes the popup menu and object properties.
+     */
+    private void init(){
         popupMenu = new javax.swing.JPopupMenu("Edit");
         popupAddRow = new javax.swing.JMenuItem("Add row");
         popupAddRow.addActionListener(new ActionListener() {
@@ -96,23 +112,30 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         popupMenu.add(popupAddRow);
         popupMenu.add(popupRemoveRow);
         popupMenu.add(popupView);
-    }
-
-    private void initializeUnitModels(){
-        unitControler = new UnitModelControler[revise.size()];
-        int display = 0;
-        for (CBRCase cbrCase : revise) {
-            Case _case = (Case) cbrCase.getSolution();
-            UnitModelControler control = new UnitModelControler();
-            int count = 0;
-            for(ArmyUnit armyUnit : _case.getArmy().getArmyUnits()){
-                UnitModel model = UnitModel.parseUnitModelFromArmyUnitForRevise(armyUnit);
-                model.setRow(count);
-                control.addUnitModel(count++, model);
-            }
-            unitControler[display++] = control;
+        if(revise!=null)
+            approved = new boolean[revise.size()];
+        else
+            approved = new boolean[1];
+        for (boolean b : approved) {
+            b = false;
         }
     }
+
+    /**
+     * Method which initializes the UnitModelControler required for each of
+     * the retrieved cases
+     */
+    private void initializeUnitModels(){
+        unitControler = new UnitModelControler[revise.size()];
+        for (int i=0; i<unitControler.length; i++) {
+            unitControler[i] = new UnitModelControler();
+        }
+    }
+
+    /**
+     * Method to aquire the player race of the displayed case
+     * @return Races The player race enum
+     */
     public Races getPlayerRace(){
        return Races.valueOf(playerTextLabel.getText());
     }
@@ -161,21 +184,11 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
                 previousCaseButtonActionPerformed(evt);
             }
         });
-        previousCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                previousCaseButtonKeyReleased(evt);
-            }
-        });
 
         nextCaseButton.setText(">");
         nextCaseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextCaseButtonActionPerformed(evt);
-            }
-        });
-        nextCaseButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                nextCaseButtonKeyReleased(evt);
             }
         });
 
@@ -338,6 +351,11 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
         useCaseCheckBox.setMnemonic('u');
         useCaseCheckBox.setText("Use case (army)");
+        useCaseCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useCaseCheckBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -408,50 +426,85 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the previousCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void previousCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousCaseButtonActionPerformed
         displayPreviousResult();
 }//GEN-LAST:event_previousCaseButtonActionPerformed
 
+    /**
+     * Action performed when the nextCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextCaseButtonActionPerformed
         displayNextResult();
 }//GEN-LAST:event_nextCaseButtonActionPerformed
 
+    /**
+     * Action performed when the nextButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-
+        if(verifyRequirements()){
+            for(int i=0; i<approved.length; i++){
+                if(approved[i]){
+                    replaceResultWithDisplayingCase(i);
+                    CBRCase _case = (CBRCase)CollectionControl.getItemAt(revise, i);
+                    System.out.println("#########################################################################");
+                    myrmidia.Util.PrintFactory.printCase((Case)_case.getSolution(), true);
+                }
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this,"No cases (armies) are approved, at least one\ncase (army) have to be approved to continue", "Error 05 - No approved cases (armies)", JOptionPane.ERROR_MESSAGE);
+        }
 }//GEN-LAST:event_nextButtonActionPerformed
 
+    /**
+     * Action performed when the cancelButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         new SelectTaskUI(this).setVisible(true);
         dispose();
 }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Action performed when the explanationButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void explanationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_explanationButtonActionPerformed
         new ExplanationUI(this, displaying, ExplanationUI.MODE_JUSTIFICATION).setVisible(true);
     }//GEN-LAST:event_explanationButtonActionPerformed
 
-    private void nextCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nextCaseButtonKeyReleased
-        if(java.awt.event.KeyEvent.VK_RIGHT==evt.getKeyCode())
-            displayNextResult();
-    }//GEN-LAST:event_nextCaseButtonKeyReleased
-
-    private void previousCaseButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_previousCaseButtonKeyReleased
-        if(java.awt.event.KeyEvent.VK_LEFT==evt.getKeyCode())
-            displayPreviousResult();
-    }//GEN-LAST:event_previousCaseButtonKeyReleased
-
+    /**
+     * Action peformed when the addUnitButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void addUnitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUnitButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
         dtm.addRow(new Object[]{"N/A",null});
     }//GEN-LAST:event_addUnitButtonActionPerformed
 
+    /**
+     * The action performed when the removeUnitButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void removeUnitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeUnitButtonActionPerformed
         int selectedRow = unitTable.getSelectedRow();
         if(selectedRow==-1)
             return;
         DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
         dtm.removeRow(selectedRow);
+        unitControler[displaying].removeUnitModel(selectedRow);
     }//GEN-LAST:event_removeUnitButtonActionPerformed
 
+    /**
+     * Action performed when the viewButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
         int selectedRow = unitTable.getSelectedRow();
         if(selectedRow==-1)
@@ -466,6 +519,10 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         }
     }//GEN-LAST:event_viewButtonActionPerformed
 
+    /**
+     * Action performed when a mouse button is released inside the unitTable
+     * @param evt The MouseEvent trigger
+     */
     private void unitTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitTableMouseReleased
         if(evt.isPopupTrigger()){
             int row = unitTable.rowAtPoint(evt.getPoint());
@@ -473,6 +530,17 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             popupMenu.show(unitTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_unitTableMouseReleased
+
+    /**
+     * Action performed when the useCaseCheckBox is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void useCaseCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useCaseCheckBoxActionPerformed
+        if(useCaseCheckBox.isSelected())
+            approved[displaying] = true;
+        else
+            approved[displaying] = false;
+    }//GEN-LAST:event_useCaseCheckBoxActionPerformed
     
     public final void displayPreviousResult() {
         displaying = (displaying==0) ? revise.size()-1 : displaying-1;
@@ -485,6 +553,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     }
 
     public void displayResult(){
+        if(!firstTime){
+            replaceResultWithDisplayingCase(-1);
+        }
         CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise, displaying);
         Case _case = (Case) cbrCase.getSolution();
         caseIDTextLabel.setText(""+_case.getID());
@@ -494,26 +565,37 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             _case.getArmy().getArmyPoints());
         displayCountLabel.setText((displaying+1)+"/"+revise.size());
         populateUnitsTable();
+        firstTime = false;
     }
 
     public void populateUnitsTable(){
         DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
+        UnitModelControler umc = unitControler[displaying];
+        umc.clear();
         int rows = unitTable.getRowCount();
         for(int i=rows-1; i>-1; i--)
             dtm.removeRow(i);
         CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise,displaying);
         Case _case = (Case) cbrCase.getSolution();
         Army army = _case.getArmy();
-        populateUnitComboBox(army);
+        populateUnitComboBox(army.getPlayerRace());
+        int row = 0;
         for(ArmyUnit unit : army.getArmyUnits()){
             String name = unit.getUnit().getName().split(":")[1];
             int num = unit.getNumberOfUnits();
             dtm.addRow(new Object[]{name,num});
+            UnitModel um = UnitModel.parseUnitModelFromArmyUnitForRevise(unit);
+            um.setRow(row++);
+            umc.addUnitModel(um);
         }
     }
 
-    public void populateUnitComboBox(Army army){
-        List<Unit> unit = CreateObjectFromDB.getRaceUnits(army.getPlayerRace());
+    /**
+     * Method to populate the unit drop down menu in the first column in unitTable
+     * @param race The Race of the units to populate the drop down list with
+     */
+    public void populateUnitComboBox(Races race){
+        List<Unit> unit = CreateObjectFromDB.getRaceUnits(race);
         String[] names = new String[unit.size()+1];
         names[0] = "N/A";
         int pos = 1;
@@ -525,6 +607,12 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         unitTable.getColumnModel().getColumn(0).setCellRenderer(new ComboBoxTableCellRenderer(names, 0));
     }
 
+    /**
+     * Method to aqurie the UnitModel from the selected unit in the unitTable
+     * @param selectedRow int The selected row in the unitTable
+     * @return The UnitModel requested or null if the unit column at the selected
+     * row contains the value N/A.
+     */
     private UnitModel getUnitModel(int selectedRow){
         String unitName = unitTable.getValueAt(selectedRow, 0).toString();
         if(unitName.contentEquals("N/A"))
@@ -550,6 +638,116 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             controler.replaceUnitModel(selectedRow, model);
         }
         return model;
+    }
+
+    /**
+     * Method to verify if the requirements to continue is met.
+     * @return true if at least one case is approved, false if no cases are
+     * approved
+     */
+    public boolean verifyRequirements(){
+        for (boolean b : approved) {
+            if(b)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method to replace the army in the result list with the army being
+     * displayed, this is done to ensure that any "last-minute" user changes
+     * are included in the army.
+     * @param display The index of the displaying case or -1 if the previously
+     * display case is the one wich changes is to be stored.
+     */
+    private void replaceResultWithDisplayingCase(int display){
+        if(display==-1){
+            String dispString = displayCountLabel.getText().split("/")[0];
+            display = Integer.parseInt(dispString)-1;
+        }
+        CBRCase cbrCase = (CBRCase)CollectionControl.getItemAt(revise, display);
+        Case _case = (Case)cbrCase.getSolution();
+        Army army = Army.copy(_case.getArmy());
+        army.setArmyUnits(createArmyUnits(getPlayerRace(),display));
+        _case.setArmy(army);
+    }
+
+    /**
+     * Method which creates the army units contained in the unitsTable and
+     * returns them as a set of army units.
+     * @param race Races The player race
+     * @return The set of ArmyUnits parsed from the unitsTable
+     */
+    private Set<ArmyUnit> createArmyUnits(Races race, int disp){
+        Set<ArmyUnit> units = new HashSet<ArmyUnit>();
+        int rows = unitTable.getRowCount();
+        UnitModelControler unitModelControler = unitControler[disp];
+        for(int i=0; i<rows; i++){
+            if(unitTable.getValueAt(i, 0)==null)
+                continue;
+            String name = unitTable.getValueAt(i, 0).toString();
+            if(name.equalsIgnoreCase("N/A"))
+                continue;
+            Object obj = unitTable.getValueAt(i, 1);
+            int number=-1;
+            if(obj!=null)
+                number = Integer.parseInt(obj.toString());
+            Unit unit = CreateObjectFromDB.createUnitFromDB(race.toString()+
+                    ":"+name);
+            ArmyUnit armyUnit = new ArmyUnit();
+            armyUnit.setUnit(unit);
+            if(number==-1)
+                number = unit.getMinNumber();
+            armyUnit.setNumberOfUnits(number);
+            UnitModel model = unitModelControler.getUnitModel(i);
+            assignModelSelectionToUnit(armyUnit, model);
+            units.add(armyUnit);
+        }
+        return units;
+    }
+
+    /**
+     * Method which assigns the UnitModel selection to the army unit
+     * @param unit ArmyUnit The armyUnit to assign the UnitModel selections to
+     * @param model UnitModel The unit model to assign to the ArmyUnit
+     */
+    private void assignModelSelectionToUnit(ArmyUnit unit, UnitModel model){
+        CheckListItem[] items = model.getEquipment();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1, index));
+                unit.getEquipment().add(new Equipment(name,cost));
+            }
+        }
+        items = model.getMagic();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getEquipment().add(new Equipment(name,cost));
+            }
+        }
+        items = model.getPromotion();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getUtility().add(new UtilityUnit(name,cost));
+            }
+        }
+        items = model.getUtility();
+        for (CheckListItem cli : items) {
+            if(cli.isSelected()){
+                int index = cli.toString().indexOf(")");
+                String name = cli.toString().substring(index+1);
+                int cost = Integer.parseInt(cli.toString().substring(1,index));
+                unit.getUtility().add(new UtilityUnit(name,cost));
+            }
+        }
     }
 
     /**

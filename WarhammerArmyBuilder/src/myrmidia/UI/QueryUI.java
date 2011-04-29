@@ -14,13 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * QueryUI.java
- *
- * Created on 21.apr.2011, 10:34:03
- */
-
 package myrmidia.UI;
 
 import java.awt.Color;
@@ -32,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRQuery;
@@ -39,7 +33,6 @@ import myrmidia.Enums.Outcomes;
 import myrmidia.Enums.Races;
 import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
-import myrmidia.UI.Resources.InputParameters;
 import myrmidia.UI.Resources.UnitModel;
 import myrmidia.UI.Resources.UnitModelControler;
 import myrmidia.UI.Resources.WindowCloser;
@@ -53,16 +46,15 @@ import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.UtilityUnit;
 
 /**
- *
+ * User interface to create a CBR-query
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class QueryUI extends javax.swing.JFrame {
 
     private int minimizedHeight = 170;
     private static int defaultHeight = 500;
     private static int defaultWidth = 597;
-    private SelectTaskUI parent;
-    private InputParameters inputParameters;
     private UnitModelControler unitModelControler;
     private String selectedPlayerRace;
 
@@ -71,13 +63,18 @@ public class QueryUI extends javax.swing.JFrame {
         init();
     }
 
-
-    public QueryUI(SelectTaskUI parent){
+    /**
+     * Creates new form QuetyUI with the supplied parent
+     * @param parent The SelectTaskUI parent to set
+     */
+    public QueryUI(JFrame parent){
         init();
-        this.parent = parent;
         setLocationRelativeTo(parent);
     }
 
+    /**
+     * Performs form initialization and custom initialization of object variables
+     */
     private void init(){
         initComponents();
         popupMenu = new javax.swing.JPopupMenu("Edit");
@@ -103,15 +100,12 @@ public class QueryUI extends javax.swing.JFrame {
         popupMenu.add(popupRemoveRow);
         popupMenu.add(popupView);
 
-        inputParameters = InputParameters.getInstance();
         updateUIBounds();
         initRaceDropDown(opponentRaceInput);
         initRaceDropDown(playerRaceInput);
         addUnitsPanel.setVisible(false);
         unitsTable.getTableHeader().setReorderingAllowed(false);
         unitModelControler = new UnitModelControler();
-        if(inputParameters.getNoRestrictions())
-            addUnitToggleButton.setEnabled(true);
         selectedPlayerRace = "";
         addWindowListener(new WindowCloser());
         pack();
@@ -336,6 +330,10 @@ public class QueryUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Action performed when the AddUnitToggleButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void addUnitToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUnitToggleButtonActionPerformed
         if(addUnitToggleButton.isSelected()){
             try{
@@ -352,6 +350,10 @@ public class QueryUI extends javax.swing.JFrame {
         updateUIBounds();
     }//GEN-LAST:event_addUnitToggleButtonActionPerformed
 
+    /**
+     * Action performed when the nectButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if(verifyRequiredFields()){
             CBRQuery query = createQuery();
@@ -363,14 +365,20 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_nextButtonActionPerformed
 
+    /**
+     * Action perfomed when the cancelButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         new SelectTaskUI(this).setVisible(true);
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Action performed when the player race is selected
+     * @param evt The ActionEvent trigger
+     */
     private void playerRaceInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerRaceInputActionPerformed
-        if(inputParameters.getNoRestrictions())
-            return;
         if(playerRaceInput.getSelectedIndex()==0){
             if(addUnitToggleButton.isSelected())
                 addUnitToggleButton.doClick();
@@ -387,12 +395,20 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_playerRaceInputActionPerformed
 
+    /**
+     * Aciton peformed when the addRowButt is selected
+     * @param evt The ActionEvent trigger
+     */
     private void addRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRowButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
         dtm.addRow(new Object[]{"N/A",null});
         unitModelControler.placeDummyObjects(unitsTable.getRowCount());
     }//GEN-LAST:event_addRowButtonActionPerformed
 
+    /**
+     * Action performed when the removeRowButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void removeRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeRowButtonActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) unitsTable.getModel();
         int selectedRow = unitsTable.getSelectedRow();
@@ -402,6 +418,10 @@ public class QueryUI extends javax.swing.JFrame {
         unitModelControler.removeUnitModel(selectedRow);
     }//GEN-LAST:event_removeRowButtonActionPerformed
 
+    /**
+     * Action performed when the viewEqUtButton is selected
+     * @param evt The ActionEvent trigger
+     */
     private void viewEqUtButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewEqUtButtonActionPerformed
         int selectedRow = unitsTable.getSelectedRow();
         if(selectedRow==-1)
@@ -416,6 +436,10 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_viewEqUtButtonActionPerformed
 
+    /**
+     * Action performed when the a mouse button is released inside the unitsTable
+     * @param evt The MouseEvent trigger
+     */
     private void unitsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unitsTableMouseReleased
         if(evt.isPopupTrigger()){
             int row = unitsTable.rowAtPoint(evt.getPoint());
@@ -424,15 +448,22 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_unitsTableMouseReleased
 
+    /**
+     * Method which populates the race combo box with the available races
+     * @param box The JComboBox to populate
+     */
     private void initRaceDropDown(JComboBox box){
         box.addItem("N/A");
         for(Races race : Races.values())
             box.addItem(race);
     }
 
+    /**
+     * Method which verifies if all the required fields are filled out
+     * @return true if all reauired fields are filled, false if any required
+     * field not is filled
+     */
     private boolean verifyRequiredFields(){
-        if(inputParameters.getNoRestrictions())
-            return true;
         boolean verified = true;
         if(playerRaceInput.getSelectedIndex()==0){
             verified = false;
@@ -455,6 +486,10 @@ public class QueryUI extends javax.swing.JFrame {
         return verified;
     }
 
+    /**
+     * Method which updates the size of the UI when the addUnitToggleButton
+     * changes state
+     */
     private void updateUIBounds() {
         if(addUnitToggleButton.isSelected()) {
             setMinimumSize(new Dimension(defaultWidth, defaultHeight));
@@ -477,7 +512,10 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }
 
-
+    /**
+     * This method populates the combobox in the 1st column in the unitsTable
+     * with the available units
+     */
     public void populateUnitComboBox(){
         List<Unit> unit = CreateObjectFromDB.getRaceUnits(Races.valueOf(
         playerRaceInput.getSelectedItem().toString()));
@@ -493,6 +531,12 @@ public class QueryUI extends javax.swing.JFrame {
         unitsTable.setValueAt("N/A", 0, 0);
     }
 
+    /**
+     * Method wich returns the UnitModel from the selected row, if the unitModel
+     * at the row dont match the row data, a new unit model is returned.
+     * @param selectedRow int The selected row in the unitsTable
+     * @return The UnitModel for the selected row in the table
+     */
     private UnitModel getUnitModel(int selectedRow) {
         String unitName = unitsTable.getValueAt(selectedRow, 0).toString();
         if(unitName.contentEquals("N/A"))
@@ -519,10 +563,18 @@ public class QueryUI extends javax.swing.JFrame {
         return model;
     }
 
+    /**
+     * Method to get the selected Player race
+     * @return The selected player Race
+     */
     public Races getPlayerRace(){
         return Races.valueOf(playerRaceInput.getSelectedItem().toString());
     }
 
+    /**
+     * Method which creates the CBRQuery from the data supplied in the UI.
+     * @return The created CBRQuery
+     */
     private CBRQuery createQuery(){
         Case queryCase = new Case();
         queryCase.setOpponent(Races.valueOf(opponentRaceInput.getSelectedItem()
@@ -541,6 +593,12 @@ public class QueryUI extends javax.swing.JFrame {
         return cbrQuery;
     }
 
+    /**
+     * Method which creates the army units contained in the unitsTable and
+     * returns them as a set of army units.
+     * @param race Races The player race
+     * @return The set of ArmyUnits parsed from the unitsTable
+     */
     private Set<ArmyUnit> createArmyUnits(Races race){
         Set<ArmyUnit> units = new HashSet<ArmyUnit>();
         int rows = unitsTable.getRowCount();
@@ -568,6 +626,11 @@ public class QueryUI extends javax.swing.JFrame {
         return units;
     }
 
+    /**
+     * Method which assigns the UnitModel selection to the army unit
+     * @param unit ArmyUnit The armyUnit to assign the UnitModel selections to
+     * @param model UnitModel The unit model to assign to the ArmyUnit
+     */
     private void assignModelSelectionToUnit(ArmyUnit unit, UnitModel model){
         CheckListItem[] items = model.getEquipment();
         for (CheckListItem cli : items) {
@@ -607,14 +670,10 @@ public class QueryUI extends javax.swing.JFrame {
         }
     }
 
-
-
-
     /**
     * @param args the command line arguments
     */
     public static void main(String args[]) {
-        InputParameters.getInstance().parseInput(args);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new QueryUI().setVisible(true);

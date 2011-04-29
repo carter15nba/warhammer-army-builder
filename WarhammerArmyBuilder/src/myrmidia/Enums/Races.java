@@ -30,7 +30,11 @@ public enum Races {
     /**
      * Enum value indicating that the player-/opponent race is Beastmen
      */
-    Beastmen,Bretonnia,
+    Beastmen,
+    /**
+     * Enum value indicating that the player-/opponent race is Bretonnia
+     */
+    Bretonnia,
     /**
      * Enum value indicating that the player-/opponent race is Dark Elves
      */

@@ -21,9 +21,9 @@ import java.awt.Component;
 import javax.swing.JTable;
 
 /**
- *
+ * Class used to render JComboBoxes inside TableCells
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class ComboBoxTableCellRenderer extends javax.swing.table.DefaultTableCellRenderer{
 
@@ -59,6 +59,4 @@ public class ComboBoxTableCellRenderer extends javax.swing.table.DefaultTableCel
         super.getTableCellRendererComponent(table, value, selected, focused, row, column);
         return this;
     }
-
-
 }

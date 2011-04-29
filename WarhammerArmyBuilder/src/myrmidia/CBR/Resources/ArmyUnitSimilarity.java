@@ -37,6 +37,9 @@ public class ArmyUnitSimilarity implements LocalSimilarityFunction{
     private int foundUnits;
     private ArmyUnitExplanation expl;
 
+    /** Default constructor */
+    public ArmyUnitSimilarity(){}
+
     /**
      * Compute the similarity between the two supplied Set objects. Each
      * object can cosist of 0, 1 or more ArmyUnits and the similarity is based
