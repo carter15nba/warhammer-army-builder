@@ -198,6 +198,8 @@ public class DatabaseManager {
      * @deprecated use the hibernate connection, create a session and take
      * advantage of the named queries instead
      * @param sql The string sql statement.
+     * @param statementType Int value indicating the type of statement to 
+     * execute
      * @return Null if a invalid sql were passed, or a ResultSet containing
      * the results of the query.
      */

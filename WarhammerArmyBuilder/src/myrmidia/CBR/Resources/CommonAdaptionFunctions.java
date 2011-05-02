@@ -207,6 +207,8 @@ public class CommonAdaptionFunctions {
      * This method finds the most expensive army unit in the supplied army type
      * @param army The army to search through
      * @param aT The army type to find the most expensive unit in
+     * @param restrictUsedUnits determines if previously found units should be 
+     * omitted from the search
      * @return The most expensive army unit
      */
     public ArmyUnit findMostExpensiveUnit(Army army, ArmyType aT,
@@ -527,7 +529,8 @@ public class CommonAdaptionFunctions {
 
     /**
      * This method determines if the full command threshold have been reached
-     * @param army -The army to check the full command threshold
+     * @param army The army to check the full command threshold
+     * @param armyUnit The ArmyUnit to check for full command
      * @return <ul><li>true - if a new full command group can be created</li>
      * <li>false - if a nee full command group cannot be created</li></ul>
      */
@@ -624,7 +627,7 @@ public class CommonAdaptionFunctions {
 
     /**
      * This metod returns the last most similar unit similarity calcualted. Note
-     * that this method is <u>not</u> Thread safe, and no guarantee is made that
+     * that this method is not Thread safe, and no guarantee is made that
      * the similarity returned is the requeted similarity
      * @return double The last most similar unit similarity calculated
      */
