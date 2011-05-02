@@ -131,7 +131,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cc.setSolution(adaptedCase);
                 cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
                 ncbr.add(cc);
-                PrintFactory.printCase(adaptedCase, true,null);
+                
+                System.out.println(adaptedCase.getArmy().calculateCost());
             }
             catch(ConcurrentModificationException cme){}            
         }
@@ -172,8 +173,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 queryCase.setOpponent(Races.Wood_Elves);
 
                 Army queryArmy = new Army();
-                queryArmy.setArmyPoints(2500);
-                queryArmy.setPlayerRace(Races.Empire);
+                queryArmy.setArmyPoints(5000);
+                queryArmy.setPlayerRace(Races.Dwarfs);
 
                 Set<ArmyUnit> armyUnitSet = new HashSet<ArmyUnit>();
                 ArmyUnit armyUnit = new ArmyUnit();
@@ -209,9 +210,6 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cbrEngine.cycle(cbrQuery);
 
                 cbrEngine.postCycle();
-                ExplanationEngine eng = ExplanationEngine.getInstance();
-                System.out.println(eng.generateTransparencyExplanations());
-                System.out.println(eng.generateJustificationExplanations());
                 
             }
             System.exit(0);

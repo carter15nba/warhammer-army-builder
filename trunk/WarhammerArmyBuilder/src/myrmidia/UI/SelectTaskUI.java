@@ -17,6 +17,7 @@
 package myrmidia.UI;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import myrmidia.UI.Resources.WindowCloser;
 
 /**
@@ -134,6 +135,8 @@ public class SelectTaskUI extends javax.swing.JFrame {
             retainUI.setVisible(true);
             dispose();
         }
+        else
+            JOptionPane.showMessageDialog(this, "No cases (armies) applicable for outcome asignment", "No cases", JOptionPane.OK_OPTION);
     }//GEN-LAST:event_assignButtonActionPerformed
 
     /**
