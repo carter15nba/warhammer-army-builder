@@ -119,8 +119,8 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             approved = new boolean[revise.size()];
         else
             approved = new boolean[1];
-        for (boolean b : approved) {
-            b = false;
+        for(int i=0; i<approved.length; i++){
+            approved[i]=false;
         }
     }
 
