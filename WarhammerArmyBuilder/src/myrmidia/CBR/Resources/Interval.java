@@ -22,7 +22,7 @@ import jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction;
 /**
  * Class used to compute the local similarity Interval
  * @author Glenn Rune Strandbråten
- * @version 0.4
+ * @version 1.0
  */
 public class Interval implements LocalSimilarityFunction{
 

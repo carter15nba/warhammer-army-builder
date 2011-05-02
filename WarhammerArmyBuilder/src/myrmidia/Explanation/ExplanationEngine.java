@@ -28,7 +28,7 @@ import myrmidia.Warhammer.Case;
 /**
  * Singleton class to create and manage all explanations the system should convey
  * @author Glenn Rune Strandbråten
- * @version 0.5.1
+ * @version 1.0
  */
 public class ExplanationEngine{
 

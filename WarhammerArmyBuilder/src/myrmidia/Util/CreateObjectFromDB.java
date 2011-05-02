@@ -25,15 +25,17 @@ import myrmidia.Database.Connector;
 import myrmidia.Database.DatabaseManager;
 import myrmidia.Enums.ArmyType;
 import myrmidia.Enums.Races;
+import myrmidia.Warhammer.Case;
 import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.Unit.*;
+import myrmidia.Warhammer.UtilityUnit;
 import org.hibernate.Session;
 
 /**
  * Class to create a unit with all the unit data from the database
  * @author Glenn Rune Strandbråten
- * @version 0.5
+ * @version 1.0
  */
 public class CreateObjectFromDB {
 
@@ -148,7 +150,77 @@ public class CreateObjectFromDB {
         List<Unit> unit = (List<Unit>) session.getNamedQuery("Unit.getRaceUnits")
                 .setString("race", race.toString())
                 .list();
+        session.close();
         return unit;
+    }
+
+    /**
+     * Method to aquire one Equipment based on its name and cost.
+     * @param name String the name of the equipment
+     * @param cost int The cost of the equipment
+     * @return The aquired Equipment
+     */
+    @SuppressWarnings("unchecked")
+    public static Equipment createEquipment(String name, int cost){
+        Session session = getSession();
+        List<Equipment> eqList = (List<Equipment>) session.getNamedQuery(
+                "Equipment.getEquipment")
+                .setString("name", name)
+                .setInteger("cost", cost)
+                .list();
+        session.close();
+        return eqList.get(0);
+    }
+
+    /**
+     * Method to aquire one UtilityUnit based on its name, the name must be the
+     * full name as typed in the database (including the prefix
+     * &lt;Race_Name&gt;:&lt;Unit_Name&gt;)
+     * @param name String the full name of the utility unit
+     * @return The aquired UtilityUnit
+     */
+    @SuppressWarnings("unchecked")
+    public static UtilityUnit createUtilityUnit(String name){
+        Session session = getSession();
+        List<UtilityUnit> utList = (List<UtilityUnit>) session.getNamedQuery(
+                "UtilityUnit.getUtilityUnit")
+                .setString("name", name)
+                .list();
+        session.close();
+        return utList.get(0);
+    }
+
+    /**
+     * Method to aquire a list with all the cases that contains the specified
+     * army id
+     * @param armyID int The army id the returned cases should contain
+     * @return A list with cases
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Case> getCasesWithArmyID(int armyID){
+        Session session = getSession();
+        List<Case> caseList = (List<Case>) session.getNamedQuery(
+                "Case.getCasesWithArmyID")
+                .setInteger("armyID", armyID)
+                .list();
+        session.close();
+        return caseList;
+    }
+
+    /**
+     * Method to get a case by the case id
+     * @param caseID int The case id of the case to get
+     * @return The case with the specified id
+     */
+    @SuppressWarnings("unchecked")
+    public static Case getCaseByID(int caseID){
+        Session session = getSession();
+        List<Case> caseList = (List<Case>) session.getNamedQuery(
+                "Case.getCaseByID")
+                .setInteger("ID", caseID)
+                .list();
+        session.close();
+        return caseList.get(0);
     }
 
     /**

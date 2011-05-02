@@ -22,7 +22,7 @@ import java.util.Collection;
 /**
  * Class to get the specified item from any collection
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class CollectionControl {
 

@@ -27,7 +27,7 @@ import myrmidia.Enums.Mode;
  * of the Case object so that the similarity of the parts can be calculated by
  * the optimized functions.
  * @author Glenn Rune Strandbråten
- * @version 0.4
+ * @version 1.0
  */
 public class SimilarityMeasure {
     private NNConfig nnConfig = null;

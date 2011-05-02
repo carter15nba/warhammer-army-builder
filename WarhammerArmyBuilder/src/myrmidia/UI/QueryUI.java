@@ -587,7 +587,7 @@ public class QueryUI extends javax.swing.JFrame {
                 .toString()));
         queryArmy.setArmyUnits(createArmyUnits(queryArmy.getPlayerRace()));
         queryCase.setArmy(queryArmy);
-        PrintFactory.printCase(queryCase, true);
+        PrintFactory.printCase(queryCase, true, null);
         CBRQuery cbrQuery = new CBRQuery();
         cbrQuery.setDescription(queryCase);
         return cbrQuery;
@@ -638,7 +638,8 @@ public class QueryUI extends javax.swing.JFrame {
                 int index = cli.toString().indexOf(")");
                 String name = cli.toString().substring(index+1);
                 int cost = Integer.parseInt(cli.toString().substring(1, index));
-                unit.getEquipment().add(new Equipment(name,cost));
+                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
+                unit.getEquipment().add(eq);
             }
         }
         items = model.getMagic();
@@ -647,25 +648,28 @@ public class QueryUI extends javax.swing.JFrame {
                 int index = cli.toString().indexOf(")");
                 String name = cli.toString().substring(index+1);
                 int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getEquipment().add(new Equipment(name,cost));
+                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
+                unit.getEquipment().add(eq);
             }
         }
         items = model.getPromotion();
         for (CheckListItem cli : items) {
             if(cli.isSelected()){
                 int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getUtility().add(new UtilityUnit(name,cost));
+                String name = getPlayerRace().toString()+":"+
+                        cli.toString().substring(index+1);
+                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
+                unit.getUtility().add(ut);
             }
         }
         items = model.getUtility();
         for (CheckListItem cli : items) {
             if(cli.isSelected()){
                 int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getUtility().add(new UtilityUnit(name,cost));
+                String name = getPlayerRace().toString()+":"+
+                        cli.toString().substring(index+1);
+                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
+                unit.getUtility().add(ut);
             }
         }
     }

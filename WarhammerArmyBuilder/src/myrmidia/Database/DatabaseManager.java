@@ -25,18 +25,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jcolibri.cbrcore.CBRCase;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
-import myrmidia.Database.Connector;
 
 /**
  * Singleton class responsible for the connections and executions of
  * statements to the database.
  * @author Glenn Rune Strandbåten
- * @version 0.4
+ * @version 1.0
  */
 public class DatabaseManager {
 

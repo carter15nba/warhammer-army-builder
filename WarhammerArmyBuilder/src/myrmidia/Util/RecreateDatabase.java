@@ -28,7 +28,7 @@ import myrmidia.File.SQLFileParser;
  * Warning DO NOT USE! This class will delete the database and recreate it with
  * the default dataset.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class RecreateDatabase {
 

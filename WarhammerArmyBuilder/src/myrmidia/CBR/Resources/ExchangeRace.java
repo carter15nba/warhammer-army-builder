@@ -34,7 +34,7 @@ import myrmidia.Warhammer.Unit;
  * Class used to change all the units in an army to another race, by replacing
  * each unit in the old army with the most similar unit from the new race.
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class ExchangeRace {
 

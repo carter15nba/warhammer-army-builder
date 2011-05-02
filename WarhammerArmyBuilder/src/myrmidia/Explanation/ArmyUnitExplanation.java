@@ -24,7 +24,7 @@ import myrmidia.CBR.Resources.SimilarityConfiguration;
  * Class used to keep track of the similarities and reasoning behind
  * the case selection on the ArmyUnit layer.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class ArmyUnitExplanation implements Explanation{
 

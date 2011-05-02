@@ -21,7 +21,7 @@ package myrmidia.CBR.Resources;
  * Singleton class used to hold the configuration data for the similarity
  * calculations.  All weigths and number of retrieved cases (k) are stored here.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class SimilarityConfiguration {
 

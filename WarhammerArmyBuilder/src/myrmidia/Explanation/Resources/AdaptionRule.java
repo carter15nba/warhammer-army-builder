@@ -23,7 +23,7 @@ import myrmidia.Enums.Actions;
 /**
  * Singleton class mapping adaption Actions to the explanation text
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class AdaptionRule {
 

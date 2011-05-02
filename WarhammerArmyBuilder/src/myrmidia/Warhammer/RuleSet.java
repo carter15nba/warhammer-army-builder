@@ -28,7 +28,7 @@ import myrmidia.Warhammer.Resources.ErrorManager;
 /**
  * Class to verify if the rules governing the creation of an army are adhered
  * @author Glenn Rune Strandbåten
- * @version 0.5
+ * @version 1.0
  */
 public class RuleSet {
 
@@ -67,6 +67,8 @@ public class RuleSet {
      */
     public RuleSet(int threshold){
         this.threshold = threshold;
+        unitNames = new ArrayList<String>();
+        unitNumber = new ArrayList<Integer>();
         errorManager = new ErrorManager();
     }
 

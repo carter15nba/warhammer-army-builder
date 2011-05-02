@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * existing files.
  *
  * @author Glenn Rune Strandbråten
- * @version 0.4
+ * @version 1.0
  */
 public class SQLFileWriter {
 

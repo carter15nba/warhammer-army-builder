@@ -28,7 +28,7 @@ import myrmidia.Warhammer.Unit;
  * Class to calculate the unit similarity (all characteristics)
  * Used during adaptation.
  * @author Glenn Rune Strandbråten
- * @version 0.5
+ * @version 1.0
  */
 public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.similarity.LocalSimilarityFunction{
 

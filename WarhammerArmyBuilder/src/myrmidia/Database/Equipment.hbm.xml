@@ -64,4 +64,9 @@
         and eq.itemType = 'Standard'
         order by eq.cost asc
     </query>
+  <query name="Equipment.getEquipment">
+        select eq from Equipment eq where
+        eq.name=:name
+        and eq.cost=:cost
+    </query>
 </hibernate-mapping>

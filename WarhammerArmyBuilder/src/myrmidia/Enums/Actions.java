@@ -20,7 +20,7 @@ package myrmidia.Enums;
 /**
  * Enum holding the list of available actions to take during adaption.
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public enum Actions {
     /**

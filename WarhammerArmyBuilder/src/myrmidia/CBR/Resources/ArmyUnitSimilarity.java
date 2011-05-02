@@ -30,7 +30,7 @@ import myrmidia.Warhammer.UtilityUnit;
 /**
  * Class to compute the similarity between two ArmyUnit objects
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class ArmyUnitSimilarity implements LocalSimilarityFunction{
 

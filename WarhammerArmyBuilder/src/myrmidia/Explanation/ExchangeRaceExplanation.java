@@ -26,7 +26,7 @@ import myrmidia.Explanation.Resources.Exchange;
  * Class holding all the information regarding to the exchange of units
  * from one race to another. 
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class ExchangeRaceExplanation implements Explanation{
 

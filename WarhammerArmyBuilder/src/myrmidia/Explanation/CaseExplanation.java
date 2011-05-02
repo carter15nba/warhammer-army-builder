@@ -29,7 +29,7 @@ import myrmidia.Enums.Races;
  * stored or accessible for this class. The data is used to create the
  * Justification explanations of this application.
  * @author Glenn Rune Strandbråten
- * @version 0,4
+ * @version 1.0
  */
 public class CaseExplanation implements Explanation{
 

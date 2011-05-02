@@ -21,9 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class responsible for keeping track of the adaption process and
+ * generate an explanation (Justification) for this process.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class AdaptionExplanation implements Explanation{
 

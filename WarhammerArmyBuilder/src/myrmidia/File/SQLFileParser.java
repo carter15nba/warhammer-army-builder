@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 /**
  * Class to parse SQL statements from a file.
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class SQLFileParser {
 

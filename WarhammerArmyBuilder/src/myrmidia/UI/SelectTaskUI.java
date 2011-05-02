@@ -129,8 +129,11 @@ public class SelectTaskUI extends javax.swing.JFrame {
      * @param evt The ActionEvent trigger
      */
     private void assignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignButtonActionPerformed
-        new RetainUI(this).setVisible(true);
-        setVisible(false);
+        RetainUI retainUI = new RetainUI(this);
+        if(retainUI.checkForUnknownCases(this)){
+            retainUI.setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_assignButtonActionPerformed
 
     /**

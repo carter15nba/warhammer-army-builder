@@ -17,6 +17,8 @@
 
 package myrmidia.Util;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Set;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
@@ -32,7 +34,7 @@ import myrmidia.Warhammer.UtilityUnit;
  * All methods will provide a fully formated easy to read
  * print of the supplied data.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class PrintFactory {
 
@@ -76,8 +78,12 @@ public class PrintFactory {
      * the standard System.out
      * @param _case The Case to be printed
      * @param printArmyUnit Boolean dictating if each unit should be printed or not
+     * @param os The OutputStream to write the case to. If null the default
+     * System.out stream is used
      */
-    public static void printCase(Case _case,boolean printArmyUnit){
+    public static void printCase(Case _case,boolean printArmyUnit,OutputStream os){
+        if(os!=null)
+            System.setOut(new PrintStream(os, true));
         System.out.println(LINE+"\n| "+_case.toString());
         System.out.println("| Calculated cost: "+_case.getArmy().calculateCost());
         if(printArmyUnit)

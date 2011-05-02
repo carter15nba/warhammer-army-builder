@@ -22,7 +22,7 @@ import jcolibri.cbrcore.Attribute;
 /**
  * Class representing a special rule
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class SpecialRules implements jcolibri.cbrcore.CaseComponent{
     private int id=0;

@@ -24,7 +24,7 @@ import myrmidia.Enums.Races;
 /**
  * Class representing a CBR case.
  * @author Glenn Rune Strandbråten
- * @version 0.5
+ * @version 1.0
  */
 public class Case implements jcolibri.cbrcore.CaseComponent{
     private int ID;

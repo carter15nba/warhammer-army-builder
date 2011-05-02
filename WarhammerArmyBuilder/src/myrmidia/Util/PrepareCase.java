@@ -33,7 +33,7 @@ import org.hibernate.Session;
  * as a mutex semaphore is used both during class creation and during
  * preparataion to avoid anyone accessing/changing the internal memory.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class PrepareCase {
 

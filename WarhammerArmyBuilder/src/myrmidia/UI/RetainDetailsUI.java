@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Glenn Rune Strandbråten
+ *  Copyright (C) 2011 Glenn Rune Strandbråten 
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,54 +14,38 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package myrmidia.UI;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import javax.swing.JFrame;
-import myrmidia.Explanation.ExplanationEngine;
+import javax.swing.SwingUtilities;
+import myrmidia.Util.PrintFactory;
+import myrmidia.Warhammer.Case;
 
 /**
- * Modal user interface used to display an explanation (or any kind of text
- * output)
+ * UI dialog which displays the case (army) information of the selected case.
  * @author Glenn Rune Strandbråten
  * @version 1.0
  */
-public class ExplanationUI extends javax.swing.JDialog {
+public class RetainDetailsUI extends javax.swing.JDialog {
 
     /**
-     * This mode indicats that a transparency explanation should be displayed
-     */
-    public static final int MODE_TRANSPARENCY = 100;
-    /**
-     * This mode indicates that a justification explanation should be displayed
-     */
-    public static final int MODE_JUSTIFICATION = 200;
-    /** Creates new form ExplanationUI */
-    public ExplanationUI() {
-        initComponents();
-        getRootPane().setDefaultButton(closeButton);
-    }
-
-    /**
-     * Creates new form ExplanationUI
-     * @param index The index of the explanation to display
-     * @param mode The mode of the explanation UI, use MODE_TRANSPARENCY or
-     * MODE_JUSTIFICATION
+     * Creates new form RetainDetailsUI
+     * @param _case The Case object to be displayed
      * @param parent The JFrame parent
      */
-    public ExplanationUI(JFrame parent, int index,int mode) {
+    public RetainDetailsUI(JFrame parent, Case _case) {
         super(parent, true);
         initComponents();
-        getRootPane().setDefaultButton(closeButton);
         setLocationRelativeTo(parent);
-        ExplanationEngine explEng = ExplanationEngine.getInstance();
-        String expl;
-        if(mode==MODE_JUSTIFICATION)
-            expl = explEng.generateJustificationExplanation(index);
-        else if(mode==MODE_TRANSPARENCY)
-            expl = explEng.generateTransparencyExplanation(index);
+        setTitle("Displaying details for case #"+_case.getID());
+        if(_case!=null)
+            PrintFactory.printCase(_case, true, createOutputStream());
         else
-            expl = "No explanation were found!";
-        explanationText.setText(expl);
+            infoArea.setText("No case found!");
     }
 
     /** This method is called from within the constructor to
@@ -74,11 +58,10 @@ public class ExplanationUI extends javax.swing.JDialog {
     private void initComponents() {
 
         closeButton = new javax.swing.JButton();
-        explanationScroll = new javax.swing.JScrollPane();
-        explanationText = new javax.swing.JTextArea();
+        infoScroll = new javax.swing.JScrollPane();
+        infoArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Myrmidia - Explanation");
 
         closeButton.setMnemonic('C');
         closeButton.setText("Close");
@@ -88,21 +71,20 @@ public class ExplanationUI extends javax.swing.JDialog {
             }
         });
 
-        explanationText.setColumns(20);
-        explanationText.setEditable(false);
-        explanationText.setFont(new java.awt.Font("Tahoma", 0, 14));
-        explanationText.setRows(5);
-        explanationScroll.setViewportView(explanationText);
+        infoArea.setColumns(20);
+        infoArea.setEditable(false);
+        infoArea.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        infoArea.setRows(5);
+        infoScroll.setViewportView(infoArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(explanationScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE))
+                    .addComponent(infoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
                     .addComponent(closeButton))
                 .addContainerGap())
         );
@@ -112,7 +94,7 @@ public class ExplanationUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(closeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(explanationScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                .addComponent(infoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -120,7 +102,7 @@ public class ExplanationUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Action performed when the closeButton is selected
+     * Action performde when the closeButton is selected
      * @param evt The ActionEvent trigger
      */
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
@@ -128,19 +110,64 @@ public class ExplanationUI extends javax.swing.JDialog {
     }//GEN-LAST:event_closeButtonActionPerformed
 
     /**
+     * Method to create an output stream bound to the JTextArea, this
+     * OutputStream will superceede the default System.out permitting a
+     * System.out call to be written to the bound JTextArea
+     * @return The created OutputStream bound to the JTextArea
+     */
+    private OutputStream createOutputStream() {
+        OutputStream out = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                updateTextArea(String.valueOf((char) b));
+            }
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                updateTextArea(new String(b, off, len));
+            }
+            @Override
+            public void write(byte[] b) throws IOException {
+                write(b, 0, b.length);
+            }
+        };
+    System.setOut(new PrintStream(out, true));
+    return out;
+    }
+
+    /**
+     * Method used by the bound OutputStream to print System.out calls to the
+     * textArea
+     * @param text String the text to be printed to the JTextArea
+     */
+    private void updateTextArea(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                infoArea.append(text);
+                infoArea.setCaretPosition(0);
+            }
+        });
+    }
+
+    /**
     * @param args the command line arguments
     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ExplanationUI(null,0,0).setVisible(true);
+                RetainDetailsUI dialog = new RetainDetailsUI(new javax.swing.JFrame(),null);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
-    private javax.swing.JScrollPane explanationScroll;
-    private javax.swing.JTextArea explanationText;
+    private javax.swing.JTextArea infoArea;
+    private javax.swing.JScrollPane infoScroll;
     // End of variables declaration//GEN-END:variables
 }

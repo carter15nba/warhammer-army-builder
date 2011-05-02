@@ -23,7 +23,7 @@ import myrmidia.Explanation.Explanation;
  * Class which stores the information neccessary explain what changes were
  * made during the race exchange process
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class Exchange implements Explanation{
 

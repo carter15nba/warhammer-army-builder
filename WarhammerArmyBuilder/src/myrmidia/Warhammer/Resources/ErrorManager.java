@@ -24,7 +24,7 @@ import myrmidia.Enums.Messages;
  * Class to manage the errors and their causes when verifying the army
  * rule set for the given army.
  * @author Glenn Rune Strandbråten
- * @version 0.4
+ * @version 1.0
  */
 public class ErrorManager{
     private ArrayList<Messages> errors;
