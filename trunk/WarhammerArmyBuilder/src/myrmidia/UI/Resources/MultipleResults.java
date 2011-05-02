@@ -44,5 +44,5 @@ public interface MultipleResults {
      * Interface method to be called when the result set contains data that
      * should be displayed in a table and the display result where called.
      */
-    public void populateUnitsTable()throws UnsupportedOperationException;
+    public void populateUnitsTable();
 }

@@ -27,7 +27,7 @@ import myrmidia.Enums.Races;
 /**
  * Class representing an army
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class Army implements jcolibri.cbrcore.CaseComponent{
 

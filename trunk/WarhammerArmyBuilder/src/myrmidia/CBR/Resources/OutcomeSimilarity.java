@@ -26,7 +26,7 @@ import myrmidia.Enums.Outcomes;
 /**
  * This class evaluates the similarity between the outcomes in query/case
  * @author Glenn Rune Strandbåten
- * @version 0.2
+ * @version 1.0
  */
 public class OutcomeSimilarity implements LocalSimilarityFunction {
 

@@ -25,7 +25,7 @@ import jcolibri.cbrcore.Attribute;
  * Class representing a army unit. A army unit is the unit and associated
  * equipment, mounts and crew that is used in a particular case.
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
     private int ID;

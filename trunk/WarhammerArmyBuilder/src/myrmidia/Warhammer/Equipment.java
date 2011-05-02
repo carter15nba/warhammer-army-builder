@@ -23,9 +23,9 @@ import jcolibri.cbrcore.Attribute;
 import myrmidia.Enums.ItemType;
 
 /**
- *
+ * Class representing Equipment a unit may have
  * @author Glenn Rune Strandbåten
- * @version 0.3
+ * @version 1.0
  */
 public class Equipment implements jcolibri.cbrcore.CaseComponent{
     private int ID;

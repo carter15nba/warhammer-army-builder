@@ -31,6 +31,8 @@ import org.hibernate.SessionFactory;
 import jcolibri.connector.DataBaseConnector.*;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
+import myrmidia.Enums.Outcomes;
+import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
@@ -47,7 +49,7 @@ import org.w3c.dom.Document;
  * method, to be able to aquire one additional feature without impair original
  * functionality.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class Connector extends jcolibri.connector.DataBaseConnector{
 
@@ -66,6 +68,18 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
         "insert into ARMY_UNIT_EQUIPMENT(ARMY_UNIT_ID,EQUIPMENT_ID)values(?,?)";
     private static final String CASE_QUERY =
         "insert into CASES(ID,ARMY_ID,OPPONENT_RACE,OUTCOME) values(?,?,?,?)";
+    private static final String CASE_UPDATE_OUTCOME_QUERY =
+            "UPDATE CASES SET OUTCOME=(?) WHERE ID=(?)";
+    private static final String DELETE_CASE_QUERY =
+            "DELETE FROM CASES WHERE ID=(?)";
+    private static final String DELETE_ARMY_QUERY = 
+            "DELETE FROM ARMIES WHERE ID=(?)";
+    private static final String DELETE_ARMY_UNIT_QUERY =
+            "DELETE FROM ARMY_UNIT WHERE ARMY_ID=(?)";
+    private static final String DELETE_ARMY_UNIT_EQ_QUERY =
+            "DELETE FROM ARMY_UNIT_EQUIPMENT WHERE ARMY_UNIT_ID=(?)";
+    private static final String DELETE_ARMY_UNIT_UT_QUERY =
+            "DELETE FROM ARMY_UNIT_UTILITY WHERE ARMY_UNIT_ID=(?)";
 
     /**
      * Default constructor - initializes the super class
@@ -296,12 +310,6 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     public void storeCases(Collection<CBRCase> cases) {
         for(CBRCase c: cases)
         {
-//            Session session = sessionFactory.openSession();
-//            Transaction transaction = session.beginTransaction();
-//            saveCase(session, c.getDescription());
-//            transaction.commit();
-//            session.close();
-
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             if(c.getSolution()!= null){
@@ -309,20 +317,6 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
             transaction.commit();
             }
             session.close();
-
-//            session = sessionFactory.openSession();
-//            transaction = session.beginTransaction();
-//            if(c.getJustificationOfSolution() != null)
-//                saveCase(session, c.getJustificationOfSolution());
-//            transaction.commit();
-//            session.close();
-//
-//            session = sessionFactory.openSession();
-//            transaction = session.beginTransaction();
-//            if(c.getResult() != null)
-//                saveCase(session, c.getResult());
-//                transaction.commit();
-//                session.close();
         }
         LogFactory.getLog(this.getClass()).info(cases.size()+
                 " cases stored into the database.");
@@ -382,5 +376,73 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 .setString(2, _case.getOpponent().toString())
                 .setString(3, _case.getOutcome().toString())
                 .executeUpdate();
+    }
+
+    /**
+     * Method to update the outcome of a case
+     * @param caseID int The case ID of the case to be updated
+     * @param newOutcome Outcome The outcome to update the case with
+     */
+    public void updateOutcome(int caseID, Outcomes newOutcome){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.createSQLQuery(CASE_UPDATE_OUTCOME_QUERY)
+                .setString(0, newOutcome.toString())
+                .setInteger(1, caseID)
+                .executeUpdate();
+        transaction.commit();
+        session.close();
+    }
+
+    /**
+     * Method to delete a case with the given case ID from the database. The
+     * method is intelligent and will delete the entire army
+     * (army units, unit equipment and utility units) from the database if this
+     * is the single case in the casebase utilizing this army.
+     * @param caseID int The ID of the case to be deleted
+     */
+    public void deleteCase(int caseID){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Case _case = CreateObjectFromDB.getCaseByID(caseID);
+        List<Case> caseList = CreateObjectFromDB.getCasesWithArmyID(
+                _case.getArmy().getID());
+        boolean deleteArmy = true;
+        if(caseList.size()>1)
+            deleteArmy=false;
+        //Ensure that the army only is deleted if it not is used in other case
+        //Also ensure that the deletion is done in the correct order to prevent
+        //foreign key constraint violations
+        if(deleteArmy){
+            Army army = _case.getArmy();
+            Set<ArmyUnit> units = army.getArmyUnits();
+            //Delete all the equipment and utility units for all the units
+            //in the case
+            for (ArmyUnit armyUnit : units) {
+                session.createSQLQuery(DELETE_ARMY_UNIT_EQ_QUERY)
+                        .setInteger(0, armyUnit.getID())
+                        .executeUpdate();
+                session.createSQLQuery(DELETE_ARMY_UNIT_UT_QUERY)
+                        .setInteger(0, armyUnit.getID())
+                        .executeUpdate();
+            }
+            //Delete all units associated with the army
+            session.createSQLQuery(DELETE_ARMY_UNIT_QUERY)
+                    .setInteger(0, army.getID())
+                    .executeUpdate();
+        }
+        //Delete the case
+        session.createSQLQuery(DELETE_CASE_QUERY)
+                .setInteger(0, caseID)
+                .executeUpdate();
+        //If applicable delete the last remains of the army
+        if(deleteArmy){
+            Army army = _case.getArmy();
+            session.createSQLQuery(DELETE_ARMY_QUERY)
+                    .setInteger(0, army.getID())
+                    .executeUpdate();
+        }
+        transaction.commit();
+        session.close();
     }
 }

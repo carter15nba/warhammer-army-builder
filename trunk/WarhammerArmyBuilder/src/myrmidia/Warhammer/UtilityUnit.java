@@ -24,7 +24,7 @@ import myrmidia.Enums.UnitType;
  * a mount, a crew or a unit promotion (e.g.: Warhorse, catapult crewman and
  * Sergant).
  * @author Glenn Rune Strandbåten
- * @version 0.2
+ * @version 1.0
  */
 public class UtilityUnit extends CoreUnit{
 
@@ -41,8 +41,14 @@ public class UtilityUnit extends CoreUnit{
     private boolean required;
     private boolean promotionUnit;
 
+    /** Default constructor */
     public UtilityUnit(){}
 
+    /**
+     * Constructor - initializes object with given parameters
+     * @param name String The utility unit name
+     * @param cost int The utility unit cost
+     */
     public UtilityUnit(String name, int cost){
         super.setName(name);
         super.setCost(cost);

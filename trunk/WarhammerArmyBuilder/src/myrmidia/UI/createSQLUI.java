@@ -15,12 +15,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * createUnitSQLUI.java
- *
- * Created on 14.feb.2011, 09:41:02
- */
-
 package myrmidia.UI;
 
 import java.awt.Dimension;
@@ -42,8 +36,23 @@ import myrmidia.UI.Resources.CaseStorage;
 import myrmidia.UI.Resources.CheckListItem;
 
 /**
+ * This class is unsupported and undocumented. It is meant for developers
+ * to use in order to create the SQL files needed to fill the database. A strict
+ * order (procedure) must be followed in order to create the neccessary data
+ * without errors.
+ *
+ * Warning: UI meant for developers only, code is heavily obscured and unstructured
+ * as this was rapidly created without consious though on how the end result
+ * should be nor adhering to good programming conventions.
+ *
+ * In short the class and class structure is a complete mess and attempting to
+ * change/understand how it works is at your own risk.
+ *
+ * Class used deprecated functions and will stop functioning if those methods
+ * are removed (changed)
  *
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class createSQLUI extends javax.swing.JFrame {
 

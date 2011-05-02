@@ -27,7 +27,7 @@ import myrmidia.Enums.Mode;
 /**
  * Class to calculate the similarity mesaure between two armies.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class ArmySimilarity implements LocalSimilarityFunction{
 

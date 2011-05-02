@@ -33,7 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Class used to parse parts of the hibernate configuration file:
  * hibernate.cfg.xml
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class RedusedHibernateParser extends DefaultHandler{
     private String tempVal;

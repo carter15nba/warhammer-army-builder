@@ -38,7 +38,7 @@ import myrmidia.Warhammer.UtilityUnit;
  * Class which contains many of the most common functions used while adapting
  * an army in addition to logic to help in the execution of those functions.
  * @author Glenn Rune Strandbråten
- * @version 0.2
+ * @version 1.0
  */
 public class CommonAdaptionFunctions {
     private List<Integer> tempUsedID;

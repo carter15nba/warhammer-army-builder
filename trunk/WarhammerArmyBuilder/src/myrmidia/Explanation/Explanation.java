@@ -22,7 +22,7 @@ package myrmidia.Explanation;
  * ensures that all explanation classes have the same unifrom mwthod to
  * generate explanations.
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public interface Explanation {
     

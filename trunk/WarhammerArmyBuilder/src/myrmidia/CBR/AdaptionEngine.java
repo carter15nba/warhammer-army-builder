@@ -35,7 +35,7 @@ import myrmidia.Enums.*;
 /**
  * Class to perform the case adaption
  * @author Glenn Rune Strandbråten
- * @version 0.5
+ * @version 1.0
  */
 public class AdaptionEngine {
     private CommonAdaptionFunctions cAF;

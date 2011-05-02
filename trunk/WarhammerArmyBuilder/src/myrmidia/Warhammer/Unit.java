@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Class to represent a unit
  * @author Glenn Rune Strandbåten
- * @version 0.5.2
+ * @version 1.0
  */
 public class Unit extends CoreUnit{
     private String movement = "";

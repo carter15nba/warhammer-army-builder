@@ -34,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRCase;
+import myrmidia.CBR.CBREngine;
 import myrmidia.Enums.Races;
 import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
@@ -51,8 +52,10 @@ import myrmidia.Warhammer.Unit;
 import myrmidia.Warhammer.UtilityUnit;
 
 /**
- *
+ * User interface that allows a user to inform to change (manually adapt)
+ * the system sugestions.
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
 public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
@@ -154,8 +157,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         nextCaseButton = new javax.swing.JButton();
         displayCountLabel = new javax.swing.JLabel();
         displayInfoLabel = new javax.swing.JLabel();
-        nextButton = new javax.swing.JButton();
+        doneButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        printButton = new javax.swing.JButton();
         explanationButton = new javax.swing.JButton();
         caseIDLabel = new javax.swing.JLabel();
         playerLabel = new javax.swing.JLabel();
@@ -196,11 +200,11 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
         displayInfoLabel.setText("Displaying case (army)");
 
-        nextButton.setMnemonic('n');
-        nextButton.setText("Next");
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
+        doneButton.setMnemonic('d');
+        doneButton.setText("Done");
+        doneButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
+                doneButtonActionPerformed(evt);
             }
         });
 
@@ -209,6 +213,14 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
+            }
+        });
+
+        printButton.setMnemonic('P');
+        printButton.setText("Print");
+        printButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printButtonActionPerformed(evt);
             }
         });
 
@@ -225,10 +237,12 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
                 .addComponent(displayCountLabel)
                 .addGap(17, 17, 17)
                 .addComponent(nextCaseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addGap(29, 29, 29)
+                .addComponent(printButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(cancelButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton)
+                .addComponent(doneButton)
                 .addContainerGap())
         );
         navigationPaneLayout.setVerticalGroup(
@@ -240,8 +254,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
                     .addComponent(displayInfoLabel)
                     .addComponent(previousCaseButton)
                     .addComponent(displayCountLabel)
-                    .addComponent(nextButton)
-                    .addComponent(cancelButton))
+                    .addComponent(doneButton)
+                    .addComponent(cancelButton)
+                    .addComponent(printButton))
                 .addContainerGap())
         );
 
@@ -446,21 +461,31 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
      * Action performed when the nextButton is selected
      * @param evt The ActionEvent trigger
      */
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+    private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
         if(verifyRequirements()){
-            for(int i=0; i<approved.length; i++){
-                if(approved[i]){
-                    replaceResultWithDisplayingCase(i);
-                    CBRCase _case = (CBRCase)CollectionControl.getItemAt(revise, i);
-                    System.out.println("#########################################################################");
-                    myrmidia.Util.PrintFactory.printCase((Case)_case.getSolution(), true);
+            try{
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                if(approved[displaying])
+                    replaceResultWithDisplayingCase(displaying);
+                Collection<CBRCase> approvedCollection = new HashSet<CBRCase>();
+                for(int i=0; i<approved.length; i++){
+                    if(approved[i]){
+                        CBRCase add=(CBRCase)CollectionControl.getItemAt(revise, i);
+                        approvedCollection.add(add);
+                    }
                 }
+                CBREngine.getInstance().retain(approvedCollection);
+            }
+            finally{
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                new SelectTaskUI(this).setVisible(true);
+                dispose();
             }
         }
         else{
             JOptionPane.showMessageDialog(this,"No cases (armies) are approved, at least one\ncase (army) have to be approved to continue", "Error 05 - No approved cases (armies)", JOptionPane.ERROR_MESSAGE);
         }
-}//GEN-LAST:event_nextButtonActionPerformed
+}//GEN-LAST:event_doneButtonActionPerformed
 
     /**
      * Action performed when the cancelButton is selected
@@ -541,6 +566,14 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         else
             approved[displaying] = false;
     }//GEN-LAST:event_useCaseCheckBoxActionPerformed
+
+    /**
+     * Action performed when the printBtton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        new PrintUI(revise, this).setVisible(true);
+    }//GEN-LAST:event_printButtonActionPerformed
     
     public final void displayPreviousResult() {
         displaying = (displaying==0) ? revise.size()-1 : displaying-1;
@@ -556,6 +589,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         if(!firstTime){
             replaceResultWithDisplayingCase(-1);
         }
+        System.out.println("DISPLAYINg: "+displaying);
         CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise, displaying);
         Case _case = (Case) cbrCase.getSolution();
         caseIDTextLabel.setText(""+_case.getID());
@@ -565,6 +599,10 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             _case.getArmy().getArmyPoints());
         displayCountLabel.setText((displaying+1)+"/"+revise.size());
         populateUnitsTable();
+        if(approved[displaying])
+            useCaseCheckBox.setSelected(true);
+        else
+            useCaseCheckBox.setSelected(false);
         firstTime = false;
     }
 
@@ -718,7 +756,8 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
                 int index = cli.toString().indexOf(")");
                 String name = cli.toString().substring(index+1);
                 int cost = Integer.parseInt(cli.toString().substring(1, index));
-                unit.getEquipment().add(new Equipment(name,cost));
+                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
+                unit.getEquipment().add(eq);
             }
         }
         items = model.getMagic();
@@ -727,25 +766,28 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
                 int index = cli.toString().indexOf(")");
                 String name = cli.toString().substring(index+1);
                 int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getEquipment().add(new Equipment(name,cost));
+                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
+                unit.getEquipment().add(eq);
             }
         }
         items = model.getPromotion();
         for (CheckListItem cli : items) {
             if(cli.isSelected()){
                 int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getUtility().add(new UtilityUnit(name,cost));
+                String name = getPlayerRace().toString()+":"+
+                        cli.toString().substring(index+1);
+                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
+                unit.getUtility().add(ut);
             }
         }
         items = model.getUtility();
         for (CheckListItem cli : items) {
             if(cli.isSelected()){
                 int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                unit.getUtility().add(new UtilityUnit(name,cost));
+                String name = getPlayerRace().toString()+":"+
+                        cli.toString().substring(index+1);
+                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
+                unit.getUtility().add(ut);
             }
         }
     }
@@ -768,9 +810,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     private javax.swing.JLabel caseIDTextLabel;
     private javax.swing.JLabel displayCountLabel;
     private javax.swing.JLabel displayInfoLabel;
+    private javax.swing.JButton doneButton;
     private javax.swing.JButton explanationButton;
     private javax.swing.JPanel navigationPane;
-    private javax.swing.JButton nextButton;
     private javax.swing.JButton nextCaseButton;
     private javax.swing.JLabel opponentLabel;
     private javax.swing.JLabel opponentTextLabel;
@@ -779,6 +821,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     private javax.swing.JLabel pointLabel;
     private javax.swing.JLabel pointTextLabel;
     private javax.swing.JButton previousCaseButton;
+    private javax.swing.JButton printButton;
     private javax.swing.JButton removeUnitButton;
     private javax.swing.JPanel unitPanel;
     private javax.swing.JScrollPane unitScroll;

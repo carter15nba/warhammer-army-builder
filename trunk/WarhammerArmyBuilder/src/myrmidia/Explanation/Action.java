@@ -28,7 +28,7 @@ import myrmidia.Warhammer.ArmyUnit;
  * Class to keep record of one change that occured during the adaptation of
  * a case
  * @author Glenn Rune Strandbråten
- * @version 0.1
+ * @version 1.0
  */
 public class Action implements Explanation{
     

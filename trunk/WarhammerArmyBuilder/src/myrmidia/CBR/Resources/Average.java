@@ -27,7 +27,7 @@ import myrmidia.Warhammer.Case;
 /**
  * Class to compute the global average of all the local similarity functions.
  * @author Glenn Rune Strandbråten
- * @version 0.3
+ * @version 1.0
  */
 public class Average extends StandardGlobalSimilarityFunction {
 

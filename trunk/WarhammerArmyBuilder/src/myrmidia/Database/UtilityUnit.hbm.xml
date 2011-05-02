@@ -33,4 +33,7 @@
     <property column="REQUIRED" name="required" type="boolean"/>
     <property column="PROMOTIONUNIT" name="promotionUnit" type="boolean"/>
   </class>
+  <query name="UtilityUnit.getUtilityUnit">
+        select ut from UtilityUnit ut where ut.name=:name
+    </query>
 </hibernate-mapping>

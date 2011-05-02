@@ -38,4 +38,10 @@
   <query name="Case.LastId">
     select cc.id from Case cc order by cc.id desc
   </query>
+  <query name="Case.getCaseByID">
+    select cc from Case cc where cc.ID=:ID
+  </query>
+  <query name="Case.getCasesWithArmyID">
+    select cc from Case cc where cc.army=:armyID
+  </query>
 </hibernate-mapping>

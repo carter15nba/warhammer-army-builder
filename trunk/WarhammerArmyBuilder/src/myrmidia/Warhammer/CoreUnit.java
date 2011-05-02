@@ -23,7 +23,7 @@ import jcolibri.cbrcore.Attribute;
  * The core unit class, this class is the super class for both the
  * unit and utility units.
  * @author Glenn Rune Strandbåten
- * @version 0.1
+ * @version 1.0
  */
 public class CoreUnit implements jcolibri.cbrcore.CaseComponent{
 

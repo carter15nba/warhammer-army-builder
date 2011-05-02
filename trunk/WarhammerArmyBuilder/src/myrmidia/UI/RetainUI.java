@@ -15,33 +15,108 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * RetainUI.java
- *
- * Created on 21.apr.2011, 13:39:46
- */
-
 package myrmidia.UI;
 
+import java.awt.Cursor;
+import java.util.List;
+import javax.swing.JFrame;
+import myrmidia.Database.Connector;
+import myrmidia.Database.DatabaseManager;
+import myrmidia.Enums.Outcomes;
+import myrmidia.UI.Resources.MultipleResults;
 import myrmidia.UI.Resources.WindowCloser;
+import myrmidia.Warhammer.Case;
+import org.hibernate.Session;
 
 /**
- *
+ * User interface that allows a user to inform the system how the new/collected
+ * case performed. (Victrory, Draw or Defeat). Victory and draw cases are
+ * stored with the new information, Defeat cases are deleted
  * @author Glenn Rune Strandbråten
+ * @version 1.0
  */
-public class RetainUI extends javax.swing.JFrame {
+public class RetainUI extends javax.swing.JFrame implements MultipleResults{
 
-    /** Creates new form RetainUI */
-    public RetainUI() {
-        initComponents();
-        setLocationRelativeTo(null);
-        addWindowListener(new WindowCloser());
-    }
-    public RetainUI(SelectTaskUI parent) {
+    private Connector connector;
+    private List<Case> caseList;
+    private int displaying = -1;
+
+    /**
+     * Creates new form RetainUI
+     * @param parent The JFrame parent
+     */
+    public RetainUI(JFrame parent) {
         initComponents();
         setLocationRelativeTo(parent);
         addWindowListener(new WindowCloser());
+        populateOutcomeComboBox();
     }
+
+    /**
+     * Method which populates the combo box with the possible values the outcome
+     * can have.
+     */
+    private void populateOutcomeComboBox(){
+        outcomeComboBox.removeAllItems();
+        for (Outcomes o : Outcomes.values()) {
+            outcomeComboBox.addItem(o.toString());
+        }
+    }
+
+    /**
+     * Method to aquire if there are cases in the casebase which outcome is
+     * unknown (i.e.: if there are cases the system have sugested which were
+     * accepted for use, but the user have not updated the system with the results)
+     * @param frame JFrame the UI initializing the check, if null this UI form
+     * is used
+     * @return true if there are unknown cases, false if there not is any unknown
+     * cases
+     */
+    @SuppressWarnings("unchecked")
+    public boolean checkForUnknownCases(JFrame frame){
+        try{
+            if(frame==null)
+                frame = this;
+            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            connector = DatabaseManager.getInstance().connect();
+            Session session = connector.getSession();
+            caseList = (List<Case>) session.getNamedQuery(
+                    "Case.Unknown").list();
+        }
+        finally{
+            frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            if(caseList!=null){
+                if(!caseList.isEmpty())
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    public final void displayPreviousResult() {
+        displaying = (displaying==0) ? caseList.size()-1 : displaying-1;
+        displayResult();
+    }
+
+    public final void displayNextResult() {
+        displaying = (displaying==caseList.size()-1) ? 0 : displaying+1;
+        displayResult();
+    }
+
+    public final void displayResult() {
+        if(caseList==null)
+            return;
+        Case c = caseList.get(displaying);
+        caseIDTextLabel.setText(""+c.getID());
+        playerTextLabel.setText(c.getArmy().getPlayerRace().toString());
+        opponentTextLabel.setText(c.getOpponent().toString());
+        pointTextLabel.setText(c.getArmy().calculateCost()+"/"+
+                c.getArmy().getArmyPoints());
+        outcomeComboBox.setSelectedItem(c.getOutcome().toString());
+        displayCountLabel.setText((displaying+1)+"/"+caseList.size());
+    }
+
+    public final void populateUnitsTable() {}
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -52,21 +127,309 @@ public class RetainUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        navigationPane = new javax.swing.JPanel();
+        previousCaseButton = new javax.swing.JButton();
+        nextCaseButton = new javax.swing.JButton();
+        displayCountLabel = new javax.swing.JLabel();
+        displayInfoLabel = new javax.swing.JLabel();
+        doneButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        caseIDLabel = new javax.swing.JLabel();
+        playerLabel = new javax.swing.JLabel();
+        opponentLabel = new javax.swing.JLabel();
+        pointLabel = new javax.swing.JLabel();
+        outcomeLabel = new javax.swing.JLabel();
+        outcomeComboBox = new javax.swing.JComboBox();
+        pointTextLabel = new javax.swing.JLabel();
+        opponentTextLabel = new javax.swing.JLabel();
+        playerTextLabel = new javax.swing.JLabel();
+        caseIDTextLabel = new javax.swing.JLabel();
+        updateButton = new javax.swing.JButton();
+        detailsButton = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Myrmidia - Retain");
+
+        navigationPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        previousCaseButton.setText("<");
+        previousCaseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previousCaseButtonActionPerformed(evt);
+            }
+        });
+
+        nextCaseButton.setText(">");
+        nextCaseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextCaseButtonActionPerformed(evt);
+            }
+        });
+
+        displayCountLabel.setText("1/1");
+
+        displayInfoLabel.setText("Displaying case (army)");
+
+        doneButton.setMnemonic('d');
+        doneButton.setText("Done");
+        doneButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doneButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setMnemonic('c');
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout navigationPaneLayout = new javax.swing.GroupLayout(navigationPane);
+        navigationPane.setLayout(navigationPaneLayout);
+        navigationPaneLayout.setHorizontalGroup(
+            navigationPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(navigationPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(previousCaseButton)
+                .addGap(18, 18, 18)
+                .addComponent(displayInfoLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(displayCountLabel)
+                .addGap(17, 17, 17)
+                .addComponent(nextCaseButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
+                .addComponent(cancelButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(doneButton)
+                .addContainerGap())
+        );
+        navigationPaneLayout.setVerticalGroup(
+            navigationPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, navigationPaneLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(navigationPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nextCaseButton)
+                    .addComponent(displayInfoLabel)
+                    .addComponent(previousCaseButton)
+                    .addComponent(displayCountLabel)
+                    .addComponent(doneButton)
+                    .addComponent(cancelButton))
+                .addContainerGap())
+        );
+
+        caseIDLabel.setText("Case id:");
+
+        playerLabel.setText("Player race:");
+
+        opponentLabel.setText("Opponent race:");
+
+        pointLabel.setText("Army points:");
+        pointLabel.setToolTipText("Shows the number of used army points over the number of available army points");
+
+        outcomeLabel.setText("Outcome:");
+
+        outcomeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Defeat", "Draw", "Unknown", "Victory" }));
+        outcomeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outcomeComboBoxActionPerformed(evt);
+            }
+        });
+
+        pointTextLabel.setText("<placeholder>");
+
+        opponentTextLabel.setText("<placeholder>");
+
+        playerTextLabel.setText("<placeholder>");
+
+        caseIDTextLabel.setText("<placeholder>");
+
+        updateButton.setMnemonic('u');
+        updateButton.setText("Update case (army) outcome");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
+
+        detailsButton.setMnemonic('v');
+        detailsButton.setText("View details");
+        detailsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detailsButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(navigationPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(opponentLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(opponentTextLabel)
+                .addContainerGap(351, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pointLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pointTextLabel)
+                .addContainerGap(366, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(outcomeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outcomeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(384, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(caseIDLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(caseIDTextLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(playerLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(playerTextLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addComponent(detailsButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(updateButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(navigationPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(caseIDLabel)
+                            .addComponent(caseIDTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(playerLabel)
+                            .addComponent(playerTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(opponentLabel)
+                            .addComponent(opponentTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(pointLabel)
+                            .addComponent(pointTextLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(outcomeLabel)
+                            .addComponent(outcomeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(updateButton)
+                        .addComponent(detailsButton)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Action performed when the previousCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void previousCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousCaseButtonActionPerformed
+        if(caseList!=null)
+            displayPreviousResult();
+}//GEN-LAST:event_previousCaseButtonActionPerformed
+
+    /**
+     * The action performed when the nextCaseButton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void nextCaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextCaseButtonActionPerformed
+        if(caseList!=null)
+            displayNextResult();
+}//GEN-LAST:event_nextCaseButtonActionPerformed
+
+    /**
+     * The action performed when the doneButton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
+        new SelectTaskUI(this).setVisible(true);
+        dispose();
+}//GEN-LAST:event_doneButtonActionPerformed
+
+    /**
+     * The action performed when the cancelButton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        new SelectTaskUI(this).setVisible(true);
+        dispose();
+}//GEN-LAST:event_cancelButtonActionPerformed
+
+    /**
+     * Action performed when a selection in the outcomeComboBox are selected
+     * @param evt The ActionEvent trigger
+     */
+    private void outcomeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outcomeComboBoxActionPerformed
+        Object selectedItem = outcomeComboBox.getSelectedItem();
+        if(selectedItem==null)
+            return;
+        Outcomes out = Outcomes.valueOf(selectedItem.toString());
+        if(out==Outcomes.Unknown)
+            updateButton.setEnabled(false);
+        else
+            updateButton.setEnabled(true);
+        if(caseList!=null)
+            caseList.get(displaying).setOutcome(out);
+    }//GEN-LAST:event_outcomeComboBoxActionPerformed
+
+    /**
+     * Action performed when the updateButton is selected
+     * @param evt The ActionEvent trigger
+     */
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        try{
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Outcomes outcome = Outcomes.valueOf(outcomeComboBox.getSelectedItem()
+                    .toString());
+            if(outcome==Outcomes.Draw||outcome==Outcomes.Victory)
+                connector.updateOutcome(caseList.get(displaying).getID(), outcome);
+            else if(outcome==Outcomes.Defeat)
+                connector.deleteCase(caseList.get(displaying).getID());
+        }
+        finally{
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            if(checkForUnknownCases(this)){
+                displaying=-1;
+                displayNextResult();
+            }
+            else{
+                cancelButtonActionPerformed(evt);
+            }
+        }
+    }//GEN-LAST:event_updateButtonActionPerformed
+
+    /**
+     * Action performed when the detailsButton is selected
+     * @param evt THe ActionEvent trigger
+     */
+    private void detailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailsButtonActionPerformed
+        
+        new RetainDetailsUI(this, caseList.get(displaying)).setVisible(true);
+    }//GEN-LAST:event_detailsButtonActionPerformed
+
+    @Override
+    public void setVisible(boolean b){
+        if(caseList!=null)
+            displayNextResult();
+        super.setVisible(b);
+    }
 
     /**
     * @param args the command line arguments
@@ -74,12 +437,29 @@ public class RetainUI extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RetainUI().setVisible(true);
+                new RetainUI(null).setVisible(true);
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel caseIDLabel;
+    private javax.swing.JLabel caseIDTextLabel;
+    private javax.swing.JButton detailsButton;
+    private javax.swing.JLabel displayCountLabel;
+    private javax.swing.JLabel displayInfoLabel;
+    private javax.swing.JButton doneButton;
+    private javax.swing.JPanel navigationPane;
+    private javax.swing.JButton nextCaseButton;
+    private javax.swing.JLabel opponentLabel;
+    private javax.swing.JLabel opponentTextLabel;
+    private javax.swing.JComboBox outcomeComboBox;
+    private javax.swing.JLabel outcomeLabel;
+    private javax.swing.JLabel playerLabel;
+    private javax.swing.JLabel playerTextLabel;
+    private javax.swing.JLabel pointLabel;
+    private javax.swing.JLabel pointTextLabel;
+    private javax.swing.JButton previousCaseButton;
+    private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
-
 }

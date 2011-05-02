@@ -47,12 +47,9 @@ import myrmidia.Enums.Races;
 /**
  * Singleton class responsible for all the CBR related functionality.
  * @author Glenn Rune Strandbåten
- * @version 0.4
+ * @version 1.0
  */
 public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication{
-    //TODO: REMOVE ALL System.out.println() used for testing from all classes.
-    //TODO: REMOVE ALL TODO'S (if they are completed/redundant/no longer valid)
-    //TODO: Promote all(most) classes to version 1.0 at launch
     private Connector connector;
     private CBRCaseBase caseBase;
     private SimilarityMeasure similarityMeasure;
@@ -134,7 +131,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 cc.setSolution(adaptedCase);
                 cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
                 ncbr.add(cc);
-                PrintFactory.printCase(adaptedCase, true);
+                PrintFactory.printCase(adaptedCase, true,null);
             }
             catch(ConcurrentModificationException cme){}            
         }
@@ -145,7 +142,8 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * performance of the revised case.
      */
     public void revise(){
-        //TODO: Add a revise step
+        //Revise performed exclusivly in the ReviseUI as only user interaction
+        //and no automated functionality is utilized.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -153,11 +151,10 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
      * Method used in the CBR cycle to store relevant cases back into the casebase.
      */
     public void retain(Collection<CBRCase> cbrCase){
-        //TODO: Add logic to find stored unknown cases and a way to update the case with the outcome. (Delete defeat cases?)
         for (CBRCase cBRCase : cbrCase) {
             Case solution = (Case) cBRCase.getSolution();
             prepareCase.prepareCase(solution);
-            PrintFactory.printCase(solution, false);
+            PrintFactory.printCase(solution, false,null);
         }
         connector.storeCases(cbrCase);
     }
@@ -206,7 +203,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
                 queryCase.setArmy(queryArmy);
 
                 System.out.println("Query Case");
-                PrintFactory.printCase(queryCase,true);
+                PrintFactory.printCase(queryCase,true,null);
 
                 cbrQuery.setDescription(queryCase);
                 cbrEngine.cycle(cbrQuery);
