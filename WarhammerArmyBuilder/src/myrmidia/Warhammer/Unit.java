@@ -506,7 +506,7 @@ public class Unit extends CoreUnit{
      * Method to check if the unit is unique, a unique unit may only be present
      * in once in the same army
      * @return <ul><li>true - if the unit is unique
-     * </li><li>false - if the unit not is unique</li>/ul>
+     * </li><li>false - if the unit not is unique</li></ul>
      */
     public boolean isUniqueUnit(){
         if(armyType==ArmyType.Hero||armyType==ArmyType.Lord){
