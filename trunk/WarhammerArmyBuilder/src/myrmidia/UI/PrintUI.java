@@ -44,16 +44,19 @@ public class PrintUI extends javax.swing.JDialog implements MultipleResults{
     /**
      * Creates new form PrintUI
      * @param cbrCases The collection of CBRCases available for printing
+     * @param displaying int The current displaying case
      * @param parent The JFrame parent
      */
-    public PrintUI(Collection<CBRCase> cbrCases, JFrame parent) {
+    public PrintUI(Collection<CBRCase> cbrCases, JFrame parent,int displaying) {
         super(parent,true);
         initComponents();
         addWindowListener(new WindowCloser());
         setLocationRelativeTo(parent);
         this.cbrCases = cbrCases;
-        if(cbrCases!=null)
+        this.displaying=displaying-1;
+        if(cbrCases!=null){
             displayNextResult();
+        }
         createOutputStream();
     }
 
@@ -283,7 +286,7 @@ public class PrintUI extends javax.swing.JDialog implements MultipleResults{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PrintUI(null,null).setVisible(true);
+                new PrintUI(null,null,0).setVisible(true);
             }
         });
     }

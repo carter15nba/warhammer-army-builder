@@ -18,6 +18,7 @@ package myrmidia.UI;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import myrmidia.Explanation.ExplanationEngine;
 import myrmidia.UI.Resources.WindowCloser;
 
 /**
@@ -144,6 +145,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
      * @param evt The ActionEvent trigger
      */
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        ExplanationEngine.getInstance().clearAllExplanationComponents();
         new QueryUI(this).setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_createButtonActionPerformed

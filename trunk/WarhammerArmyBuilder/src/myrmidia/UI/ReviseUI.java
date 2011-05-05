@@ -81,9 +81,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     public ReviseUI(JFrame parent, Collection<CBRCase> cases) {
         initComponents();
         setLocationRelativeTo(parent);
-        init();
         this.revise = cases;
         displaying=-1;
+        init();
         initializeUnitModels();
         displayNextResult();     
         addWindowListener(new WindowCloser());
@@ -572,7 +572,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
      * @param evt The ActionEvent trigger
      */
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
-        new PrintUI(revise, this).setVisible(true);
+        new PrintUI(revise, this,displaying).setVisible(true);
     }//GEN-LAST:event_printButtonActionPerformed
     
     public final void displayPreviousResult() {

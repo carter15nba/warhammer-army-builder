@@ -112,7 +112,7 @@ public class UnitSimilarity implements jcolibri.method.retrieve.NNretrieval.simi
         double[] caseValues = caseUnit.getCharacteristics();
         double[] queryValues = queryUnit.getCharacteristics();
 
-        Threshold costSimilarity = new Threshold(1);
+        Threshold costSimilarity = new Threshold(2);
 
         double characterisitcs = computeCharacteristicsSimilarity(caseValues, queryValues);
         double unitTypeSimilarity = computeUnitTypeSimilarity(caseUnit.getUnitType(),queryUnit.getUnitType());
