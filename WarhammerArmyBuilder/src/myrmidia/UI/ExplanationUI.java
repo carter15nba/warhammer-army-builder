@@ -48,7 +48,7 @@ public class ExplanationUI extends javax.swing.JDialog {
      * MODE_JUSTIFICATION
      * @param parent The JFrame parent
      */
-    public ExplanationUI(JFrame parent, int index,int mode) {
+    public ExplanationUI(JFrame parent, int index, int mode) {
         super(parent, true);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
@@ -62,6 +62,7 @@ public class ExplanationUI extends javax.swing.JDialog {
         else
             expl = "No explanation were found!";
         explanationText.setText(expl);
+        explanationText.setCaretPosition(0);
     }
 
     /** This method is called from within the constructor to

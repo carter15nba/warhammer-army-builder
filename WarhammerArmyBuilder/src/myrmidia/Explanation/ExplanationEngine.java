@@ -128,8 +128,9 @@ public class ExplanationEngine{
     public String generateTransparencyExplanation(int index) {
         String ret = "";
         if(index>=0&&index<caseExplanations.size()){
+            CaseExplanation ce = caseExplanations.get(index);
             ret = "Generating the transparency (selection) explanation for the desired case!\n\n";
-            ret += caseExplanations.get(index).generateExplanation();
+            ret += ce.generateExplanation();
         }
         return ret;
     }
@@ -239,7 +240,7 @@ public class ExplanationEngine{
         if(index>=0&&index<adaptionExplanations.size()){
             AdaptionExplanation expl = adaptionExplanations.get(index);
             ret += generateRaceExchangeExplanation(expl.getCaseID());
-            ret = expl.generateExplanation();
+            ret += expl.generateExplanation();
         }
         return ret;
     }
@@ -272,8 +273,9 @@ public class ExplanationEngine{
      */
     public String generateRaceExchangeExplanation(int caseID){
         for (ExchangeRaceExplanation expl : exchangeRaceExplanations) {
-            if(expl.getCaseID()==caseID)
+            if(expl.getCaseID()==caseID){
                 return expl.generateExplanation();
+            }
         }
         return "";
     }

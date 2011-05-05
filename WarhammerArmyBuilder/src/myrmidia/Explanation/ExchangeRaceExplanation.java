@@ -116,6 +116,6 @@ public class ExchangeRaceExplanation implements Explanation{
         for (Exchange exchange : exchanged) {
             ret += "  "+exchange.generateExplanation();
         }
-        return ret+"\n";
+        return ret+="\n";
     }
 }
