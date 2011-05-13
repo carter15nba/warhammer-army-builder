@@ -36,9 +36,10 @@ public class RetainDetailsUI extends javax.swing.JDialog {
      * Creates new form RetainDetailsUI
      * @param _case The Case object to be displayed
      * @param parent The JFrame parent
+     * @param parent boolean determining if the dialog is modal
      */
-    public RetainDetailsUI(JFrame parent, Case _case) {
-        super(parent, true);
+    public RetainDetailsUI(JFrame parent, Case _case, boolean modal) {
+        super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
         setTitle("Displaying details for case #"+_case.getID());
@@ -46,6 +47,7 @@ public class RetainDetailsUI extends javax.swing.JDialog {
             PrintFactory.printCase(_case, true, createOutputStream());
         else
             infoArea.setText("No case found!");
+        infoArea.setCaretPosition(0);
     }
 
     /** This method is called from within the constructor to
@@ -154,7 +156,7 @@ public class RetainDetailsUI extends javax.swing.JDialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                RetainDetailsUI dialog = new RetainDetailsUI(new javax.swing.JFrame(),null);
+                RetainDetailsUI dialog = new RetainDetailsUI(new JFrame(),null,false);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);

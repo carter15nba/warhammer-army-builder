@@ -145,6 +145,9 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
                 LogFactory.getLog(this.getClass()).info("Case does not have result");
             }
             hbconfig.setProperty("hibernate.hbm2ddl.auto", "update");
+            String currentProperty = hbconfig.getProperty("hibernate.connection.url");
+            currentProperty += ";create=true";
+            hbconfig.setProperty("hibernate.connection.url", currentProperty);
             sessionFactory = hbconfig.buildSessionFactory();
         }
         catch (Throwable ex) {

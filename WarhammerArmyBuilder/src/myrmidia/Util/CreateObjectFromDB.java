@@ -177,14 +177,16 @@ public class CreateObjectFromDB {
      * full name as typed in the database (including the prefix
      * &lt;Race_Name&gt;:&lt;Unit_Name&gt;)
      * @param name String the full name of the utility unit
+     * @param cost int The cost of the utility unit
      * @return The aquired UtilityUnit
      */
     @SuppressWarnings("unchecked")
-    public static UtilityUnit createUtilityUnit(String name){
+    public static UtilityUnit createUtilityUnit(String name, int cost){
         Session session = getSession();
         List<UtilityUnit> utList = (List<UtilityUnit>) session.getNamedQuery(
                 "UtilityUnit.getUtilityUnit")
                 .setString("name", name)
+                .setInteger("cost", cost)
                 .list();
         session.close();
         return utList.get(0);

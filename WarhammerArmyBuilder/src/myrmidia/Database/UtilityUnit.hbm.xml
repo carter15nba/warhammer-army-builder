@@ -34,6 +34,7 @@
     <property column="PROMOTIONUNIT" name="promotionUnit" type="boolean"/>
   </class>
   <query name="UtilityUnit.getUtilityUnit">
-        select ut from UtilityUnit ut where ut.name=:name
+        select ut from UtilityUnit ut where ut.name=:name 
+        and ut.cost=:cost
     </query>
 </hibernate-mapping>

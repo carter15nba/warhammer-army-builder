@@ -112,6 +112,7 @@ public class UnitModel {
      */
     public void setUtility(CheckListItem[] utility) {
         this.utility = utility;
+        sortModel(this.utility);
     }
 
     /**
@@ -126,6 +127,7 @@ public class UnitModel {
      */
     public void setEquipment(CheckListItem[] equipment) {
         this.equipment = equipment;
+        sortModel(this.equipment);
     }
 
     /**
@@ -140,6 +142,7 @@ public class UnitModel {
      */
     public void setMagic(CheckListItem[] magic) {
         this.magic = magic;
+        sortModel(this.magic);
     }
 
     /**
@@ -154,6 +157,72 @@ public class UnitModel {
      */
     public void setPromotion(CheckListItem[] promotion) {
         this.promotion = promotion;
+        sortModel(this.promotion);
+    }
+
+    /**
+     * @return the battleStandardBearer
+     */
+    public boolean isBattleStandardBearer() {
+        return battleStandardBearer;
+    }
+
+    /**
+     * @param battleStandardBearer the battleStandardBearer to set
+     */
+    public void setBattleStandardBearer(boolean battleStandardBearer) {
+        this.battleStandardBearer = battleStandardBearer;
+    }
+    
+    /**
+     * Method to aquire if the UnitModel is empty, if all CheckListItem arrays
+     * are empty, this method returns true.
+     * @return true if all CheckListItem arrays are empty, false otherwise
+     */
+    public boolean isEmpty() {
+        if((utility.length==0)&&
+                (equipment.length==0)&&
+                (promotion.length==0)&&
+                (magic.length==0))
+            return true;
+        return false;
+    }
+
+    @Override
+    public String toString(){
+        return "Unit name: "+name+", index:"+row+", BSB: "+battleStandardBearer+"\n"
+                + "  Equipment: "+equipment.length+"\n"
+                + "  Utility: "+utility.length+"\n"
+                + "  Promotion: "+promotion.length+"\n"
+                + "  Magic: "+magic.length;
+    }
+    
+    /**
+     * Sorts all equipment/utility lists in the UnitModel. Selected items are
+     * moved up in the lists
+     */
+    public void sortModels(){
+        sortModel(equipment);
+        sortModel(utility);
+        sortModel(promotion);
+        sortModel(magic);
+    }
+    
+    /**
+     * This method sort the supplied list based on the list items isSelected 
+     * flag. All selected items are moved up the list
+     * @param cli The list to sort
+     */
+    private void sortModel(CheckListItem[] cli){
+        CheckListItem tmp;
+        for(int i=cli.length-1; i>0; i--){
+            if(cli[i].isSelected())
+                while(!cli[i-1].isSelected()){
+                    tmp = cli[i-1];
+                    cli[i-1] = cli[i];
+                    cli[i] = tmp;
+                }
+        }   
     }
 
     /**
@@ -257,6 +326,25 @@ public class UnitModel {
         }
         return items;
     }
+    
+    /**
+     * Method to parse the unit into a CheckListItem array with the battle 
+     * standards the unit can purchase
+     * @param unit The unit to be parsed
+     * @return  The parsed CheckListItem array
+     */
+    public static CheckListItem[] parseBattleStandardBearer(Unit unit){
+        Set<Equipment>eq=CreateObjectFromDB.getBattleStandards(unit.getRace());
+        CheckListItem[] items = new CheckListItem[eq.size()];
+        int count=0;
+        for(Equipment e : eq){
+            String name = e.getName();
+            int cost = e.getCost();
+            String title = "("+cost+")"+name;
+            items[count++] = new CheckListItem(title);
+        }
+        return items;
+    }
 
     /**
      * Method to parse a ArmyUnit into a UnitModel, this method parses
@@ -284,14 +372,16 @@ public class UnitModel {
         UnitModel model = new UnitModel();
         model.setName(armyUnit.getUnit().getName().split(":")[1]);
         model.setEquipment(parseSelectedEquipment(armyUnit));
+        for(CheckListItem cli: model.getEquipment()){
+            if(cli.toString().contains("Battle standard bearer")
+                    && cli.isSelected()){
+                model.battleStandardBearer = true;
+                System.out.println("found BSB");
+            }
+        }
         model.setUtility(parseSelectedUtility(armyUnit));
         model.setPromotion(parseSelectedPromotion(armyUnit));
-        model.setMagic(parseSelectedMagic(armyUnit));
-        for(CheckListItem cli: model.getEquipment()){
-            if(cli.toString().equalsIgnoreCase("Battle standard bearer")
-                    && cli.isSelected())
-                model.battleStandardBearer = true;
-        }
+        model.setMagic(parseSelectedMagic(armyUnit,model.battleStandardBearer));
         return model;
     }
 
@@ -338,11 +428,18 @@ public class UnitModel {
      * This method parses the magic items the ArmyUnit can have and the magic
      * items the ArmyUnit have into a CheckListItem array
      * @param armyUnit The ArnyUnit to be parsed
+     * @param battleStandardBearer boolean informing if the unit is a battle
+     * standard bearer or nor, this will effect what magic items are retrieved.
      * @return The parsed ChechListItem array
      */
-    public static CheckListItem[] parseSelectedMagic(ArmyUnit armyUnit){
+    public static CheckListItem[] parseSelectedMagic(ArmyUnit armyUnit, 
+            boolean battleStandardBearer){
         Unit unit = armyUnit.getUnit();
-        CheckListItem[] cli = parseMagic(unit);
+        CheckListItem[] cli = null;
+        if(battleStandardBearer)
+            cli = parseBattleStandardBearer(armyUnit.getUnit());
+        else
+            cli = parseMagic(unit);
         findSelected(cli,armyUnit.getEquipment());
         return cli;
     }
@@ -368,42 +465,5 @@ public class UnitModel {
                 }
             }
         }
-    }
-
-    /**
-     * Method to aquire if the UnitModel is empty, if all CheckListItem arrays
-     * are empty, this method returns true.
-     * @return true if all CheckListItem arrays are empty, false otherwise
-     */
-    public boolean isEmpty() {
-        if((utility.length==0)&&
-                (equipment.length==0)&&
-                (promotion.length==0)&&
-                (magic.length==0))
-            return true;
-        return false;
-    }
-
-    /**
-     * @return the battleStandardBearer
-     */
-    public boolean isBattleStandardBearer() {
-        return battleStandardBearer;
-    }
-
-    /**
-     * @param battleStandardBearer the battleStandardBearer to set
-     */
-    public void setBattleStandardBearer(boolean battleStandardBearer) {
-        this.battleStandardBearer = battleStandardBearer;
-    }
-
-    @Override
-    public String toString(){
-        return "Unit name: "+name+", index:"+row+", BSB: "+battleStandardBearer+"\n"
-                + "  Equipment: "+equipment.length+"\n"
-                + "  Utility: "+utility.length+"\n"
-                + "  Promotion: "+promotion.length+"\n"
-                + "  Magic: "+magic.length;
     }
 }
