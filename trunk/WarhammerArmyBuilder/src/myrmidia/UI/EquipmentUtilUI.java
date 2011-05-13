@@ -265,6 +265,10 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
      * @param evt The ActionEvent trigger
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        if(getParent() instanceof ReviseUI){
+            ReviseUI ui = (ReviseUI) getParent();
+            ui.parseUnitModelForSelectedUnit(unitModel);
+        }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -324,6 +328,7 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
         CheckListItem item =(CheckListItem) list.getModel().getElementAt(index);
         item.setSelected(! item.isSelected());
         list.repaint(list.getCellBounds(index, index));
+        
         if(item.toString().contains("Battle standard bearer")){
             Container cont = getParent();
                 Races race;
@@ -352,6 +357,8 @@ public class EquipmentUtilUI extends javax.swing.JDialog {
             }
             initializeLists(unitModel);
         }
+        unitModel.sortModels();
+        initializeLists(unitModel);
         
     }
     /**

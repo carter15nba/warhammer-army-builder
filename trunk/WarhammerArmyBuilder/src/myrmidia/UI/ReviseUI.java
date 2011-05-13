@@ -29,27 +29,23 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import jcolibri.cbrcore.CBRCase;
 import myrmidia.CBR.CBREngine;
 import myrmidia.Enums.Races;
-import myrmidia.UI.Resources.CheckListItem;
 import myrmidia.UI.Resources.ComboBoxTableCellRenderer;
 import myrmidia.UI.Resources.MultipleResults;
 import myrmidia.UI.Resources.UnitModel;
-import myrmidia.UI.Resources.UnitModelControler;
 import myrmidia.UI.Resources.WindowCloser;
 import myrmidia.Util.CollectionControl;
 import myrmidia.Util.CreateObjectFromDB;
+import myrmidia.Util.PrintFactory;
 import myrmidia.Warhammer.Army;
 import myrmidia.Warhammer.ArmyUnit;
 import myrmidia.Warhammer.Case;
-import myrmidia.Warhammer.Equipment;
 import myrmidia.Warhammer.Unit;
-import myrmidia.Warhammer.UtilityUnit;
 
 /**
  * User interface that allows a user to inform to change (manually adapt)
@@ -61,9 +57,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
 
     private Collection<CBRCase> revise;
     private int displaying;
-    private UnitModelControler[] unitControler;
     private boolean[] approved;
-    private boolean firstTime = true;
 
     /** Creates new form ReviseUI */
     public ReviseUI() {
@@ -84,7 +78,6 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         this.revise = cases;
         displaying=-1;
         init();
-        initializeUnitModels();
         displayNextResult();     
         addWindowListener(new WindowCloser());
     }
@@ -121,17 +114,6 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             approved = new boolean[1];
         for(int i=0; i<approved.length; i++){
             approved[i]=false;
-        }
-    }
-
-    /**
-     * Method which initializes the UnitModelControler required for each of
-     * the retrieved cases
-     */
-    private void initializeUnitModels(){
-        unitControler = new UnitModelControler[revise.size()];
-        for (int i=0; i<unitControler.length; i++) {
-            unitControler[i] = new UnitModelControler();
         }
     }
 
@@ -465,9 +447,9 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         if(verifyRequirements()){
             try{
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                if(approved[displaying])
-                    replaceResultWithDisplayingCase(displaying);
                 Collection<CBRCase> approvedCollection = new HashSet<CBRCase>();
+                //Need to change the data representation to the format recognized
+                //by the save functionality.
                 for(int i=0; i<approved.length; i++){
                     if(approved[i]){
                         CBRCase add=(CBRCase)CollectionControl.getItemAt(revise, i);
@@ -523,7 +505,6 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             return;
         DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
         dtm.removeRow(selectedRow);
-        unitControler[displaying].removeUnitModel(selectedRow);
     }//GEN-LAST:event_removeUnitButtonActionPerformed
 
     /**
@@ -536,7 +517,11 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             return;
         try{
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            new EquipmentUtilUI(this, getUnitModel(selectedRow),false).setVisible(true);
+            int row = unitTable.getSelectedRow();
+            CBRCase cbr = (CBRCase)CollectionControl.getItemAt(revise, displaying);
+            Case _case = (Case) cbr.getSolution();
+            ArmyUnit au = (ArmyUnit)CollectionControl.getItemAt(_case.getArmy().getArmyUnits(), row);
+            new EquipmentUtilUI(this, UnitModel.parseUnitModelFromArmyUnitForRevise(au),false).setVisible(true);
         }
         catch(NullPointerException npe){}
         finally{
@@ -572,7 +557,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
      * @param evt The ActionEvent trigger
      */
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
-        new PrintUI(revise, this,displaying).setVisible(true);
+        new PrintUI(revise, this,displaying,true).setVisible(true);
     }//GEN-LAST:event_printButtonActionPerformed
     
     public final void displayPreviousResult() {
@@ -586,10 +571,7 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     }
 
     public void displayResult(){
-        if(!firstTime){
-            replaceResultWithDisplayingCase(-1);
-        }
-        System.out.println("DISPLAYINg: "+displaying);
+        System.out.println("DISPLAYING: "+displaying);
         CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise, displaying);
         Case _case = (Case) cbrCase.getSolution();
         caseIDTextLabel.setText(""+_case.getID());
@@ -603,28 +585,22 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
             useCaseCheckBox.setSelected(true);
         else
             useCaseCheckBox.setSelected(false);
-        firstTime = false;
     }
 
     public void populateUnitsTable(){
         DefaultTableModel dtm = (DefaultTableModel) unitTable.getModel();
-        UnitModelControler umc = unitControler[displaying];
-        umc.clear();
         int rows = unitTable.getRowCount();
         for(int i=rows-1; i>-1; i--)
             dtm.removeRow(i);
         CBRCase cbrCase=(CBRCase)CollectionControl.getItemAt(revise,displaying);
         Case _case = (Case) cbrCase.getSolution();
+        PrintFactory.printCase(_case, false, null);                
         Army army = _case.getArmy();
         populateUnitComboBox(army.getPlayerRace());
-        int row = 0;
         for(ArmyUnit unit : army.getArmyUnits()){
             String name = unit.getUnit().getName().split(":")[1];
             int num = unit.getNumberOfUnits();
             dtm.addRow(new Object[]{name,num});
-            UnitModel um = UnitModel.parseUnitModelFromArmyUnitForRevise(unit);
-            um.setRow(row++);
-            umc.addUnitModel(um);
         }
     }
 
@@ -646,39 +622,6 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
     }
 
     /**
-     * Method to aqurie the UnitModel from the selected unit in the unitTable
-     * @param selectedRow int The selected row in the unitTable
-     * @return The UnitModel requested or null if the unit column at the selected
-     * row contains the value N/A.
-     */
-    private UnitModel getUnitModel(int selectedRow){
-        String unitName = unitTable.getValueAt(selectedRow, 0).toString();
-        if(unitName.contentEquals("N/A"))
-            return null;
-        UnitModelControler controler = unitControler[displaying];
-        UnitModel model = controler.getUnitModel(selectedRow);
-        if(model==null){
-            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
-                    playerTextLabel.getText()+":"+unitName);
-            model = UnitModel.parseUnitModelFromUnit(unit);
-            model.setRow(selectedRow);
-            controler.addUnitModel(model);
-        }
-        else if((model.getName().contentEquals(unitName)) &&
-                (model.getRow() == selectedRow)){
-            return model;
-        }
-        else{
-            Unit unit = (Unit) CreateObjectFromDB.createUnitFromDB(
-                    playerTextLabel.getText()+":"+unitName);
-            model = UnitModel.parseUnitModelFromUnit(unit);
-            model.setRow(selectedRow);
-            controler.replaceUnitModel(selectedRow, model);
-        }
-        return model;
-    }
-
-    /**
      * Method to verify if the requirements to continue is met.
      * @return true if at least one case is approved, false if no cases are
      * approved
@@ -690,106 +633,12 @@ public class ReviseUI extends javax.swing.JFrame implements MultipleResults{
         }
         return false;
     }
-
-    /**
-     * Method to replace the army in the result list with the army being
-     * displayed, this is done to ensure that any "last-minute" user changes
-     * are included in the army.
-     * @param display The index of the displaying case or -1 if the previously
-     * display case is the one wich changes is to be stored.
-     */
-    private void replaceResultWithDisplayingCase(int display){
-        if(display==-1){
-            String dispString = displayCountLabel.getText().split("/")[0];
-            display = Integer.parseInt(dispString)-1;
-        }
-        CBRCase cbrCase = (CBRCase)CollectionControl.getItemAt(revise, display);
-        Case _case = (Case)cbrCase.getSolution();
-        Army army = Army.copy(_case.getArmy());
-        army.setArmyUnits(createArmyUnits(getPlayerRace(),display));
-        _case.setArmy(army);
-    }
-
-    /**
-     * Method which creates the army units contained in the unitsTable and
-     * returns them as a set of army units.
-     * @param race Races The player race
-     * @return The set of ArmyUnits parsed from the unitsTable
-     */
-    private Set<ArmyUnit> createArmyUnits(Races race, int disp){
-        Set<ArmyUnit> units = new HashSet<ArmyUnit>();
-        int rows = unitTable.getRowCount();
-        UnitModelControler unitModelControler = unitControler[disp];
-        for(int i=0; i<rows; i++){
-            if(unitTable.getValueAt(i, 0)==null)
-                continue;
-            String name = unitTable.getValueAt(i, 0).toString();
-            if(name.equalsIgnoreCase("N/A"))
-                continue;
-            Object obj = unitTable.getValueAt(i, 1);
-            int number=-1;
-            if(obj!=null)
-                number = Integer.parseInt(obj.toString());
-            Unit unit = CreateObjectFromDB.createUnitFromDB(race.toString()+
-                    ":"+name);
-            ArmyUnit armyUnit = new ArmyUnit();
-            armyUnit.setUnit(unit);
-            if(number==-1)
-                number = unit.getMinNumber();
-            armyUnit.setNumberOfUnits(number);
-            UnitModel model = unitModelControler.getUnitModel(i);
-            assignModelSelectionToUnit(armyUnit, model);
-            units.add(armyUnit);
-        }
-        return units;
-    }
-
-    /**
-     * Method which assigns the UnitModel selection to the army unit
-     * @param unit ArmyUnit The armyUnit to assign the UnitModel selections to
-     * @param model UnitModel The unit model to assign to the ArmyUnit
-     */
-    private void assignModelSelectionToUnit(ArmyUnit unit, UnitModel model){
-        CheckListItem[] items = model.getEquipment();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1, index));
-                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
-                unit.getEquipment().add(eq);
-            }
-        }
-        items = model.getMagic();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
-                unit.getEquipment().add(eq);
-            }
-        }
-        items = model.getPromotion();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = getPlayerRace().toString()+":"+
-                        cli.toString().substring(index+1);
-                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
-                unit.getUtility().add(ut);
-            }
-        }
-        items = model.getUtility();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = getPlayerRace().toString()+":"+
-                        cli.toString().substring(index+1);
-                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
-                unit.getUtility().add(ut);
-            }
-        }
+    
+    public void parseUnitModelForSelectedUnit(UnitModel model){
+        CBRCase cbr = (CBRCase)CollectionControl.getItemAt(revise, displaying);
+        Case _case = (Case) cbr.getSolution();
+        ArmyUnit armyUnit = (ArmyUnit) CollectionControl.getItemAt(_case.getArmy().getArmyUnits(), unitTable.getSelectedRow());
+        armyUnit.parseUnitModel(model);
     }
 
     /**

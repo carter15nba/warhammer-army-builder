@@ -20,6 +20,9 @@ package myrmidia.Warhammer;
 import java.util.HashSet;
 import java.util.Set;
 import jcolibri.cbrcore.Attribute;
+import myrmidia.UI.Resources.CheckListItem;
+import myrmidia.UI.Resources.UnitModel;
+import myrmidia.Util.CreateObjectFromDB;
 
 /**
  * Class representing a army unit. A army unit is the unit and associated
@@ -28,6 +31,8 @@ import jcolibri.cbrcore.Attribute;
  * @version 1.0
  */
 public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
+    private static final int EQ = 100;
+    private static final int UT = 200;
     private int ID;
     private int armyID;
     private int numberOfUnits;
@@ -222,6 +227,51 @@ public class ArmyUnit implements jcolibri.cbrcore.CaseComponent{
             }
         }
         return false;
+    }
+    
+    /**
+     * Method to parse the units UnitModel in order to aquire the equipment/
+     * utility units from the UnitModel. This will replace all existing 
+     * items with the ones selected in the model. Only a unit model belonging
+     * to the unit will be parsed.
+     * @param model The UnitModel to be parsed and belonging to the army unit
+     */
+    public void parseUnitModel(UnitModel model){
+        if(unit.getName().contains(model.getName())){
+            equipment.clear();
+            utility.clear();
+            if(model.isEmpty())
+                return;
+            parseCheckListItem(model.getEquipment(), EQ);
+            parseCheckListItem(model.getMagic(), EQ);
+            parseCheckListItem(model.getPromotion(), UT);
+            parseCheckListItem(model.getUtility(), UT);
+        }
+    }
+    
+    /**
+     * Method which parses the CheckListItem arrays inside the UnitModel
+     * @param items The CheckListItem array to be parsed
+     * @param mode int The mode determines if he items in the CheckListItem array
+     * denotes Equipment or UtilitUnits, use the private static final int EQ/UT
+     */
+    private void parseCheckListItem(CheckListItem[] items, int mode){
+        for (CheckListItem cli : items) {
+            if(!cli.isSelected())
+                continue;
+            int index = cli.toString().indexOf(")");
+            String name = cli.toString().substring(index+1);
+            int cost = Integer.parseInt(cli.toString().substring(1,index));
+            switch(mode){
+                case EQ:
+                    equipment.add(CreateObjectFromDB.createEquipment(name,cost));
+                    break;
+                case UT:
+                    name = unit.getRace().toString()+":"+name;
+                    utility.add(CreateObjectFromDB.createUtilityUnit(name,cost));
+                    break;
+            }
+        }
     }
 
     @Override

@@ -421,7 +421,7 @@ public class RetainUI extends javax.swing.JFrame implements MultipleResults{
      */
     private void detailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailsButtonActionPerformed
         
-        new RetainDetailsUI(this, caseList.get(displaying)).setVisible(true);
+        new RetainDetailsUI(this, caseList.get(displaying),true).setVisible(true);
     }//GEN-LAST:event_detailsButtonActionPerformed
 
     @Override

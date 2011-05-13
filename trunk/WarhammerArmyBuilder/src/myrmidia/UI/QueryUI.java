@@ -620,58 +620,10 @@ public class QueryUI extends javax.swing.JFrame {
                 number = unit.getMinNumber();
             armyUnit.setNumberOfUnits(number);
             UnitModel model = unitModelControler.getUnitModel(i);
-            assignModelSelectionToUnit(armyUnit, model);
+            armyUnit.parseUnitModel(model);
             units.add(armyUnit);
         }
         return units;
-    }
-
-    /**
-     * Method which assigns the UnitModel selection to the army unit
-     * @param unit ArmyUnit The armyUnit to assign the UnitModel selections to
-     * @param model UnitModel The unit model to assign to the ArmyUnit
-     */
-    private void assignModelSelectionToUnit(ArmyUnit unit, UnitModel model){
-        CheckListItem[] items = model.getEquipment();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1, index));
-                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
-                unit.getEquipment().add(eq);
-            }
-        }
-        items = model.getMagic();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = cli.toString().substring(index+1);
-                int cost = Integer.parseInt(cli.toString().substring(1,index));
-                Equipment eq = CreateObjectFromDB.createEquipment(name, cost);
-                unit.getEquipment().add(eq);
-            }
-        }
-        items = model.getPromotion();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = getPlayerRace().toString()+":"+
-                        cli.toString().substring(index+1);
-                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
-                unit.getUtility().add(ut);
-            }
-        }
-        items = model.getUtility();
-        for (CheckListItem cli : items) {
-            if(cli.isSelected()){
-                int index = cli.toString().indexOf(")");
-                String name = getPlayerRace().toString()+":"+
-                        cli.toString().substring(index+1);
-                UtilityUnit ut = CreateObjectFromDB.createUtilityUnit(name);
-                unit.getUtility().add(ut);
-            }
-        }
     }
 
     /**

@@ -46,9 +46,10 @@ public class PrintUI extends javax.swing.JDialog implements MultipleResults{
      * @param cbrCases The collection of CBRCases available for printing
      * @param displaying int The current displaying case
      * @param parent The JFrame parent
+     * @param modal boolean determining if the dialog is of type modal
      */
-    public PrintUI(Collection<CBRCase> cbrCases, JFrame parent,int displaying) {
-        super(parent,true);
+    public PrintUI(Collection<CBRCase> cbrCases, JFrame parent,int displaying, boolean modal) {
+        super(parent,modal);
         initComponents();
         addWindowListener(new WindowCloser());
         setLocationRelativeTo(parent);
@@ -286,7 +287,7 @@ public class PrintUI extends javax.swing.JDialog implements MultipleResults{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PrintUI(null,null,0).setVisible(true);
+                new PrintUI(null,null,0,false).setVisible(true);
             }
         });
     }
