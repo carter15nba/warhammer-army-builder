@@ -55,6 +55,7 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     private SimilarityMeasure similarityMeasure;
     private PrepareCase prepareCase;
     private SimilarityConfiguration simConfig;
+    private ArmyChangeStatus[] armyChangeStatus;
 
     /**
      * Default private constructor
@@ -122,17 +123,21 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public Collection<CBRCase> reuse(CBRQuery cbrq, Collection<RetrievalResult> retrievalResults){
         AdaptionEngine adaptionEngine = new AdaptionEngine();
         Collection<CBRCase> ncbr = new HashSet<CBRCase>();
+        armyChangeStatus = new ArmyChangeStatus[retrievalResults.size()];
+        int count = 0;
         for (RetrievalResult retrievalResult : retrievalResults) {
             Case _case = (Case) retrievalResult.get_case().getSolution();
             try{
                 Case adaptedCase = adaptionEngine.adaptCase(_case, cbrq);
+                boolean change = adaptionEngine.isArmyUnchanged();
+                int caseID = adaptedCase.getID();
+                System.out.println("CASEID: "+caseID+", CHANGE: "+change);
+                armyChangeStatus[count++] = new ArmyChangeStatus(caseID, change);
                 CBRCase cc = new CBRCase();
                 cc.setDescription(retrievalResult.get_case().getDescription());
                 cc.setSolution(adaptedCase);
                 cc.setJustificationOfSolution(retrievalResult.get_case().getJustificationOfSolution());
                 ncbr.add(cc);
-                
-                System.out.println(adaptedCase.getArmy().calculateCost());
             }
             catch(ConcurrentModificationException cme){}            
         }
@@ -154,10 +159,30 @@ public class CBREngine implements jcolibri.cbraplications.StandardCBRApplication
     public void retain(Collection<CBRCase> cbrCase){
         for (CBRCase cBRCase : cbrCase) {
             Case solution = (Case) cBRCase.getSolution();
-            prepareCase.prepareCase(solution);
+            ArmyChangeStatus acs = getArmyChangeStatus(cBRCase);
+            if(!acs.isUnchanged())
+                prepareCase.prepareFullCase(solution);
+            else
+                prepareCase.prepareCase(solution);
+            acs.setCaseID(solution.getID());
             PrintFactory.printCase(solution, false,null);
         }
         connector.storeCases(cbrCase);
+    }
+    
+    /**
+     * Method to get the ArmyChangeStatus for the supplied case.
+     * @param _case The case to get the status of
+     * @return null if no mathcing status where found, or the ArmyChangeStatus 
+     * object requested.
+     */
+    public ArmyChangeStatus getArmyChangeStatus(CBRCase _case){
+        Case c = (Case) _case.getSolution();
+        for(ArmyChangeStatus acs : armyChangeStatus){
+            if(c.getID()==acs.getCaseID())
+                return acs;
+        }
+        return null;
     }
 
     public static void main(String[] args) throws NoApplicableSimilarityFunctionException, SQLException {

@@ -108,7 +108,7 @@ public class PrepareCase {
      * and a new unique ID for the Army and ArmyUnits
      * @param _case The case object to prepare
      */
-    public void prepareCase(Case _case){
+    public void prepareFullCase(Case _case){
         try {
             MUTEX.acquire();
         }
@@ -117,7 +117,20 @@ public class PrepareCase {
         prepareArmy(_case.getArmy());
         nextCaseID++;
         MUTEX.release();
-
+    }
+    
+    /**
+     * Method which prepares the case by giving it a new unique ID.
+     * @param _case The case object to prepare
+     */
+    public void prepareCase(Case _case){
+        try {
+            MUTEX.acquire();
+        }
+        catch (InterruptedException ex) {return;}
+        _case.setID(nextCaseID);
+        nextCaseID++;
+        MUTEX.release();
     }
 
     /**

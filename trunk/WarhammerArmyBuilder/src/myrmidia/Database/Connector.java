@@ -31,6 +31,8 @@ import org.hibernate.SessionFactory;
 import jcolibri.connector.DataBaseConnector.*;
 import jcolibri.exception.InitializingException;
 import jcolibri.util.FileIO;
+import myrmidia.CBR.CBREngine;
+import myrmidia.CBR.Resources.ArmyChangeStatus;
 import myrmidia.Enums.Outcomes;
 import myrmidia.Util.CreateObjectFromDB;
 import myrmidia.Warhammer.Army;
@@ -311,13 +313,18 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
      */
     @Override
     public void storeCases(Collection<CBRCase> cases) {
+        CBREngine engine = CBREngine.getInstance();
         for(CBRCase c: cases)
         {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
-            if(c.getSolution()!= null){
+            ArmyChangeStatus changeStatus = engine.getArmyChangeStatus(c);
+            if(c.getSolution()!= null && !changeStatus.isUnchanged()){
+                saveFullCase(session, c.getSolution());
+                transaction.commit();
+            }
+            else if(c.getSolution()!= null && changeStatus.isUnchanged()){
                 saveCase(session, c.getSolution());
-            transaction.commit();
             }
             session.close();
         }
@@ -326,15 +333,16 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
     }
 
     /**
-     * Method which overrides the dedault hibernate saving scheme. This method
+     * Method which overrides the default hibernate saving scheme. This method
      * forces the connection to save only those parts of the case which is
      * neccessary in the neccessay order, by taking the saving power away from
-     * hibernate and executing regular SQL's.
+     * hibernate and executing regular SQL's. <strong>NOTE:</strong> This method
+     * saves the entire case (case, army and equipment/utility)
      * @param session The session with an open connection to the database
      * @param description The CaseComponent to be saved to the database.
      */
-    private void saveCase(Session session, CaseComponent description) {
-        System.out.println("SAVE CASE");
+    private void saveFullCase(Session session, CaseComponent description) {
+        System.out.println("SAVE FULL CASE");
         Case _case = (Case) description;
         Army army = _case.getArmy();
         //Create the army entry
@@ -373,6 +381,28 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
 
         }
         //Create the case associated with this army
+        session.createSQLQuery(CASE_QUERY)
+                .setInteger(0, _case.getID())
+                .setInteger(1, army.getID())
+                .setString(2, _case.getOpponent().toString())
+                .setString(3, _case.getOutcome().toString())
+                .executeUpdate();
+    }
+    
+    /**
+     * Method which overrides the default hibernate saving scheme. This method
+     * forces the connection to save only those parts of the case which is
+     * neccessary in the neccessay order, by taking the saving power away from
+     * hibernate and executing regular SQL's. <strong>NOTE:</strong> This method
+     * saves only te case. The army and equipment/utility is allready in the 
+     * database.
+     * @param session The session with an open connection to the database
+     * @param description The CaseComponent to be saved to the database.
+     */
+    private void saveCase(Session session, CaseComponent description){
+        System.out.println("SAVE CASE ONLY");
+        Case _case = (Case) description;
+        Army army = _case.getArmy();
         session.createSQLQuery(CASE_QUERY)
                 .setInteger(0, _case.getID())
                 .setInteger(1, army.getID())
