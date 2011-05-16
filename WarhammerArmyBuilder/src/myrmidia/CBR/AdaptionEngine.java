@@ -44,6 +44,7 @@ public class AdaptionEngine {
     private ExplanationEngine explEng;
     private AdaptionExplanation currentExpl;
     private int caseID;
+    private boolean armyNotChanged;
 
     /**
      * Default constructor
@@ -70,6 +71,7 @@ public class AdaptionEngine {
      * @return Case - The adapted case
      */
     public Case adaptCase(Case _case, CBRQuery query){
+        armyNotChanged = true;
         cAF.resetAll();
         explEng.addAdaptionExplanation(new AdaptionExplanation(_case.getID()));
         Case adaptedCase = naiveAdaption(_case, query);
@@ -90,6 +92,7 @@ public class AdaptionEngine {
         caseID = adaptedCase.getID();
         adaptedCase.setOpponent(queryCase.getOpponent());
         adaptedCase.setOutcome(Outcomes.Unknown);
+        
         adaptedCase.getArmy().setPlayerRace(queryCase.getArmy().getPlayerRace());
         adaptedCase.setArmy(adaptArmyFromQuery(_case, queryCase));
         return adaptedCase;
@@ -117,6 +120,11 @@ public class AdaptionEngine {
      * @return Army - The adapted army.
      */
     private Army adaptArmyFromQuery(Case _case, Case queryCase){
+        if(queryCase.getArmy().getArmyUnits().isEmpty()){
+            System.out.println("FOUND EMPTY QUERY");
+            armyNotChanged = true;
+            return _case.getArmy();
+        }
         Army adaptedArmy = Army.copy(_case.getArmy());
         adaptedArmy.setArmyPoints(queryCase.getArmy().getArmyPoints());
         Set<ArmyUnit> queryUnits = queryCase.getArmy().getArmyUnits();
@@ -228,7 +236,8 @@ public class AdaptionEngine {
                 default:
                     return army;
             }
-            messages = rule.isFollowingArmyDispositionRules(army,armyPoints);
+            messages = rule.isFollowingArmyDispositionRules(army,armyPoints);           
+            armyNotChanged = false;
         }
         return army;
     }
@@ -748,5 +757,15 @@ public class AdaptionEngine {
         units = CreateObjectFromDB.findRaceAndArmyTypeUnits(
                     army.getPlayerRace(), aT);
         addUnitGroup(army, units, message);
+    }
+    
+    /**
+     * Method to aquire if the army is unchanged. i.e.: No units or equipment
+     * in the existing army have been changed.
+     * @return <ul><li>true - if no changes have been performed</li> 
+     * <li>false - if any changes have been made</li></ul>
+     */
+    public boolean isArmyUnchanged(){
+        return armyNotChanged;
     }
 }
