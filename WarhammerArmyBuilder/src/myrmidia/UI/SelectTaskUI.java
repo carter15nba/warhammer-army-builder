@@ -156,6 +156,7 @@ public class SelectTaskUI extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                myrmidia.File.LockFile.getInstance().lockFile();
                 new SelectTaskUI().setVisible(true);
             }
         });

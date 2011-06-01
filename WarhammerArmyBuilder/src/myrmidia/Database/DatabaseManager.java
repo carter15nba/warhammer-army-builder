@@ -86,7 +86,7 @@ public class DatabaseManager {
             return casebaseConnector;
             
         }
-        catch (InitializingException ex) {}
+        catch (InitializingException ex) {}    
         return null;
     }
 
