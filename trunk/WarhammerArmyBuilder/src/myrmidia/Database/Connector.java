@@ -163,7 +163,7 @@ public class Connector extends jcolibri.connector.DataBaseConnector{
      */
     @Override
     public void initFromXMLfile(URL file) throws InitializingException {
-        try {
+        try {         
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse( file.openStream() );
