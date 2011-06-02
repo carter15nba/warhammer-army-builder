@@ -108,8 +108,8 @@ public class ExchangeRaceExplanation implements Explanation{
     public String generateExplanation() {
         String ret = "The army race were changed from "+originalRace+" to "+
                 replacementRace+", since the case army did not fit the query "
-                + "army\nAll unist were exchanged with the most similar "
-                + "corresponing unit in the new race.\nThe most similar unit "
+                + "army\nAll units were exchanged with the most similar "
+                + "corresponding unit in the new race.\nThe most similar unit "
                 + "is determined based on unit characteristics; similarity "
                 + "tables between Army-, Unit, and Weapon types; the units base "
                 + "cost; and if the unit is a magician or not.\n";
